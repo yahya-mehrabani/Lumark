@@ -114,7 +114,7 @@ Verify packaging and desktop file association mechanisms across all three target
 
 ### Task US-004.5: Create and validate macOS bundle and UTI association prototype
 - **Task ID:** `US-004.5`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-001.4`
 - **Completion Criteria:** `packaging/macos/Info.plist` defines `CFBundleDocumentTypes` for Markdown and declares UTI `net.daringfireball.markdown`.
 - **Verification Command:**
@@ -161,11 +161,13 @@ Verify packaging and desktop file association mechanisms across all three target
   - `packaging/linux/build-deb.sh`
   - `build/linux/markdown-viewer.desktop`
   - `packaging/windows/installer.nsi`
+  - `packaging/macos/Info.plist`
+  - `build/darwin/Info.plist`
 - **Platform Evidence Records:**
   - **Linux (Ubuntu 24.04/26.04 WSL2):** `PASS` (Desktop entry, SVG icon, and Debian maintainer manifests created; validated syntax and Freedesktop keys; shellcheck and shfmt passed)
   - **Linux (Ubuntu 24.04 LTS Native):** `BLOCKED` (Requires native Ubuntu machine for desktop database inspection)
   - **Windows 10/11 x64:** `PARTIAL / SCRIPT VERIFIED` (NSIS script prototype created with ProgID `MarkdownViewer.Document` and `OpenWithProgids` keys; compilation and native runtime `BLOCKED / NOT RUN` locally due to missing Windows host toolchain)
-  - **macOS Apple Silicon:** `BLOCKED` (Requires macOS hardware or CI runner)
+  - **macOS Apple Silicon:** `PARTIAL / PLIST VERIFIED` (Info.plist declaring `CFBundleDocumentTypes` and UTI `net.daringfireball.markdown` created and validated with plistlib; native `.app` build and Launch Services execution `BLOCKED / NOT RUN` locally due to missing macOS hardware)
 - **Terminal Output & Verification Evidence:**
 
 ### Task US-004.1: Linux Packaging Manifest and Desktop Entry
@@ -261,4 +263,32 @@ $ grep -E "MarkdownViewer\.Document|OpenWithProgids" packaging/windows/installer
     DeleteRegKey HKCU "${UNINST_KEY}"
     DeleteRegKey HKCU "Software\${PRODUCT_NAME}"
 (exit: 0, ProgID and OpenWithProgids declared; zero UserChoice references; clean DeleteRegKey removal verified)
+```
+
+### Task US-004.5: macOS Bundle and UTI Association Prototype
+```text
+$ plutil -lint packaging/macos/Info.plist 2>&1 || grep -E "net\.daringfireball\.markdown|CFBundleDocumentTypes" packaging/macos/Info.plist
+Command 'plutil' not found (exit: 127). Handled gracefully per AGENTS.md §8: plutil absent in Linux container.
+    <key>CFBundleDocumentTypes</key>
+                <string>net.daringfireball.markdown</string>
+            <string>net.daringfireball.markdown</string>
+
+$ python3 -c '
+import plistlib
+with open("packaging/macos/Info.plist", "rb") as f:
+    pl = plistlib.load(f)
+assert pl["CFBundleIdentifier"] == "com.markdownviewer.app"
+assert "CFBundleDocumentTypes" in pl
+doc_type = pl["CFBundleDocumentTypes"][0]
+assert "net.daringfireball.markdown" in doc_type["LSItemContentTypes"]
+assert "md" in doc_type["CFBundleTypeExtensions"]
+assert "text/markdown" in doc_type["CFBundleTypeMIMETypes"]
+assert "UTImportedTypeDeclarations" in pl
+uti = pl["UTImportedTypeDeclarations"][0]
+assert uti["UTTypeIdentifier"] == "net.daringfireball.markdown"
+assert "public.plain-text" in uti["UTTypeConformsTo"]
+assert "md" in uti["UTTypeTagSpecification"]["public.filename-extension"]
+print("macOS Info.plist successfully parsed and validated by plistlib.")
+'
+macOS Info.plist successfully parsed and validated by plistlib.
 ```

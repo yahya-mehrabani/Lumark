@@ -932,3 +932,37 @@ This log is an append-only chronological record of all significant actions, veri
 - **Completed Tasks:** `US-004.1` (`DONE`), `US-004.2` (`DONE`), `US-004.4` (`DONE`).
 - **Next Eligible Task:** `US-004.5: Create and validate macOS bundle and UTI association prototype` under [`US-004`](../stories/US-004-packaging-association-spike.md) (`READY`).
 - **Phase 1 Readiness Verdict:** **`NOT_READY`** (Contingent on multi-platform feasibility evidence across Windows 10/11 x64, macOS Apple Silicon, and Ubuntu 24.04/26.04).
+
+---
+
+## [2026-10-23] — Phase 1: Create and Validate macOS Bundle and UTI Association Prototype (US-004.5)
+
+- **Work Item ID:** `US-004.5`
+- **Agent:** Antigravity Autonomous Story Runner
+- **Summary:** Implemented macOS application bundle property list `packaging/macos/Info.plist` and updated `build/darwin/Info.plist` fulfilling PRD Section 11.3, FR-OPEN-003, and AUD-012. Declared `CFBundleDocumentTypes` for Markdown documents (`.md`, `.markdown`, `.mdown`, `.mkd`, MIME `text/markdown`, `text/x-markdown`) with `LSHandlerRank` set to `Alternate` to respect user defaults. Declared `UTImportedTypeDeclarations` defining Uniform Type Identifier `net.daringfireball.markdown` conforming to `public.plain-text` without hijacking generic `.txt` files. Handled graceful tool degradation on missing `plutil` in Linux container and validated complete XML property list structure using Python standard library `plistlib`. Advanced Task `US-004.5` to `DONE`.
+
+### Actions Taken:
+1. **macOS Info.plist Implementation (`packaging/macos/Info.plist`, `build/darwin/Info.plist`):**
+   - Configured bundle properties: `CFBundlePackageType`, `CFBundleName`, `CFBundleDisplayName`, `CFBundleExecutable`, `CFBundleIdentifier` (`com.markdownviewer.app`), and version information.
+   - Configured `CFBundleDocumentTypes` declaring role `Viewer`, rank `Alternate`, extensions `md`, `markdown`, `mdown`, `mkd`, and MIME types `text/markdown`, `text/x-markdown`.
+   - Configured `UTImportedTypeDeclarations` with UTI `net.daringfireball.markdown` conforming to `public.plain-text`.
+2. **Verification Command Execution:**
+   - Executed `plutil -lint packaging/macos/Info.plist 2>&1 || grep -E "net\.daringfireball\.markdown|CFBundleDocumentTypes" packaging/macos/Info.plist` (exit code 0; graceful plutil fallback).
+   - Executed Python `plistlib` validation script verifying all required keys, arrays, and UTI tags.
+3. **Documentation Synchronization:**
+   - Updated `docs/stories/US-004-packaging-association-spike.md`: marked Task `US-004.5` as `DONE` and recorded validation output in Section 8.
+   - Updated `docs/implementation/CURRENT-STATE.md`: advanced last completed work item to `US-004.5` and next eligible task to `US-004.6`.
+   - Updated `docs/implementation/BACKLOG.md`: updated `US-004` status to `IN_PROGRESS (Tasks US-004.1, US-004.2, US-004.4, US-004.5 DONE)`.
+
+### Verification Results:
+- `plutil ... || grep -E ...`: Declared UTI and document types verified (PASS).
+- `python3 -c "import plistlib ..."`: All dictionary keys, UTI identifiers, and extensions verified (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **Phase:** Phase 1 (Technical Feasibility Spike).
+- **Active Story:** `US-004: Platform Packaging & File Association Feasibility Spike` (`IN_PROGRESS`).
+- **Completed Tasks:** `US-004.1` (`DONE`), `US-004.2` (`DONE`), `US-004.4` (`DONE`), `US-004.5` (`DONE`).
+- **Next Eligible Task:** `US-004.6: Record independent platform feasibility evidence` under [`US-004`](../stories/US-004-packaging-association-spike.md) (`READY`).
+- **Phase 1 Readiness Verdict:** **`NOT_READY`** (Contingent on multi-platform feasibility evidence across Windows 10/11 x64, macOS Apple Silicon, and Ubuntu 24.04/26.04).
