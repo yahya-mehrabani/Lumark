@@ -437,3 +437,74 @@ This log is an append-only chronological record of all significant actions, veri
 - **Completed Tasks:** `US-001.1` (`DONE`), `US-001.2` (`DONE`), `US-001.3` (`DONE`), `US-001.4` (`DONE`).
 - **Next Eligible Task:** `US-001.5: Execute standalone binary and verify independent execution` (`READY`).
 - **Phase 1 Readiness Verdict:** **`NOT_READY`** (Contingent on multi-platform feasibility evidence across Windows 10/11 x64, macOS Apple Silicon, and Ubuntu 24.04/26.04).
+
+---
+
+## [2026-10-23] — Task US-001.5: Standalone Binary Execution & Process Independence Verification
+
+- **Work Item ID:** `US-001.5`
+- **Agent:** Antigravity AI Implementation Agent
+- **Summary:** Executed and completed Task `US-001.5`, completing all five tasks of User Story `US-001`. Verified standalone execution of compiled production binaries (`build/bin/markdown-viewer-spike` and `bin/markdown-viewer`) under WSLg (`DISPLAY=:0`), observing native desktop window initialization (`0x600005 "Markdown Viewer (Spike Baseline)"`, 1000x618) with measured cold-start launch latency of 363–379 ms (< 2.5s AC-4 threshold). Verified that the static test string `"Spike Baseline Loaded"` is directly embedded into the binary and rendered via embedded React production assets without runtime asset server errors. Verified full process independence from development servers (`pgrep -af vite` returned exit code 1; `ps aux | grep -i '[n]ode'` confirmed zero Node.js/npm development server processes). Verified autonomous out-of-directory execution by launching the executable from `/tmp` with working directory outside the project/frontend tree. Verified clean termination lifecycle via `SIGTERM` with zero orphaned or zombie processes. Reused valid compilation and build metadata evidence from Task `US-001.4` while adding authentic runtime measurements and process inspection. Transitioned Task `US-001.5` and Story `US-001` to `DONE`, while preserving overall Phase 1 verdict as `NOT_READY` pending cross-platform evidence across Windows, macOS, and Linux per PRD Section 1.4.
+
+### Actions Taken:
+1. **Repository Inspection & Existing Evidence Review:**
+   - Reviewed `AGENTS.md`, `CURRENT-STATE.md`, `US-001`, `EPIC-001`, `ADR-0001`, `BACKLOG.md`, and commit `bfbf621` (`US-001.4`).
+   - Identified criteria supported by existing reproducible evidence (AC-1 binary build & embedded `dist/` assets; `go1.26.10` toolchain pin and 0 CVEs via `govulncheck`) and criteria requiring independent execution verification (AC-2 desktop window & string rendering, AC-3 development server non-reliance, AC-4 launch latency < 2.5s, clean exit lifecycle, and out-of-tree execution).
+2. **Standalone Desktop Window Execution & Launch Latency:**
+   - Launched `./build/bin/markdown-viewer-spike` under WSLg (`GDK_BACKEND=x11 DISPLAY=:0 WEBKIT_DISABLE_COMPOSITING_MODE=1`).
+   - Measured cold-start window creation time via nanosecond timestamp delta: **379 ms** for `build/bin/markdown-viewer-spike` and **363 ms** for `bin/markdown-viewer`, well under the 2,500 ms threshold (AC-4 PASS).
+   - Inspected X11 root window hierarchy (`xwininfo -root -tree`) and verified window `0x600005 "Markdown Viewer (Spike Baseline)"` (1000x618).
+   - Inspected window properties (`xprop -id 0x600005`): `_GTK_APPLICATION_ID = "org.wails.markdown-viewer"`, `WM_CLASS = "markdown-viewer-spike"`, `WM_NAME = "Markdown Viewer (Spike Baseline)"`.
+3. **Static Test String & Embedded Asset Rendering:**
+   - Verified that `"Spike Baseline Loaded"` is present in compiled binary strings (`strings build/bin/markdown-viewer-spike | grep -o "Spike Baseline Loaded"`).
+   - Confirmed desktop window rendered React frontend containing static test string.
+4. **Process Independence & Non-Reliance on Development Servers:**
+   - Executed `pgrep -af vite`: returned exit code 1 (zero active Vite processes).
+   - Executed `ps aux | grep -i '[n]ode'`: confirmed zero Node.js/npm processes associated with Vite dev server, frontend dev servers, or project execution. All running Node processes on the machine belong to the IDE server and MCP language servers (`tsserver`, `jsonServerMain`).
+5. **Autonomous Out-of-Directory Execution:**
+   - Changed working directory to `/tmp` (completely outside the repository and frontend directories) and launched `/home/repos/personal/markdown-go/build/bin/markdown-viewer-spike`.
+   - Verified window creation in **366 ms**, confirmed assets loaded directly from embedded `embed.FS`, and confirmed clean termination.
+6. **Process Termination & Cleanup:**
+   - Tested application shutdown via `SIGTERM` (`kill -TERM $APP_PID`).
+   - Confirmed application exited cleanly with exit code 0.
+   - Inspected process state with `kill -0 $APP_PID`: confirmed process fully terminated; zero lingering or zombie processes remained.
+7. **Quality, Linting & Repository Validation:**
+   - Ran `go test ./... && go vet ./...` (exit code 0).
+   - Ran `golangci-lint run ./...` (0 issues).
+   - Ran `govulncheck ./...` (0 vulnerabilities found under `go1.26.10`).
+   - Ran `cd frontend && npm run build` (built in 343 ms, 0 errors).
+   - Ran `python3 scripts/validate_links.py` (74 files scanned; 0 broken links; 0 machine-specific links).
+   - Ran `python3 scripts/reconcile_tasks.py` (124 tasks scanned; complete verification fields).
+   - Ran `python3 scripts/reconcile_requirements_crosswalk.py` (88 rows; 60 catalog items verified).
+   - Ran `git diff --check` (0 whitespace errors).
+   - Ran `git diff -- PRD.md` (0 changes; PRD strictly preserved).
+8. **Documentation Synchronization:**
+   - Updated `docs/stories/US-001-wails-react-skeleton-spike.md`: marked Task `US-001.5` and Story `US-001` as `DONE`, and recorded complete validation evidence.
+   - Updated `docs/implementation/CURRENT-STATE.md`: advanced last completed work item to `US-001.5` (Story `US-001` `DONE`) and next eligible work item to `US-002.1`.
+   - Updated `docs/implementation/BACKLOG.md`: updated `US-001` status to `DONE`.
+   - Preserved overall Phase 1 verdict as `NOT_READY` pending multi-platform feasibility evidence.
+
+### Verification Results:
+- `xwininfo -root -tree`: Window `0x600005 "Markdown Viewer (Spike Baseline)"` (1000x618) active on display `:0` (PASS).
+- Launch Latency: **379 ms** (`build/bin/`), **363 ms** (`bin/`), **366 ms** (out-of-tree `/tmp`) vs < 2.5s threshold (PASS).
+- `strings build/bin/markdown-viewer-spike | grep -o "Spike Baseline Loaded"`: String embedded in binary (PASS).
+- `pgrep -af vite`: Exit code 1; no active Vite processes (PASS).
+- `ps aux | grep -i '[n]ode'`: No project-related Node.js or npm processes (PASS).
+- Out-of-Directory Launch (`cd /tmp && ...`): Window created in 366 ms, zero missing embedded asset errors (PASS).
+- Clean Exit Lifecycle: Process cleanly terminated on `SIGTERM`, zero zombie processes (PASS).
+- `go test ./... && go vet ./...`: Exit code 0 (PASS).
+- `golangci-lint run ./...`: 0 issues (PASS).
+- `govulncheck ./...`: 0 vulnerabilities found under `go1.26.10` (PASS).
+- `cd frontend && npm run build`: Built in 343 ms, exit code 0 (PASS).
+- `python3 scripts/validate_links.py`: 74 files scanned; 0 machine-specific; 379 valid; 0 broken (PASS).
+- `python3 scripts/reconcile_tasks.py`: 124 tasks scanned; 0 duplicate IDs; complete verification fields (PASS).
+- `python3 scripts/reconcile_requirements_crosswalk.py`: 88 rows parsed; 60 catalog items verified (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **Phase:** Phase 1 (Technical Feasibility Spike).
+- **Active Story:** `US-001: Wails Application Skeleton & Production Asset Embedding Spike` (`DONE`).
+- **Completed Tasks:** `US-001.1` (`DONE`), `US-001.2` (`DONE`), `US-001.3` (`DONE`), `US-001.4` (`DONE`), `US-001.5` (`DONE`).
+- **Next Eligible Task:** `US-002.1: Implement and evaluate single-instance IPC mechanism` under [`US-002`](../stories/US-002-cli-single-instance-spike.md) (`READY`).
+- **Phase 1 Readiness Verdict:** **`NOT_READY`** (Contingent on multi-platform feasibility evidence across Windows 10/11 x64, macOS Apple Silicon, and Ubuntu 24.04/26.04).

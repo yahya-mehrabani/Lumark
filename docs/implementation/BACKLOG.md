@@ -36,7 +36,7 @@ This document is the authoritative index of all Epics and User Stories for `mark
 
 | Story ID | Title | Priority | Status | Dependencies | Story Link |
 |---|---|---|---|---|---|
-| `US-001` | Wails Application Skeleton & Production Asset Embedding Spike (Wails v3 Candidate / v2 Fallback) | P0 | `IN_PROGRESS` | None | [US-001.md](../stories/US-001-wails-react-skeleton-spike.md) |
+| `US-001` | Wails Application Skeleton & Production Asset Embedding Spike (Wails v3 Candidate / v2 Fallback) | P0 | `DONE` | None | [US-001.md](../stories/US-001-wails-react-skeleton-spike.md) |
 | `US-002` | Command-Line & Single-Instance IPC Feasibility Spike | P0 | `READY` | `US-001` | [US-002.md](../stories/US-002-cli-single-instance-spike.md) |
 | `US-003` | WebView Rendering & Local Asset Security Baseline Spike | P0 | `READY` | `US-001` | [US-003.md](../stories/US-003-webview-asset-security-spike.md) |
 | `US-004` | Platform Packaging & File Association Feasibility Spike | P0 | `READY` | `US-001` | [US-004.md](../stories/US-004-packaging-association-spike.md) |

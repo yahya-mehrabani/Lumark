@@ -11,10 +11,10 @@
 
 - **Current Overall Phase:** **Phase 1 (Technical Feasibility Spike)**.
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
-- **Application Implementation Status:** **FEASIBILITY SPIKE IN PROGRESS**. Minimal Wails v3 + React + Vite project structure initialized, frontend compiled with static bindings, standalone desktop window verified, and production binary with embedded assets compiled and verified under Task `US-001.4`.
+- **Application Implementation Status:** **FEASIBILITY SPIKE IN PROGRESS**. Story [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) fully verified and complete across all five tasks (`US-001.1` through `US-001.5`). Standalone production binary, embedded React frontend assets, sub-400ms launch latency, and process independence from Node.js/Vite verified under WSLg.
 - **Feasibility Spike Status:** **IN_PROGRESS**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-001.4: Build production binary with embedded assets` under [`US-001`](../stories/US-001-wails-react-skeleton-spike.md).
-- **Active / Next Eligible Work Item:** Task `US-001.5: Execute standalone binary and verify independent execution` under [`US-001`](../stories/US-001-wails-react-skeleton-spike.md).
+- **Last Completed Work Item:** Task `US-001.5: Execute standalone binary and verify independent execution` under [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) (Story `US-001` completed).
+- **Active / Next Eligible Work Item:** Task `US-002.1: Implement and evaluate single-instance IPC mechanism` under [`US-002`](../stories/US-002-cli-single-instance-spike.md).
 
 ---
 
@@ -81,13 +81,13 @@ All planning remediation artifacts must be preserved:
 ## 5. Exact Next Action for the Next Agent
 
 The next incoming agent must:
-1. **Confirm Prerequisites Completed in Tasks `US-001.1`, `US-001.2`, `US-001.3`, and `US-001.4`:**
-   - Review Section 8 of [`docs/stories/US-001-wails-react-skeleton-spike.md`](../stories/US-001-wails-react-skeleton-spike.md) for verified toolchain versions (`go1.26.10`), doctor diagnostics, generated project skeleton, static binding generation, clean `govulncheck` resolution, and standalone production build outputs (`bin/markdown-viewer` and `build/bin/markdown-viewer-spike`).
-2. **Execute Task `US-001.5: Execute standalone binary and verify independent execution`:**
-   - Execute the compiled standalone production binary outside dev mode (`./build/bin/markdown-viewer-spike` or `./bin/markdown-viewer`).
-   - Verify that the desktop window renders the static test string ("Spike Baseline Loaded") on screen under WSLg (`DISPLAY=:0`).
-   - Verify process independence: confirm no active Vite server or Node dev server process exists (`ps aux | grep node` / `pgrep -f vite`).
-   - Record authentic process tables and runtime evidence in Section 8 of `US-001`.
+1. **Confirm Prerequisites Completed in Story `US-001` (Tasks `US-001.1` through `US-001.5`):**
+   - Review Section 8 of [`docs/stories/US-001-wails-react-skeleton-spike.md`](../stories/US-001-wails-react-skeleton-spike.md) for verified toolchain versions (`go1.26.10`), doctor diagnostics, generated project skeleton, static binding generation, clean `govulncheck` resolution, standalone production build outputs (`bin/markdown-viewer` and `build/bin/markdown-viewer-spike`), sub-400ms launch latency, and process independence from Node/Vite.
+2. **Execute Task `US-002.1: Implement and evaluate single-instance IPC mechanism`:**
+   - Review [`docs/stories/US-002-cli-single-instance-spike.md`](../stories/US-002-cli-single-instance-spike.md) and [`docs/decisions/ADR-0002-single-instance-ipc.md`](../decisions/ADR-0002-single-instance-ipc.md).
+   - Implement prototype IPC coordinator in `spike/ipc/` evaluating Wails v3 native single-instance capabilities alongside local socket/named pipe IPC.
+   - Execute verification: `go test -v -race ./spike/ipc/...` confirming socket creation, secondary connection, JSON payload transmission, and clean shutdown.
+   - Record authentic test output in Section 8 of `US-002`.
    - Follow the Task-Level Conventional Commits policy upon successful verification.
 3. **Do NOT Jump to Feature Code:** Maintain strict Phase 1 spike bounds. Do not write production viewer code or modify `PRD.md`.
 4. **Preserve Phase Gate Verdict:** Keep overall Phase 1 verdict `NOT_READY` until all platform evidence (Windows, macOS, Linux) is recorded.
