@@ -1,0 +1,48 @@
+
+# Go binaries and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Go test binaries and artifacts
+*.test
+*.out
+coverage.*
+!coverage.go
+*.coverprofile
+profile.cov
+coverage.out
+coverage.html
+
+# Go workspace files
+go.work
+go.work.sum
+
+# Dependencies
+# vendor/
+
+# Node.js dependencies and build outputs
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+
+# Wails generated binaries
+/build/bin/
+
+# Environment files and secrets
+.env
+.env.*
+!.env.example
+
+# Editor/IDE
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
