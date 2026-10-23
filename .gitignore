@@ -46,3 +46,8 @@ dist/
 .DS_Store
 Thumbs.db
 Desktop.ini
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class

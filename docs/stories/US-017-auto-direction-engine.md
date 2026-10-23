@@ -1,0 +1,123 @@
+# US-017: Unicode Automatic Direction Detection Engine
+
+- **Story ID:** `US-017`
+- **Parent Epic:** [EPIC-005: Bidirectional Text & Layout Engine (RTL/LTR)](../epics/EPIC-005-bidirectional-layout.md)
+- **Status:** `DRAFT`
+- **Assigned Phase:** Phase 4 (Advanced Rendering & Direction)
+
+---
+
+## 1. Objective and Expected Outcome
+
+Implement block-level automatic text direction detection based on standard Unicode bidirectional rules:
+1. Automatically determine direction (`rtl` or `ltr`) for textual blocks (paragraphs, headings, list items, blockquotes, table cells, captions).
+2. Use standard HTML `dir="auto"` behavior or Unicode first strong directional character algorithm:
+   - Paragraphs starting with Persian/Arabic characters resolve to RTL.
+   - Paragraphs starting with Latin characters resolve to LTR.
+   - Leading neutral characters (digits, punctuation, spaces, emojis) are skipped until the first strong directional character.
+3. Allow adjacent blocks in the same document to have different directions independently.
+4. Ensure punctuation (periods, parentheses, brackets, colons) in mixed-language sentences does not unpredictably jump to the wrong end of the line.
+
+---
+
+## 2. Source PRD Requirements
+
+- **FR-DIR-001:** Automatic direction (Standards-compliant HTML bidi behavior, first strong character).
+- **PRD Section 2.3:** Invariant 5 (RTL is a core feature).
+
+---
+
+## 3. Dependencies
+
+- **Prerequisites:** [US-009](US-009-commonmark-gfm-pipeline.md) (Core rendering pipeline).
+
+---
+
+## 4. Scope and Explicit Exclusions
+
+- **In Scope:**
+  - `frontend/src/features/direction/autoDirection.ts`.
+  - Attaching `dir="auto"` or calculated direction to block elements in the Markdown AST.
+  - CSS bidirectional text isolation (`unicode-bidi: isolate`).
+- **Explicit Exclusions:**
+  - Code blocks and formulas (handled in US-019).
+
+---
+
+## 5. Observable Acceptance Criteria
+
+1. A paragraph starting with Persian text (`این یک متن آزمایشی است.`) renders with `dir="rtl"`, right-aligned, with the trailing period placed on the left.
+2. A paragraph starting with English text (`This is a test document.`) renders with `dir="ltr"`, left-aligned.
+3. A block starting with `123. فارسی` resolves to RTL based on the first strong character (`ف`).
+4. In a Persian sentence containing an English word (`از ابزار Docker استفاده کنید.`), "Docker" remains LTR while the overall sentence flows RTL and the period remains on the far left.
+5. Adjacent paragraphs with differing languages alternate direction cleanly without bleeding into each other.
+
+---
+
+## 6. Implementation Tasks
+
+### Task US-017.1: Implement Unicode first strong character detector
+- **Task ID:** `US-017.1`
+- **Status:** `DRAFT`
+- **Dependencies:** None
+- **Completion Criteria:** Tests accurately classify strings with leading punctuation, emojis, and numbers.
+- **Verification Command:** `npm run test:unit -- first-strong-char`
+- **Expected Observable Result:** Paragraphs beginning with Arabic/Persian characters assigned dir='rtl'; Latin assigned 'ltr'.
+- **Evidence to Record:** Bidi unit test output.
+- **Environment Handling:** Node.js / Vitest environment.
+
+### Task US-017.2: Apply block-level direction in Markdown AST
+- **Task ID:** `US-017.2`
+- **Status:** `DRAFT`
+- **Dependencies:** `US-017.1`
+- **Completion Criteria:** Remark/rehype plugin attaches `dir` attribute to `p`, `h1`-`h6`, `li`, `blockquote`, `td`, `th`.
+- **Verification Command:** `npm run test:unit -- auto-direction-dom`
+- **Expected Observable Result:** Block elements receive dir='auto' attribute.
+- **Evidence to Record:** DOM test output.
+- **Environment Handling:** Node.js / Vitest environment.
+
+### Task US-017.3: Configure CSS bidi rules
+- **Task ID:** `US-017.3`
+- **Status:** `DRAFT`
+- **Dependencies:** `US-017.2`
+- **Completion Criteria:** Applies `unicode-bidi: isolate;` to avoid cross-element bidi interference.
+- **Verification Command:** `npm run test:unit -- mixed-paragraphs`
+- **Expected Observable Result:** Multi-paragraph mixed Persian/English document sets direction independently per paragraph.
+- **Evidence to Record:** Mixed text test output.
+- **Environment Handling:** Node.js / Vitest environment.
+
+### Task US-017.4: Write unit tests for bidi resolution
+- **Task ID:** `US-017.4`
+- **Status:** `DRAFT`
+- **Dependencies:** `US-017.3`
+- **Completion Criteria:** Tests verify direction calculation across 20+ multilingual test cases.
+- **Verification Command:** `npm run test:unit -- auto-direction`
+- **Expected Observable Result:** Command/test exits with code 0 and verifies completion criteria.
+- **Evidence to Record:** Execution log captured in Section 8.
+- **Environment Handling:** Standard test environment.
+
+---
+
+## 7. Verification Instructions
+
+1. Run unit tests: `npm run test:unit -- auto-direction`.
+2. Open fixture `mixed-bidi-tech.md`: verify Persian and English paragraphs alternate alignment naturally.
+
+---
+
+## 8. Known Risks and Blockers
+
+- Differences in system fonts for Persian shaping. Ensure fallback stack includes `Vazirmatn`, `Tahoma`, `Arial`, system-ui.
+
+---
+
+## 9. Implementation Notes and Validation Evidence
+
+*(To be filled by implementation agent during execution)*
+- **Execution Date:** Not yet executed
+- **Agent ID:** N/A
+- **Changed Files:** None
+- **Terminal Output & Verification Evidence:**
+```text
+(Awaiting execution in Phase 4)
+```

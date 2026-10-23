@@ -1,0 +1,123 @@
+# US-007: Frontend Application Shell, Tab State Management & Empty State
+
+- **Story ID:** `US-007`
+- **Parent Epic:** [EPIC-002: Core Native Application Lifecycle & Tab Management](../epics/EPIC-002-native-lifecycle-tabs.md)
+- **Status:** `DRAFT`
+- **Assigned Phase:** Phase 2 (Core Application Structure)
+
+---
+
+## 1. Objective and Expected Outcome
+
+Build the React frontend application shell, tab navigation system, and empty state:
+1. Application shell layout containing menu bar, tab strip, document viewport container, and status bar.
+2. Tab management: open, switch, and close tabs; duplicate path prevention (focuses existing tab instead of duplicating).
+3. Informative empty state when 0 tabs are open: "Open File" button, drag-and-drop landing target, recent files list, and key shortcut hints.
+4. Tab status indicators: show clear error badge if a file is missing or inaccessible on disk.
+
+---
+
+## 2. Source PRD Requirements
+
+- **PRD Section 5.1:** Main window layout and chrome design.
+- **PRD Section 5.2:** Empty state clear actions.
+- **PRD Section 5.3:** Tabs management and single-tab duplicate prevention.
+- **FR-OPEN-001:** Rendering document in tab upon selection.
+
+---
+
+## 3. Dependencies
+
+- **Prerequisites:** [US-005](US-005-native-document-service.md) and [US-006](US-006-lifecycle-cli-single-instance.md).
+
+---
+
+## 4. Scope and Explicit Exclusions
+
+- **In Scope:**
+  - `frontend/src/features/shell/` and `frontend/src/features/tabs/`.
+  - React state store for tabs (active tab ID, list of open tabs, document metadata).
+  - Empty state component.
+- **Explicit Exclusions:**
+  - Full Markdown rendering pipeline (mock renderer placeholder used until Epic 3).
+
+---
+
+## 5. Observable Acceptance Criteria
+
+1. Launching without files displays the empty state with "Open File" action and shortcut hints.
+2. Opening a file creates a tab displaying the filename; closing the tab returns to empty state if it was the last tab.
+3. Opening an already-open file focuses the existing tab without reloading or altering tab order.
+4. Closing a tab frees its in-memory document state.
+5. Inaccessible or missing files display a distinct error status badge on the tab without crashing the app.
+
+---
+
+## 6. Implementation Tasks
+
+### Task US-007.1: Implement TabStateStore in React
+- **Task ID:** `US-007.1`
+- **Status:** `DRAFT`
+- **Dependencies:** None
+- **Completion Criteria:** Store handles `openTab`, `closeTab`, `switchTab`, and `focusExistingTab`.
+- **Verification Command:** `npm run test:unit -- tab-store`
+- **Expected Observable Result:** Tab state store manages open tabs, active tab index, and tab closing.
+- **Evidence to Record:** Vitest unit test pass output.
+- **Environment Handling:** Node.js / Vitest jsdom environment.
+
+### Task US-007.2: Create TabBar and TabItem components
+- **Task ID:** `US-007.2`
+- **Status:** `DRAFT`
+- **Dependencies:** `US-007.1`
+- **Completion Criteria:** Accessible tab list with close buttons (`Ctrl/Cmd`+`W`), middle-click to close, and active tab styling.
+- **Verification Command:** `npm run test:unit -- tab-bar`
+- **Expected Observable Result:** TabBar and TabItem components render tabs and respond to tab clicks.
+- **Evidence to Record:** Component test execution output.
+- **Environment Handling:** Node.js / Vitest jsdom environment.
+
+### Task US-007.3: Create EmptyState component
+- **Task ID:** `US-007.3`
+- **Status:** `DRAFT`
+- **Dependencies:** `US-007.1`
+- **Completion Criteria:** Renders action buttons, drag-and-drop dropzone, and shortcut cheatsheet.
+- **Verification Command:** `npm run test:unit -- empty-state`
+- **Expected Observable Result:** EmptyState component renders drag-and-drop zone and recent files entrypoint.
+- **Evidence to Record:** Component test execution output.
+- **Environment Handling:** Node.js / Vitest jsdom environment.
+
+### Task US-007.4: Write component unit tests
+- **Task ID:** `US-007.4`
+- **Status:** `DRAFT`
+- **Dependencies:** `US-007.2`, `US-007.3`
+- **Completion Criteria:** Vitest + React Testing Library tests pass for tab switching, closing, and empty state.
+- **Verification Command:** `npm run test:unit -- shell`
+- **Expected Observable Result:** Command/test exits with code 0 and verifies completion criteria.
+- **Evidence to Record:** Execution log captured in Section 8.
+- **Environment Handling:** Standard test environment.
+
+---
+
+## 7. Verification Instructions
+
+1. Run frontend test suite: `npm run test:unit`.
+2. Launch app: verify empty state renders when no documents are loaded.
+3. Open 3 files: verify 3 tabs render. Close all 3: verify empty state reappears.
+
+---
+
+## 8. Known Risks and Blockers
+
+- Identical filenames in different folders: Tab title must disambiguate with parent folder name if basenames collide.
+
+---
+
+## 9. Implementation Notes and Validation Evidence
+
+*(To be filled by implementation agent during execution)*
+- **Execution Date:** Not yet executed
+- **Agent ID:** N/A
+- **Changed Files:** None
+- **Terminal Output & Verification Evidence:**
+```text
+(Awaiting execution in Phase 2)
+```
