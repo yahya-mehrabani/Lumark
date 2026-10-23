@@ -1,6 +1,6 @@
 # ADR-0001: Desktop Application Stack (Noncanonical Reference Alias)
 
-- **Authoritative Status:** Refer to canonical record: `PROPOSED CANDIDATE FOR FEASIBILITY SPIKE`
+- **Authoritative Status:** Refer to canonical record: `APPROVED FOR FEASIBILITY SPIKE (Wails v3.0.0-beta.34 Preferred Spike Candidate / Wails v2.17.0 Proven Fallback)`
 - **Canonical Decision Record:** [`docs/decisions/ADR-0001-technology-baseline.md`](./ADR-0001-technology-baseline.md)
 - **Role:** Noncanonical historical alias preserved strictly for compatibility with PRD Section 14 Phase 0 deliverable naming.
 

@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-001`
 - **Parent Epic:** [EPIC-001: Technical Feasibility Spike & Platform Foundation](../epics/EPIC-001-feasibility-spike.md)
-- **Status:** `READY` (Execution Blocked on Baseline Decision & Platform Evidence)
+- **Status:** `IN_PROGRESS`
 - **Assigned Phase:** Phase 1 (Feasibility Spike)
 
 ---
@@ -62,7 +62,7 @@ Verify that a minimal Wails desktop application (evaluating Wails v3 `v3.0.0-bet
 
 ### Task US-001.1: Verify local toolchain readiness and environment prerequisites
 - **Task ID:** `US-001.1`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** Go toolchain (`>= 1.26.0`), Node.js (`>= 20.0.0`), npm, and C build tools are verified; GTK and WebKit library availability is inventoried.
 - **Verification Command:**
@@ -141,11 +141,93 @@ Verify that a minimal Wails desktop application (evaluating Wails v3 `v3.0.0-bet
 
 ## 8. Implementation Notes and Validation Evidence
 
-*(To be filled by implementation agent during Phase 1 execution)*
-- **Execution Date:** Not yet executed
-- **Agent ID:** N/A
-- **Changed Files:** None
-- **Terminal Output & Verification Evidence:**
-```text
-(Awaiting Phase 1 execution)
+- **Execution Date:** 2026-10-23
+- **Agent ID:** Antigravity AI Implementation Agent
+- **Active Task:** `US-001.1` (Completed & Verified)
+- **Host Environment:** Linux COM-807 6.18.54.1-microsoft-standard-WSL2 (Ubuntu 26.04.1 LTS x86_64)
+- **Graphical Subsystem:** WSLg active (`DISPLAY=:0`, `WAYLAND_DISPLAY=wayland-0`)
+- **Status Transition:** `US-001` transitioned from `READY` to `IN_PROGRESS`; Task `US-001.1` transitioned from `READY` to `DONE`.
+- **Changed Files:** Documentation status and verification evidence only (toolchain verification task; zero application source files changed).
+
+### Task US-001.1 Verification Evidence
+
+#### 1. Core Toolchain & GTK3/WebKit2GTK 4.1 Verification
+**Command:**
+```bash
+go version && node -v && npm -v && pkg-config --cflags gtk+-3.0 webkit2gtk-4.1
 ```
+**Exit Code:** 0
+**Captured Terminal Output:**
+```text
+go version go1.26.8 linux/amd64
+v22.22.1
+9.2.0
+-I/usr/include/webkitgtk-4.1 -I/usr/include/gtk-3.0 -I/usr/include/pango-1.0 -I/usr/include/cairo -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/glycin-2 -I/usr/include/at-spi2-atk/2.0 -I/usr/include/at-spi-2.0 -I/usr/include/atk-1.0 -I/usr/include/dbus-1.0 -I/usr/lib/x86_64-linux-gnu/dbus-1.0/include -I/usr/include/fribidi -I/usr/include/pixman-1 -I/usr/include/harfbuzz -I/usr/include/freetype2 -I/usr/include/libpng16 -I/usr/include/gio-unix-2.0 -I/usr/include/libsoup-3.0 -I/usr/include/libmount -I/usr/include/blkid -isystem /usr/include/mit-krb5 -isystem /usr/include/mit-krb5 -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/sysprof-6 -pthread
+```
+
+#### 2. GTK4 and WebKitGTK 6.0 Subsystem Verification (Wails v3 Requirements)
+**Command:**
+```bash
+pkg-config --cflags gtk4 webkitgtk-6.0
+```
+**Exit Code:** 0
+**Captured Terminal Output:**
+```text
+-I/usr/include/webkitgtk-6.0 -I/usr/include/gtk-4.0 -I/usr/include/pango-1.0 -I/usr/include/fribidi -I/usr/include/harfbuzz -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/glycin-2 -I/usr/include/cairo -I/usr/include/freetype2 -I/usr/include/libpng16 -I/usr/include/pixman-1 -I/usr/include/graphene-1.0 -I/usr/lib/x86_64-linux-gnu/graphene-1.0/include -mfpmath=sse -msse -msse2 -I/usr/include/libsoup-3.0 -I/usr/include/libmount -I/usr/include/blkid -isystem /usr/include/mit-krb5 -isystem /usr/include/mit-krb5 -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/sysprof-6 -pthread
+```
+
+#### 3. Native Package Inventory (dpkg)
+**Command:**
+```bash
+dpkg -l | grep -E "libgtk-[34]-dev|libwebkit.*dev"
+```
+**Exit Code:** 0
+**Captured Terminal Output:**
+```text
+ii  libgtk-3-dev:amd64                               3.24.52-0ubuntu1                           amd64        development files for the GTK library
+ii  libgtk-4-dev:amd64                               4.22.4+ds-0ubuntu0.1                       amd64        development files for the GTK library
+ii  libwebkit2gtk-4.1-dev                            2.52.6-0ubuntu0.26.04.1                    amd64        Web content engine library for GTK - development files
+ii  libwebkitgtk-6.0-dev                             2.52.6-0ubuntu0.26.04.1                    amd64        Web content engine library for GTK - development files
+```
+
+#### 4. Wails v3 Module Metadata Verification
+**Command:**
+```bash
+go list -m -json github.com/wailsapp/wails/v3@v3.0.0-beta.34
+```
+**Exit Code:** 0
+**Captured Terminal Output:**
+```json
+{
+        "Path": "github.com/wailsapp/wails/v3",
+        "Version": "v3.0.0-beta.34",
+        "Time": "2026-10-20T15:13:56Z",
+        "Dir": "/root/go/pkg/mod/github.com/wailsapp/wails/v3@v3.0.0-beta.34",
+        "GoMod": "/root/go/pkg/mod/cache/download/github.com/wailsapp/wails/v3/@v/v3.0.0-beta.34.mod",
+        "GoVersion": "1.26.0",
+        "Origin": {
+                "VCS": "git",
+                "URL": "https://github.com/wailsapp/wails",
+                "Hash": "2bdf60a266de9ed835d6998cd695c66e2c37d15a",
+                "Ref": "refs/tags/v3.0.0-beta.34"
+        }
+}
+```
+*(Metadata confirms Go version requirement `go 1.26.0` and toolchain `go1.26.9`; local `go1.26.8 linux/amd64` satisfies toolchain requirements).*
+
+#### 5. Pinned Wails CLI Binary Check
+**Command:**
+```bash
+/root/go/bin/wails3 version
+```
+**Exit Code:** 0
+**Captured Terminal Output:**
+```text
+v3.0.0-beta.34
+```
+
+#### 6. Build Utilities & Graphical Runtime Inventory
+- **C Compiler:** `gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0`
+- **Package Config:** `pkg-config 2.5.1`
+- **Graphical Displays:** `DISPLAY=:0`, `WAYLAND_DISPLAY=wayland-0` (WSLg active)
+- **Toolchain Status:** All prerequisites for Task `US-001.2` (`wails3 doctor`) are satisfied.

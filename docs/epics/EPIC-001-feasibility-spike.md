@@ -2,7 +2,7 @@
 
 - **Epic ID:** `EPIC-001`
 - **Title:** Technical Feasibility Spike & Platform Foundation
-- **Status:** `READY` (Awaiting Owner Decision on ADR-0001 Wails Baseline)
+- **Status:** `IN_PROGRESS` (Authorized for Feasibility Spike by Product Owner on 2026-10-23; Wails v3.0.0-beta.34 Preferred Spike Candidate / v2.17.0 Fallback)
 - **Phase:** Phase 1 (Technical Feasibility Spike)
 - **Target Release:** MVP Foundation
 

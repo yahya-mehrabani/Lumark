@@ -1,6 +1,6 @@
 # ADR-0001: Technology Baseline — Desktop Application Stack Evaluation (Wails v3 Candidate vs Wails v2 Fallback)
 
-- **Status:** PROPOSED CANDIDATE FOR FEASIBILITY SPIKE (Wails v3.0.0-beta.34 Proposed Spike Candidate / Wails v2.17.0 Proven Fallback)
+- **Status:** APPROVED FOR FEASIBILITY SPIKE (Wails v3.0.0-beta.34 Preferred Spike Candidate / Wails v2.17.0 Proven Fallback; Final Production Baseline Pending Spike Evidence)
 - **Canonical Path:** `docs/decisions/ADR-0001-technology-baseline.md`<br>
 - **Historical Alias in PRD §14:** `docs/decisions/ADR-0001-desktop-stack.md` (canonical redirect to this file)
 - **Verification Date:** 2026-10-23
@@ -46,9 +46,9 @@ While `PRD.md` established Go + Wails v2 + React + TypeScript + Vite as the init
 ## 3. Pinned Releases and Toolchains
 
 To guarantee reproducible, non-ephemeral project execution:
-- **Pinned Wails v3 Candidate (Proposed Spike Candidate):** `github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-beta.34`
+- **Pinned Wails v3 Candidate (Preferred Spike Candidate):** `github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-beta.34`
   - Exact Go Toolchain Requirement: `go 1.26.0+` (repo local: `go1.26.8 linux/amd64`, toolchain: `go1.26.9`)
-  - Linux Native Libraries Required: `libgtk-4-dev`, `libwebkitgtk-6.0-dev`, `build-essential`, `pkg-config` (uninstalled locally)
+  - Linux Native Libraries Required: `libgtk-4-dev` (installed: `4.22.4`), `libwebkitgtk-6.0-dev` (installed: `2.52.6`), `build-essential`, `pkg-config` (verified present locally)
 - **Pinned Wails v2 Fallback (Documented Fallback Candidate):** `github.com/wailsapp/wails/v2/cmd/wails@v2.17.0`
   - Exact Go Toolchain Requirement: `go 1.25.0+` (repo local: `go1.26.8 linux/amd64`)
   - Linux Native Libraries Required: `libgtk-3-dev` (installed: `3.24.52`), `libwebkit2gtk-4.1-dev` (installed: `2.52.6`), `build-essential`, `pkg-config`
@@ -85,8 +85,11 @@ If Wails v3 encounters any of the following blocking conditions during the spike
 
 ## 5. Decision Status, Authority, and Spike Authorization Boundaries
 
-- **Spike Authorization Boundary:** The Product Owner may authorize execution of the Phase 1 feasibility spike using Wails v3 candidate (`v3.0.0-beta.34`) **without** declaring Wails v3 the final production baseline.
-- **PRD Authority:** `PRD.md` Section 1.1 currently designates Wails v2 as the baseline. In accordance with `AGENTS.md` Rule 7.1, this PRD specification is not silently rewritten during planning.
-- **Final Product Baseline Approval Condition:** Final approval of Wails v3 as the production baseline depends strictly on observable Phase 1 spike evidence across all declared target platforms (Windows 10/11 x64, macOS Apple Silicon, Ubuntu 24.04 LTS x64).
-- **Current Status:** **PROPOSED CANDIDATE FOR FEASIBILITY SPIKE**.
-- **Readiness Verdict Impact:** Because baseline approval and platform execution gates remain pending, the overall implementation readiness verdict remains **`NOT_READY`**. Application code implementation must not begin before Product Owner authorization.
+- **Product Owner Authorization (2026-10-23):** The Product Owner has formally authorized execution of the Phase 1 technical feasibility spike (`EPIC-001`, `US-001` through `US-004`) using provisional candidates:
+  - **Preferred spike candidate:** Wails v3 `v3.0.0-beta.34`.
+  - **Fallback candidate:** Wails v2 `v2.17.0`, subject to the documented fallback criteria in Section 4.
+  - **Final production baseline:** Not yet approved. This decision depends strictly on recorded feasibility evidence across all declared target platforms (Windows 10/11 x64, macOS Apple Silicon, Ubuntu 24.04/26.04 x64).
+- **Authorization Scope:** This authorization strictly permits the technical spike work defined by `EPIC-001`. It does not authorize implementation of product features outside the spike scope, nor does it approve Wails v3 as the final production baseline.
+- **PRD Authority:** `PRD.md` Section 1.1 designates Wails v2 as the documented MVP baseline. In accordance with `AGENTS.md` Rule 7.1, this PRD specification is not silently rewritten during planning or spike authorization.
+- **Current Status:** **APPROVED FOR FEASIBILITY SPIKE** (Wails v3 `v3.0.0-beta.34` Preferred Spike Candidate / Wails v2 `v2.17.0` Fallback; Final Production Baseline Pending Spike Evidence).
+- **Readiness Verdict Impact:** Phase 1 Feasibility Spike is actively `IN_PROGRESS` under Product Owner authorization. Implementation of Phase 2+ product features remains gated on Phase 1 exit criteria and multi-platform evidence.

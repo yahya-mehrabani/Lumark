@@ -19,7 +19,7 @@ This document is the authoritative index of all Epics and User Stories for `mark
 
 | Epic ID | Title | Target Phase | Status | Authoritative Document |
 |---|---|---|---|---|
-| `EPIC-001` | Technical Feasibility Spike & Platform Foundation | Phase 1 | `READY` (Blocked on ADR-0001) | [EPIC-001-feasibility-spike.md](../epics/EPIC-001-feasibility-spike.md) |
+| `EPIC-001` | Technical Feasibility Spike & Platform Foundation | Phase 1 | `IN_PROGRESS` (Authorized for Feasibility Spike) | [EPIC-001-feasibility-spike.md](../epics/EPIC-001-feasibility-spike.md) |
 | `EPIC-002` | Core Native Application Lifecycle & Tab Management | Phase 2 | `DRAFT` | [EPIC-002-native-lifecycle-tabs.md](../epics/EPIC-002-native-lifecycle-tabs.md) |
 | `EPIC-003` | CommonMark, GFM & Core Document Rendering | Phase 3 | `DRAFT` | [EPIC-003-commonmark-gfm-rendering.md](../epics/EPIC-003-commonmark-gfm-rendering.md) |
 | `EPIC-004` | Advanced Rendering & Security Sanitization | Phase 4 | `DRAFT` | [EPIC-004-advanced-rendering-security.md](../epics/EPIC-004-advanced-rendering-security.md) |
@@ -36,7 +36,7 @@ This document is the authoritative index of all Epics and User Stories for `mark
 
 | Story ID | Title | Priority | Status | Dependencies | Story Link |
 |---|---|---|---|---|---|
-| `US-001` | Wails Application Skeleton & Production Asset Embedding Spike (Wails v3 Candidate / v2 Fallback) | P0 | `READY` (Blocked on ADR-0001) | None | [US-001.md](../stories/US-001-wails-react-skeleton-spike.md) |
+| `US-001` | Wails Application Skeleton & Production Asset Embedding Spike (Wails v3 Candidate / v2 Fallback) | P0 | `IN_PROGRESS` | None | [US-001.md](../stories/US-001-wails-react-skeleton-spike.md) |
 | `US-002` | Command-Line & Single-Instance IPC Feasibility Spike | P0 | `READY` | `US-001` | [US-002.md](../stories/US-002-cli-single-instance-spike.md) |
 | `US-003` | WebView Rendering & Local Asset Security Baseline Spike | P0 | `READY` | `US-001` | [US-003.md](../stories/US-003-webview-asset-security-spike.md) |
 | `US-004` | Platform Packaging & File Association Feasibility Spike | P0 | `READY` | `US-001` | [US-004.md](../stories/US-004-packaging-association-spike.md) |
@@ -112,4 +112,4 @@ This document is the authoritative index of all Epics and User Stories for `mark
 - **Total User Stories:** 32
 - **Total Detailed Tasks:** 124 (all 124 tasks have complete, concrete verification methods and environment handling)
 - **PRD Requirements & Obligations Mapped:** 60 / 60 (100% bidirectional traceability)
-- **Current Implementation Verdict:** **`NOT_READY`** (Phase 0 planning audit remediated; Phase 1 execution awaiting Product Owner baseline decision on ADR-0001 and platform provisioning)
+- **Current Implementation Verdict:** **`IN_PROGRESS`** (Phase 1 Feasibility Spike authorized on Wails v3 candidate `v3.0.0-beta.34` with v2 `v2.17.0` fallback; Task `US-001.1` completed & verified, `US-001.2` next)
