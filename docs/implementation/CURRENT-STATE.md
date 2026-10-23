@@ -13,8 +13,8 @@
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
 - **Application Implementation Status:** **FEASIBILITY SPIKE IN PROGRESS**. Story [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) fully verified and complete across all five tasks (`US-001.1` through `US-001.5`). Standalone production binary, embedded React frontend assets, sub-400ms launch latency, and process independence from Node.js/Vite verified under WSLg.
 - **Feasibility Spike Status:** **IN_PROGRESS**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-002.3: Verify path handling with spaces and Unicode` under [`US-002`](../stories/US-002-cli-single-instance-spike.md) (Story `US-002` fully verified and complete across all three tasks `US-002.1`, `US-002.2`, `US-002.3`; golden fixture `fixtures/golden/نمونه سند.md` created; exact UTF-8 byte sequences `d9 86 d9 85 d9 88 d9 86 d9 87 20 d8 b3 d9 86 d8 af 2e 6d 64` and decoded Persian basename logged; space preservation verified across directory and file names; secondary exit code 0 verified; unit tests and race checks passed).
-- **Active / Next Eligible Work Item:** Task `US-003.1: Implement scoped local asset resolver in Go backend` under [`US-003`](../stories/US-003-webview-asset-security-spike.md) (`READY`).
+- **Last Completed Work Item:** Task `US-003.1: Implement scoped local asset resolver in Go backend` under [`US-003`](../stories/US-003-webview-asset-security-spike.md) (Scoped resolver implemented in `spike/assets/resolver.go`; enforces document root boundaries; blocks traversal payloads, null bytes, Windows drive letters, UNC paths, and symlink escapes with 403 Forbidden; supports MIME detection, `ServeHTTP`, and Wails v3 `Middleware`; verified with `go test -v -race ./spike/assets/...`).
+- **Active / Next Eligible Work Item:** Task `US-003.2: Assemble cross-feature spike fixture` under [`US-003`](../stories/US-003-webview-asset-security-spike.md) (`READY`).
 
 ---
 
@@ -81,15 +81,14 @@ All planning remediation artifacts must be preserved:
 ## 5. Exact Next Action for the Next Agent
 
 The next incoming agent must:
-1. **Confirm Prerequisites Completed in Story `US-001` and Story `US-002`:**
-   - Review Section 8 of [`docs/stories/US-001-wails-react-skeleton-spike.md`](../stories/US-001-wails-react-skeleton-spike.md) and [`docs/stories/US-002-cli-single-instance-spike.md`](../stories/US-002-cli-single-instance-spike.md).
-   - Confirm Story `US-002` complete across all three tasks (`US-002.1`, `US-002.2`, `US-002.3`).
-2. **Execute Task `US-003.1: Implement scoped local asset resolver in Go backend`:**
-   - Review [`docs/stories/US-003-webview-asset-security-spike.md`](../stories/US-003-webview-asset-security-spike.md).
-   - Implement Go backend asset loader in `spike/assets/` enforcing document root directory boundaries and rejecting path traversal payloads (`../../../../etc/passwd` or Windows drive traversal) with 403 Forbidden.
+1. **Confirm Prerequisites Completed in Task `US-003.1`:**
+   - Review Section 8 of [`docs/stories/US-003-webview-asset-security-spike.md`](../stories/US-003-webview-asset-security-spike.md).
+   - Confirm Task `US-003.1` complete with all tests in `spike/assets/` passing with `-race`.
+2. **Execute Task `US-003.2: Assemble cross-feature spike fixture`:**
+   - Assemble `fixtures/spike/monolithic-fixture.md` containing Persian RTL, English LTR, code block, KaTeX math, Mermaid diagram, sanitized HTML, and relative image reference.
    - Run verification command:
      ```bash
-     go test -v -race ./spike/assets/...
+     test -f fixtures/spike/monolithic-fixture.md && grep -E "سلام دنیا|\\\$E = mc\^2\\\$|mermaid" fixtures/spike/monolithic-fixture.md
      ```
    - Record observable test output in Section 8 of `US-003`.
    - Create isolated Task-level Conventional Commit upon successful verification.

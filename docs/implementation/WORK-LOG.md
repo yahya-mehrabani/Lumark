@@ -670,3 +670,51 @@ This log is an append-only chronological record of all significant actions, veri
 - **Completed Tasks:** `US-002.1` (`DONE`), `US-002.2` (`DONE`), `US-002.3` (`DONE`).
 - **Next Eligible Task:** `US-003.1: Implement scoped local asset resolver in Go backend` under [`US-003`](../stories/US-003-webview-asset-security-spike.md) (`READY`).
 - **Phase 1 Readiness Verdict:** **`NOT_READY`** (Contingent on multi-platform feasibility evidence across Windows 10/11 x64, macOS Apple Silicon, and Ubuntu 24.04/26.04).
+
+---
+
+## [2026-10-23] — Phase 1: Implement Scoped Local Asset Resolver in Go Backend (US-003.1)
+
+- **Work Item ID:** `US-003.1`
+- **Agent:** Antigravity Autonomous Story Runner
+- **Summary:** Implemented `ScopedResolver` in `spike/assets/resolver.go` enforcing document root directory boundaries and preventing path traversal. Blocks traversal payloads (`../../../../etc/passwd`, Windows drive letters `C:`, UNC paths, leading slashes, null bytes, and symlink escapes) with HTTP 403 Forbidden. Supports automatic MIME detection (PNG, JPEG, SVG, GIF, WebP, etc.), standard HTTP HEAD/GET serving via `ServeHTTP`, and Wails v3 `application.AssetOptions.Middleware` integration. Implemented comprehensive unit tests in `spike/assets/resolver_test.go` verifying valid assets, traversal rejection, missing assets (404), method filtering (405), and concurrency safety under `-race`. Advanced Task `US-003.1` to `DONE` and Story `US-003` to `IN_PROGRESS`.
+
+### Actions Taken:
+1. **Scoped Asset Resolver (`spike/assets/resolver.go`):**
+   - Implemented `ScopedResolver` struct with thread-safe `SetRootDir`, `RootDir`, `SetPrefix`, and `Prefix`.
+   - Implemented `ResolvePath` with canonical path boundary verification using `filepath.Abs`, `filepath.Clean`, `filepath.ToSlash`, `filepath.Rel`, and symlink evaluation via `filepath.EvalSymlinks`.
+   - Implemented strict input validation: rejects null bytes, absolute paths, Windows drive letters, UNC paths, and parent directory escapes.
+   - Implemented `DetectMIMEType` with fallback map for common image extensions and content sniffing.
+   - Implemented `ServeHTTP` returning 403 Forbidden for traversal attempts, 404 for missing files, and 405 for invalid methods.
+   - Implemented `Middleware` compatible with Wails v3 `application.AssetOptions`.
+2. **Comprehensive Unit Testing (`spike/assets/resolver_test.go`):**
+   - Implemented `TestResolveValidAssets` covering PNG, SVG, JPEG, spaces in filenames, Persian Unicode filenames (`تصویر فارسی.png`), and nested files.
+   - Implemented `TestPathTraversalRejection` covering relative parent escapes, deep traversal, Windows drive letters, UNC paths, double slashes, null bytes, and escaping symlinks.
+   - Implemented `TestNotFoundAndDirectoryAccess` verifying 404 on missing files and rejection of directory requests.
+   - Implemented `TestHTTPServeHTTP` verifying status codes, headers (`Content-Type`, `X-Content-Type-Options: nosniff`), and body data.
+   - Implemented `TestMiddlewareIntegration` asserting local asset routing and pass-through to fallback application handler.
+   - Implemented `TestConcurrentResolverAccess` with 20 concurrent goroutines under race detector.
+3. **Static Analysis & Linters:**
+   - Ran `goimports -l ./spike/assets/` (0 formatting issues).
+   - Ran `golangci-lint run` (0 issues).
+   - Ran `govulncheck ./...` (0 vulnerabilities found).
+   - Ran `go test -v -race ./...` (all tests passed).
+4. **Documentation Synchronization:**
+   - Updated `docs/stories/US-003-webview-asset-security-spike.md`: advanced `US-003` to `IN_PROGRESS` and `US-003.1` to `DONE` with terminal output evidence in Section 8.
+   - Updated `docs/implementation/BACKLOG.md`: advanced `US-003` to `IN_PROGRESS`.
+   - Updated `docs/implementation/CURRENT-STATE.md`: advanced last completed work item to `US-003.1` and next eligible task to `US-003.2`.
+
+### Verification Results:
+- `go test -v -race ./spike/assets/...`: PASS (1.074s).
+- `go test -v -race ./...`: All tests in repo passed (PASS).
+- `golangci-lint run`: 0 issues (PASS).
+- `govulncheck ./...`: 0 vulnerabilities found (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **Phase:** Phase 1 (Technical Feasibility Spike).
+- **Active Story:** `US-003: WebView Rendering & Local Asset Security Baseline Spike` (`IN_PROGRESS`).
+- **Completed Tasks:** `US-003.1` (`DONE`).
+- **Next Eligible Task:** `US-003.2: Assemble cross-feature spike fixture` under [`US-003`](../stories/US-003-webview-asset-security-spike.md) (`READY`).
+- **Phase 1 Readiness Verdict:** **`NOT_READY`** (Contingent on multi-platform feasibility evidence across Windows 10/11 x64, macOS Apple Silicon, and Ubuntu 24.04/26.04).

@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-003`
 - **Parent Epic:** [EPIC-001: Technical Feasibility Spike & Platform Foundation](../epics/EPIC-001-feasibility-spike.md)
-- **Status:** `READY` (Execution Blocked on Baseline Decision & Platform Evidence)
+- **Status:** `IN_PROGRESS` (Authorized for Feasibility Spike by Product Owner on 2026-10-23)
 - **Assigned Phase:** Phase 1 (Feasibility Spike)
 
 ---
@@ -54,7 +54,7 @@ Verify that the platform WebView (WebKitGTK on Linux, WebView2 on Windows, WKWeb
 
 ### Task US-003.1: Implement scoped local asset resolver in Go backend
 - **Task ID:** `US-003.1`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-001.4`
 - **Completion Criteria:** Go handler checks document directory boundaries and returns mime-typed image bytes or 403 Forbidden for path traversal attempts.
 - **Verification Command:**
@@ -105,11 +105,66 @@ Verify that the platform WebView (WebKitGTK on Linux, WebView2 on Windows, WKWeb
 
 ## 8. Implementation Notes and Validation Evidence
 
-*(To be filled by implementation agent during Phase 1 execution)*
-- **Execution Date:** Not yet executed
-- **Agent ID:** N/A
-- **Changed Files:** None
+### Task US-003.1 Implementation & Verification Evidence
+- **Execution Date:** 2026-10-23
+- **Agent ID:** Antigravity Autonomous Story Runner
+- **Status:** `DONE`
+- **Changed Files:**
+  - `spike/assets/resolver.go` (Scoped local asset resolver with boundary enforcement, MIME detection, and Wails v3 middleware)
+  - `spike/assets/resolver_test.go` (Unit tests covering traversal payloads, symlink escapes, Windows drive prefixes, null bytes, MIME detection, and concurrency)
+- **Summary of Implementation:**
+  - Implemented `ScopedResolver` in package `assets` enforcing strict document root boundaries.
+  - Rejects null bytes, absolute paths, Windows drive letters (`C:`), UNC paths (`\\server\share`), and leading backslashes (`\`).
+  - Normalizes slashes via `filepath.ToSlash` and checks forward-slash clean representations.
+  - Verifies target paths using `filepath.Rel` and evaluates symlinks with `filepath.EvalSymlinks` to prevent symlink traversal attacks.
+  - Provides `ServeHTTP` returning HTTP 403 Forbidden for traversal payloads, 404 for missing files, and 405 for unsupported methods.
+  - Adds `Middleware(next http.Handler)` compatible with Wails v3 `application.AssetOptions.Middleware`.
+  - Concurrency safety verified with `-race` across 20 concurrent goroutines.
 - **Terminal Output & Verification Evidence:**
 ```text
-(Awaiting Phase 1 execution)
+=== RUN   TestResolveValidAssets
+=== RUN   TestResolveValidAssets/PNG_in_assets_directory
+=== RUN   TestResolveValidAssets/SVG_vector_image
+=== RUN   TestResolveValidAssets/JPEG_photo
+=== RUN   TestResolveValidAssets/Asset_with_spaces_in_filename
+=== RUN   TestResolveValidAssets/Asset_with_Persian_Unicode_filename
+=== RUN   TestResolveValidAssets/Nested_subdirectory_asset
+=== RUN   TestResolveValidAssets/Relative_leading_dot_slash
+--- PASS: TestResolveValidAssets (0.00s)
+=== RUN   TestPathTraversalRejection
+=== RUN   TestPathTraversalRejection/Parent_directory_escape
+=== RUN   TestPathTraversalRejection/Deep_directory_traversal
+=== RUN   TestPathTraversalRejection/Nested_escape
+=== RUN   TestPathTraversalRejection/Absolute_Unix_root
+=== RUN   TestPathTraversalRejection/Absolute_path_with_double_slash
+=== RUN   TestPathTraversalRejection/Leading_backslash
+=== RUN   TestPathTraversalRejection/Windows_drive_traversal
+=== RUN   TestPathTraversalRejection/Windows_forward_slash_drive
+=== RUN   TestPathTraversalRejection/Windows_UNC_path
+=== RUN   TestPathTraversalRejection/Null_byte_injection
+=== RUN   TestPathTraversalRejection/Just_parent_dot-dot
+=== RUN   TestPathTraversalRejection/Trailing_dot-dot_slash
+=== RUN   TestPathTraversalRejection/Symlink_escape_attempt
+--- PASS: TestPathTraversalRejection (0.01s)
+=== RUN   TestNotFoundAndDirectoryAccess
+=== RUN   TestNotFoundAndDirectoryAccess/Nonexistent_file_within_root
+=== RUN   TestNotFoundAndDirectoryAccess/Directory_access_rejection
+--- PASS: TestNotFoundAndDirectoryAccess (0.00s)
+=== RUN   TestHTTPServeHTTP
+=== RUN   TestHTTPServeHTTP/Valid_GET_request_via_path
+=== RUN   TestHTTPServeHTTP/Valid_HEAD_request
+=== RUN   TestHTTPServeHTTP/Valid_GET_request_with_URL_encoded_Persian_filename
+=== RUN   TestHTTPServeHTTP/Valid_GET_request_via_query_parameter
+=== RUN   TestHTTPServeHTTP/Traversal_attempt_returns_403_Forbidden
+=== RUN   TestHTTPServeHTTP/Nonexistent_asset_returns_404_Not_Found
+=== RUN   TestHTTPServeHTTP/Disallowed_method_returns_405_Method_Not_Allowed
+--- PASS: TestHTTPServeHTTP (0.00s)
+=== RUN   TestMiddlewareIntegration
+=== RUN   TestMiddlewareIntegration/Local_asset_handled_by_resolver
+=== RUN   TestMiddlewareIntegration/App_routes_pass_through_to_next_handler
+--- PASS: TestMiddlewareIntegration (0.00s)
+=== RUN   TestConcurrentResolverAccess
+--- PASS: TestConcurrentResolverAccess (0.03s)
+PASS
+ok      markdown-viewer/spike/assets    1.074s
 ```
