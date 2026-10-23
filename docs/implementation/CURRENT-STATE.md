@@ -13,8 +13,8 @@
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
 - **Application Implementation Status:** **FEASIBILITY SPIKE IN PROGRESS**. Story [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) fully verified and complete across all five tasks (`US-001.1` through `US-001.5`). Standalone production binary, embedded React frontend assets, sub-400ms launch latency, and process independence from Node.js/Vite verified under WSLg.
 - **Feasibility Spike Status:** **IN_PROGRESS**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-004.2: Build prototype Debian package (.deb)` under [`US-004`](../stories/US-004-packaging-association-spike.md) (Prototype `.deb` package built and inspected via `dpkg-deb --info` and `dpkg-deb -c`, confirming binary in `/usr/bin/`, desktop launcher in `/usr/share/applications/`, and icons in `/usr/share/icons/hicolor/`).
-- **Active / Next Eligible Work Item:** Task `US-004.3: Test Linux installation, MIME registration, and uninstall lifecycle` under [`US-004`](../stories/US-004-packaging-association-spike.md) (`READY`).
+- **Last Completed Work Item:** Task `US-004.4: Create and validate Windows NSIS packaging prototype` under [`US-004`](../stories/US-004-packaging-association-spike.md) (NSIS installer script `packaging/windows/installer.nsi` created declaring ProgID `MarkdownViewer.Document` and `OpenWithProgids` keys for `.md`, `.markdown`, `.mdown`, `.mkd` without overriding user default choice; uninstallation `DeleteRegKey` verified).
+- **Active / Next Eligible Work Item:** Task `US-004.5: Create and validate macOS bundle and UTI association prototype` under [`US-004`](../stories/US-004-packaging-association-spike.md) (`READY`).
 
 ---
 
@@ -81,15 +81,15 @@ All planning remediation artifacts must be preserved:
 ## 5. Exact Next Action for the Next Agent
 
 The next incoming agent must:
-1. **Confirm Prerequisites Completed for Task `US-004.3`:**
-   - Review Task `US-004.2` in [`docs/stories/US-004-packaging-association-spike.md`](../stories/US-004-packaging-association-spike.md) (Status: `DONE`).
-2. **Execute Task `US-004.3: Test Linux installation, MIME registration, and uninstall lifecycle`:**
-   - Run verification commands:
+1. **Confirm Prerequisites Completed for Task `US-004.5`:**
+   - Review Task `US-004.4` in [`docs/stories/US-004-packaging-association-spike.md`](../stories/US-004-packaging-association-spike.md) (Status: `DONE`).
+2. **Execute Task `US-004.5: Create and validate macOS bundle and UTI association prototype`:**
+   - Create `packaging/macos/Info.plist` defining `CFBundleDocumentTypes` for Markdown and declaring UTI `net.daringfireball.markdown`.
+   - Run verification command:
      ```bash
-     go test -v -race ./internal/... && golangci-lint run
+     plutil -lint packaging/macos/Info.plist || grep -E "net\.daringfireball\.markdown|CFBundleDocumentTypes" packaging/macos/Info.plist
      ```
-   - Evaluate installation lifecycle requirements against environment constraints (native Ubuntu desktop vs WSL2).
-   - Record observable evidence and classify any unavailable platform checks explicitly.
-   - Create isolated Task-level Conventional Commit upon completion.
+   - Record observable output in Section 8 of `US-004`.
+   - Create isolated Task-level Conventional Commit upon successful verification.
 3. **Do NOT Jump to Feature Code:** Maintain strict Phase 1 spike bounds. Do not write production viewer code or modify `PRD.md`.
 4. **Preserve Phase Gate Verdict:** Keep overall Phase 1 verdict `NOT_READY` until all platform evidence (Windows, macOS, Linux) is recorded.

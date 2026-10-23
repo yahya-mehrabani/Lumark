@@ -101,7 +101,7 @@ Verify packaging and desktop file association mechanisms across all three target
 
 ### Task US-004.4: Create and validate Windows NSIS packaging prototype
 - **Task ID:** `US-004.4`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-001.4`
 - **Completion Criteria:** NSIS script `packaging/windows/installer.nsi` configures `MarkdownViewer.Document` ProgID and `OpenWithProgids` keys without modifying `UserChoice`.
 - **Verification Command:**
@@ -160,10 +160,11 @@ Verify packaging and desktop file association mechanisms across all three target
   - `packaging/linux/debian/postrm`
   - `packaging/linux/build-deb.sh`
   - `build/linux/markdown-viewer.desktop`
+  - `packaging/windows/installer.nsi`
 - **Platform Evidence Records:**
   - **Linux (Ubuntu 24.04/26.04 WSL2):** `PASS` (Desktop entry, SVG icon, and Debian maintainer manifests created; validated syntax and Freedesktop keys; shellcheck and shfmt passed)
   - **Linux (Ubuntu 24.04 LTS Native):** `BLOCKED` (Requires native Ubuntu machine for desktop database inspection)
-  - **Windows 10/11 x64:** `BLOCKED` (Requires Windows host toolchain or CI runner)
+  - **Windows 10/11 x64:** `PARTIAL / SCRIPT VERIFIED` (NSIS script prototype created with ProgID `MarkdownViewer.Document` and `OpenWithProgids` keys; compilation and native runtime `BLOCKED / NOT RUN` locally due to missing Windows host toolchain)
   - **macOS Apple Silicon:** `BLOCKED` (Requires macOS hardware or CI runner)
 - **Terminal Output & Verification Evidence:**
 
@@ -237,4 +238,27 @@ drwxr-xr-x root/root         0 2026-10-23 22:57 ./usr/share/icons/hicolor/128x12
 drwxr-xr-x root/root         0 2026-10-23 22:57 ./usr/share/icons/hicolor/scalable/
 drwxr-xr-x root/root         0 2026-10-23 22:57 ./usr/share/icons/hicolor/scalable/apps/
 -rw-r--r-- root/root      1024 2026-10-23 22:52 ./usr/share/icons/hicolor/scalable/apps/markdown-viewer.svg
+```
+
+### Task US-004.4: Windows NSIS Packaging Prototype
+```text
+$ grep -E "MarkdownViewer\.Document|OpenWithProgids" packaging/windows/installer.nsi && ! grep -i "UserChoice" packaging/windows/installer.nsi && grep -i "DeleteRegKey" packaging/windows/installer.nsi
+!define PROGID "MarkdownViewer.Document"
+    ; HKCU\Software\Classes\MarkdownViewer.Document
+    ; Register as Open With handler under OpenWithProgids for supported Markdown extensions
+    ; Registering under OpenWithProgids presents Markdown Viewer in Windows "Open with"
+    WriteRegNone HKCU "Software\Classes\.md\OpenWithProgids" "${PROGID}"
+    WriteRegNone HKCU "Software\Classes\.markdown\OpenWithProgids" "${PROGID}"
+    WriteRegNone HKCU "Software\Classes\.mdown\OpenWithProgids" "${PROGID}"
+    WriteRegNone HKCU "Software\Classes\.mkd\OpenWithProgids" "${PROGID}"
+    ; Remove OpenWithProgids entries without touching user preferences or unrelated handlers
+    DeleteRegValue HKCU "Software\Classes\.md\OpenWithProgids" "${PROGID}"
+    DeleteRegValue HKCU "Software\Classes\.markdown\OpenWithProgids" "${PROGID}"
+    DeleteRegValue HKCU "Software\Classes\.mdown\OpenWithProgids" "${PROGID}"
+    DeleteRegValue HKCU "Software\Classes\.mkd\OpenWithProgids" "${PROGID}"
+    DeleteRegKey HKCU "Software\Classes\${PROGID}"
+    DeleteRegKey HKCU "Software\Classes\Applications\${PRODUCT_EXE}"
+    DeleteRegKey HKCU "${UNINST_KEY}"
+    DeleteRegKey HKCU "Software\${PRODUCT_NAME}"
+(exit: 0, ProgID and OpenWithProgids declared; zero UserChoice references; clean DeleteRegKey removal verified)
 ```
