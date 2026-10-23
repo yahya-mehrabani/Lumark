@@ -508,3 +508,61 @@ This log is an append-only chronological record of all significant actions, veri
 - **Completed Tasks:** `US-001.1` (`DONE`), `US-001.2` (`DONE`), `US-001.3` (`DONE`), `US-001.4` (`DONE`), `US-001.5` (`DONE`).
 - **Next Eligible Task:** `US-002.1: Implement and evaluate single-instance IPC mechanism` under [`US-002`](../stories/US-002-cli-single-instance-spike.md) (`READY`).
 - **Phase 1 Readiness Verdict:** **`NOT_READY`** (Contingent on multi-platform feasibility evidence across Windows 10/11 x64, macOS Apple Silicon, and Ubuntu 24.04/26.04).
+
+---
+
+## [2026-10-23] — Phase 1: Implement and Evaluate Single-Instance IPC Mechanism (US-002.1)
+
+- **Work Item ID:** `US-002.1`
+- **Agent:** Antigravity Autonomous Task Runner
+- **Summary:** Implemented the prototype single-instance IPC coordinator in `spike/ipc/` fulfilling `FR-OPEN-004`, `FR-OPEN-005`, and `ADR-0002`. Evaluated Wails v3 built-in `SingleInstanceOptions` against custom Unix Domain Socket / Named Pipe coordination. Verified local-only access-controlled communication, length-prefixed JSON framing with ACK protocol, XDG runtime directory resolution with fallback hierarchy, stale socket recovery, race condition protection, payload integrity with spaces and Unicode, and clean shutdown under `-race`. Cross-compilation to Windows verified.
+
+### Actions Taken:
+1. **Core IPC Types & Protocol Framing:**
+   - Implemented `spike/ipc/types.go` defining `Role` (`RolePrimary`, `RoleSecondary`), `Message` (arguments, working directory, metadata), and `Options`.
+   - Implemented `spike/ipc/protocol.go` providing length-prefixed big-endian JSON framing (1 MB maximum payload limit) and single-byte ACK exchange (`0x06` ASCII ACK).
+2. **Directory Resolution & Fallback Hierarchy:**
+   - Implemented `spike/ipc/dir.go` resolving runtime paths per XDG specification:
+     1. `$XDG_RUNTIME_DIR` (standard POSIX user session dir, typically `/run/user/<uid>`);
+     2. `~/.cache/markdown-viewer/` (fallback user cache directory with `0700` permissions);
+     3. `<tempDir>/markdown-viewer-<uid>/` (fallback temporary directory with `0700` permissions);
+     4. `<tempDir>` (last resort if directory creation fails).
+   - Designed with `EnvGetter` interface for deterministic table-driven testing without mutating global process environment variables.
+3. **Advisory File Locking & Stale Socket Handling:**
+   - Implemented `spike/ipc/lock.go` and `spike/ipc/lock_unix.go` using non-blocking POSIX `flock` (`syscall.LOCK_EX|syscall.LOCK_NB`) on an advisory lock file (`markdown-viewer.lock`).
+   - Implemented `spike/ipc/lock_windows.go` as a cross-compilation stub.
+   - Handled stale socket detection and cleanup: if the primary lock is acquired, the coordinator tests existing socket connectivity and unlinks stale sockets left by hard crashes or SIGKILL before binding a new listener.
+4. **Coordinator Lifecycle & Message Forwarding:**
+   - Implemented `spike/ipc/coordinator.go` managing primary socket creation (`0700` owner-only mode), secondary connection with configurable exponential backoff retries, connection handling, and clean shutdown.
+   - Enforced primary-only socket cleanup so secondary client instances never unlink the primary socket file upon process exit.
+5. **Architectural Evaluation (Wails v3 vs Custom Socket IPC):**
+   - Implemented `spike/ipc/evaluation.go` recording the comparative evaluation matrix between Wails v3 native `SingleInstanceOptions` (D-Bus session bus on Linux, Named Mutex on Windows) and custom socket IPC (`ADR-0002`).
+   - Verified that custom socket IPC has zero external desktop daemon requirements, runs seamlessly in headless CI runners, containers, and WSL2, and allows pre-GUI command-line routing decoupled from Wails window initialization.
+6. **Testing & Quality Verification:**
+   - Added table-driven tests in `spike/ipc/coordinator_test.go` covering primary startup, secondary messaging, sequential transmissions, stale socket cleanup, clean shutdown, fallback directory resolution, Unicode/spaces payload integrity, and 10 concurrent secondaries with `-race`.
+   - Executed `go test -v -race ./spike/ipc/...` (all 8 test suites passed).
+   - Executed `golangci-lint run ./spike/ipc/...` (0 issues).
+   - Executed `goimports -l` and `gofmt -l` (0 formatting diffs).
+   - Executed `govulncheck ./...` (0 vulnerabilities found).
+   - Executed `GOOS=windows go build ./spike/ipc/...` (cross-compilation succeeded with exit code 0).
+7. **Documentation Synchronization:**
+   - Updated `docs/stories/US-002-cli-single-instance-spike.md`: marked Task `US-002.1` as `DONE`, Story `US-002` as `IN_PROGRESS`, and recorded validation evidence.
+   - Updated `docs/implementation/BACKLOG.md`: advanced `US-002` to `IN_PROGRESS (Task US-002.1 DONE)`.
+   - Updated `docs/implementation/CURRENT-STATE.md`: advanced last completed work item to `US-002.1` and next eligible work item to `US-002.2`.
+   - Preserved overall Phase 1 verdict as `NOT_READY` pending multi-platform feasibility evidence.
+
+### Verification Results:
+- `go test -v -race ./spike/ipc/...`: 8 test suites passed (1.031s) (PASS).
+- `go test -v -race ./...`: All repository packages passed (PASS).
+- `golangci-lint run ./spike/ipc/...`: 0 issues (PASS).
+- `govulncheck ./...`: 0 vulnerabilities found (PASS).
+- `GOOS=windows go build ./spike/ipc/...`: Exited with code 0 (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **Phase:** Phase 1 (Technical Feasibility Spike).
+- **Active Story:** `US-002: Command-Line & Single-Instance IPC Feasibility Spike` (`IN_PROGRESS`).
+- **Completed Tasks:** `US-002.1` (`DONE`).
+- **Next Eligible Task:** `US-002.2: Wire IPC coordinator into Wails application lifecycle` under [`US-002`](../stories/US-002-cli-single-instance-spike.md) (`READY`).
+- **Phase 1 Readiness Verdict:** **`NOT_READY`** (Contingent on multi-platform feasibility evidence across Windows 10/11 x64, macOS Apple Silicon, and Ubuntu 24.04/26.04).

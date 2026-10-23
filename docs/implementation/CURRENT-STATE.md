@@ -13,8 +13,8 @@
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
 - **Application Implementation Status:** **FEASIBILITY SPIKE IN PROGRESS**. Story [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) fully verified and complete across all five tasks (`US-001.1` through `US-001.5`). Standalone production binary, embedded React frontend assets, sub-400ms launch latency, and process independence from Node.js/Vite verified under WSLg.
 - **Feasibility Spike Status:** **IN_PROGRESS**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-001.5: Execute standalone binary and verify independent execution` under [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) (Story `US-001` completed).
-- **Active / Next Eligible Work Item:** Task `US-002.1: Implement and evaluate single-instance IPC mechanism` under [`US-002`](../stories/US-002-cli-single-instance-spike.md).
+- **Last Completed Work Item:** Task `US-002.1: Implement and evaluate single-instance IPC mechanism` under [`US-002`](../stories/US-002-cli-single-instance-spike.md) (single-instance coordinator verified with `go test -v -race ./spike/ipc/...`, zero linter issues, and comparative evaluation).
+- **Active / Next Eligible Work Item:** Task `US-002.2: Wire IPC coordinator into Wails application lifecycle` under [`US-002`](../stories/US-002-cli-single-instance-spike.md).
 
 ---
 
@@ -81,13 +81,15 @@ All planning remediation artifacts must be preserved:
 ## 5. Exact Next Action for the Next Agent
 
 The next incoming agent must:
-1. **Confirm Prerequisites Completed in Story `US-001` (Tasks `US-001.1` through `US-001.5`):**
-   - Review Section 8 of [`docs/stories/US-001-wails-react-skeleton-spike.md`](../stories/US-001-wails-react-skeleton-spike.md) for verified toolchain versions (`go1.26.10`), doctor diagnostics, generated project skeleton, static binding generation, clean `govulncheck` resolution, standalone production build outputs (`bin/markdown-viewer` and `build/bin/markdown-viewer-spike`), sub-400ms launch latency, and process independence from Node/Vite.
-2. **Execute Task `US-002.1: Implement and evaluate single-instance IPC mechanism`:**
-   - Review [`docs/stories/US-002-cli-single-instance-spike.md`](../stories/US-002-cli-single-instance-spike.md) and [`docs/decisions/ADR-0002-single-instance-ipc.md`](../decisions/ADR-0002-single-instance-ipc.md).
-   - Implement prototype IPC coordinator in `spike/ipc/` evaluating Wails v3 native single-instance capabilities alongside local socket/named pipe IPC.
-   - Execute verification: `go test -v -race ./spike/ipc/...` confirming socket creation, secondary connection, JSON payload transmission, and clean shutdown.
-   - Record authentic test output in Section 8 of `US-002`.
-   - Follow the Task-Level Conventional Commits policy upon successful verification.
+1. **Confirm Prerequisites Completed in Story `US-001` and Task `US-002.1`:**
+   - Review Section 8 of [`docs/stories/US-001-wails-react-skeleton-spike.md`](../stories/US-001-wails-react-skeleton-spike.md) and [`docs/stories/US-002-cli-single-instance-spike.md`](../stories/US-002-cli-single-instance-spike.md).
+   - Verify prototype IPC coordinator in `spike/ipc/` (clean test execution under `go test -v -race ./spike/ipc/...`, XDG fallback hierarchy, length-prefixed JSON protocol with ACK, and comparative evaluation report).
+2. **Execute Task `US-002.2: Wire IPC coordinator into Wails application lifecycle`:**
+   - Review [`docs/stories/US-002-cli-single-instance-spike.md`](../stories/US-002-cli-single-instance-spike.md).
+   - Wire the IPC coordinator into the application startup sequence (`main.go` / application options).
+   - On startup, the application initializes the coordinator: if a secondary instance is detected, it transmits CLI arguments (`os.Args[1:]`) and working directory to the primary instance, then terminates immediately with exit code 0. If primary, it continues into the Wails desktop window lifecycle and listens for forwarded document paths.
+   - Execute verification: `./build/bin/markdown-viewer-spike doc1.md & PID=$!; sleep 1; ./build/bin/markdown-viewer-spike doc2.md; kill $PID`
+   - Record observable session evidence in Section 8 of `US-002`.
+   - Create isolated Task-level Conventional Commit upon successful verification.
 3. **Do NOT Jump to Feature Code:** Maintain strict Phase 1 spike bounds. Do not write production viewer code or modify `PRD.md`.
 4. **Preserve Phase Gate Verdict:** Keep overall Phase 1 verdict `NOT_READY` until all platform evidence (Windows, macOS, Linux) is recorded.
