@@ -13,8 +13,8 @@
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
 - **Application Implementation Status:** **FEASIBILITY SPIKE IN PROGRESS**. Story [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) fully verified and complete across all five tasks (`US-001.1` through `US-001.5`). Standalone production binary, embedded React frontend assets, sub-400ms launch latency, and process independence from Node.js/Vite verified under WSLg.
 - **Feasibility Spike Status:** **IN_PROGRESS**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-003.2: Assemble cross-feature spike fixture` under [`US-003`](../stories/US-003-webview-asset-security-spike.md) (Monolithic cross-feature fixture created in `fixtures/spike/monolithic-fixture.md` and `fixtures/spike/assets/test.png`; verified Persian RTL prose with `سلام دنیا`, KaTeX math `$E = mc^2$`, Mermaid diagram, code fences, relative image, and script injection payload; verified via regex test command).
-- **Active / Next Eligible Work Item:** Task `US-003.3: Render fixture in spike WebView window and record visual result` under [`US-003`](../stories/US-003-webview-asset-security-spike.md) (`READY`).
+- **Last Completed Work Item:** Task `US-003.3: Render fixture in spike WebView window and record visual result` under [`US-003`](../stories/US-003-webview-asset-security-spike.md) (Story `US-003` fully verified and complete across all three tasks `US-003.1`, `US-003.2`, `US-003.3`; scoped asset resolver with 403 traversal protection integrated; cross-feature monolithic fixture with Persian RTL prose, KaTeX math, Mermaid SVG flowchart, code fences, relative local image, and neutralized script tags rendered in WebKitGTK window; dynamic document loading and secondary instance routing verified).
+- **Active / Next Eligible Work Item:** Task `US-004.1: Prototype Linux deb packaging and desktop file association` under [`US-004`](../stories/US-004-packaging-association-spike.md) (`READY`).
 
 ---
 
@@ -81,15 +81,17 @@ All planning remediation artifacts must be preserved:
 ## 5. Exact Next Action for the Next Agent
 
 The next incoming agent must:
-1. **Confirm Prerequisites Completed in Task `US-003.1` and `US-003.2`:**
+1. **Confirm Prerequisites Completed in Story `US-001`, `US-002`, and `US-003`:**
    - Review Section 8 of [`docs/stories/US-003-webview-asset-security-spike.md`](../stories/US-003-webview-asset-security-spike.md).
-   - Confirm Task `US-003.1` and `US-003.2` verified and completed.
-2. **Execute Task `US-003.3: Render fixture in spike WebView window and record visual result`:**
-   - Wire local asset resolver and markdown fixture loader into the spike application.
-   - Launch application loading fixture: `./build/bin/markdown-viewer-spike fixtures/spike/monolithic-fixture.md`.
-   - Inspect rendered window: verify Persian alignment, KaTeX font rendering, diagram layout, and relative image loading.
-   - Verify console logs and DOM to confirm zero script execution from document body (`<script>` inert).
-   - Record observable visual and console evidence in Section 8 of `US-003`.
+   - Confirm Story `US-003` complete across all three tasks (`US-003.1`, `US-003.2`, `US-003.3`).
+2. **Execute Task `US-004.1: Prototype Linux deb packaging and desktop file association`:**
+   - Review [`docs/stories/US-004-packaging-association-spike.md`](../stories/US-004-packaging-association-spike.md).
+   - Generate prototype `.deb` package using Taskfile / dpkg tools, registering `text/markdown` MIME type and desktop entry.
+   - Run verification command:
+     ```bash
+     dpkg-deb -c build/dist/linux/markdown-viewer*.deb | grep -E "usr/share/applications|usr/share/mime"
+     ```
+   - Record observable package inspection output in Section 8 of `US-004`.
    - Create isolated Task-level Conventional Commit upon successful verification.
 3. **Do NOT Jump to Feature Code:** Maintain strict Phase 1 spike bounds. Do not write production viewer code or modify `PRD.md`.
 4. **Preserve Phase Gate Verdict:** Keep overall Phase 1 verdict `NOT_READY` until all platform evidence (Windows, macOS, Linux) is recorded.

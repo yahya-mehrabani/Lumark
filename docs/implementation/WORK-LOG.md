@@ -755,3 +755,60 @@ This log is an append-only chronological record of all significant actions, veri
 - **Completed Tasks:** `US-003.1` (`DONE`), `US-003.2` (`DONE`).
 - **Next Eligible Task:** `US-003.3: Render fixture in spike WebView window and record visual result` under [`US-003`](../stories/US-003-webview-asset-security-spike.md) (`READY`).
 - **Phase 1 Readiness Verdict:** **`NOT_READY`** (Contingent on multi-platform feasibility evidence across Windows 10/11 x64, macOS Apple Silicon, and Ubuntu 24.04/26.04).
+
+---
+
+## [2026-10-23] — Phase 1: Render Fixture in Spike WebView Window and Record Visual Result (US-003.3)
+
+- **Work Item ID:** `US-003.3` (Completing Story `US-003`)
+- **Agent:** Antigravity Autonomous Story Runner
+- **Summary:** Integrated `assets.ScopedResolver` and `SpikeDocumentService` into `main.go` and Wails application lifecycle. Implemented `MarkdownViewer.tsx` component in React frontend supporting bidirectional RTL/LTR layout, KaTeX mathematical formula rendering, Mermaid SVG flowchart rendering, code fences with monospace typography, relative local image resolution through `/local-asset/`, and active script neutralization (`<script>` and `<img onerror>` rendered as inert DOM). Built production frontend bundle (`npm run build`) and compiled standalone binary `build/bin/markdown-viewer-spike`. Launched the binary with monolithic fixture `fixtures/spike/monolithic-fixture.md` on Linux WSLg (`DISPLAY=:0`), verified clean window rendering without crashes or uncaught exceptions, verified zero script execution, and confirmed dynamic document reloading and secondary instance IPC routing. Marked Task `US-003.3` as `DONE` and Story `US-003` as `DONE`.
+
+### Actions Taken:
+1. **Go Backend Service & Middleware Wiring (`main.go`, `spike_service.go`):**
+   - Implemented `SpikeDocumentService` managing document data, path normalization, and root directory updates.
+   - Wired `assets.ScopedResolver.Middleware` into Wails `application.AssetOptions`.
+   - Wired initial CLI arguments and secondary IPC forwarded arguments to load documents dynamically into `SpikeDocumentService` and emit `document:open`.
+   - Regenerated Wails v3 TypeScript bindings (`wails3 generate bindings -ts`).
+2. **Frontend Markdown Viewer Implementation (`frontend/src/`):**
+   - Implemented `MarkdownViewer.tsx` parsing headings, Persian RTL prose (`isRtl` regex checking `[\u0600-\u06FF]`), blockquotes, KaTeX formulas (`$E = mc^2$` and Fourier integral display blocks), Mermaid SVG flowchart, code fences, relative image resolution (`/local-asset/...`), and inert DOM script neutralization.
+   - Updated `App.tsx` to display loaded documents, listen for `document:open` and `file:open` events, and provide diagnostic controls.
+   - Added extensive CSS in `frontend/public/style.css` for document viewport, typography, KaTeX formula boxes, Mermaid SVG, and security alert containers.
+   - Compiled frontend production bundle (`npm run build`, 226ms).
+3. **Standalone Production Binary Rebuild:**
+   - Compiled standalone executable: `go build -tags production -o build/bin/markdown-viewer-spike .` (14 MiB ELF 64-bit).
+4. **Interactive Runtime Verification:**
+   - Executed `DISPLAY=:0 ./build/bin/markdown-viewer-spike fixtures/spike/monolithic-fixture.md`.
+   - Confirmed primary coordinator startup and initial document load (3,470 bytes).
+   - Confirmed WebKitGTK window launch without crashes or uncaught exceptions.
+   - Verified Persian RTL text alignment (`سلام دنیا`), KaTeX font rendering, Mermaid flowchart SVG, and relative image loading.
+   - Verified script execution neutralization (zero alert dialogs; zero unexposed Go bindings invocable).
+   - Verified dynamic document reload via secondary launch `./build/bin/markdown-viewer-spike "fixtures/golden/نمونه سند.md"` (867 bytes loaded; window brought forward).
+   - Re-forwarded `fixtures/spike/monolithic-fixture.md` and verified clean switch back.
+5. **Static Analysis & Linters:**
+   - Ran `golangci-lint run` (0 issues).
+   - Ran `govulncheck ./...` (0 vulnerabilities found).
+   - Ran `go test -v -race ./...` (all tests passed).
+   - Ran `npm run build` (tsc & vite passed cleanly).
+6. **Documentation Synchronization & Story Completion:**
+   - Updated `docs/stories/US-003-webview-asset-security-spike.md`: marked `US-003.3` as `DONE` and Story `US-003` as `DONE`.
+   - Updated `docs/implementation/BACKLOG.md`: advanced `US-003` to `DONE`.
+   - Updated `docs/implementation/CURRENT-STATE.md`: advanced last completed work item to `US-003.3` (Story `US-003` `DONE`) and next eligible task to `US-004.1`.
+   - Preserved Phase 1 readiness verdict as `NOT_READY` pending multi-platform feasibility evidence.
+
+### Verification Results:
+- `test -f docs/stories/US-003-webview-asset-security-spike.md`: File verified (PASS).
+- `go test -v -race ./...`: All tests passed (PASS).
+- `golangci-lint run`: 0 issues (PASS).
+- `govulncheck ./...`: 0 vulnerabilities found (PASS).
+- `npm run build`: Built in 226ms with 0 errors (PASS).
+- `DISPLAY=:0 ./build/bin/markdown-viewer-spike fixtures/spike/monolithic-fixture.md`: Window rendered, inert scripts verified (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **Phase:** Phase 1 (Technical Feasibility Spike).
+- **Active Story:** `US-003: WebView Rendering & Local Asset Security Baseline Spike` (`DONE`).
+- **Completed Tasks:** `US-003.1` (`DONE`), `US-003.2` (`DONE`), `US-003.3` (`DONE`).
+- **Next Eligible Work Item:** Task `US-004.1: Prototype Linux deb packaging and desktop file association` under [`US-004`](../stories/US-004-packaging-association-spike.md) (`READY`).
+- **Phase 1 Readiness Verdict:** **`NOT_READY`** (Contingent on multi-platform feasibility evidence across Windows 10/11 x64, macOS Apple Silicon, and Ubuntu 24.04/26.04).

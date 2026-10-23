@@ -14,6 +14,7 @@ import (
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 
+	"markdown-viewer/spike/assets"
 	"markdown-viewer/spike/ipc"
 )
 
@@ -23,13 +24,12 @@ import (
 // See https://pkg.go.dev/embed for more information.
 
 //go:embed all:frontend/dist
-var assets embed.FS
+var frontendAssets embed.FS
 
 func init() {
-	// Register a custom event whose associated data type is string.
-	// This is not required, but the binding generator will pick up registered events
-	// and provide a strongly typed JS/TS API for them.
+	// Register custom events for frontend bindings
 	application.RegisterEvent[string]("time")
+	application.RegisterEvent[DocumentData]("document:open")
 }
 
 // main function serves as the application's entry point. It initializes the single-instance
@@ -76,27 +76,44 @@ func main() {
 	// This process is the Primary instance
 	log.Printf("[IPC/Primary] Single-instance coordinator active (socket: %s)", coord.SocketPath())
 
+	// Initialize the scoped local asset resolver
+	assetResolver, err := assets.NewScopedResolver("")
+	if err != nil {
+		log.Fatalf("[Assets] Failed to initialize asset resolver: %v", err)
+	}
+
+	// Initialize the spike document service
+	docService := NewSpikeDocumentService(assetResolver)
+
 	// Handle initial command-line arguments if provided
 	if len(os.Args) > 1 {
 		log.Printf("[IPC/Primary] Initial arguments: %v (working dir: %s)", os.Args[1:], wd)
 		for _, arg := range os.Args[1:] {
 			logReceivedFile("IPC/Primary", arg)
+			targetFile := arg
+			if !filepath.IsAbs(targetFile) {
+				targetFile = filepath.Join(wd, targetFile)
+			}
+			if doc, loadErr := docService.LoadFile(targetFile); loadErr != nil {
+				log.Printf("[DocumentService] Failed to load initial document %s: %v", targetFile, loadErr)
+			} else {
+				log.Printf("[DocumentService] Initial document loaded: %s (dir: %s, bytes: %d)",
+					doc.Filename, doc.Dir, len(doc.Content))
+			}
 		}
 	}
 
 	// Create a new Wails application by providing the necessary options.
-	// Variables 'Name' and 'Description' are for application metadata.
-	// 'Assets' configures the asset server with the 'FS' variable pointing to the frontend files.
-	// 'Bind' is a list of Go struct instances. The frontend has access to the methods of these instances.
-	// 'Mac' options tailor the application when running on macOS.
 	app := application.New(application.Options{
 		Name:        "markdown-viewer",
 		Description: "Markdown Viewer Feasibility Spike",
 		Services: []application.Service{
 			application.NewService(&GreetService{}),
+			application.NewService(docService),
 		},
 		Assets: application.AssetOptions{
-			Handler: application.AssetFileServerFS(assets),
+			Handler:    application.AssetFileServerFS(frontendAssets),
+			Middleware: assetResolver.Middleware,
 		},
 		Mac: application.MacOptions{
 			ApplicationShouldTerminateAfterLastWindowClosed: true,
@@ -144,6 +161,17 @@ func main() {
 			log.Printf("[IPC/Primary] Received forwarded message from secondary (working dir: %s, args: %v)", msg.WorkingDir, msg.Args)
 			for _, arg := range msg.Args {
 				logReceivedFile("IPC/Primary", arg)
+				targetFile := arg
+				if !filepath.IsAbs(targetFile) {
+					targetFile = filepath.Join(msg.WorkingDir, targetFile)
+				}
+				if doc, loadErr := docService.LoadFile(targetFile); loadErr != nil {
+					log.Printf("[DocumentService] Failed to load forwarded document %s: %v", targetFile, loadErr)
+				} else {
+					log.Printf("[DocumentService] Forwarded document loaded: %s (dir: %s, bytes: %d)",
+						doc.Filename, doc.Dir, len(doc.Content))
+					app.Event.Emit("document:open", doc)
+				}
 				app.Event.Emit("file:open", arg)
 			}
 			// Bring the main window forward and request focus
