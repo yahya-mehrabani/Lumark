@@ -13,8 +13,8 @@
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
 - **Application Implementation Status:** **FEASIBILITY SPIKE IN PROGRESS**. Story [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) fully verified and complete across all five tasks (`US-001.1` through `US-001.5`). Standalone production binary, embedded React frontend assets, sub-400ms launch latency, and process independence from Node.js/Vite verified under WSLg.
 - **Feasibility Spike Status:** **IN_PROGRESS**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-003.3: Render fixture in spike WebView window and record visual result` under [`US-003`](../stories/US-003-webview-asset-security-spike.md) (Story `US-003` fully verified and complete across all three tasks `US-003.1`, `US-003.2`, `US-003.3`; scoped asset resolver with 403 traversal protection integrated; cross-feature monolithic fixture with Persian RTL prose, KaTeX math, Mermaid SVG flowchart, code fences, relative local image, and neutralized script tags rendered in WebKitGTK window; dynamic document loading and secondary instance routing verified).
-- **Active / Next Eligible Work Item:** Task `US-004.1: Prototype Linux deb packaging and desktop file association` under [`US-004`](../stories/US-004-packaging-association-spike.md) (`READY`).
+- **Last Completed Work Item:** Task `US-004.1: Create Linux packaging manifest and desktop entry` under [`US-004`](../stories/US-004-packaging-association-spike.md) (Freedesktop `.desktop` launcher with `text/markdown` and `text/x-markdown` MIME associations, custom SVG icon badge, and Debian `control`, `postinst`, and `postrm` maintainer scripts created and validated with shellcheck and shfmt).
+- **Active / Next Eligible Work Item:** Task `US-004.2: Build prototype Debian package (.deb)` under [`US-004`](../stories/US-004-packaging-association-spike.md) (`READY`).
 
 ---
 
@@ -81,15 +81,13 @@ All planning remediation artifacts must be preserved:
 ## 5. Exact Next Action for the Next Agent
 
 The next incoming agent must:
-1. **Confirm Prerequisites Completed in Story `US-001`, `US-002`, and `US-003`:**
-   - Review Section 8 of [`docs/stories/US-003-webview-asset-security-spike.md`](../stories/US-003-webview-asset-security-spike.md).
-   - Confirm Story `US-003` complete across all three tasks (`US-003.1`, `US-003.2`, `US-003.3`).
-2. **Execute Task `US-004.1: Prototype Linux deb packaging and desktop file association`:**
-   - Review [`docs/stories/US-004-packaging-association-spike.md`](../stories/US-004-packaging-association-spike.md).
-   - Generate prototype `.deb` package using Taskfile / dpkg tools, registering `text/markdown` MIME type and desktop entry.
+1. **Confirm Prerequisites Completed for Task `US-004.2`:**
+   - Review Task `US-004.1` in [`docs/stories/US-004-packaging-association-spike.md`](../stories/US-004-packaging-association-spike.md) (Status: `DONE`).
+2. **Execute Task `US-004.2: Build prototype Debian package (.deb)`:**
+   - Build Debian package `.deb` containing binary in `/usr/bin/` and desktop file.
    - Run verification command:
      ```bash
-     dpkg-deb -c build/dist/linux/markdown-viewer*.deb | grep -E "usr/share/applications|usr/share/mime"
+     dpkg-deb --info build/bin/markdown-viewer-spike.deb && dpkg-deb -c build/bin/markdown-viewer-spike.deb
      ```
    - Record observable package inspection output in Section 8 of `US-004`.
    - Create isolated Task-level Conventional Commit upon successful verification.

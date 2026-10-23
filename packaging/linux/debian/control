@@ -1,0 +1,12 @@
+Package: markdown-viewer
+Version: 0.1.0-1
+Section: utils
+Priority: optional
+Architecture: amd64
+Maintainer: Markdown Viewer Team <maintainers@markdownviewer.local>
+Depends: libc6 (>= 2.38), libgtk-4-1 (>= 4.12.0) | libgtk-3-0 (>= 3.24.0), libwebkitgtk-6.0-4 (>= 2.40.0) | libwebkit2gtk-4.1-0 (>= 2.40.0)
+Description: Fast, cross-platform Markdown Viewer desktop application
+ A local-first, standalone desktop Markdown viewer built with Wails and Go.
+ Features CommonMark and GitHub Flavored Markdown rendering, offline KaTeX math,
+ Mermaid diagrams, bidirectional RTL/LTR layout, and secure local asset isolation.
+Homepage: https://github.com/personal/markdown-go

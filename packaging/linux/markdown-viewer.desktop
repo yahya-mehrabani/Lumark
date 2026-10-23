@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Markdown Viewer
+GenericName=Markdown Document Viewer
+Comment=A fast, cross-platform Markdown Viewer
+Exec=markdown-viewer %F
+Icon=markdown-viewer
+Terminal=false
+Categories=Utility;TextEditor;Viewer;
+MimeType=text/markdown;text/x-markdown;
+Keywords=Markdown;Viewer;Editor;CommonMark;GFM;
+StartupNotify=false
+StartupWMClass=markdown-viewer
