@@ -29,8 +29,12 @@ dist/
 .vite/
 *.tsbuildinfo
 
-# Wails generated binaries
+# Wails generated binaries and artifacts
 /build/bin/
+.task/
+bin/
+build/linux/appimage/build/
+build/windows/nsis/MicrosoftEdgeWebview2Setup.exe
 
 # Environment files and secrets
 .env

@@ -11,10 +11,10 @@
 
 - **Current Overall Phase:** **Phase 1 (Technical Feasibility Spike)**.
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
-- **Application Implementation Status:** **FEASIBILITY SPIKE IN PROGRESS**. Zero production code created; toolchain and environment diagnostics verified for minimal spike.
+- **Application Implementation Status:** **FEASIBILITY SPIKE IN PROGRESS**. Minimal Wails v3 + React + Vite project structure initialized, frontend compiled with static bindings, and standalone desktop window verified running under Task `US-001.3`.
 - **Feasibility Spike Status:** **IN_PROGRESS**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-001.2: Install pinned Wails CLI and run environment diagnostics` under [`US-001`](../stories/US-001-wails-react-skeleton-spike.md).
-- **Active / Next Eligible Work Item:** Task `US-001.3: Initialize minimal Wails project structure with React + Vite` under [`US-001`](../stories/US-001-wails-react-skeleton-spike.md).
+- **Last Completed Work Item:** Task `US-001.3: Initialize minimal Wails project structure with React + Vite` under [`US-001`](../stories/US-001-wails-react-skeleton-spike.md).
+- **Active / Next Eligible Work Item:** Task `US-001.4: Build production binary with embedded assets` under [`US-001`](../stories/US-001-wails-react-skeleton-spike.md).
 
 ---
 
@@ -81,13 +81,13 @@ All planning remediation artifacts must be preserved:
 ## 5. Exact Next Action for the Next Agent
 
 The next incoming agent must:
-1. **Confirm Prerequisites Completed in Tasks `US-001.1` and `US-001.2`:**
-   - Review Section 8 of [`docs/stories/US-001-wails-react-skeleton-spike.md`](../stories/US-001-wails-react-skeleton-spike.md) for verified toolchain versions and completed `wails3 doctor` diagnostics (exit code 0, no issues found).
-2. **Execute Task `US-001.3: Initialize minimal Wails project structure with React + Vite`:**
-   - Initialize minimal Wails v3 + React + Vite skeleton conforming to [ADR-0001](../decisions/ADR-0001-technology-baseline.md).
-   - Ensure `main.go`, `frontend/package.json`, and `frontend/vite.config.ts` are present.
-   - Run verification command: `test -f main.go && test -f frontend/package.json && test -f frontend/vite.config.ts && cd frontend && npm run build`.
-   - Verify `frontend/dist/index.html` is generated cleanly.
+1. **Confirm Prerequisites Completed in Tasks `US-001.1`, `US-001.2`, and `US-001.3`:**
+   - Review Section 8 of [`docs/stories/US-001-wails-react-skeleton-spike.md`](../stories/US-001-wails-react-skeleton-spike.md) for verified toolchain versions, doctor diagnostics, generated project skeleton, static binding generation, and WSLg interactive window verification.
+2. **Execute Task `US-001.4: Build production binary with embedded assets`:**
+   - Build the standalone production binary embedding the frontend build:
+     `go build -tags production -o build/bin/markdown-viewer-spike . && ls -lh build/bin/markdown-viewer-spike`
+   - Verify executable size (between 10 MiB and 30 MiB) and confirm ELF 64-bit executable via `file`.
+   - Record authentic build output, size, and checksum in Section 8 of `US-001`.
    - Follow the Task-Level Conventional Commits policy upon successful verification.
 3. **Do NOT Jump to Feature Code:** Maintain strict Phase 1 spike bounds. Do not write production viewer code or modify `PRD.md`.
 4. **Preserve Phase Gate Verdict:** Keep overall Phase 1 verdict `NOT_READY` until all platform evidence (Windows, macOS, Linux) is recorded.

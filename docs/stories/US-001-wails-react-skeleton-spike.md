@@ -92,7 +92,7 @@ Verify that a minimal Wails desktop application (evaluating Wails v3 `v3.0.0-bet
 
 ### Task US-001.3: Initialize minimal Wails project structure with React + Vite
 - **Task ID:** `US-001.3`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-001.2`
 - **Completion Criteria:** Valid project structure generated including Go entrypoint (`main.go`), embed directive, `frontend/package.json`, and `vite.config.ts`.
 - **Verification Command:**
@@ -143,11 +143,11 @@ Verify that a minimal Wails desktop application (evaluating Wails v3 `v3.0.0-bet
 
 - **Execution Date:** 2026-10-23
 - **Agent ID:** Antigravity AI Implementation Agent
-- **Active Task:** `US-001.2` (Completed & Verified)
+- **Active Task:** `US-001.3` (Completed & Verified)
 - **Host Environment:** Linux COM-807 6.18.54.1-microsoft-standard-WSL2 (Ubuntu 26.04.1 LTS x86_64)
 - **Graphical Subsystem:** WSLg active (`DISPLAY=:0`, `WAYLAND_DISPLAY=wayland-0`)
-- **Status Transition:** Task `US-001.2` transitioned from `READY` to `DONE` (`US-001` remains `IN_PROGRESS`).
-- **Changed Files:** Documentation status and verification evidence only (CLI diagnostics task; zero application source files changed).
+- **Status Transition:** Task `US-001.3` transitioned from `READY` to `DONE` (`US-001` remains `IN_PROGRESS`).
+- **Changed Files:** Initialized Wails v3 + React + Vite skeleton (`main.go`, `greetservice.go`, `go.mod`, `go.sum`, `Taskfile.yml`, `build/`, `frontend/`).
 
 ### Task US-001.1 Verification Evidence
 
@@ -362,3 +362,144 @@ Need documentation? Run: wails3 docs
   - Code signing (macOS, Windows, Linux GPG): Not configured; packaging and distribution concern scheduled for Phase 6 (`EPIC-008`), not required for Phase 1 local feasibility spike.
 - **Package Installation Decision:** Zero additional packages are required. No changes to system packages or shell environment variables were made.
 - **Task Completion Status:** Task `US-001.2` completion criteria are fully met. Environment is verified ready for Task `US-001.3`.
+
+### Task US-001.3 Verification Evidence
+
+#### 1. Manifests & Project Structure Verification
+**Command:**
+```bash
+test -f main.go && test -f frontend/package.json && test -f frontend/vite.config.ts && cd frontend && npm run build
+```
+**Exit Code:** 0
+**Captured Terminal Output:**
+```text
+> markdown-viewer-frontend@0.1.0 build
+> tsc && vite build --mode production
+
+vite v8.3.5 building client environment for production...
+✓ 46 modules transformed.
+computing gzip size...
+dist/index.html                  0.50 kB │ gzip:  0.32 kB
+dist/assets/index-B0PVsrM-.js  172.04 kB │ gzip: 56.31 kB
+
+✓ built in 259ms
+```
+
+#### 2. Generated Asset Verification
+**Command:**
+```bash
+test -f frontend/dist/index.html && ls -lh frontend/dist/index.html
+```
+**Exit Code:** 0
+**Captured Terminal Output:**
+```text
+-rw-r--r-- 1 root root 506 Oct 23 16:43 frontend/dist/index.html
+```
+
+#### 3. Wails v3 Static Bindings Generation
+**Command:**
+```bash
+/root/go/bin/wails3 generate bindings
+```
+**Exit Code:** 0
+**Captured Terminal Output:**
+```text
+Wails v3.0.0-beta.34 › Generate Bindings
+ INFO  Processed: 244 Packages, 1 Service, 1 Method, 0 Enums, 0 Models, 1 Event in 23.654953573s.
+ INFO  Output directory: /home/repos/personal/markdown-go/frontend/bindings
+```
+
+#### 4. Frontend Dependency Installation & Lockfile
+**Command:**
+```bash
+cd frontend && npm install
+```
+**Exit Code:** 0
+**Captured Terminal Output:**
+```text
+added 29 packages, and audited 30 packages in 12s
+found 0 vulnerabilities
+```
+- Pinned dependency: `@wailsio/runtime: 3.0.0-beta.34` (explicitly pinned in `frontend/package.json`, avoiding `@latest`).
+
+#### 5. Go Backend Tests & Linting
+**Commands:**
+```bash
+go test ./... && go vet ./...
+golangci-lint run ./...
+```
+**Exit Code:** 0
+**Captured Terminal Output:**
+- `go test ./... && go vet ./...`:
+  ```text
+  ?       markdown-viewer [no test files]
+  ?       markdown-viewer/build/android/scripts/deps      [no test files]
+  ?       markdown-viewer/build/ios       [no test files]
+  ?       markdown-viewer/build/ios/scripts/deps  [no test files]
+  ```
+- `golangci-lint run ./...`:
+  ```text
+  0 issues.
+  ```
+
+#### 6. Go Toolchain Analysis & Vulnerability Inspection
+**Command:**
+```bash
+govulncheck ./...
+```
+**Exit Code:** 3 (Standard library CVEs found in local Go `1.26.8`):
+- `govulncheck` identified 11 vulnerabilities in Go standard library packages (`net/http`, `crypto/tls`, `net/textproto`) fixed in `go1.26.9`.
+- **Finding:** Upstream Wails module's `toolchain go1.26.9` directive reflects security patch release `go1.26.9`. Local Go `1.26.8` successfully compiles and runs the application under `GOTOOLCHAIN=auto` / `go 1.26.0` declared in `go.mod`. Local compilation operates cleanly without blocking development.
+
+#### 7. Desktop Application Compilation & Asset Embedding
+**Command:**
+```bash
+mkdir -p bin && go build -o bin/markdown-viewer . && ls -lh bin/markdown-viewer && file bin/markdown-viewer
+```
+**Exit Code:** 0
+**Captured Terminal Output:**
+```text
+-rwxr-xr-x 1 root root 17M Oct 23 16:46 bin/markdown-viewer
+bin/markdown-viewer: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=c05e0cb40746777c4c414bf32294a2ca1df97401, for GNU/Linux 3.2.0, with debug_info, not stripped
+```
+
+#### 8. Interactive Desktop Launch & WSLg Window Verification
+**Execution Command:**
+```bash
+GDK_BACKEND=x11 DISPLAY=:0 WEBKIT_DISABLE_COMPOSITING_MODE=1 ./bin/markdown-viewer
+```
+**Window Inspection (`xwininfo -root -tree`):**
+```text
+xwininfo: Window id: 0x390 (the root window) (has no name)
+  Root window id: 0x390 (the root window) (has no name)
+  Parent window id: 0x0 (none)
+     5 children:
+     0x200081 (has no name): ()  1076x715+297+56  +297+56
+        1 child:
+        0x600005 "Markdown Viewer (Spike Baseline)": ("markdown-viewer" "markdown-viewer")  1000x618+38+59  +335+115
+           1 child:
+           0x600006 (has no name): ()  1x1+-1+-1  +334+114
+     0x600003 "markdown-viewer": ("markdown-viewer" "markdown-viewer")  1x1+0+0  +0+0
+```
+**Window Properties (`xprop -id 0x600005`):**
+```text
+_NET_WM_OPAQUE_REGION(CARDINAL) = 0, 0, 1000, 618
+_GTK_APPLICATION_ID(UTF8_STRING) = "org.wails.markdown-viewer"
+WM_CLASS(STRING) = "markdown-viewer", "markdown-viewer"
+WM_NAME(STRING) = "Markdown Viewer (Spike Baseline)"
+```
+**Application Asset Server Runtime Logs:**
+```text
+4:46PM INF AssetServer Info: middleware=true handler=true
+4:46PM INF Build Info: Wails=v3.0.0-beta.34 Compiler=go1.26.8 -buildmode=exe GOARCH=amd64 GOOS=linux CGO_ENABLED=1
+4:46PM INF Platform Info: ID=ubuntu Name=Ubuntu Version=26.04 Branding=26.04.1 LTS (Resolute Raccoon) GTK=4.22.4 WebKitGTK=2.52.6
+4:46PM INF [AssetFileServerFS] Handling request url=/ file=.
+4:46PM INF [AssetFileServerFS] Handling request url=/style.css file=style.css
+4:46PM INF [AssetFileServerFS] Handling request url=/assets/index-B0PVsrM-.js file=assets/index-B0PVsrM-.js
+4:46PM INF [AssetFileServerFS] Handling request url=/bg-desktop.jpg file=bg-desktop.jpg
+4:46PM INF [AssetFileServerFS] Handling request url=/wails.png file=wails.png
+4:46PM INF [AssetFileServerFS] Handling request url=/react.svg file=react.svg
+```
+- **Process Check:** `ps aux | grep node` confirmed zero active Vite or Node dev server processes during desktop runtime. Assets were embedded into the standalone Go binary via `//go:embed all:frontend/dist`.
+- **Interactive UI Verification:** The native GTK4/WebKitGTK desktop window (1000x618) was created, loading the React/Vite application with static test string `"Spike Baseline Loaded"` rendered in the interface.
+- **Task Completion Status:** Task `US-001.3` completion criteria are fully met. The repository is verified ready for Task `US-001.4`.
