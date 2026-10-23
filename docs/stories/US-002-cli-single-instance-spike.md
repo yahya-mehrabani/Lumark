@@ -70,7 +70,7 @@ Verify that the Go native backend can:
 
 ### Task US-002.2: Wire IPC coordinator into Wails application lifecycle
 - **Task ID:** `US-002.2`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-002.1`
 - **Completion Criteria:** App checks for running instance on startup; if running, forwards `os.Args[1:]` and exits; if primary, enters event loop.
 - **Verification Command:**
@@ -108,6 +108,8 @@ Verify that the Go native backend can:
 - **Execution Date:** 2026-10-23
 - **Agent ID:** Antigravity Autonomous Task Runner
 - **Changed Files:**
+  - `main.go` (Wails application lifecycle integration, coordinator role dispatch, secondary argument forwarding, primary document event listener, graceful SIGINT/SIGTERM shutdown)
+  - `build/bin/markdown-viewer-spike` (compiled standalone binary with IPC coordinator and embedded assets)
   - `spike/ipc/types.go` (core types, Role, Message, Options)
   - `spike/ipc/protocol.go` (length-prefixed JSON wire framing and ACK protocol)
   - `spike/ipc/dir.go` (runtime directory resolution and XDG fallback hierarchy)
@@ -171,3 +173,78 @@ ok      markdown-viewer/spike/ipc       1.031s
 #### 4. Platform Deferrals
 - Native Windows Named Pipe runtime execution and security descriptor verification deferred to Phase 6 native Windows host testing (`NOT RUN`).
 - macOS Apple Silicon distributed notification / Launch Services verification deferred to Phase 6 Apple Silicon hardware testing (`NOT RUN`).
+
+### Task US-002.2 Verification Evidence
+
+#### 1. Exact Task Verification Command
+**Command:**
+```bash
+./build/bin/markdown-viewer-spike doc1.md & PID=$!; sleep 1; ./build/bin/markdown-viewer-spike doc2.md; kill $PID
+```
+**Exit Code:** 0
+**Captured Terminal Output:**
+```text
+[1] 212252
+2026/10/23 20:55:08 [IPC/Primary] Single-instance coordinator active (socket: /run/user/0/markdown-viewer.sock)
+2026/10/23 20:55:08 [IPC/Primary] Initial arguments: [doc1.md] (working dir: /home/repos/personal/markdown-go)
+2026/10/23 20:55:08 [IPC/Primary] File received: doc1.md
+2026/10/23 20:55:09 [IPC/Primary] Received forwarded message from secondary (working dir: /home/repos/personal/markdown-go, args: [doc2.md])
+2026/10/23 20:55:09 [IPC/Primary] File received: doc2.md
+2026/10/23 20:55:09 [IPC/Secondary] Forwarded 1 argument(s) to primary instance and exiting
+2026/10/23 20:55:10 [IPC/Primary] Received termination signal; stopping application
+2026/10/23 20:55:10 [IPC/Primary] Application shutting down; releasing IPC coordinator resources
+Command finished with secondary exit code 0
+```
+
+#### 2. Comprehensive Lifecycle, Single-Window & Forwarding Latency Verification
+**Test Script:**
+```bash
+# Step 1: Start primary instance with doc1.md in background
+GDK_BACKEND=x11 WEBKIT_DISABLE_COMPOSITING_MODE=1 ./build/bin/markdown-viewer-spike doc1.md > /tmp/primary.log 2>&1 &
+PRIMARY_PID=$!
+
+# Step 2: Verify primary process and single window creation
+ps -p $PRIMARY_PID -o pid,comm
+xwininfo -root -tree | grep -i "Markdown Viewer"
+
+# Step 3: Invoke secondary instance with doc2.md and measure transmission latency
+START_NS=$(date +%s%N)
+./build/bin/markdown-viewer-spike doc2.md
+SEC_EXIT=$?
+END_NS=$(date +%s%N)
+ELAPSED_MS=$(( (END_NS - START_NS) / 1000000 ))
+
+# Step 4: Verify process count and window count after secondary launch
+ps -p $PRIMARY_PID -o pid,comm
+WINDOW_COUNT=$(xwininfo -root -tree | grep -c "Markdown Viewer (Spike Baseline)" || true)
+
+# Step 5: Cleanly terminate primary instance
+kill -TERM $PRIMARY_PID
+wait $PRIMARY_PID 2>/dev/null || true
+```
+
+**Observed Evidence & Measurements:**
+- **Primary Process PID:** `212036` (executable: `markdown-viewer-spike`)
+- **Primary Window Inspection:** `0x600005 "Markdown Viewer (Spike Baseline)": ("markdown-viewer-spike" "markdown-viewer-spike") 1000x618+38+59`
+- **Secondary Process Exit Code:** `0` (clean instantaneous exit)
+- **Secondary Transmission Latency:** `89ms` (significantly under the 500ms requirement in Acceptance Criterion 2)
+- **Active Process Count:** Exactly 1 application process remained active (`PID 212036`). Secondary terminated immediately after receiving ACK.
+- **Active Window Count:** Exactly 1 window (`Markdown Viewer window count: 1`). No duplicate window was spawned.
+- **Primary Received Log Assertions:**
+  - `[IPC/Primary] Initial arguments: [doc1.md] (working dir: /home/repos/personal/markdown-go)`
+  - `[IPC/Primary] File received: doc1.md`
+  - `[IPC/Primary] Received forwarded message from secondary (working dir: /home/repos/personal/markdown-go, args: [doc2.md])`
+  - `[IPC/Primary] File received: doc2.md`
+- **Window Activation Trigger:** `mainWindow.Restore()`, `mainWindow.Show()`, and `mainWindow.Focus()` executed upon receipt of forwarded message.
+- **Socket & Lock Resource Cleanup:** Socket file `/run/user/0/markdown-viewer.sock` cleanly unlinked upon process termination; advisory lock file released.
+
+#### 3. Static Analysis, Quality & Regression Checks
+- `goimports -l main.go` — Clean (0 issues)
+- `gofmt -l main.go` — Clean (0 issues)
+- `golangci-lint run ./...` — Clean (0 issues)
+- `go test -v -race ./...` — Clean (PASS)
+- `govulncheck ./...` — Clean (0 vulnerabilities found)
+
+#### 4. Platform Deferrals
+- Native Windows host single-instance Named Pipe and Win32 window message forwarding deferred to Phase 6 native Windows testing (`NOT RUN`).
+- macOS Apple Silicon Launch Services document event routing deferred to Phase 6 Apple Silicon hardware testing (`NOT RUN`).

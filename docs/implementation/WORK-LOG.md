@@ -566,3 +566,57 @@ This log is an append-only chronological record of all significant actions, veri
 - **Completed Tasks:** `US-002.1` (`DONE`).
 - **Next Eligible Task:** `US-002.2: Wire IPC coordinator into Wails application lifecycle` under [`US-002`](../stories/US-002-cli-single-instance-spike.md) (`READY`).
 - **Phase 1 Readiness Verdict:** **`NOT_READY`** (Contingent on multi-platform feasibility evidence across Windows 10/11 x64, macOS Apple Silicon, and Ubuntu 24.04/26.04).
+
+---
+
+## [2026-10-23] — Phase 1: Wire IPC Coordinator into Wails Application Lifecycle (US-002.2)
+
+- **Work Item ID:** `US-002.2`
+- **Agent:** Antigravity Autonomous Task Runner
+- **Summary:** Integrated the single-instance IPC coordinator into the Wails application startup sequence in `main.go`. Verified that a secondary process detects the running primary instance, transmits command-line arguments (`os.Args[1:]`) and working directory over local Unix domain socket IPC, and terminates cleanly with exit code 0 within 89ms (< 500ms requirement). Verified that the primary instance continues running, logs forwarded documents (`doc2.md`), preserves the single-window invariant (0 additional windows created), activates and focuses the main window, and cleanly removes the IPC socket file upon graceful termination via SIGINT/SIGTERM.
+
+### Actions Taken:
+1. **Application Lifecycle & Coordinator Wiring (`main.go`):**
+   - Initialized `ipc.New(ipc.DefaultOptions())` and resolved the current working directory.
+   - Evaluated coordinator role via `coord.Start(context.Background())`.
+   - On secondary role (`RoleSecondary`): packaged `ipc.Message{Args: os.Args[1:], WorkingDir: wd}`, forwarded payload via `coord.Send()`, logged transmission confirmation, and cleanly exited via `os.Exit(0)`.
+   - On primary role (`RolePrimary`): logged initial CLI arguments, created Wails application and main window (`1000x618`), and attached asynchronous message consumer listening on `coord.Messages()`.
+   - Wired document arrival to Wails frontend event emitter (`app.Event.Emit("file:open", arg)`) and desktop window activation (`mainWindow.Restore()`, `mainWindow.Show()`, `mainWindow.Focus()`).
+   - Wired clean resource shutdown hooks via `app.OnShutdown` and OS signal handler (`signal.Notify` for `os.Interrupt` and `syscall.SIGTERM`).
+2. **Binary Build & Compilation:**
+   - Compiled standalone executable `build/bin/markdown-viewer-spike` with `-tags production`.
+3. **Automated & Interactive Verification:**
+   - Executed exact Task verification command: `./build/bin/markdown-viewer-spike doc1.md & PID=$!; sleep 1; ./build/bin/markdown-viewer-spike doc2.md; kill $PID` (Exit code 0).
+   - Executed comprehensive lifecycle verification script under WSLg:
+     - Verified primary process PID `212036` and primary window creation `0x600005`.
+     - Verified secondary process transmission latency of `89ms` with exit code `0`.
+     - Verified window count stayed at exactly 1 (0 duplicate windows).
+     - Verified primary received logs for `doc1.md` (initial) and `doc2.md` (forwarded).
+     - Verified clean termination and socket file deletion (`/run/user/0/markdown-viewer.sock`).
+4. **Static Analysis & Regression Checks:**
+   - Ran `goimports -l main.go` and `gofmt -l main.go` (0 issues).
+   - Ran `golangci-lint run ./...` (0 issues).
+   - Ran `go test -v -race ./...` (all tests passed).
+   - Ran `govulncheck ./...` (0 vulnerabilities found).
+5. **Documentation Synchronization:**
+   - Updated `docs/stories/US-002-cli-single-instance-spike.md`: marked Task `US-002.2` as `DONE` and recorded verification evidence.
+   - Updated `docs/implementation/BACKLOG.md`: advanced `US-002` to `IN_PROGRESS (Tasks US-002.1, US-002.2 DONE)`.
+   - Updated `docs/implementation/CURRENT-STATE.md`: advanced last completed work item to `US-002.2` and next eligible work item to `US-002.3`.
+   - Preserved overall Phase 1 verdict as `NOT_READY` pending multi-platform feasibility evidence.
+
+### Verification Results:
+- `./build/bin/markdown-viewer-spike doc1.md & PID=$!; sleep 1; ./build/bin/markdown-viewer-spike doc2.md; kill $PID`: Exit code 0 (PASS).
+- Secondary transmission latency: 89ms (< 500ms bound) (PASS).
+- Window count: exactly 1 window active after secondary launch (PASS).
+- `go test -v -race ./...`: All tests passed (PASS).
+- `golangci-lint run ./...`: 0 issues (PASS).
+- `govulncheck ./...`: 0 vulnerabilities found (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **Phase:** Phase 1 (Technical Feasibility Spike).
+- **Active Story:** `US-002: Command-Line & Single-Instance IPC Feasibility Spike` (`IN_PROGRESS`).
+- **Completed Tasks:** `US-002.1` (`DONE`), `US-002.2` (`DONE`).
+- **Next Eligible Task:** `US-002.3: Verify path handling with spaces and Unicode` under [`US-002`](../stories/US-002-cli-single-instance-spike.md) (`READY`).
+- **Phase 1 Readiness Verdict:** **`NOT_READY`** (Contingent on multi-platform feasibility evidence across Windows 10/11 x64, macOS Apple Silicon, and Ubuntu 24.04/26.04).

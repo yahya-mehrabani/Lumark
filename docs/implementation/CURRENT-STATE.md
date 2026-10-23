@@ -13,8 +13,8 @@
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
 - **Application Implementation Status:** **FEASIBILITY SPIKE IN PROGRESS**. Story [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) fully verified and complete across all five tasks (`US-001.1` through `US-001.5`). Standalone production binary, embedded React frontend assets, sub-400ms launch latency, and process independence from Node.js/Vite verified under WSLg.
 - **Feasibility Spike Status:** **IN_PROGRESS**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-002.1: Implement and evaluate single-instance IPC mechanism` under [`US-002`](../stories/US-002-cli-single-instance-spike.md) (single-instance coordinator verified with `go test -v -race ./spike/ipc/...`, zero linter issues, and comparative evaluation).
-- **Active / Next Eligible Work Item:** Task `US-002.2: Wire IPC coordinator into Wails application lifecycle` under [`US-002`](../stories/US-002-cli-single-instance-spike.md).
+- **Last Completed Work Item:** Task `US-002.2: Wire IPC coordinator into Wails application lifecycle` under [`US-002`](../stories/US-002-cli-single-instance-spike.md) (single-instance coordinator wired into `main.go`, initial document receipt verified, secondary argument forwarding verified with 89ms latency and exit code 0, single-window invariant preserved, clean socket cleanup verified).
+- **Active / Next Eligible Work Item:** Task `US-002.3: Verify path handling with spaces and Unicode` under [`US-002`](../stories/US-002-cli-single-instance-spike.md) (`READY`).
 
 ---
 
@@ -81,14 +81,17 @@ All planning remediation artifacts must be preserved:
 ## 5. Exact Next Action for the Next Agent
 
 The next incoming agent must:
-1. **Confirm Prerequisites Completed in Story `US-001` and Task `US-002.1`:**
+1. **Confirm Prerequisites Completed in Story `US-001` and Tasks `US-002.1`, `US-002.2`:**
    - Review Section 8 of [`docs/stories/US-001-wails-react-skeleton-spike.md`](../stories/US-001-wails-react-skeleton-spike.md) and [`docs/stories/US-002-cli-single-instance-spike.md`](../stories/US-002-cli-single-instance-spike.md).
-   - Verify prototype IPC coordinator in `spike/ipc/` (clean test execution under `go test -v -race ./spike/ipc/...`, XDG fallback hierarchy, length-prefixed JSON protocol with ACK, and comparative evaluation report).
-2. **Execute Task `US-002.2: Wire IPC coordinator into Wails application lifecycle`:**
+   - Verify single-instance IPC coordinator wiring in `main.go` and standalone binary `build/bin/markdown-viewer-spike`.
+2. **Execute Task `US-002.3: Verify path handling with spaces and Unicode`:**
    - Review [`docs/stories/US-002-cli-single-instance-spike.md`](../stories/US-002-cli-single-instance-spike.md).
-   - Wire the IPC coordinator into the application startup sequence (`main.go` / application options).
-   - On startup, the application initializes the coordinator: if a secondary instance is detected, it transmits CLI arguments (`os.Args[1:]`) and working directory to the primary instance, then terminates immediately with exit code 0. If primary, it continues into the Wails desktop window lifecycle and listens for forwarded document paths.
-   - Execute verification: `./build/bin/markdown-viewer-spike doc1.md & PID=$!; sleep 1; ./build/bin/markdown-viewer-spike doc2.md; kill $PID`
+   - Test forwarding and handling of paths containing spaces and multi-byte UTF-8 Unicode characters (such as `fixtures/golden/نمونه سند.md`).
+   - Execute verification command:
+     ```bash
+     ./build/bin/markdown-viewer-spike "fixtures/golden/نمونه سند.md"
+     ```
+   - Verify exact UTF-8 byte sequence preservation, absence of shell or IPC string mangling, and proper logging.
    - Record observable session evidence in Section 8 of `US-002`.
    - Create isolated Task-level Conventional Commit upon successful verification.
 3. **Do NOT Jump to Feature Code:** Maintain strict Phase 1 spike bounds. Do not write production viewer code or modify `PRD.md`.
