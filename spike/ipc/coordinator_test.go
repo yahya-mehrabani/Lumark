@@ -1,6 +1,7 @@
 package ipc
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"os"
@@ -9,6 +10,7 @@ import (
 	"sync"
 	"testing"
 	"time"
+	"unicode/utf8"
 )
 
 type mockEnv struct {
@@ -417,6 +419,15 @@ func TestPayloadIntegrityWithUnicodeAndSpaces(t *testing.T) {
 		case received := <-primary.Messages():
 			if len(received.Args) != 1 || received.Args[0] != path {
 				t.Errorf("payload corrupted for path %q: got %v", path, received.Args)
+			}
+			if !bytes.Equal([]byte(received.Args[0]), []byte(path)) {
+				t.Errorf("byte sequence mismatch for path %q: got %x, want %x", path, []byte(received.Args[0]), []byte(path))
+			}
+			if !utf8.ValidString(received.Args[0]) {
+				t.Errorf("received string %q is not valid UTF-8", received.Args[0])
+			}
+			if filepath.Base(received.Args[0]) != filepath.Base(path) {
+				t.Errorf("decoded basename mismatch for path %q: got %q, want %q", path, filepath.Base(received.Args[0]), filepath.Base(path))
 			}
 		case <-time.After(2 * time.Second):
 			t.Fatalf("timed out waiting for path %q", path)

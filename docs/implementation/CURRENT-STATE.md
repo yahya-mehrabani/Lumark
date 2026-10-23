@@ -13,8 +13,8 @@
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
 - **Application Implementation Status:** **FEASIBILITY SPIKE IN PROGRESS**. Story [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) fully verified and complete across all five tasks (`US-001.1` through `US-001.5`). Standalone production binary, embedded React frontend assets, sub-400ms launch latency, and process independence from Node.js/Vite verified under WSLg.
 - **Feasibility Spike Status:** **IN_PROGRESS**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-002.2: Wire IPC coordinator into Wails application lifecycle` under [`US-002`](../stories/US-002-cli-single-instance-spike.md) (single-instance coordinator wired into `main.go`, initial document receipt verified, secondary argument forwarding verified with 89ms latency and exit code 0, single-window invariant preserved, clean socket cleanup verified).
-- **Active / Next Eligible Work Item:** Task `US-002.3: Verify path handling with spaces and Unicode` under [`US-002`](../stories/US-002-cli-single-instance-spike.md) (`READY`).
+- **Last Completed Work Item:** Task `US-002.3: Verify path handling with spaces and Unicode` under [`US-002`](../stories/US-002-cli-single-instance-spike.md) (Story `US-002` fully verified and complete across all three tasks `US-002.1`, `US-002.2`, `US-002.3`; golden fixture `fixtures/golden/نمونه سند.md` created; exact UTF-8 byte sequences `d9 86 d9 85 d9 88 d9 86 d9 87 20 d8 b3 d9 86 d8 af 2e 6d 64` and decoded Persian basename logged; space preservation verified across directory and file names; secondary exit code 0 verified; unit tests and race checks passed).
+- **Active / Next Eligible Work Item:** Task `US-003.1: Implement scoped local asset resolver in Go backend` under [`US-003`](../stories/US-003-webview-asset-security-spike.md) (`READY`).
 
 ---
 
@@ -81,18 +81,17 @@ All planning remediation artifacts must be preserved:
 ## 5. Exact Next Action for the Next Agent
 
 The next incoming agent must:
-1. **Confirm Prerequisites Completed in Story `US-001` and Tasks `US-002.1`, `US-002.2`:**
+1. **Confirm Prerequisites Completed in Story `US-001` and Story `US-002`:**
    - Review Section 8 of [`docs/stories/US-001-wails-react-skeleton-spike.md`](../stories/US-001-wails-react-skeleton-spike.md) and [`docs/stories/US-002-cli-single-instance-spike.md`](../stories/US-002-cli-single-instance-spike.md).
-   - Verify single-instance IPC coordinator wiring in `main.go` and standalone binary `build/bin/markdown-viewer-spike`.
-2. **Execute Task `US-002.3: Verify path handling with spaces and Unicode`:**
-   - Review [`docs/stories/US-002-cli-single-instance-spike.md`](../stories/US-002-cli-single-instance-spike.md).
-   - Test forwarding and handling of paths containing spaces and multi-byte UTF-8 Unicode characters (such as `fixtures/golden/نمونه سند.md`).
-   - Execute verification command:
+   - Confirm Story `US-002` complete across all three tasks (`US-002.1`, `US-002.2`, `US-002.3`).
+2. **Execute Task `US-003.1: Implement scoped local asset resolver in Go backend`:**
+   - Review [`docs/stories/US-003-webview-asset-security-spike.md`](../stories/US-003-webview-asset-security-spike.md).
+   - Implement Go backend asset loader in `spike/assets/` enforcing document root directory boundaries and rejecting path traversal payloads (`../../../../etc/passwd` or Windows drive traversal) with 403 Forbidden.
+   - Run verification command:
      ```bash
-     ./build/bin/markdown-viewer-spike "fixtures/golden/نمونه سند.md"
+     go test -v -race ./spike/assets/...
      ```
-   - Verify exact UTF-8 byte sequence preservation, absence of shell or IPC string mangling, and proper logging.
-   - Record observable session evidence in Section 8 of `US-002`.
+   - Record observable test output in Section 8 of `US-003`.
    - Create isolated Task-level Conventional Commit upon successful verification.
 3. **Do NOT Jump to Feature Code:** Maintain strict Phase 1 spike bounds. Do not write production viewer code or modify `PRD.md`.
 4. **Preserve Phase Gate Verdict:** Keep overall Phase 1 verdict `NOT_READY` until all platform evidence (Windows, macOS, Linux) is recorded.

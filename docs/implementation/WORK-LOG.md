@@ -620,3 +620,53 @@ This log is an append-only chronological record of all significant actions, veri
 - **Completed Tasks:** `US-002.1` (`DONE`), `US-002.2` (`DONE`).
 - **Next Eligible Task:** `US-002.3: Verify path handling with spaces and Unicode` under [`US-002`](../stories/US-002-cli-single-instance-spike.md) (`READY`).
 - **Phase 1 Readiness Verdict:** **`NOT_READY`** (Contingent on multi-platform feasibility evidence across Windows 10/11 x64, macOS Apple Silicon, and Ubuntu 24.04/26.04).
+
+---
+
+## [2026-10-23] — Phase 1: Verify Path Handling with Spaces and Unicode (US-002.3)
+
+- **Work Item ID:** `US-002.3`
+- **Agent:** Antigravity Autonomous Task Runner
+- **Summary:** Verified command-line and single-instance IPC path handling for filenames and paths containing spaces, special characters, and multi-byte UTF-8 Unicode. Created baseline golden fixture `fixtures/golden/نمونه سند.md` containing Persian text. Updated `main.go` with a structured `logReceivedFile` logger asserting decoded basename, exact UTF-8 byte sequences, and UTF-8 validity. Enhanced unit tests in `spike/ipc/coordinator_test.go` with byte-level equality assertions (`bytes.Equal`), valid UTF-8 checks (`utf8.ValidString`), and basename checks (`filepath.Base`). Executed exact verification command `./build/bin/markdown-viewer-spike "fixtures/golden/نمونه سند.md"` and secondary forwarding of `"test docs/path with spaces/نمونه سند.md"`, confirming exact byte sequence preservation (`d9 86 d9 85 d9 88 d9 86 d9 87 20 d8 b3 d9 86 d8 af 2e 6d 64`) without shell mangling, space splitting, or character substitution. Marked Story `US-002` as `DONE`.
+
+### Actions Taken:
+1. **Fixture Creation:**
+   - Created golden fixture `fixtures/golden/نمونه سند.md` with Persian RTL prose and Markdown formatting.
+2. **Path Logging & UTF-8 Validation (`main.go`):**
+   - Added `logReceivedFile` helper to log decoded filename (`filepath.Base`), full path hex byte sequences, filename hex byte sequences, and `utf8.ValidString` verification.
+   - Connected `logReceivedFile` to both initial command-line arguments and forwarded messages from secondary instances.
+3. **Unit Test Hardening (`spike/ipc/coordinator_test.go`):**
+   - Enhanced `TestPayloadIntegrityWithUnicodeAndSpaces` to assert `bytes.Equal([]byte(received.Args[0]), []byte(path))`, `utf8.ValidString(received.Args[0])`, and `filepath.Base(received.Args[0]) == filepath.Base(path)` across Persian, CJK, Cyrillic, emoji, and spaced path test cases.
+4. **Standalone Binary Rebuild:**
+   - Recompiled production binary `build/bin/markdown-viewer-spike` with `-tags production`.
+5. **Exact Task Verification:**
+   - Launched primary instance with initial argument `"fixtures/golden/نمونه سند.md"` and captured log.
+   - Executed exact verification command `./build/bin/markdown-viewer-spike "fixtures/golden/نمونه سند.md"`, confirming secondary exit code 0 and primary message receipt.
+   - Executed secondary forwarding with spaced path `"test docs/path with spaces/نمونه سند.md"`, confirming secondary exit code 0 and primary message receipt.
+   - Verified exact byte sequence `[d9 86 d9 85 d9 88 d9 86 d9 87 20 d8 b3 d9 86 d8 af 2e 6d 64]`, valid UTF-8 (`true`), and decoded filename `نمونه سند.md`.
+6. **Static Analysis & Linters:**
+   - Ran `goimports -l main.go spike/ipc/` and `gofmt -l main.go spike/ipc/` (0 issues).
+   - Ran `golangci-lint run ./...` (0 issues).
+   - Ran `go test -v -race ./...` (all tests passed).
+   - Ran `govulncheck ./...` (0 vulnerabilities found).
+7. **Documentation Synchronization & Milestone Completion:**
+   - Marked Task `US-002.3` as `DONE` and Story `US-002` as `DONE` in `docs/stories/US-002-cli-single-instance-spike.md`.
+   - Updated `docs/implementation/BACKLOG.md`: advanced `US-002` to `DONE`.
+   - Updated `docs/implementation/CURRENT-STATE.md`: advanced last completed work item to `US-002.3` and active / next eligible work item to `US-003.1`.
+   - Preserved overall Phase 1 verdict as `NOT_READY` pending multi-platform feasibility evidence.
+
+### Verification Results:
+- `./build/bin/markdown-viewer-spike "fixtures/golden/نمونه سند.md"`: Exit code 0, UTF-8 bytes verified (PASS).
+- Spaced path forwarding `"test docs/path with spaces/نمونه سند.md"`: Exit code 0, exact bytes verified (PASS).
+- `go test -v -race ./...`: All tests passed (PASS).
+- `golangci-lint run ./...`: 0 issues (PASS).
+- `govulncheck ./...`: 0 vulnerabilities found (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **Phase:** Phase 1 (Technical Feasibility Spike).
+- **Active Story:** `US-002: Command-Line & Single-Instance IPC Feasibility Spike` (`DONE`).
+- **Completed Tasks:** `US-002.1` (`DONE`), `US-002.2` (`DONE`), `US-002.3` (`DONE`).
+- **Next Eligible Task:** `US-003.1: Implement scoped local asset resolver in Go backend` under [`US-003`](../stories/US-003-webview-asset-security-spike.md) (`READY`).
+- **Phase 1 Readiness Verdict:** **`NOT_READY`** (Contingent on multi-platform feasibility evidence across Windows 10/11 x64, macOS Apple Silicon, and Ubuntu 24.04/26.04).

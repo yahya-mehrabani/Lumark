@@ -3,11 +3,14 @@ package main
 import (
 	"context"
 	"embed"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"syscall"
 	"time"
+	"unicode/utf8"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 
@@ -77,7 +80,7 @@ func main() {
 	if len(os.Args) > 1 {
 		log.Printf("[IPC/Primary] Initial arguments: %v (working dir: %s)", os.Args[1:], wd)
 		for _, arg := range os.Args[1:] {
-			log.Printf("[IPC/Primary] File received: %s", arg)
+			logReceivedFile("IPC/Primary", arg)
 		}
 	}
 
@@ -140,7 +143,7 @@ func main() {
 		for msg := range coord.Messages() {
 			log.Printf("[IPC/Primary] Received forwarded message from secondary (working dir: %s, args: %v)", msg.WorkingDir, msg.Args)
 			for _, arg := range msg.Args {
-				log.Printf("[IPC/Primary] File received: %s", arg)
+				logReceivedFile("IPC/Primary", arg)
 				app.Event.Emit("file:open", arg)
 			}
 			// Bring the main window forward and request focus
@@ -172,4 +175,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+// logReceivedFile logs the received path, decoded basename, UTF-8 byte sequences, and validity.
+func logReceivedFile(source, arg string) {
+	filename := filepath.Base(arg)
+	byteSeq := fmt.Sprintf("% x", []byte(arg))
+	filenameByteSeq := fmt.Sprintf("% x", []byte(filename))
+	log.Printf("[%s] File received: %s (filename: %s, utf8 bytes: [%s], filename bytes: [%s], valid utf8: %t)",
+		source, arg, filename, byteSeq, filenameByteSeq, utf8.ValidString(arg))
 }
