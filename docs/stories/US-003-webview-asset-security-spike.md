@@ -67,7 +67,7 @@ Verify that the platform WebView (WebKitGTK on Linux, WebView2 on Windows, WKWeb
 
 ### Task US-003.2: Assemble cross-feature spike fixture
 - **Task ID:** `US-003.2`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** `fixtures/spike/monolithic-fixture.md` created with Persian RTL, English LTR, code block, KaTeX, Mermaid, and image reference.
 - **Verification Command:**
@@ -167,4 +167,31 @@ Verify that the platform WebView (WebKitGTK on Linux, WebView2 on Windows, WKWeb
 --- PASS: TestConcurrentResolverAccess (0.03s)
 PASS
 ok      markdown-viewer/spike/assets    1.074s
+```
+
+### Task US-003.2 Implementation & Verification Evidence
+- **Execution Date:** 2026-10-23
+- **Agent ID:** Antigravity Autonomous Story Runner
+- **Status:** `DONE`
+- **Changed Files:**
+  - `fixtures/spike/monolithic-fixture.md` (Monolithic cross-feature spike fixture with Persian RTL, English LTR, KaTeX, Mermaid, code fences, local image reference, and script injection vector)
+  - `fixtures/spike/assets/test.png` (Valid 1x1 RGBA PNG asset referenced by the fixture)
+- **Summary of Implementation:**
+  - Created `fixtures/spike/monolithic-fixture.md` satisfying all PRD §1.4 item 7 and FR-ASSET-001 requirements.
+  - Included Persian RTL heading and prose containing verified string `سلام دنیا`.
+  - Included KaTeX inline formula `$E = mc^2$` and Fourier transform display math block.
+  - Included Mermaid flowchart diagram block (` ```mermaid `).
+  - Included multilingual code fences (Go with Persian comments and TypeScript interface).
+  - Included relative local image reference `![Local Image](./assets/test.png)`.
+  - Included adversarial injection payloads (`<script>alert(...)</script>` and `<img onerror=... />`) alongside safe HTML blocks.
+  - Verified presence and regex string matching via exact verification command.
+- **Terminal Output & Verification Evidence:**
+```bash
+test -f fixtures/spike/monolithic-fixture.md && grep -n -E "سلام دنیا|\\\$E = mc\^2\\\$|mermaid" fixtures/spike/monolithic-fixture.md
+```
+```text
+1:# سند آزمون جامع — سلام دنیا
+29:- رابطه هم‌ارزی جرم و انرژی: $E = mc^2$
+40:```mermaid
+60:    fmt.Println("سلام دنیا — Hello World from Go!")
 ```
