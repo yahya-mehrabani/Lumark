@@ -112,4 +112,4 @@ This document is the authoritative index of all Epics and User Stories for `mark
 - **Total User Stories:** 32
 - **Total Detailed Tasks:** 124 (all 124 tasks have complete, concrete verification methods and environment handling)
 - **PRD Requirements & Obligations Mapped:** 60 / 60 (100% bidirectional traceability)
-- **Current Implementation Verdict:** **`IN_PROGRESS`** (Phase 1 Feasibility Spike authorized on Wails v3 candidate `v3.0.0-beta.34` with v2 `v2.17.0` fallback; Task `US-001.1` completed & verified, `US-001.2` next)
+- **Current Implementation Verdict:** **`IN_PROGRESS`** (Phase 1 Feasibility Spike authorized on Wails v3 candidate `v3.0.0-beta.34` with v2 `v2.17.0` fallback; Tasks `US-001.1` and `US-001.2` completed & verified, `US-001.3` next)

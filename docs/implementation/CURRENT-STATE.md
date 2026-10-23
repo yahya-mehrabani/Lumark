@@ -3,7 +3,7 @@
 **Last Updated:** 2026-10-23<br>
 **Status Authority:** Single active operational snapshot for incoming agents.<br>
 **Planning Audit Remediation Status:** Complete across all 18 original audit findings (AUD-001 through AUD-018) and 10 new remediation findings (REM-001 through REM-010).<br>
-**Implementation Readiness Verdict:** **`IN_PROGRESS`** (Phase 1 Feasibility Spike Authorized by Product Owner on Wails v3 Candidate `v3.0.0-beta.34`; Multi-Platform Production Baseline Evidence Pending)
+**Implementation Readiness Verdict:** **`IN_PROGRESS`** (Phase 1 Feasibility Spike in progress; overall Phase 1 verdict remains **`NOT_READY`** for Phase 2 transition until multi-platform feasibility evidence is satisfied on Windows, macOS, and Linux per PRD Section 1.4)
 
 ---
 
@@ -11,10 +11,10 @@
 
 - **Current Overall Phase:** **Phase 1 (Technical Feasibility Spike)**.
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
-- **Application Implementation Status:** **FEASIBILITY SPIKE IN PROGRESS**. Zero production code created; toolchain readiness verified for minimal spike.
+- **Application Implementation Status:** **FEASIBILITY SPIKE IN PROGRESS**. Zero production code created; toolchain and environment diagnostics verified for minimal spike.
 - **Feasibility Spike Status:** **IN_PROGRESS**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-001.1: Verify local toolchain readiness and environment prerequisites` under [`US-001`](../stories/US-001-wails-react-skeleton-spike.md).
-- **Active / Next Eligible Work Item:** Task `US-001.2: Install pinned Wails CLI and run environment diagnostics` under [`US-001`](../stories/US-001-wails-react-skeleton-spike.md).
+- **Last Completed Work Item:** Task `US-001.2: Install pinned Wails CLI and run environment diagnostics` under [`US-001`](../stories/US-001-wails-react-skeleton-spike.md).
+- **Active / Next Eligible Work Item:** Task `US-001.3: Initialize minimal Wails project structure with React + Vite` under [`US-001`](../stories/US-001-wails-react-skeleton-spike.md).
 
 ---
 
@@ -81,11 +81,13 @@ All planning remediation artifacts must be preserved:
 ## 5. Exact Next Action for the Next Agent
 
 The next incoming agent must:
-1. **Confirm Prerequisites Completed in Task `US-001.1`:**
-   - Review Section 8 of [`docs/stories/US-001-wails-react-skeleton-spike.md`](../stories/US-001-wails-react-skeleton-spike.md) for verified toolchain versions and package configurations.
-2. **Execute Task `US-001.2: Install pinned Wails CLI and run environment diagnostics`:**
-   - Verify presence of pinned `wails3` binary at `/root/go/bin/wails3` (`v3.0.0-beta.34`).
-   - Run verification command: `/root/go/bin/wails3 doctor`.
-   - Record complete doctor diagnostics in `docs/stories/US-001-wails-react-skeleton-spike.md` under Section 8.
+1. **Confirm Prerequisites Completed in Tasks `US-001.1` and `US-001.2`:**
+   - Review Section 8 of [`docs/stories/US-001-wails-react-skeleton-spike.md`](../stories/US-001-wails-react-skeleton-spike.md) for verified toolchain versions and completed `wails3 doctor` diagnostics (exit code 0, no issues found).
+2. **Execute Task `US-001.3: Initialize minimal Wails project structure with React + Vite`:**
+   - Initialize minimal Wails v3 + React + Vite skeleton conforming to [ADR-0001](../decisions/ADR-0001-technology-baseline.md).
+   - Ensure `main.go`, `frontend/package.json`, and `frontend/vite.config.ts` are present.
+   - Run verification command: `test -f main.go && test -f frontend/package.json && test -f frontend/vite.config.ts && cd frontend && npm run build`.
+   - Verify `frontend/dist/index.html` is generated cleanly.
    - Follow the Task-Level Conventional Commits policy upon successful verification.
 3. **Do NOT Jump to Feature Code:** Maintain strict Phase 1 spike bounds. Do not write production viewer code or modify `PRD.md`.
+4. **Preserve Phase Gate Verdict:** Keep overall Phase 1 verdict `NOT_READY` until all platform evidence (Windows, macOS, Linux) is recorded.

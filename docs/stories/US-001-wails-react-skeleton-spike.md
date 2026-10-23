@@ -75,7 +75,7 @@ Verify that a minimal Wails desktop application (evaluating Wails v3 `v3.0.0-bet
 
 ### Task US-001.2: Install pinned Wails CLI and run environment diagnostics
 - **Task ID:** `US-001.2`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-001.1`
 - **Completion Criteria:** Pinned Wails CLI installed to `~/go/bin/`; doctor command verifies system capabilities.
 - **Verification Command (Wails v3 candidate):**
@@ -143,11 +143,11 @@ Verify that a minimal Wails desktop application (evaluating Wails v3 `v3.0.0-bet
 
 - **Execution Date:** 2026-10-23
 - **Agent ID:** Antigravity AI Implementation Agent
-- **Active Task:** `US-001.1` (Completed & Verified)
+- **Active Task:** `US-001.2` (Completed & Verified)
 - **Host Environment:** Linux COM-807 6.18.54.1-microsoft-standard-WSL2 (Ubuntu 26.04.1 LTS x86_64)
 - **Graphical Subsystem:** WSLg active (`DISPLAY=:0`, `WAYLAND_DISPLAY=wayland-0`)
-- **Status Transition:** `US-001` transitioned from `READY` to `IN_PROGRESS`; Task `US-001.1` transitioned from `READY` to `DONE`.
-- **Changed Files:** Documentation status and verification evidence only (toolchain verification task; zero application source files changed).
+- **Status Transition:** Task `US-001.2` transitioned from `READY` to `DONE` (`US-001` remains `IN_PROGRESS`).
+- **Changed Files:** Documentation status and verification evidence only (CLI diagnostics task; zero application source files changed).
 
 ### Task US-001.1 Verification Evidence
 
@@ -231,3 +231,134 @@ v3.0.0-beta.34
 - **Package Config:** `pkg-config 2.5.1`
 - **Graphical Displays:** `DISPLAY=:0`, `WAYLAND_DISPLAY=wayland-0` (WSLg active)
 - **Toolchain Status:** All prerequisites for Task `US-001.2` (`wails3 doctor`) are satisfied.
+
+### Task US-001.2 Verification Evidence
+
+#### 1. Pinned Wails CLI Binary Verification
+**Command:**
+```bash
+/root/go/bin/wails3 version
+```
+**Exit Code:** 0
+**Captured Terminal Output:**
+```text
+v3.0.0-beta.34
+```
+
+#### 2. Go Toolchain Analysis & Compiler vs Upstream Distinction
+**Commands:**
+```bash
+go env GOTOOLCHAIN
+GOTOOLCHAIN=local go version
+go version -m /root/go/bin/wails3
+```
+**Exit Code:** 0
+**Captured Terminal Output:**
+- `go env GOTOOLCHAIN`:
+  ```text
+  auto
+  ```
+- `GOTOOLCHAIN=local go version`:
+  ```text
+  go version go1.26.8 linux/amd64
+  ```
+- `go version -m /root/go/bin/wails3` (header excerpt):
+  ```text
+  /root/go/bin/wails3: go1.26.8
+          path    github.com/wailsapp/wails/v3/cmd/wails3
+          mod     github.com/wailsapp/wails/v3    v3.0.0-beta.34  h1:3p/s+rk6olaquzaDWWowVTJ1ZMIBDHEsTUqxsffR4Zw=
+  ```
+**Explicit Toolchain Version Distinction:**
+- **Local Active Go Version:** `go1.26.8 linux/amd64` (`/usr/bin/go`).
+- **Compiler Version Used to Build CLI Binary:** `go1.26.8` (confirmed via `go version -m /root/go/bin/wails3`).
+- **Wails v3 Minimum Go Requirement:** `go 1.26.0` (declared in `github.com/wailsapp/wails/v3@v3.0.0-beta.34` `go.mod`).
+- **Wails v3 Upstream Toolchain Directive:** `toolchain go1.26.9` (declared in upstream module `go.mod`).
+- **Analysis:** Local `go1.26.8` satisfies the minimum language requirement `go 1.26.0`. Local compiler version `go1.26.8` is distinct from the upstream toolchain directive `go1.26.9`. With `GOTOOLCHAIN=auto`, local compilation operates without requiring artificial toolchain switching.
+
+#### 3. Official Wails Environment Diagnostic Report (`wails3 doctor`)
+**Command:**
+```bash
+/root/go/bin/wails3 doctor
+```
+**Exit Code:** 0
+**Captured Terminal Output:**
+```text
+Wails v3.0.0-beta.34 › Wails Doctor
+
+# System
+
+┌────────────────────────────────────────────────────────────────┐
+| Name                | Ubuntu                                   |
+| Version             | 26.04                                    |
+| ID                  | ubuntu                                   |
+| Branding            | 26.04.1 LTS (Resolute Raccoon)           |
+| Platform            | linux                                    |
+| Architecture        | amd64                                    |
+| Desktop Environment | unset                                    |
+| NVIDIA Driver       | N/A                                      |
+| XDG_SESSION_TYPE    | unset                                    |
+| CPU                 | Intel(R) Core(TM) i5-9500T CPU @ 2.20GHz |
+| Memory              | 10GB                                     |
+└────────────────────────────────────────────────────────────────┘
+
+# Build Environment
+
+┌───────────────────────────────┐
+| Wails CLI    | v3.0.0-beta.34 |
+| Go Version   | go1.26.8       |
+| -buildmode   | exe            |
+| -compiler    | gc             |
+| CGO_CFLAGS   |                |
+| CGO_CPPFLAGS |                |
+| CGO_CXXFLAGS |                |
+| CGO_ENABLED  | 1              |
+| CGO_LDFLAGS  |                |
+| GOAMD64      | v1             |
+| GOARCH       | amd64          |
+| GOOS         | linux          |
+└───────────────────────────────┘
+
+# Dependencies
+
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+| *Android SDK        | Not found. Set ANDROID_HOME (install via Android Studio or the command-line tools). |
+| gcc                 | 12.12ubuntu2.26.04.2                                                                |
+| gtk3 (legacy)       | 3.24.52-0ubuntu1                                                                    |
+| gtk4                | 4.22.4+ds-0ubuntu0.1                                                                |
+| npm                 | 9.2.0                                                                               |
+| pkg-config          | 2.5.1-4                                                                             |
+| webkit2gtk (legacy) | 2.52.6-0ubuntu0.26.04.1                                                             |
+| webkitgtk-6.0       | 2.52.6-0ubuntu0.26.04.1                                                             |
+| docker              | *Not installed (optional - for cross-compilation)                                   |
+|                                                                                                           |
+└───────────────────────────────────────── * - Optional Dependency ─────────────────────────────────────────┘
+
+# Signing
+
+┌────────────────────────────────────────┐
+| macOS Signing   | Not configured       |
+| Windows Signing | Not configured       |
+| Linux Signing   | Not configured (GPG) |
+└────────────────────────────────────────┘
+
+# Checking for issues
+
+ SUCCESS  No issues found
+
+# Diagnosis
+
+ SUCCESS  Your system is ready for Wails development!
+
+Need documentation? Run: wails3 docs
+ ♥   If Wails is useful to you or your company, please consider sponsoring the project: wails3 sponsor
+```
+
+#### 4. Dependency & Diagnostics Assessment
+- **Core System Status:** `SUCCESS No issues found`; `SUCCESS Your system is ready for Wails development!`.
+- **GTK4 & WebKitGTK 6.0 Detection:** GTK4 (`4.22.4`) and WebKitGTK 6.0 (`2.52.6`) were successfully detected by `wails3 doctor` alongside build tools (`gcc`, `pkg-config 2.5.1-4`) and Node ecosystem (`npm 9.2.0`).
+- **Optional Dependencies Handled:**
+  - `*Android SDK` (Not found): Optional mobile target; strictly excluded by PRD and project scope. No action required.
+  - `*docker` (Not installed): Optional cross-compilation utility; not required for local WSL2/Linux spike development.
+  - Code signing (macOS, Windows, Linux GPG): Not configured; packaging and distribution concern scheduled for Phase 6 (`EPIC-008`), not required for Phase 1 local feasibility spike.
+- **Package Installation Decision:** Zero additional packages are required. No changes to system packages or shell environment variables were made.
+- **Task Completion Status:** Task `US-001.2` completion criteria are fully met. Environment is verified ready for Task `US-001.3`.
