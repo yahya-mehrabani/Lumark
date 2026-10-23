@@ -373,3 +373,67 @@ This log is an append-only chronological record of all significant actions, veri
 - **Completed Tasks:** `US-001.1` (`DONE`), `US-001.2` (`DONE`), `US-001.3` (`DONE`).
 - **Next Eligible Task:** `US-001.4: Build production binary with embedded assets` (`READY`).
 - **Phase 1 Readiness Verdict:** **`NOT_READY`** (Contingent on multi-platform feasibility evidence across Windows 10/11 x64, macOS Apple Silicon, and Ubuntu 24.04/26.04).
+
+---
+
+## [2026-10-23] — Phase 1: Build Production Binary with Embedded Assets (Task US-001.4)
+
+- **Work Item ID:** `US-001.4`
+- **Agent:** Antigravity AI Implementation Agent
+- **Summary:** Executed and completed Task `US-001.4`. Resolved Go standard-library vulnerabilities identified in previous scan by pinning `toolchain go1.26.10` in `go.mod` (tested via `GOTOOLCHAIN=auto`), confirming that `govulncheck ./...` reports 0 vulnerabilities found. Verified clean frontend dependency installation from lockfile (`npm ci`) and production asset compilation (`npm run build`). Executed official Wails v3 production build (`wails3 build`), producing stripped production binary `bin/markdown-viewer` (9.9 MiB). Executed explicit story verification command `mkdir -p build/bin && go build -tags production -o build/bin/markdown-viewer-spike .`, producing standalone production executable `build/bin/markdown-viewer-spike` (14 MiB, ELF 64-bit). Inspected binary build metadata via `go version -m`, confirming `go1.26.10`, `-tags=production`, and `CGO_ENABLED=1`. Verified standalone execution under WSLg (`DISPLAY=:0`), observing native desktop window creation (1000x618) and embedded asset loading without running Vite dev server or Node.js runtime (`ps aux | grep node` / `pgrep -f vite` confirmed zero active Vite servers). Ran all Go test, vet, linter (`golangci-lint`), and repository validators. Synchronized `docs/stories/US-001-wails-react-skeleton-spike.md`, `docs/implementation/CURRENT-STATE.md`, and `docs/implementation/BACKLOG.md`.
+
+### Actions Taken:
+1. **Toolchain Vulnerability Remediation:**
+   - Evaluated Go toolchain security findings: 11 standard library CVEs in `go1.26.8` fixed in `go1.26.9`/`go1.26.10`.
+   - Updated `go.mod` with `toolchain go1.26.10` to enable reproducible automatic toolchain selection via Go's built-in toolchain management (`GOTOOLCHAIN=auto`).
+   - Verified active compilation version via `go version` (`go version go1.26.10 linux/amd64`).
+   - Ran `govulncheck ./...`, confirming 0 vulnerabilities found (all 11 standard library CVEs resolved).
+2. **Frontend Reproducible Build:**
+   - Ran `npm ci` in `frontend/`, verifying deterministic dependencies from committed `package-lock.json` (30 packages audited, 0 vulnerabilities).
+   - Ran `npm run build`, producing bundled client assets in `frontend/dist/` (`dist/index.html` 506 B, `dist/assets/index-BfZl-D9R.js` 171.99 kB).
+3. **Production Application Builds:**
+   - Executed `/root/go/bin/wails3 build`, generating desktop entry `build/linux/markdown-viewer.desktop`, typed TypeScript bindings in `frontend/bindings/`, and compiled stripped binary `bin/markdown-viewer` (9.9 MiB, ELF 64-bit, SHA-256: `2745d359ee6079d40064937bbd6410d456a645517cf2d25f71942259f3b9317f`).
+   - Executed story task verification command `mkdir -p build/bin && go build -tags production -o build/bin/markdown-viewer-spike .`, producing standalone executable `build/bin/markdown-viewer-spike` (14 MiB, ELF 64-bit, SHA-256: `68f5f4a80eba7e76fc2600597a2ac68c8b5f430e623dc0a89582c9bc9ae1a86b`).
+   - Verified build metadata via `go version -m build/bin/markdown-viewer-spike`, confirming compiler `go1.26.10`, `-tags=production`, and `CGO_ENABLED=1`.
+4. **Desktop Execution & Embedded Asset Verification:**
+   - Launched production binary under WSLg (`GDK_BACKEND=x11 DISPLAY=:0 WEBKIT_DISABLE_COMPOSITING_MODE=1 ./build/bin/markdown-viewer-spike`).
+   - Inspected window hierarchy with `xwininfo -root -tree` (Window `0x600005 "Markdown Viewer (Spike Baseline)"`, 1000x618) and properties via `xprop -id 0x600005`.
+   - Verified process isolation: `ps aux | grep -i '[n]ode'` and `pgrep -f vite` confirmed zero active Vite or Node dev server processes; assets loaded directly from embedded `embed.FS`.
+5. **Quality, Linting & Repository Validation:**
+   - Ran `go test ./... && go vet ./...` (exit code 0).
+   - Ran `golangci-lint run ./...` (0 issues).
+   - Ran `python3 scripts/validate_links.py` (PASS; 74 files scanned, 0 broken, 0 machine-specific).
+   - Ran `python3 scripts/reconcile_tasks.py` (PASS; 124 tasks, complete structural verification fields).
+   - Ran `python3 scripts/reconcile_requirements_crosswalk.py` (PASS; 88 rows parsed, 60 catalog items verified).
+   - Ran `git diff --check` (PASS; 0 whitespace errors).
+   - Verified `git diff PRD.md` remains empty (PRD strictly preserved).
+6. **Documentation Synchronization:**
+   - Marked Task `US-001.4` as `DONE` in `docs/stories/US-001-wails-react-skeleton-spike.md` and recorded complete verification logs.
+   - Synchronized `docs/implementation/CURRENT-STATE.md`, advancing last completed work item to `US-001.4` and next eligible work item to `US-001.5`.
+   - Updated `docs/implementation/BACKLOG.md` metrics summary.
+   - Preserved overall Phase 1 verdict as `NOT_READY` pending cross-platform evidence.
+
+### Verification Results:
+- `go version`: `go version go1.26.10 linux/amd64` (PASS).
+- `govulncheck ./...`: `No vulnerabilities found.` (PASS, exit code 0).
+- `npm ci`: 30 packages audited, 0 vulnerabilities (PASS).
+- `npm run build`: Exit code 0, generated `dist/index.html` (PASS).
+- `/root/go/bin/wails3 build`: Exit code 0, generated `bin/markdown-viewer` (9.9 MiB stripped) (PASS).
+- `mkdir -p build/bin && go build -tags production -o build/bin/markdown-viewer-spike .`: Exit code 0, 14 MiB ELF 64-bit binary (PASS).
+- `go version -m build/bin/markdown-viewer-spike`: Compiled with `go1.26.10`, `-tags=production`, `CGO_ENABLED=1` (PASS).
+- `xwininfo -root -tree`: Window `0x600005 "Markdown Viewer (Spike Baseline)"` (1000x618) active on display `:0` (PASS).
+- `pgrep -f vite`: No active Vite development server processes (PASS).
+- `go test ./... && go vet ./...`: Exit code 0 (PASS).
+- `golangci-lint run ./...`: 0 issues (PASS).
+- `python3 scripts/validate_links.py`: 74 files scanned; 0 machine-specific links; 379 valid internal links; 0 broken links (PASS).
+- `python3 scripts/reconcile_tasks.py`: 124 tasks scanned; 0 duplicate IDs; 0 sequence gaps; complete structural verification fields (PASS).
+- `python3 scripts/reconcile_requirements_crosswalk.py`: 88 rows parsed; 0 duplicate keys; 0 missing destinations; 60/60 catalog parity; 32 story files verified (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **Phase:** Phase 1 (Technical Feasibility Spike).
+- **Active Story:** `US-001: Wails Application Skeleton & Production Asset Embedding Spike`.
+- **Completed Tasks:** `US-001.1` (`DONE`), `US-001.2` (`DONE`), `US-001.3` (`DONE`), `US-001.4` (`DONE`).
+- **Next Eligible Task:** `US-001.5: Execute standalone binary and verify independent execution` (`READY`).
+- **Phase 1 Readiness Verdict:** **`NOT_READY`** (Contingent on multi-platform feasibility evidence across Windows 10/11 x64, macOS Apple Silicon, and Ubuntu 24.04/26.04).

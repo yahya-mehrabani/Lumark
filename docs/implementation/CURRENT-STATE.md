@@ -11,10 +11,10 @@
 
 - **Current Overall Phase:** **Phase 1 (Technical Feasibility Spike)**.
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
-- **Application Implementation Status:** **FEASIBILITY SPIKE IN PROGRESS**. Minimal Wails v3 + React + Vite project structure initialized, frontend compiled with static bindings, and standalone desktop window verified running under Task `US-001.3`.
+- **Application Implementation Status:** **FEASIBILITY SPIKE IN PROGRESS**. Minimal Wails v3 + React + Vite project structure initialized, frontend compiled with static bindings, standalone desktop window verified, and production binary with embedded assets compiled and verified under Task `US-001.4`.
 - **Feasibility Spike Status:** **IN_PROGRESS**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-001.3: Initialize minimal Wails project structure with React + Vite` under [`US-001`](../stories/US-001-wails-react-skeleton-spike.md).
-- **Active / Next Eligible Work Item:** Task `US-001.4: Build production binary with embedded assets` under [`US-001`](../stories/US-001-wails-react-skeleton-spike.md).
+- **Last Completed Work Item:** Task `US-001.4: Build production binary with embedded assets` under [`US-001`](../stories/US-001-wails-react-skeleton-spike.md).
+- **Active / Next Eligible Work Item:** Task `US-001.5: Execute standalone binary and verify independent execution` under [`US-001`](../stories/US-001-wails-react-skeleton-spike.md).
 
 ---
 
@@ -23,8 +23,8 @@
 1. **Host Environment:** Linux COM-807 6.18.54.1-microsoft-standard-WSL2 (Ubuntu 26.04.1 LTS x86_64).
 2. **Graphical Subsystem:** WSLg is active with `DISPLAY=:0` and `WAYLAND_DISPLAY=wayland-0`. Graphical runtime execution is functional within WSL2.
 3. **Core Toolchains Installed & Verified:**
-   - Go: `go1.26.8 linux/amd64` (`/usr/bin/go`).
-   - Wails v3 Module Requirement: `go 1.26.0`, toolchain `go1.26.9` (verified via `go list -m -json github.com/wailsapp/wails/v3@v3.0.0-beta.34`; satisfied by local Go).
+   - Go: `go1.26.10 linux/amd64` (selected via `toolchain go1.26.10` in `go.mod` under `GOTOOLCHAIN=auto`; local host base binary `/usr/bin/go` is `go1.26.8`).
+   - Wails v3 Module Requirement: `go 1.26.0`, toolchain `go1.26.9` (satisfied by `go1.26.10`).
    - Wails CLI: `v3.0.0-beta.34` (`/root/go/bin/wails3`).
    - Node.js: `v22.22.1` (`/usr/bin/node`).
    - npm: `9.2.0` (`/usr/bin/npm`).
@@ -32,7 +32,7 @@
 4. **Go Verification & Linter Tools Installed:**
    - `golangci-lint`: `2.15.0` (`/root/go/bin/golangci-lint`).
    - `goimports`: Installed (`/root/go/bin/goimports`).
-   - `govulncheck`: `v1.9.0` (`/root/go/bin/govulncheck`).
+   - `govulncheck`: `v1.9.0` (`/root/go/bin/govulncheck`; 0 vulnerabilities found under `go1.26.10`).
    - `gopls`: `v0.24.0` (`/root/go/bin/gopls`).
 5. **Shell & Utility Tools Installed:** `shellcheck`, `shfmt`, `rg` (ripgrep), `fdfind`, `tree`, `jq`, `strace`, `lsof`.
 6. **Linux Desktop Libraries Installed & Verified:**
@@ -81,13 +81,13 @@ All planning remediation artifacts must be preserved:
 ## 5. Exact Next Action for the Next Agent
 
 The next incoming agent must:
-1. **Confirm Prerequisites Completed in Tasks `US-001.1`, `US-001.2`, and `US-001.3`:**
-   - Review Section 8 of [`docs/stories/US-001-wails-react-skeleton-spike.md`](../stories/US-001-wails-react-skeleton-spike.md) for verified toolchain versions, doctor diagnostics, generated project skeleton, static binding generation, and WSLg interactive window verification.
-2. **Execute Task `US-001.4: Build production binary with embedded assets`:**
-   - Build the standalone production binary embedding the frontend build:
-     `go build -tags production -o build/bin/markdown-viewer-spike . && ls -lh build/bin/markdown-viewer-spike`
-   - Verify executable size (between 10 MiB and 30 MiB) and confirm ELF 64-bit executable via `file`.
-   - Record authentic build output, size, and checksum in Section 8 of `US-001`.
+1. **Confirm Prerequisites Completed in Tasks `US-001.1`, `US-001.2`, `US-001.3`, and `US-001.4`:**
+   - Review Section 8 of [`docs/stories/US-001-wails-react-skeleton-spike.md`](../stories/US-001-wails-react-skeleton-spike.md) for verified toolchain versions (`go1.26.10`), doctor diagnostics, generated project skeleton, static binding generation, clean `govulncheck` resolution, and standalone production build outputs (`bin/markdown-viewer` and `build/bin/markdown-viewer-spike`).
+2. **Execute Task `US-001.5: Execute standalone binary and verify independent execution`:**
+   - Execute the compiled standalone production binary outside dev mode (`./build/bin/markdown-viewer-spike` or `./bin/markdown-viewer`).
+   - Verify that the desktop window renders the static test string ("Spike Baseline Loaded") on screen under WSLg (`DISPLAY=:0`).
+   - Verify process independence: confirm no active Vite server or Node dev server process exists (`ps aux | grep node` / `pgrep -f vite`).
+   - Record authentic process tables and runtime evidence in Section 8 of `US-001`.
    - Follow the Task-Level Conventional Commits policy upon successful verification.
 3. **Do NOT Jump to Feature Code:** Maintain strict Phase 1 spike bounds. Do not write production viewer code or modify `PRD.md`.
 4. **Preserve Phase Gate Verdict:** Keep overall Phase 1 verdict `NOT_READY` until all platform evidence (Windows, macOS, Linux) is recorded.

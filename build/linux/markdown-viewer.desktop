@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=markdown-viewer
+Exec=markdown-viewer
+Icon=markdown-viewer
+Categories=Development;
+Terminal=false
+Keywords=wails
+Version=1.0
+StartupNotify=false

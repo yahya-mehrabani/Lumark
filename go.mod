@@ -2,6 +2,8 @@ module markdown-viewer
 
 go 1.26.0
 
+toolchain go1.26.10
+
 require github.com/wailsapp/wails/v3 v3.0.0-beta.34
 
 require (
