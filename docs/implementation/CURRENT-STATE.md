@@ -11,10 +11,10 @@
 
 - **Current Overall Phase:** **Phase 1 (Technical Feasibility Spike)**.
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
-- **Application Implementation Status:** **FEASIBILITY SPIKE IN PROGRESS**. Story [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) fully verified and complete across all five tasks (`US-001.1` through `US-001.5`). Standalone production binary, embedded React frontend assets, sub-400ms launch latency, and process independence from Node.js/Vite verified under WSLg.
-- **Feasibility Spike Status:** **IN_PROGRESS**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-004.5: Create and validate macOS bundle and UTI association prototype` under [`US-004`](../stories/US-004-packaging-association-spike.md) (macOS `Info.plist` bundle property list created in `packaging/macos/Info.plist` and `build/darwin/Info.plist` declaring `CFBundleDocumentTypes` for Markdown and UTI `net.daringfireball.markdown` conforming to `public.plain-text`; validated with plistlib).
-- **Active / Next Eligible Work Item:** Task `US-004.6: Record independent platform feasibility evidence` under [`US-004`](../stories/US-004-packaging-association-spike.md) (`READY`).
+- **Application Implementation Status:** **FEASIBILITY SPIKE COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md), [`US-002`](../stories/US-002-cli-single-instance-spike.md), [`US-003`](../stories/US-003-webview-asset-security-spike.md), and [`US-004`](../stories/US-004-packaging-association-spike.md) fully verified across all implementation tasks under WSLg. Platform packaging prototypes for Linux (.deb), Windows (NSIS), and macOS (Info.plist) delivered.
+- **Feasibility Spike Status:** **SPIKE IMPLEMENTATION COMPLETE / AWAITING CROSS-PLATFORM GATES**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
+- **Last Completed Work Item:** Task `US-004.6: Record independent platform feasibility evidence` under [`US-004`](../stories/US-004-packaging-association-spike.md) (Story `US-004` complete across all implementation tasks; independent platform packaging evidence records compiled for Linux, Windows, and macOS with non-run native environments explicitly classified as `BLOCKED` / `NOT RUN`).
+- **Active / Next Eligible Work Item:** Phase 1 Multi-Platform Feasibility Review & Phase 2 Gate Decision (Phase 1 Linux feasibility tasks completed; overall Phase 1 verdict remains **`NOT_READY`** for Phase 2 transition until native Windows and macOS verification is conducted via dedicated CI runners or hardware).
 
 ---
 
@@ -81,15 +81,12 @@ All planning remediation artifacts must be preserved:
 ## 5. Exact Next Action for the Next Agent
 
 The next incoming agent must:
-1. **Confirm Prerequisites Completed for Task `US-004.6`:**
-   - Review Tasks `US-004.2`, `US-004.4`, `US-004.5` in [`docs/stories/US-004-packaging-association-spike.md`](../stories/US-004-packaging-association-spike.md) (All `DONE`).
-2. **Execute Task `US-004.6: Record independent platform feasibility evidence`:**
-   - Compile independent platform evidence records for Windows, Linux, and macOS in Section 8 of `US-004`.
-   - Explicitly classify non-run platforms as `NOT RUN` or `BLOCKED`.
-   - Run verification command:
-     ```bash
-     cat docs/stories/US-004-packaging-association-spike.md | grep -E "NOT RUN|BLOCKED|PASS"
-     ```
-   - Create isolated Task-level Conventional Commit upon successful verification.
-3. **Do NOT Jump to Feature Code:** Maintain strict Phase 1 spike bounds. Do not write production viewer code or modify `PRD.md`.
+1. **Confirm Phase 1 Feasibility Spike Stories Complete:**
+   - Confirm Stories `US-001`, `US-002`, `US-003`, and `US-004` are `DONE` across all implementation tasks.
+   - Review independent platform evidence matrix in Section 8 of [`docs/stories/US-004-packaging-association-spike.md`](../stories/US-004-packaging-association-spike.md).
+2. **Phase 1 Multi-Platform Verification / Phase 2 Gate Decision:**
+   - Review [`docs/decisions/ADR-0001-technology-baseline.md`](../decisions/ADR-0001-technology-baseline.md) and [`docs/architecture/PLATFORM-SUPPORT.md`](../architecture/PLATFORM-SUPPORT.md).
+   - In accordance with PRD Section 1.4, overall Phase 1 verdict remains **`NOT_READY`** for Phase 2 transition until native Windows 10/11 x64 and macOS Apple Silicon build/runtime verification is executed via CI runners or dedicated test hosts.
+   - Awaiting Product Owner gate authorization to either execute CI-based cross-platform verification workflows or formally authorize Phase 2 (`EPIC-002: Core Native Application Lifecycle & Tab Management`, starting with [`US-005`](../stories/US-005-native-document-service.md)).
+3. **Do NOT Jump to Feature Code without Gate Authorization:** Maintain strict phase boundaries. Do not write production viewer code or modify `PRD.md`.
 4. **Preserve Phase Gate Verdict:** Keep overall Phase 1 verdict `NOT_READY` until all platform evidence (Windows, macOS, Linux) is recorded.
