@@ -856,3 +856,42 @@ This log is an append-only chronological record of all significant actions, veri
 - **Completed Tasks:** `US-004.1` (`DONE`).
 - **Next Eligible Task:** `US-004.2: Build prototype Debian package (.deb)` under [`US-004`](../stories/US-004-packaging-association-spike.md) (`READY`).
 - **Phase 1 Readiness Verdict:** **`NOT_READY`** (Contingent on multi-platform feasibility evidence across Windows 10/11 x64, macOS Apple Silicon, and Ubuntu 24.04/26.04).
+
+---
+
+## [2026-10-23] — Phase 1: Build Prototype Debian Package (.deb) (US-004.2)
+
+- **Work Item ID:** `US-004.2`
+- **Agent:** Antigravity Autonomous Story Runner
+- **Summary:** Implemented Debian archive generation script `packaging/linux/build-deb.sh` producing prototype Debian package `build/bin/markdown-viewer-spike.deb` using `dpkg-deb`. Configured package staging hierarchy assembling binary executable into `/usr/bin/markdown-viewer-spike`, Freedesktop desktop launcher into `/usr/share/applications/markdown-viewer.desktop`, scalable SVG icon into `/usr/share/icons/hicolor/scalable/apps/markdown-viewer.svg`, 128x128 PNG icon into `/usr/share/icons/hicolor/128x128/apps/markdown-viewer.png`, and `DEBIAN` control archive containing package metadata and executable maintainer scripts (`postinst`, `postrm`). Tested package generation and verified package integrity via `dpkg-deb --info` and `dpkg-deb -c`, confirming all expected paths, permissions, and dependency declarations. Added `build/staging/` to `.gitignore`. Advanced Task `US-004.2` to `DONE`.
+
+### Actions Taken:
+1. **Debian Packaging Script (`packaging/linux/build-deb.sh`):**
+   - Implemented `build-deb.sh` adhering to shell script standards (no destructive `rm -rf`, safe variable quoting, clean permissions).
+   - Validated script with `shellcheck` (0 issues) and formatted with `shfmt`.
+2. **Prototype Package Build:**
+   - Executed `./packaging/linux/build-deb.sh`, assembling package tree and compiling `build/bin/markdown-viewer-spike.deb` (6.98 MB).
+   - Verified that package contains executable binary in `/usr/bin/markdown-viewer-spike`.
+   - Verified that desktop entry is staged in `/usr/share/applications/markdown-viewer.desktop`.
+   - Verified that SVG and PNG icons are staged in `/usr/share/icons/hicolor/`.
+3. **Verification Command Execution:**
+   - Executed exact verification command `dpkg-deb --info build/bin/markdown-viewer-spike.deb && dpkg-deb -c build/bin/markdown-viewer-spike.deb` (exit code 0).
+4. **Documentation Synchronization:**
+   - Updated `docs/stories/US-004-packaging-association-spike.md`: marked Task `US-004.2` as `DONE` and recorded package listing output in Section 8.
+   - Updated `docs/implementation/CURRENT-STATE.md`: advanced last completed work item to `US-004.2` and next eligible task to `US-004.3`.
+   - Updated `docs/implementation/BACKLOG.md`: updated `US-004` status to `IN_PROGRESS (Tasks US-004.1, US-004.2 DONE)`.
+
+### Verification Results:
+- `dpkg-deb --info build/bin/markdown-viewer-spike.deb`: Valid control archive, package metadata, and maintainer scripts verified (PASS).
+- `dpkg-deb -c build/bin/markdown-viewer-spike.deb`: File tree structure verified with binary, desktop entry, and icons (PASS).
+- `shellcheck packaging/linux/build-deb.sh`: 0 issues (PASS).
+- `shfmt -d packaging/linux/build-deb.sh`: Formatted cleanly (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **Phase:** Phase 1 (Technical Feasibility Spike).
+- **Active Story:** `US-004: Platform Packaging & File Association Feasibility Spike` (`IN_PROGRESS`).
+- **Completed Tasks:** `US-004.1` (`DONE`), `US-004.2` (`DONE`).
+- **Next Eligible Task:** `US-004.3: Test Linux installation, MIME registration, and uninstall lifecycle` under [`US-004`](../stories/US-004-packaging-association-spike.md) (`READY`).
+- **Phase 1 Readiness Verdict:** **`NOT_READY`** (Contingent on multi-platform feasibility evidence across Windows 10/11 x64, macOS Apple Silicon, and Ubuntu 24.04/26.04).

@@ -70,7 +70,7 @@ Verify packaging and desktop file association mechanisms across all three target
 
 ### Task US-004.2: Build prototype Debian package (.deb)
 - **Task ID:** `US-004.2`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-004.1`
 - **Completion Criteria:** `.deb` archive is created containing binary in `/usr/bin/` and desktop file.
 - **Verification Command:**
@@ -158,6 +158,7 @@ Verify packaging and desktop file association mechanisms across all three target
   - `packaging/linux/debian/control`
   - `packaging/linux/debian/postinst`
   - `packaging/linux/debian/postrm`
+  - `packaging/linux/build-deb.sh`
   - `build/linux/markdown-viewer.desktop`
 - **Platform Evidence Records:**
   - **Linux (Ubuntu 24.04/26.04 WSL2):** `PASS` (Desktop entry, SVG icon, and Debian maintainer manifests created; validated syntax and Freedesktop keys; shellcheck and shfmt passed)
@@ -195,4 +196,45 @@ $ shfmt -d packaging/linux/debian/postinst packaging/linux/debian/postrm
 
 $ desktop-file-validate packaging/linux/markdown-viewer.desktop
 Command 'desktop-file-validate' not found (exit: 127). Handled gracefully per AGENTS.md §8: desktop-file-utils package absent in current container. Syntax and key requirements verified via Python Freedesktop Entry Specification parser.
+```
+
+### Task US-004.2: Build Prototype Debian Package (.deb)
+```text
+$ ./packaging/linux/build-deb.sh
+dpkg-deb: building package 'markdown-viewer-spike' in '/home/repos/personal/markdown-go/build/bin/markdown-viewer-spike.deb'.
+Built Debian package: /home/repos/personal/markdown-go/build/bin/markdown-viewer-spike.deb
+
+$ dpkg-deb --info build/bin/markdown-viewer-spike.deb && dpkg-deb -c build/bin/markdown-viewer-spike.deb
+ new Debian package, version 2.0.
+ size 6984112 bytes: control archive=820 bytes.
+     670 bytes,    12 lines      control
+     552 bytes,    21 lines   *  postinst             #!/bin/sh
+     547 bytes,    21 lines   *  postrm               #!/bin/sh
+ Package: markdown-viewer-spike
+ Version: 0.1.0-1
+ Section: utils
+ Priority: optional
+ Architecture: amd64
+ Maintainer: Markdown Viewer Team <maintainers@markdownviewer.local>
+ Depends: libc6 (>= 2.38), libgtk-4-1 (>= 4.12.0) | libgtk-3-0 (>= 3.24.0), libwebkitgtk-6.0-4 (>= 2.40.0) | libwebkit2gtk-4.1-0 (>= 2.40.0)
+ Description: Fast, cross-platform Markdown Viewer desktop application
+  A local-first, standalone desktop Markdown viewer built with Wails and Go.
+  Features CommonMark and GitHub Flavored Markdown rendering, offline KaTeX math,
+  Mermaid diagrams, bidirectional RTL/LTR layout, and secure local asset isolation.
+ Homepage: https://github.com/personal/markdown-go
+drwxr-xr-x root/root         0 2026-10-23 22:57 ./
+drwxr-xr-x root/root         0 2026-10-23 22:57 ./usr/
+drwxr-xr-x root/root         0 2026-10-23 22:57 ./usr/bin/
+-rwxr-xr-x root/root  14542880 2026-10-23 22:20 ./usr/bin/markdown-viewer-spike
+drwxr-xr-x root/root         0 2026-10-23 22:57 ./usr/share/
+drwxr-xr-x root/root         0 2026-10-23 22:57 ./usr/share/applications/
+-rw-r--r-- root/root       387 2026-10-23 22:52 ./usr/share/applications/markdown-viewer.desktop
+drwxr-xr-x root/root         0 2026-10-23 22:57 ./usr/share/icons/
+drwxr-xr-x root/root         0 2026-10-23 22:57 ./usr/share/icons/hicolor/
+drwxr-xr-x root/root         0 2026-10-23 22:57 ./usr/share/icons/hicolor/128x128/
+drwxr-xr-x root/root         0 2026-10-23 22:57 ./usr/share/icons/hicolor/128x128/apps/
+-rw-r--r-- root/root     31495 2026-10-23 16:40 ./usr/share/icons/hicolor/128x128/apps/markdown-viewer.png
+drwxr-xr-x root/root         0 2026-10-23 22:57 ./usr/share/icons/hicolor/scalable/
+drwxr-xr-x root/root         0 2026-10-23 22:57 ./usr/share/icons/hicolor/scalable/apps/
+-rw-r--r-- root/root      1024 2026-10-23 22:52 ./usr/share/icons/hicolor/scalable/apps/markdown-viewer.svg
 ```
