@@ -67,7 +67,7 @@ Build the React frontend application shell, tab navigation system, and empty sta
 
 ### Task US-007.2: Create TabBar and TabItem components
 - **Task ID:** `US-007.2`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-007.1`
 - **Completion Criteria:** Accessible tab list with close buttons (`Ctrl/Cmd`+`W`), middle-click to close, and active tab styling.
 - **Verification Command:** `npm run test:unit -- tab-bar`
@@ -154,5 +154,30 @@ Build the React frontend application shell, tab navigation system, and empty sta
       Tests  13 passed (13)
    Start at  10:32:53
    Duration  1.48s (environment 66%, import 10%, transform 9%, setup 9%, tests 5%, worker 1%)
+```
+Exit Code: 0 (PASS)
+
+### Task US-007.2 Evidence (`npm run test:unit -- tab-bar`)
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run tab-bar
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/tabs/tab-bar.test.tsx (8 tests) 671ms
+   ✓ TabBar & TabItem Components (US-007.2) (8)
+     ✓ renders nothing when tabs list is empty 114ms
+     ✓ renders accessible tab list and tab items with correct roles and aria attributes 284ms
+     ✓ calls onSelectTab when a tab is clicked 72ms
+     ✓ calls onCloseTab when close button is clicked 39ms
+     ✓ closes tab on middle-click (button === 1 auxclick) 32ms
+     ✓ displays status badge for missing or error files without crashing 54ms
+     ✓ handles keyboard navigation with ArrowRight and ArrowLeft 38ms
+     ✓ closes active tab on Ctrl+W keyboard shortcut 6ms
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Start at  10:41:29
+   Duration  11.55s (environment 62%, import 11%, transform 11%, tests 10%, setup 6%, worker 1%)
 ```
 Exit Code: 0 (PASS)
