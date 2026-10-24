@@ -1108,3 +1108,44 @@ This log is an append-only chronological record of all significant actions, veri
 - **Completed Tasks:** `US-005.1` (`DONE`), `US-005.2` (`DONE`), `US-005.3` (`DONE`).
 - **Next Eligible Task:** `US-005.4: Write comprehensive Go unit test suite` under [`US-005`](../stories/US-005-native-document-service.md) (`READY`).
 - **Phase Gate Status:** In progress under approved Linux-only implementation policy; cross-platform validation deferred.
+
+---
+
+## [2026-10-24] — Phase 2: Write Comprehensive Go Unit Test Suite (US-005.4)
+
+- **Work Item ID:** `US-005.4` (Completing Story `US-005: Native Document Service & Secure File Loading`, `EPIC-002`)
+- **Agent:** Antigravity Autonomous Story Runner
+- **Summary:** Created comprehensive unit test suite in `internal/documents/service_test.go` verifying `DocumentService`, `DocumentDTO`, and `DocumentError` structured error handling. Covered all error branches, edge cases, Unicode/non-Latin filenames and paths with spaces, read-only file mode detection, relative path resolution, and TOCTOU size limit defense. Verified zero data races via `go test -v -race`, zero vulnerabilities via `govulncheck`, and zero staticcheck/lint warnings. Concluded Story `US-005` with all 4 tasks (`US-005.1` through `US-005.4`) complete.
+
+### Actions Taken:
+1. **Created Comprehensive Test Suite (`internal/documents/service_test.go`):**
+   - Implemented `TestDocumentError_FormattingAndUnwrap` verifying error formatting with and without underlying errors, plus `errors.Is` unwrapping.
+   - Implemented `TestReadDocument_Success` asserting all `DocumentDTO` fields (`Path`, `FileName`, `Content`, `FileSizeBytes`, `LastModified`, `IsReadOnly`, `HasEncodingErrors`).
+   - Implemented `TestReadDocument_ReadOnly` verifying read-only permission (`0444`) detection.
+   - Implemented `TestReadDocument_UnicodeAndSpaces` verifying Persian/Arabic folder/file paths with spaces, Unicode characters, and ZWNJ (`\u200c`).
+   - Implemented `TestReadDocument_RelativePath` verifying conversion from relative paths (`./relative.mdown`) to canonical absolute paths.
+   - Implemented `TestReadDocument_ValidationErrors` covering missing files, directories, unsupported extensions, and files exceeding size limit.
+   - Implemented `TestIsSupportedExtension` testing full matrix of extensions and casings.
+2. **Verification and Static Analysis:**
+   - Ran `go test -count=1 -v -race ./internal/documents/...` (100% test cases passing with zero race conditions).
+   - Ran `golangci-lint run ./internal/documents/...` (0 issues).
+   - Ran `govulncheck ./...` (0 vulnerabilities).
+3. **Documentation Synchronization:**
+   - Updated `docs/stories/US-005-native-document-service.md`: marked Task `US-005.4` and Story `US-005` as `DONE`, recorded verification output.
+   - Updated `docs/implementation/BACKLOG.md`: advanced `US-005` to `DONE` and `US-006` to `READY`.
+   - Updated `docs/implementation/REQUIREMENT-TRACEABILITY.md`: updated `FR-OPEN-001`, `SEC-INVAR-08`, and `NFR-COMPAT` implementation status.
+   - Updated `docs/implementation/CURRENT-STATE.md`: advanced last completed work item to `US-005.4` and next eligible work item to `US-006.1`.
+
+### Verification Results:
+- `go test -count=1 -v -race ./internal/documents/...`: PASS (0 race warnings).
+- `golangci-lint run ./...`: 0 issues (PASS).
+- `govulncheck ./...`: No vulnerabilities found (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **Phase:** Phase 2 (Core Application Structure).
+- **Completed Story:** `US-005: Native Document Service & Secure File Loading` (`DONE`).
+- **Phase 2 Stories Completed:** `US-005` (`DONE`).
+- **Next Eligible Story / Task:** Story [`US-006: Application Lifecycle, Command-Line Parsing & Single-Instance Routing`](../stories/US-006-lifecycle-cli-single-instance.md), starting with Task `US-006.1` (`READY`).
+- **Phase Gate Status:** In progress under approved Linux-only implementation policy; cross-platform validation deferred.

@@ -13,8 +13,8 @@
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
 - **Application Implementation Status:** **FEASIBILITY SPIKE COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md), [`US-002`](../stories/US-002-cli-single-instance-spike.md), [`US-003`](../stories/US-003-webview-asset-security-spike.md), and [`US-004`](../stories/US-004-packaging-association-spike.md) fully verified across all implementation tasks under WSLg. Platform packaging prototypes for Linux (.deb), Windows (NSIS), and macOS (Info.plist) delivered.
 - **Feasibility Spike Status:** **SPIKE IMPLEMENTATION COMPLETE / AWAITING CROSS-PLATFORM GATES**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-005.3: Implement UTF-8 reader with BOM stripping and replacement` under [`US-005`](../stories/US-005-native-document-service.md) (`DecodeUTF8` and `ReadDocument` verified with `go test -v -run TestUTF8Reader` and `golangci-lint`).
-- **Active / Next Eligible Work Item:** Task `US-005.4: Write comprehensive Go unit test suite` under [`US-005`](../stories/US-005-native-document-service.md) (in progress under approved Linux-only implementation policy; cross-platform validation deferred).
+- **Last Completed Work Item:** Task `US-005.4: Write comprehensive Go unit test suite` under [`US-005`](../stories/US-005-native-document-service.md) (Story `US-005` complete across all implementation tasks; `internal/documents/` service, DTO, UTF-8 reader, and tests verified with `go test -v -race`, `golangci-lint`, and `govulncheck`).
+- **Active / Next Eligible Work Item:** Story [`US-006: Application Lifecycle, Command-Line Parsing & Single-Instance Routing`](../stories/US-006-lifecycle-cli-single-instance.md) (Task `US-006.1: Define CLI flag parsing and command line routing` ready for execution under approved Linux-only implementation policy).
 
 ---
 
@@ -81,7 +81,10 @@ All planning remediation artifacts must be preserved:
 ## 5. Exact Next Action for the Next Agent
 
 The next incoming agent must:
-1. **Continue Story US-005 Execution (Task US-005.4):**
-   - Write comprehensive Go unit test suite in `internal/documents/`.
-   - Verify with `go test -v -race ./internal/documents/...`.
-2. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.
+1. **Confirm Story US-005 Complete:**
+   - Confirm Story `US-005` is `DONE` across all implementation tasks (`US-005.1` through `US-005.4`).
+   - Confirm backend `internal/documents/` package is verified with `go test -v -race`, `golangci-lint`, and `govulncheck`.
+2. **Begin Story US-006 (Task US-006.1):**
+   - Active work item: Task `US-006.1: Define CLI flag parsing and command line routing` under [`docs/stories/US-006-lifecycle-cli-single-instance.md`](../stories/US-006-lifecycle-cli-single-instance.md).
+   - Implement CLI parsing logic in `internal/application/`.
+3. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.
