@@ -651,3 +651,58 @@
   line-height: 1.4;
   color: #e2e8f0;
 }
+
+/* ==========================================================================
+   KaTeX Mathematical Formulas & Error Isolation (US-014)
+   ========================================================================== */
+
+.markdown-content .katex {
+  font-size: 1.1em;
+  text-rendering: auto;
+}
+
+.markdown-content .katex-display {
+  display: block;
+  margin: 1.5em 0;
+  text-align: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  padding: 0.5rem 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.markdown-content .katex-error {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.85em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  cursor: help;
+  white-space: pre-wrap;
+}
+
+.markdown-content .katex-error::before {
+  content: "⚠️ Math Error: ";
+  font-weight: 600;
+  font-size: 0.8em;
+  color: #f87171;
+}
+
+/* Light Theme KaTeX Error styling */
+[data-theme="light"] .markdown-content .katex-error,
+.theme-light .markdown-content .katex-error {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #b91c1c;
+}
+
+[data-theme="light"] .markdown-content .katex-error::before,
+.theme-light .markdown-content .katex-error::before {
+  color: #dc2626;
+}

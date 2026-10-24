@@ -1,12 +1,16 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import { STRICT_KATEX_OPTIONS } from './katex-adapter';
 import { CodeBlock } from './components/CodeBlock';
 import { Heading } from './components/Heading';
 import { MarkdownImage } from './components/MarkdownImage';
 import { MarkdownLink } from './components/MarkdownLink';
 import { MermaidBlock } from './components/MermaidBlock';
 import { SlugTracker, SlugContext } from './utils/slugify';
+import '../../styles/katex.css';
 import './markdown.css';
 
 export interface DocumentInfo {
@@ -60,7 +64,8 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
       <main className="markdown-content" data-testid="markdown-content">
         <SlugContext.Provider value={slugTracker}>
           <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
+            remarkPlugins={[remarkGfm, remarkMath]}
+            rehypePlugins={[[rehypeKatex, STRICT_KATEX_OPTIONS]]}
             urlTransform={(url) => url}
             components={{
               h1: ({ node, ...props }) => <Heading level={1} {...props} />,

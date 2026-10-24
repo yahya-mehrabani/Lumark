@@ -2090,3 +2090,34 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Task:
 - Task `US-014.2: Integrate remark-math and rehype-katex into pipeline` under Story [`US-014`](../stories/US-014-katex-math-rendering.md).
+
+---
+
+## 2026-10-24: Task US-014.2 Execution — Integrate remark-math and rehype-katex into Pipeline
+
+- **Task ID:** `US-014.2`
+- **Parent Story:** [`US-014: LaTeX Math Offline Rendering with KaTeX`](../stories/US-014-katex-math-rendering.md)
+- **Status:** Task `US-014.2` marked `DONE`. Story `US-014` remains `IN_PROGRESS`.
+
+### Actions Taken:
+1. **Installed Unified Math Pipeline Plugins:** Installed `remark-math: "6.0.0"` and `rehype-katex: "7.0.1"` in `frontend/package.json` for AST-based inline math (`$...$`) and block math (`$$...$$`) processing.
+2. **Integrated into MarkdownViewer:** Configured `ReactMarkdown` with `remarkPlugins={[remarkGfm, remarkMath]}` and `rehypePlugins={[[rehypeKatex, STRICT_KATEX_OPTIONS]]}`, importing `../../styles/katex.css` for local offline font styling.
+3. **Configured Fault Isolation & Error Badges:** Configured `throwOnError: false` so that malformed formulas or unsupported macros render graceful inline error indicators rather than throwing uncaught exceptions or breaking the surrounding document (PRD FR-RENDER-006, FR-RENDER-009).
+4. **Added Error Styling in markdown.css:** Styled `.markdown-content .katex-error` with warning badge `⚠️ Math Error: `, monospace raw formula text, tooltips containing detailed KaTeX parse errors, and high-contrast color styling for both dark and light themes.
+5. **Authored Pipeline & Fallback Test Suite:** Created `frontend/src/features/rendering/katex-error-fallback.test.tsx` with 5 tests:
+   - Valid inline and display math rendering via unified pipeline.
+   - Malformed inline formula (`$\frac{1}{$`) rendering safe `.katex-error` badge with raw formula and tooltip without crashing.
+   - Graceful partial rendering (FR-RENDER-009) asserting that surrounding valid headings, paragraphs, and subsequent formulas render cleanly around a malformed display block.
+   - Graceful handling of unknown/unsupported macros without throwing uncaught exceptions.
+   - Independent error containment for multiple distinct errors across the same document.
+6. **Synchronized Tracking Documents:** Updated `docs/stories/US-014-katex-math-rendering.md` (Task `US-014.2` `DONE`), `docs/implementation/CURRENT-STATE.md`, and `docs/implementation/WORK-LOG.md`.
+
+### Verification Results:
+- `npm --prefix frontend run test:unit -- katex-error-fallback`: 5 passed across 1 test file in 710ms (PASS).
+- `npm --prefix frontend run test:unit -- katex`: 15 passed across 2 test files in 354ms (PASS).
+- `npm --prefix frontend run build`: Clean production bundle built in 4.28s (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Task:
+- Task `US-014.3: Implement horizontal scrolling for display equations` under Story [`US-014`](../stories/US-014-katex-math-rendering.md).

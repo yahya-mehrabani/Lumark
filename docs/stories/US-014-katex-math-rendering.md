@@ -67,7 +67,7 @@ Render mathematical expressions offline using locally bundled KaTeX:
 
 ### Task US-014.2: Integrate remark-math and rehype-katex into pipeline
 - **Task ID:** `US-014.2`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-014.1`
 - **Completion Criteria:** Configures parser with `throwOnError: false` to allow graceful fallbacks.
 - **Verification Command:** `npm run test:unit -- katex-error-fallback`
@@ -154,3 +154,40 @@ Render mathematical expressions offline using locally bundled KaTeX:
 ✓ built in 2.35s
 ```
 - **Deferred Cross-Platform Checks:** Native Windows WebView2 and macOS WKWebView visual font rendering deferred to post-implementation cross-platform process (`NOT RUN`).
+
+### Task US-014.2: Integrate remark-math and rehype-katex into pipeline
+- **Execution Date:** 2026-10-24
+- **Agent ID:** Antigravity Autonomous Story Runner
+- **Changed Files:**
+  - `frontend/package.json` (installed `remark-math: 6.0.0`, `rehype-katex: 7.0.1`)
+  - `frontend/package-lock.json`
+  - `frontend/src/features/rendering/MarkdownViewer.tsx` (configured `remarkMath` in `remarkPlugins` and `rehypeKatex` with `STRICT_KATEX_OPTIONS` in `rehypePlugins`)
+  - `frontend/src/features/rendering/markdown.css` (styled KaTeX math and added warning badge for `.katex-error`)
+  - `frontend/src/features/rendering/katex-error-fallback.test.tsx` (5 unit tests covering pipeline integration, safe error badge, graceful partial rendering, and multi-error isolation)
+- **Terminal Output & Verification Evidence:**
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run katex-error-fallback
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/rendering/katex-error-fallback.test.tsx (5 tests) 710ms
+   ✓ KaTeX Pipeline Integration & Error Fallback (US-014.2) (5)
+     ✓ renders valid inline and display math via the unified pipeline 408ms
+     ✓ renders malformed inline formula with safe error fallback badge without crashing 26ms
+     ✓ renders malformed display formula with graceful partial rendering (FR-RENDER-009) 150ms
+     ✓ handles unsupported or unknown LaTeX macros gracefully without throwing 56ms
+     ✓ handles multiple distinct math errors across the document independently 63ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  17:52:00
+   Duration  5.33s (import 40%, environment 34%, tests 15%, transform 6%, setup 4%, worker 1%)
+```
+- **Build Verification:**
+```text
+> markdown-viewer-frontend@0.1.0 build
+> tsc && vite build --mode production
+✓ built in 4.28s
+```
+- **Deferred Cross-Platform Checks:** Native Windows WebView2 and macOS WKWebView math presentation deferred to post-implementation cross-platform validation workflow (`NOT RUN`).
