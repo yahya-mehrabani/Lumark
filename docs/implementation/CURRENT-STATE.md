@@ -13,8 +13,8 @@
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
 - **Application Implementation Status:** **FEASIBILITY SPIKE COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md), [`US-002`](../stories/US-002-cli-single-instance-spike.md), [`US-003`](../stories/US-003-webview-asset-security-spike.md), and [`US-004`](../stories/US-004-packaging-association-spike.md) fully verified across all implementation tasks under WSLg. Platform packaging prototypes for Linux (.deb), Windows (NSIS), and macOS (Info.plist) delivered.
 - **Feasibility Spike Status:** **SPIKE IMPLEMENTATION COMPLETE / AWAITING CROSS-PLATFORM GATES**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-007.3: Create EmptyState component` under [`US-007`](../stories/US-007-app-shell-tabs-empty-state.md) (EmptyState component, Open File button, drag-and-drop dropzone, recent files list, and keyboard shortcuts cheatsheet verified via `npm run test:unit -- empty-state` with 6 passing unit tests).
-- **Active / Next Eligible Work Item:** Task `US-007.4: Write component unit tests` under [`US-007`](../stories/US-007-app-shell-tabs-empty-state.md).
+- **Last Completed Work Item:** Task `US-007.4: Write component unit tests` under [`US-007`](../stories/US-007-app-shell-tabs-empty-state.md) (Story `US-007` complete across all 4 implementation tasks; React application shell, TabStateStore, TabBar, and EmptyState verified with 34 passing unit/component tests via `npm run test:unit` and clean production build).
+- **Active / Next Eligible Work Item:** Story [`US-008: Native File Picker & Drag-and-Drop Integration`](../stories/US-008-file-picker-drag-drop.md) (Task `US-008.1: Implement native file dialog service in Go` ready for execution under approved Linux-only implementation policy).
 
 ---
 
@@ -81,7 +81,10 @@ All planning remediation artifacts must be preserved:
 ## 5. Exact Next Action for the Next Agent
 
 The next incoming agent must:
-1. **Continue Story US-007 (Task US-007.4):**
-   - Active work item: Task `US-007.4: Write component unit tests` under [`docs/stories/US-007-app-shell-tabs-empty-state.md`](../stories/US-007-app-shell-tabs-empty-state.md).
-   - Write comprehensive AppShell integration tests for tab switching, tab closing, document rendering, and empty-state transitions.
-2. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.
+1. **Confirm Story US-007 Complete:**
+   - Confirm Story `US-007` is `DONE` across all implementation tasks (`US-007.1` through `US-007.4`).
+   - Confirm frontend unit test suite passes with `npm run test:unit` (34 passed across 4 files) and production build passes with `npm run build`.
+2. **Begin Story US-008 (Task US-008.1):**
+   - Active work item: Story [`docs/stories/US-008-file-picker-drag-drop.md`](../stories/US-008-file-picker-drag-drop.md) (Task `US-008.1: Implement native file dialog service in Go`).
+   - Implement native file dialog service in Go backend for opening single and multiple files.
+3. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.

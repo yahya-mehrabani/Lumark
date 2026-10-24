@@ -1389,3 +1389,31 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-007.4: Write component unit tests` under [`docs/stories/US-007-app-shell-tabs-empty-state.md`](../stories/US-007-app-shell-tabs-empty-state.md).
+
+---
+
+## [2026-10-24] — Phase 2: Write Component Unit Tests and Complete Story US-007 (Task US-007.4)
+
+- **Work Item ID:** `US-007.4`
+- **Agent:** Autonomous Story Runner
+- **Summary:** Implemented `AppShell` component under `frontend/src/features/shell/` integrating header bar, `TabBar`, main document viewport, `EmptyState`, and status bar. Connected `AppShell` with `tabStore` and Wails events in `frontend/src/App.tsx`. Wrote comprehensive integration and component tests in `frontend/src/features/shell/shell.test.tsx` verifying empty state on launch with 0 tabs, tab creation and document rendering, tab switching, adjacent tab selection upon tab closure, return to empty state when closing the last tab, duplicate path prevention, missing/error document status alerts, and global `Ctrl+O`/`Ctrl+W` shortcuts. Verified 34 passing tests across the entire frontend unit test suite and clean production build.
+- **Status:** Task `US-007.4` marked `DONE`; Story `US-007` transitioned to `DONE`.
+
+### Actions Taken:
+1. **Implemented AppShell Component:** Created `frontend/src/features/shell/AppShell.tsx` and `frontend/src/features/shell/shell.css` providing top header chrome, `TabBar`, dynamic viewport switching between `EmptyState` and document container, error notice banners, and status bar.
+2. **Wired AppShell into App.tsx:** Updated `frontend/src/App.tsx` to bind `AppShell` with `tabStore`, listening to backend `SpikeDocumentService.GetCurrentDocument()`, secondary instance `document:open`, and `file:open` events without forcing fixture opening when no file arguments are present.
+3. **Wrote AppShell Component Tests:** Created `frontend/src/features/shell/shell.test.tsx` with 7 tests covering zero-tab empty state launch, document tab opening, active tab switching, adjacent tab focus on closure, return to empty state on last tab closure, duplicate path refocusing, and missing file error alerts.
+4. **Comprehensive Test Suite & Build Verification:** Ran `npm run test:unit -- shell` (13 passed across 2 files), full suite `npm run test:unit` (34 passed across 4 files), `npm run build` (59 modules transformed), and full backend `go test -v -race ./...` (all Go tests pass).
+5. **Documentation Synchronization:** Updated `docs/stories/US-007-app-shell-tabs-empty-state.md`, `docs/implementation/CURRENT-STATE.md`, and `docs/implementation/BACKLOG.md`.
+
+### Verification Results:
+- `npm run test:unit -- shell`: 13 passed in 3.45s (PASS).
+- `npm run test:unit`: 34 passed across 4 test files in 6.93s (PASS).
+- `npm run build`: 59 modules transformed in 255ms (PASS).
+- `go test -v -race ./...`: All backend packages PASS.
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Story US-007 Completion Status:
+- **Story Status:** `DONE` (All 4 tasks `US-007.1`, `US-007.2`, `US-007.3`, `US-007.4` verified and committed).
+- **Next Eligible Story:** Story [`US-008: Native File Picker & Drag-and-Drop Integration`](../stories/US-008-file-picker-drag-drop.md) (Status: `READY`).

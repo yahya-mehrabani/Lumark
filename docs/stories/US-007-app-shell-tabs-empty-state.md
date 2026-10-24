@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-007`
 - **Parent Epic:** [EPIC-002: Core Native Application Lifecycle & Tab Management](../epics/EPIC-002-native-lifecycle-tabs.md)
-- **Status:** `IN_PROGRESS`
+- **Status:** `DONE` (Frontend application shell, tab state store, TabBar, EmptyState, and comprehensive unit test suite verified with 34 passing tests)
 - **Assigned Phase:** Phase 2 (Core Application Structure)
 
 ---
@@ -87,7 +87,7 @@ Build the React frontend application shell, tab navigation system, and empty sta
 
 ### Task US-007.4: Write component unit tests
 - **Task ID:** `US-007.4`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-007.2`, `US-007.3`
 - **Completion Criteria:** Vitest + React Testing Library tests pass for tab switching, closing, and empty state.
 - **Verification Command:** `npm run test:unit -- shell`
@@ -202,5 +202,41 @@ Exit Code: 0 (PASS)
       Tests  6 passed (6)
    Start at  10:45:14
    Duration  1.79s (environment 40%, tests 37%, import 8%, transform 7%, setup 6%, worker 1%)
+```
+Exit Code: 0 (PASS)
+
+### Task US-007.4 Evidence (`npm run test:unit -- shell`)
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run shell
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/shell/shell.test.tsx (7 tests) 497ms
+ ✓ src/features/shell/empty-state.test.tsx (6 tests) 307ms
+
+ Test Files  2 passed (2)
+      Tests  13 passed (13)
+   Start at  10:50:29
+   Duration  3.45s (environment 50%, tests 29%, import 9%, setup 9%, transform 3%, worker 1%)
+```
+Exit Code: 0 (PASS)
+
+### Full Story US-007 Unit Test Suite (`npm run test:unit`)
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/shell/shell.test.tsx (7 tests) 389ms
+ ✓ src/features/shell/empty-state.test.tsx (6 tests) 365ms
+ ✓ src/features/tabs/tab-bar.test.tsx (8 tests) 450ms
+ ✓ src/features/tabs/tab-store.test.ts (13 tests) 48ms
+
+ Test Files  4 passed (4)
+      Tests  34 passed (34)
+   Start at  10:50:09
+   Duration  6.93s (environment 56%, tests 23%, import 10%, setup 8%, transform 2%, worker 1%)
 ```
 Exit Code: 0 (PASS)
