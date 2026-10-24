@@ -146,6 +146,13 @@ export const MermaidBlockInner: React.FC<MermaidBlockProps> = ({
     setIsLoading(true);
     setError(null);
 
+    const trimmed = (rawCode || '').trim();
+    if (!trimmed) {
+      setSvgHtml('');
+      setIsLoading(false);
+      return;
+    }
+
     renderMermaid(rawCode, { theme: activeTheme })
       .then((res) => {
         if (!isCancelled) {

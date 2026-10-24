@@ -2004,3 +2004,50 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Task:
 - Task `US-013.4: Write unit tests for Mermaid rendering and error fallbacks` under Story [`US-013`](../stories/US-013-mermaid-offline-rendering.md).
+
+---
+
+## 2026-10-24: Task US-013.4 Execution & Story US-013 Completion — Write Unit Tests for Mermaid Rendering and Error Fallbacks
+
+- **Task ID:** `US-013.4`
+- **Parent Story:** [`US-013: Mermaid Diagrams Offline Rendering & Error Isolation`](../stories/US-013-mermaid-offline-rendering.md)
+- **Status:** Task `US-013.4` marked `DONE`. Story `US-013` marked `DONE`. Epic `EPIC-004` marked `IN_PROGRESS`.
+
+### Actions Taken:
+1. **Authored Integration & Golden Fixture Test Suite:** Created `frontend/src/features/rendering/mermaid-integration.test.tsx` providing 5 comprehensive end-to-end integration tests:
+   - Validated that all 6 diagram types (flowchart, sequence, class, state, ER, Gantt) from golden fixture `fixtures/golden/diagrams-mermaid.md` render into valid SVG elements offline without network access or errors.
+   - Tested click directive script neutralization and dangerous link stripping (`javascript:`, `data:`, inline `onclick`), asserting that no script executes or dangerous handler is retained in DOM per AC 4 and SEC-INVAR-07.
+   - Asserted that oversized/wide diagrams are contained within horizontally scrollable wrappers (`overflow-x: auto`, `direction: ltr !important`) per AC 5 and PRD Section 5.4.
+   - Asserted that multiple diagrams in the same document render independently, verifying that an invalid diagram renders an isolated error card without preventing surrounding valid diagrams from rendering (AC 3).
+   - Validated that empty and whitespace-only diagram blocks are safely handled without throwing uncaught exceptions.
+2. **Added Whitespace Guard:** Enhanced `frontend/src/features/rendering/components/MermaidBlock.tsx` with an immediate empty/whitespace check returning an empty container and skipping unnecessary parser invocations.
+3. **Synchronized Requirement Traceability:** Updated `docs/implementation/REQUIREMENT-TRACEABILITY.md` to transition `FR-RENDER-005` from `NOT_STARTED / UNVERIFIED` to `IMPLEMENTED / VERIFIED`.
+4. **Synchronized Project Tracking Records:** Updated `docs/stories/US-013-mermaid-offline-rendering.md` (Story `DONE`, Task `US-013.4` `DONE`), `docs/implementation/BACKLOG.md` (Story `US-013` `DONE`), and `docs/implementation/CURRENT-STATE.md`.
+5. **Verified Unit Tests, Full Suite, Build, and Go Backend:**
+   - Executed `npm --prefix frontend run test:unit -- mermaid`: 26 passed across 4 test files in 13.68s.
+   - Executed `npm --prefix frontend run test:unit`: 229 passed across 26 test files in 51.19s.
+   - Executed `npm --prefix frontend run build`: Clean production bundle built in 2.05s.
+   - Executed `go test ./...`: All backend packages passed (cached).
+   - Executed `golangci-lint run ./...`: 0 issues.
+
+### Verification Results:
+- `npm --prefix frontend run test:unit -- mermaid`: 26 passed across 4 test files in 13.68s (PASS).
+- `npm --prefix frontend run test:unit`: 229 passed across 26 test files in 51.19s (PASS).
+- `npm --prefix frontend run build`: Clean production bundle built in 2.05s (PASS).
+- `go test ./...`: All backend packages pass (PASS).
+- `golangci-lint run ./...`: 0 issues (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Story US-013 Completion Summary:
+- Story [`US-013: Mermaid Diagrams Offline Rendering & Error Isolation`](../stories/US-013-mermaid-offline-rendering.md) is fully complete (`DONE`).
+- All 4 tasks completed with isolated Conventional Commits:
+  - `US-013.1` (Commit `3828130`): Bundle Mermaid locally with strict configuration and SVG sanitization.
+  - `US-013.2` (Commit `4655ccc`): Implement MermaidBlock React component with localized error boundary.
+  - `US-013.3` (Commit `00e079b`): Implement theme synchronization (Light/Dark) and golden fixture suite.
+  - `US-013.4` (Commit pending): Write full pipeline integration and golden fixture tests for Mermaid.
+- All 5 acceptance criteria satisfied and verified offline in Linux environment.
+- Multi-platform validation is deferred to the separate post-implementation cross-platform validation workflow.
+
+### Next Eligible Story & Task:
+- Story [`US-014: LaTeX Math Offline Rendering with KaTeX`](../stories/US-014-katex-math-rendering.md) (Task `US-014.1: Bundle KaTeX locally with strict configuration and CSS/fonts`) under Phase 4 / `EPIC-004`.

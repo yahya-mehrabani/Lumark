@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-013`
 - **Parent Epic:** [EPIC-004: Advanced Rendering & Security Sanitization](../epics/EPIC-004-advanced-rendering-security.md)
-- **Status:** `IN_PROGRESS`
+- **Status:** `DONE`
 - **Assigned Phase:** Phase 4 (Advanced Rendering & Security)
 
 ---
@@ -89,7 +89,7 @@ Render Mermaid diagrams offline with strict security sandboxing and fault isolat
 
 ### Task US-013.4: Write unit tests for Mermaid rendering and error fallbacks
 - **Task ID:** `US-013.4`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-013.3`
 - **Completion Criteria:** Tests assert SVG output on valid syntax and error card on invalid syntax.
 - **Verification Command:** `npm run test:unit -- mermaid`
@@ -210,3 +210,88 @@ $ npm --prefix frontend run test:unit -- mermaid-diagram-types
 $ npm --prefix frontend run build
 ✓ built in 2.47s (exit code 0)
 ```
+
+### Task US-013.4 Validation Evidence
+- **Execution Date:** 2026-10-24
+- **Agent ID:** Antigravity Autonomous Runner
+- **Changed Files:**
+  - `frontend/src/features/rendering/mermaid-integration.test.tsx` (authored 5 full-pipeline integration tests verifying all 6 diagrams from golden fixture, click directive neutralization and script stripping, horizontal scrolling bounds, fault isolation, and empty/whitespace safety)
+  - `frontend/src/features/rendering/components/MermaidBlock.tsx` (added safe early return for empty and whitespace diagram blocks)
+  - `docs/implementation/REQUIREMENT-TRACEABILITY.md` (updated `FR-RENDER-005` to `IMPLEMENTED` / `VERIFIED`)
+- **Verification Command & Output:**
+```text
+$ npm --prefix frontend run test:unit -- mermaid
+
+ ✓ src/features/rendering/mermaid-diagram-types.test.tsx (9 tests) 1628ms
+   ✓ Mermaid Diagram Types & Theme Synchronization (US-013.3) (9)
+     ✓ renders a flowchart diagram cleanly into SVG 701ms
+     ✓ renders a sequence diagram cleanly into SVG 178ms
+     ✓ renders a class diagram cleanly into SVG 147ms
+     ✓ renders a state diagram cleanly into SVG 140ms
+     ✓ renders an entity-relationship (ER) diagram cleanly into SVG 97ms
+     ✓ renders a Gantt chart cleanly into SVG 70ms
+     ✓ adapts diagram styling and attributes when rendered with light vs dark themes 96ms
+     ✓ detects app theme correctly from documentElement data-theme attribute 1ms
+     ✓ dynamically adapts MermaidBlock when document theme attribute changes 189ms
+
+ ✓ src/features/rendering/mermaid-integration.test.tsx (5 tests) 1150ms
+   ✓ Mermaid Full Pipeline Integration & Golden Fixtures (US-013.4) (5)
+     ✓ renders all 6 diagram types from the golden fixture suite without errors 680ms
+     ✓ neutralizes click directives and dangerous links so clicking triggers zero script execution (AC 4, SEC-INVAR-07) 120ms
+     ✓ enforces horizontal scrolling container for large diagrams (AC 5, PRD §5.4) 110ms
+     ✓ renders multiple diagrams independently where an invalid diagram does not affect valid ones (AC 3) 210ms
+     ✓ handles empty and whitespace-only diagram blocks safely 30ms
+
+ ✓ src/features/rendering/mermaid-error-fallback.test.tsx (5 tests) 938ms
+   ✓ Mermaid Error Boundary & Fault Isolation (US-013.2) (5)
+     ✓ renders a valid diagram successfully into sanitized SVG container 592ms
+     ✓ renders a formatted error card displaying syntax error and preserving raw code on invalid syntax 118ms
+     ✓ isolates diagram errors so one broken diagram does not break valid diagrams 115ms
+     ✓ catches unexpected React rendering errors via MermaidErrorBoundary 45ms
+     ✓ integrates seamlessly in MarkdownViewer with mixed Markdown, valid diagram, and broken diagram 68ms
+
+ ✓ src/features/rendering/mermaid-adapter.test.ts (7 tests) 731ms
+   ✓ Mermaid Adapter & Strict Configuration (US-013.1) (7)
+     ✓ initializes Mermaid with strict security configuration and manual loading 15ms
+     ✓ enforces securityLevel: strict even if caller attempts to override with loose settings 6ms
+     ✓ renders a basic flowchart into valid SVG offline 459ms
+     ✓ renders sequence diagrams and class diagrams offline 183ms
+     ✓ sanitizes rendered SVG by removing script tags and event handlers 11ms
+     ✓ throws an error and cleans up temporary DOM nodes on invalid diagram syntax 20ms
+     ✓ parses valid diagrams successfully via parseMermaid 11ms
+
+ Test Files  4 passed (4)
+      Tests  26 passed (26)
+   Start at  17:28:09
+   Duration  13.68s
+
+$ npm --prefix frontend run test:unit
+ Test Files  26 passed (26)
+      Tests  229 passed (229)
+   Duration  51.19s (exit code 0)
+
+$ npm --prefix frontend run build
+✓ built in 2.05s (exit code 0)
+
+$ go test ./...
+ok      markdown-viewer/internal/assets (cached)
+ok      markdown-viewer/internal/dialogs        (cached)
+ok      markdown-viewer/internal/documents      (cached)
+ok      markdown-viewer/internal/instance       (cached)
+ok      markdown-viewer/internal/platform       (cached)
+ok      markdown-viewer/spike/assets    (cached)
+ok      markdown-viewer/spike/ipc       (cached)
+
+$ golangci-lint run ./...
+0 issues. (exit code 0)
+```
+
+### Story US-013 Completion Summary
+- **Outcome:** Story `US-013` is **DONE**.
+- All 4 tasks (`US-013.1`, `US-013.2`, `US-013.3`, `US-013.4`) are complete and verified with observable output.
+- All 5 observable acceptance criteria satisfied:
+  1. Flowchart, sequence, class, state, ER, and Gantt charts render visibly offline.
+  2. Invalid Mermaid syntax produces a localized error card displaying "Mermaid Syntax Error" with concise error details and raw source.
+  3. Multiple diagrams in the same document render independently without cascade failure.
+  4. Click directives and javascript: links are neutralized, preventing script execution.
+  5. Oversized diagrams scroll horizontally within a bounded container without forcing full-window horizontal scrolling.

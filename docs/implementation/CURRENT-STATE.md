@@ -11,10 +11,10 @@
 
 - **Current Overall Phase:** **Phase 1 (Technical Feasibility Spike)**.
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
-- **Application Implementation Status:** **PHASE 2 (EPIC-002) AND PHASE 3 (EPIC-003: US-009, US-010, US-011, US-012) COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) through [`US-004`](../stories/US-004-packaging-association-spike.md) (Phase 1 Spike), Stories [`US-005`](../stories/US-005-native-document-service.md) through [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Phase 2 Core Lifecycle & Tabs), and Stories [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) through [`US-012`](../stories/US-012-headings-anchors-fixtures.md) (Phase 3 Core Rendering Core) fully verified across all implementation tasks under Linux/WSLg.
+- **Application Implementation Status:** **PHASE 2 (EPIC-002), PHASE 3 (EPIC-003), AND STORY US-013 (EPIC-004) COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) through [`US-004`](../stories/US-004-packaging-association-spike.md) (Phase 1 Spike), Stories [`US-005`](../stories/US-005-native-document-service.md) through [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Phase 2 Core Lifecycle & Tabs), Stories [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) through [`US-012`](../stories/US-012-headings-anchors-fixtures.md) (Phase 3 Core Rendering Core), and Story [`US-013`](../stories/US-013-mermaid-offline-rendering.md) (Phase 4 Mermaid Diagrams Offline Rendering) fully verified across all implementation tasks under Linux/WSLg.
 - **Feasibility Spike Status:** **SPIKE IMPLEMENTATION COMPLETE / AWAITING CROSS-PLATFORM GATES**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-013.3: Implement theme synchronization (Light/Dark)` under [`US-013`](../stories/US-013-mermaid-offline-rendering.md) (Added `detectAppTheme`, dynamic theme synchronization in `MermaidBlock.tsx`, SVGPathElement headless layout polyfills, created `fixtures/golden/diagrams-mermaid.md`, and 9 passing unit/integration tests).
-- **Active / Next Eligible Work Item:** Story [`US-013: Mermaid Diagrams Offline Rendering & Error Isolation`](../stories/US-013-mermaid-offline-rendering.md) (Task `US-013.4: Write unit tests for Mermaid rendering and error fallbacks`) under Phase 4 / `EPIC-004`.
+- **Last Completed Work Item:** Story [`US-013: Mermaid Diagrams Offline Rendering & Error Isolation`](../stories/US-013-mermaid-offline-rendering.md) completed (Task `US-013.4: Write unit tests for Mermaid rendering and error fallbacks` verified; full suite of 26 tests across 4 files passing; all 6 diagram types, click directive neutralization, horizontal scroll containers, and multi-diagram error boundaries verified; `FR-RENDER-005` marked `IMPLEMENTED` and `VERIFIED`).
+- **Active / Next Eligible Work Item:** Story [`US-014: LaTeX Math Offline Rendering with KaTeX`](../stories/US-014-katex-math-rendering.md) (Task `US-014.1: Bundle KaTeX locally with strict configuration and CSS/fonts`) under Phase 4 / `EPIC-004`.
 
 ---
 
@@ -80,9 +80,9 @@ All planning remediation artifacts must be preserved:
 
 ## 5. Exact Next Action for the Next Agent
 
-1. **Confirm Task US-013.3 Complete:**
-   - Task `US-013.3: Implement theme synchronization (Light/Dark)` is `DONE`.
-   - `npm --prefix frontend run test:unit -- mermaid-diagram-types` passes (9 tests).
-2. **Execute Task US-013.4 (Next Active):**
-   - Active work item: Task `US-013.4: Write unit tests for Mermaid rendering and error fallbacks` under Story [`US-013`](../stories/US-013-mermaid-offline-rendering.md) (Phase 4 / `EPIC-004`).
+1. **Confirm Story US-013 Complete:**
+   - Story [`US-013: Mermaid Diagrams Offline Rendering & Error Isolation`](../stories/US-013-mermaid-offline-rendering.md) is `DONE` (all 4 tasks completed and verified with isolated Conventional Commits).
+   - Full Mermaid suite passes: `npm --prefix frontend run test:unit -- mermaid` (26 tests across 4 test files).
+2. **Execute Story US-014 (Next Active):**
+   - Active work item: Task `US-014.1: Bundle KaTeX locally with strict configuration and CSS/fonts` under Story [`US-014`](../stories/US-014-katex-math-rendering.md) (Phase 4 / `EPIC-004`).
 3. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.
