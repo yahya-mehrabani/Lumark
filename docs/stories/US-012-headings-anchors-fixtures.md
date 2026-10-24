@@ -76,7 +76,7 @@ Implement stable heading anchor generation and establish the baseline golden fix
 
 ### Task US-012.3: Assemble baseline golden fixture suite
 - **Task ID:** `US-012.3`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** Commit fixtures in `fixtures/golden/` with tests validating them.
 - **Verification Command:** `npm run test:unit -- golden-headings`
@@ -194,4 +194,33 @@ Implement stable heading anchor generation and establish the baseline golden fix
  Test Files  1 passed (1)
       Tests  11 passed (11)
    Duration  1.92s
+```
+
+### Task US-012.3 Validation Evidence
+- **Execution Date:** 2026-10-24
+- **Agent ID:** Autonomous Implementation Agent
+- **Changed Files:**
+  - `fixtures/golden/headings-and-anchors.md`: Canonical golden fixture covering heading levels `h1` through `h6`, duplicate section headings for disambiguation testing, headings with inline markdown formatting, punctuation/symbol filtering, multilingual Unicode headings (Persian, Arabic, German umlauts, Japanese CJK), and in-document anchor navigation links.
+  - `fixtures/golden/commonmark-spec.md`: Baseline CommonMark specification golden fixture covering typography, soft/hard breaks, blockquotes (nested), ordered and unordered lists, horizontal rules, and inline links per PRD Section 13.2.
+  - `frontend/src/features/rendering/golden-headings.test.tsx`: 7 integration tests validating DOM tags `h1` through `h6`, deterministic IDs, duplicate suffixing (`duplicate-section`, `duplicate-section-1`, `duplicate-section-2`), Unicode preservation, formatted heading text extraction, heading-anchor presence, and internal link scrolling.
+- **Terminal Output & Verification Evidence:**
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run golden-headings
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/rendering/golden-headings.test.tsx (7 tests) 1094ms
+   ✓ Golden Headings Fixture Suite (US-012.3) (7)
+     ✓ loads and renders the complete headings and anchors golden fixture 230ms
+     ✓ renders all heading levels h1 through h6 with correct tags and deterministic IDs 68ms
+     ✓ disambiguates triplicate duplicate headings with incrementing suffixes 336ms
+     ✓ preserves Unicode characters across Persian, German, and Japanese headings 134ms
+     ✓ extracts plain text from headings containing nested Markdown formatting 112ms
+     ✓ attaches heading-anchor direct link to every rendered heading 51ms
+     ✓ navigates to duplicate heading targets when clicked from internal links 147ms
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Duration  3.63s
 ```

@@ -1875,3 +1875,27 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-012.3: Assemble baseline golden fixture suite` under [`docs/stories/US-012-headings-anchors-fixtures.md`](../stories/US-012-headings-anchors-fixtures.md).
+
+---
+
+## [2026-10-24] — Phase 3: Assemble Baseline Golden Fixture Suite (Task US-012.3)
+
+- **Work Item ID:** `US-012.3`
+- **Agent:** Autonomous Story Runner
+- **Summary:** Created canonical golden fixture suites `fixtures/golden/headings-and-anchors.md` and `fixtures/golden/commonmark-spec.md`. Validated all heading levels `h1`-`h6`, triplicate duplicate suffix disambiguation, multilingual Unicode preservation, formatted heading text extraction, and in-document link scrolling via `frontend/src/features/rendering/golden-headings.test.tsx` (7 tests passing).
+- **Status:** Task `US-012.3` marked `DONE`. Story `US-012` marked `IN_PROGRESS`.
+
+### Actions Taken:
+1. **Created Headings & Anchors Golden Fixture:** Authored `fixtures/golden/headings-and-anchors.md` covering heading levels `h1`-`h6`, duplicate section headings for disambiguation testing, headings with inline markdown formatting, punctuation/symbol filtering, multilingual Unicode headings (Persian, Arabic, German umlauts, Japanese CJK), and in-document anchor navigation links.
+2. **Created CommonMark Specification Golden Fixture:** Authored `fixtures/golden/commonmark-spec.md` covering baseline CommonMark elements (typography, soft/hard breaks, nested blockquotes, ordered and unordered lists, horizontal rules, and inline links per PRD Section 13.2).
+3. **Created Integration Test Suite:** Created `frontend/src/features/rendering/golden-headings.test.tsx` containing 7 test cases verifying DOM tags `h1` through `h6`, deterministic IDs, duplicate suffixing (`duplicate-section`, `duplicate-section-1`, `duplicate-section-2`), Unicode preservation, formatted heading text extraction, heading-anchor presence, and internal link scrolling.
+4. **Synchronized Documentation:** Updated `docs/stories/US-012-headings-anchors-fixtures.md` (Task `US-012.3` `DONE`, Section 9 evidence), `docs/implementation/CURRENT-STATE.md`, and `docs/implementation/WORK-LOG.md`.
+
+### Verification Results:
+- `npm --prefix frontend run test:unit -- golden-headings`: 7 passed across 1 test file in 1094ms (PASS).
+- `npm --prefix frontend run build:dev`: Clean TypeScript compilation and Vite build in 1.19s (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-012.4: Write unit and visual tests for fixtures` under [`docs/stories/US-012-headings-anchors-fixtures.md`](../stories/US-012-headings-anchors-fixtures.md).
