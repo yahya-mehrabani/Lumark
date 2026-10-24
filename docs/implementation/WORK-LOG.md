@@ -1417,3 +1417,31 @@ This log is an append-only chronological record of all significant actions, veri
 ### Story US-007 Completion Status:
 - **Story Status:** `DONE` (All 4 tasks `US-007.1`, `US-007.2`, `US-007.3`, `US-007.4` verified and committed).
 - **Next Eligible Story:** Story [`US-008: Native File Picker & Drag-and-Drop Integration`](../stories/US-008-file-picker-drag-drop.md) (Status: `READY`).
+
+---
+
+## [2026-10-24] — Phase 2: Implement Native File Dialog in Go (Task US-008.1)
+
+- **Work Item ID:** `US-008.1`
+- **Agent:** Autonomous Story Runner
+- **Summary:** Implemented native file dialog service in Go under `internal/dialogs/` with `DialogRunner` interface, `WailsDialogRunner` calling Wails v3 `application.Get().Dialog.OpenFileWithOptions`, and `Service` providing `OpenFile()`, `OpenFiles()`, `OpenFileDialog()`, and `OpenMultipleFilesDialog()`. Configured default filters prioritizing Markdown extensions (`*.md`, `*.markdown`, `*.mdown`, `*.mkd`) with All Files fallback (`*.*`). Registered `dialogs.NewService()` in `main.go` and regenerated Wails v3 frontend bindings. Wrote comprehensive unit tests in `internal/dialogs/service_test.go` covering single selection, multi-selection, cancellation, error propagation, filter definitions, custom titles, and uninitialized application guards.
+- **Status:** Task `US-008.1` marked `DONE`. Story `US-008` transitioned to `IN_PROGRESS`.
+
+### Actions Taken:
+1. **Implemented Dialog Types and Runner:** Created `internal/dialogs/types.go` defining `DialogRunner` interface, `WailsDialogRunner`, `ErrNoApplication`, and `DefaultMarkdownFilters()`.
+2. **Implemented Dialog Service:** Created `internal/dialogs/service.go` implementing `DialogService` interface with `OpenFile`, `OpenFiles`, `OpenFileDialog`, and `OpenMultipleFilesDialog`.
+3. **Registered Service in main.go:** Added `application.NewService(dialogs.NewService())` to Wails application initialization in `main.go`.
+4. **Generated Wails v3 Bindings:** Ran `wails3 generate bindings` producing typed TypeScript bindings in `frontend/bindings/markdown-viewer/internal/dialogs/`.
+5. **Wrote Unit Tests:** Created `internal/dialogs/service_test.go` with 8 subtests for `TestNativeFileDialog`.
+6. **Documentation Synchronization:** Updated `docs/stories/US-008-file-picker-drag-drop.md` and `docs/implementation/CURRENT-STATE.md`.
+
+### Verification Results:
+- `go test -v -run TestNativeFileDialog ./internal/dialogs/...`: 8 passed in 0.047s (PASS).
+- `go test ./...`: All packages passed (PASS).
+- `golangci-lint run ./internal/dialogs/...`: 0 issues (PASS).
+- `npm run build && npm run test:unit`: 34 passed across 4 files, build succeeded (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-008.2: Implement frontend file drop handler` under [`docs/stories/US-008-file-picker-drag-drop.md`](../stories/US-008-file-picker-drag-drop.md).

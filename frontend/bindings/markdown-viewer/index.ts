@@ -8,6 +8,6 @@ export {
     SpikeDocumentService
 };
 
-export {
+export type {
     DocumentData
 } from "./models.js";

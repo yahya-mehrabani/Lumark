@@ -14,6 +14,7 @@ import (
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 
+	"markdown-viewer/internal/dialogs"
 	"markdown-viewer/spike/assets"
 	"markdown-viewer/spike/ipc"
 )
@@ -110,6 +111,7 @@ func main() {
 		Services: []application.Service{
 			application.NewService(&GreetService{}),
 			application.NewService(docService),
+			application.NewService(dialogs.NewService()),
 		},
 		Assets: application.AssetOptions{
 			Handler:    application.AssetFileServerFS(frontendAssets),

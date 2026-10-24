@@ -8,7 +8,7 @@
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Unused imports
-import { Call as $Call, CancellablePromise as $CancellablePromise, Create as $Create } from "@wailsio/runtime";
+import { Call as $Call, CancellablePromise as $CancellablePromise } from "@wailsio/runtime";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Unused imports
@@ -18,19 +18,12 @@ import * as $models from "./models.js";
  * GetCurrentDocument returns the currently loaded document data.
  */
 export function GetCurrentDocument(): $CancellablePromise<$models.DocumentData> {
-    return $Call.ByID(1817100390).then(($result: any) => {
-        return $$createType0($result);
-    });
+    return $Call.ByID(1817100390);
 }
 
 /**
  * LoadFile reads the specified file, configures the asset resolver root directory, and returns DocumentData.
  */
 export function LoadFile(path: string): $CancellablePromise<$models.DocumentData> {
-    return $Call.ByID(817508912, path).then(($result: any) => {
-        return $$createType0($result);
-    });
+    return $Call.ByID(817508912, path);
 }
-
-// Private type creation functions
-const $$createType0 = $models.DocumentData.createFrom;

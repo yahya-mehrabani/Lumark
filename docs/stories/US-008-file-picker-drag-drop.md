@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-008`
 - **Parent Epic:** [EPIC-002: Core Native Application Lifecycle & Tab Management](../epics/EPIC-002-native-lifecycle-tabs.md)
-- **Status:** `DRAFT`
+- **Status:** `IN_PROGRESS`
 - **Assigned Phase:** Phase 2 (Core Application Structure)
 
 ---
@@ -33,7 +33,7 @@ Enable users to open Markdown files through:
 ## 4. Scope and Explicit Exclusions
 
 - **In Scope:**
-  - Wails native dialog adapter in `internal/platform/dialogs.go`.
+  - Wails native dialog adapter in `internal/platform/dialogs.go` (implemented in `internal/dialogs`).
   - Frontend drag-and-drop event handlers in `features/shell/DropZone.tsx`.
   - Extension filtering and multi-file batch opening.
 - **Explicit Exclusions:**
@@ -55,7 +55,7 @@ Enable users to open Markdown files through:
 
 ### Task US-008.1: Implement native file dialog in Go
 - **Task ID:** `US-008.1`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** Go method calls `runtime.OpenFileDialog` with extension filters and returns selected paths.
 - **Verification Command:** `go test -v -run TestNativeFileDialog ./internal/dialogs/...`
@@ -111,11 +111,36 @@ Enable users to open Markdown files through:
 
 ## 9. Implementation Notes and Validation Evidence
 
-*(To be filled by implementation agent during execution)*
-- **Execution Date:** Not yet executed
-- **Agent ID:** N/A
-- **Changed Files:** None
+### Task US-008.1: Implement native file dialog in Go
+- **Execution Date:** 2026-10-24
+- **Status:** `DONE`
+- **Changed Files:**
+  - `internal/dialogs/types.go`: `DialogRunner` interface, `WailsDialogRunner`, and `DefaultMarkdownFilters()`.
+  - `internal/dialogs/service.go`: `DialogService` interface and `Service` implementing `OpenFile`, `OpenFiles`, `OpenFileDialog`, `OpenMultipleFilesDialog`.
+  - `internal/dialogs/service_test.go`: Unit tests for `TestNativeFileDialog` covering single file, multi-file, cancellation, error handling, default Markdown filters, and Wails uninitialized runner.
+  - `main.go`: Registered `dialogs.NewService()` in Wails application services.
+  - `frontend/bindings/markdown-viewer/internal/dialogs/service.ts`: Generated TypeScript bindings for `OpenFile` and `OpenFiles`.
 - **Terminal Output & Verification Evidence:**
 ```text
-(Awaiting execution in Phase 2)
+=== RUN   TestNativeFileDialog
+=== RUN   TestNativeFileDialog/single_file_selection_success
+=== RUN   TestNativeFileDialog/single_file_selection_canceled_by_user
+=== RUN   TestNativeFileDialog/single_file_selection_runner_error
+=== RUN   TestNativeFileDialog/multiple_files_selection_success
+=== RUN   TestNativeFileDialog/multiple_files_selection_canceled_by_user
+=== RUN   TestNativeFileDialog/default_markdown_filters_validation
+=== RUN   TestNativeFileDialog/custom_title_configuration
+=== RUN   TestNativeFileDialog/wails_runner_without_running_application_returns_ErrNoApplication
+--- PASS: TestNativeFileDialog (0.00s)
+    --- PASS: TestNativeFileDialog/single_file_selection_success (0.00s)
+    --- PASS: TestNativeFileDialog/single_file_selection_canceled_by_user (0.00s)
+    --- PASS: TestNativeFileDialog/single_file_selection_runner_error (0.00s)
+    --- PASS: TestNativeFileDialog/multiple_files_selection_success (0.00s)
+    --- PASS: TestNativeFileDialog/multiple_files_selection_canceled_by_user (0.00s)
+    --- PASS: TestNativeFileDialog/default_markdown_filters_validation (0.00s)
+    --- PASS: TestNativeFileDialog/custom_title_configuration (0.00s)
+    --- PASS: TestNativeFileDialog/wails_runner_without_running_application_returns_ErrNoApplication (0.00s)
+PASS
+ok      markdown-viewer/internal/dialogs        0.047s
 ```
+- **Linter Status:** `golangci-lint run ./internal/dialogs/...` passed with 0 issues.
