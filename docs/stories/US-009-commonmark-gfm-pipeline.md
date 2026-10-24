@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-009`
 - **Parent Epic:** [EPIC-003: CommonMark, GFM & Core Document Rendering](../epics/EPIC-003-commonmark-gfm-rendering.md)
-- **Status:** `IN_PROGRESS`
+- **Status:** `DONE`
 - **Assigned Phase:** Phase 3 (Baseline Markdown Rendering)
 
 ---
@@ -77,7 +77,7 @@ Implement the core Markdown rendering pipeline in React using `react-markdown` a
 
 ### Task US-009.3: Add component tests for CommonMark and GFM constructs
 - **Task ID:** `US-009.3`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-009.2`
 - **Completion Criteria:** Tests assert proper HTML elements generated for tables, task lists, and quotes.
 - **Verification Command:** `npm run test:unit -- markdown-viewer`
@@ -186,6 +186,71 @@ vite v8.3.5 building client environment for production...
 ✓ 316 modules transformed.
 dist/index.html                   0.58 kB │ gzip:   0.35 kB
 dist/assets/index-RMY3-iKt.css   13.25 kB │ gzip:   3.34 kB
-dist/assets/index-DqmTTRvN.js   342.79 kB │ gzip: 106.60 kB
 ✓ built in 328ms
 ```
+
+### Task US-009.3 Validation Evidence
+- **Execution Date:** 2026-10-24
+- **Agent ID:** Autonomous Story Runner (Pair Programmer)
+- **Status:** `DONE`
+- **Changed Files:**
+  - `fixtures/golden/gfm-extensions.md`
+  - `frontend/src/features/rendering/markdown-viewer.test.tsx`
+  - `docs/implementation/REQUIREMENT-TRACEABILITY.md`
+- **Terminal Output & Verification Evidence:**
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run markdown-viewer
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/rendering/markdown-viewer.test.tsx (6 tests) 470ms
+   ✓ MarkdownViewer Component Integration (US-009.3) (6)
+     ✓ renders a complete document with header and CommonMark/GFM blocks 200ms
+     ✓ renders content directly without header when document prop is omitted 9ms
+     ✓ handles empty string content gracefully without throwing errors 7ms
+     ✓ renders large multi-paragraph documents with bounded performance 210ms
+     ✓ sanitizes script tags and inline event handlers inertly 12ms
+     ✓ renders the golden GFM extensions fixture accurately 27ms
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  13:56:39
+   Duration  1.77s
+```
+- **Full Frontend Suite Verification:**
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/rendering/markdown-viewer.test.tsx (6 tests) 480ms
+ ✓ src/features/shell/shell.test.tsx (7 tests) 383ms
+ ✓ src/features/shell/dropzone.test.tsx (9 tests) 424ms
+ ✓ src/features/shell/empty-state.test.tsx (6 tests) 292ms
+ ✓ src/features/rendering/commonmark-pipeline.test.tsx (9 tests) 275ms
+ ✓ src/features/rendering/gfm-pipeline.test.tsx (5 tests) 242ms
+ ✓ src/features/tabs/tab-bar.test.tsx (8 tests) 264ms
+ ✓ src/features/shell/drag-drop.test.tsx (7 tests) 109ms
+ ✓ src/features/tabs/tab-store.test.ts (13 tests) 46ms
+ ✓ src/features/shell/mixed-drop.test.tsx (10 tests) 26ms
+
+ Test Files  10 passed (10)
+      Tests  80 passed (80)
+   Start at  13:56:52
+   Duration  13.79s
+```
+- **Production Build Verification:**
+```text
+> markdown-viewer-frontend@0.1.0 build
+> tsc && vite build --mode production
+
+vite v8.3.5 building client environment for production...
+✓ 316 modules transformed.
+dist/index.html                   0.58 kB │ gzip:   0.35 kB
+dist/assets/index-RMY3-iKt.css   13.25 kB │ gzip:   3.34 kB
+dist/assets/index-DqmTTRvN.js   342.79 kB │ gzip: 106.60 kB
+✓ built in 351ms
+```
+- **Story Completion Status:** `DONE` (All 3 tasks `US-009.1`, `US-009.2`, and `US-009.3` completed and verified; CommonMark and GFM constructs fully operational and tested).
