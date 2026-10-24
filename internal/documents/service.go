@@ -3,6 +3,7 @@ package documents
 import (
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -160,23 +161,77 @@ func (s *Service) ValidatePath(path string) (string, os.FileInfo, error) {
 	return resolvedPath, info, nil
 }
 
-// ReadDocument reads and validates a Markdown document from disk.
+// ReadDocument reads, validates, and decodes a Markdown document from disk.
 func (s *Service) ReadDocument(path string) (*DocumentDTO, error) {
 	resolvedPath, info, err := s.ValidatePath(path)
 	if err != nil {
 		return nil, err
 	}
 
+	f, err := os.Open(resolvedPath)
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return nil, &DocumentError{
+				Code:    ErrCodeFileNotFound,
+				Message: "file not found",
+				Path:    resolvedPath,
+				Err:     err,
+			}
+		}
+		if errors.Is(err, os.ErrPermission) {
+			return nil, &DocumentError{
+				Code:    ErrCodePermissionDenied,
+				Message: "permission denied reading file",
+				Path:    resolvedPath,
+				Err:     err,
+			}
+		}
+		return nil, &DocumentError{
+			Code:    ErrCodeReadFailed,
+			Message: "failed to open file",
+			Path:    resolvedPath,
+			Err:     err,
+		}
+	}
+	defer func() {
+		_ = f.Close()
+	}()
+
+	// Guard with LimitReader (maxSizeBytes + 1) to protect against concurrent file growth
+	var reader io.Reader = f
+	if s.maxSizeBytes > 0 {
+		reader = io.LimitReader(f, s.maxSizeBytes+1)
+	}
+
+	raw, err := io.ReadAll(reader)
+	if err != nil {
+		return nil, &DocumentError{
+			Code:    ErrCodeReadFailed,
+			Message: "failed to read file contents",
+			Path:    resolvedPath,
+			Err:     err,
+		}
+	}
+
+	if s.maxSizeBytes > 0 && int64(len(raw)) > s.maxSizeBytes {
+		return nil, &DocumentError{
+			Code: ErrCodeFileTooLarge,
+			Message: fmt.Sprintf("file size exceeds maximum allowed limit (%d bytes)",
+				s.maxSizeBytes),
+			Path: resolvedPath,
+		}
+	}
+
+	content, hasEncodingErrors := DecodeUTF8(raw)
 	isReadOnly := (info.Mode().Perm() & 0200) == 0
 
-	// Full UTF-8 content reading and BOM normalization is in US-005.3
 	return &DocumentDTO{
 		Path:              resolvedPath,
 		FileName:          info.Name(),
-		Content:           "",
-		FileSizeBytes:     info.Size(),
+		Content:           content,
+		FileSizeBytes:     int64(len(raw)),
 		LastModified:      info.ModTime(),
 		IsReadOnly:        isReadOnly,
-		HasEncodingErrors: false,
+		HasEncodingErrors: hasEncodingErrors,
 	}, nil
 }

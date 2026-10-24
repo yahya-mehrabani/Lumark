@@ -1071,3 +1071,40 @@ This log is an append-only chronological record of all significant actions, veri
 - **Completed Tasks:** `US-005.1` (`DONE`), `US-005.2` (`DONE`).
 - **Next Eligible Task:** `US-005.3: Implement UTF-8 reader with BOM stripping and replacement` under [`US-005`](../stories/US-005-native-document-service.md) (`READY`).
 - **Phase Gate Status:** In progress under approved Linux-only implementation policy; cross-platform validation deferred.
+
+---
+
+## [2026-10-24] — Phase 2: Implement UTF-8 Reader with BOM Stripping and Replacement (US-005.3)
+
+- **Work Item ID:** `US-005.3` (Story `US-005: Native Document Service & Secure File Loading`, `EPIC-002`)
+- **Agent:** Antigravity Autonomous Story Runner
+- **Summary:** Implemented `DecodeUTF8` in `internal/documents/reader.go` handling clean stripping of leading UTF-8 BOM (`\xEF\xBB\xBF`) via `bytes.TrimPrefix`, validating UTF-8 encoding, and replacing invalid sequences with Unicode replacement character `\uFFFD` with non-blocking error flag per PRD Section 7.3 and 12.4. Integrated `DecodeUTF8` into `ReadDocument` in `internal/documents/service.go` with `io.LimitReader` concurrency guard and proper resource cleanup. Added unit test suite `TestUTF8Reader` covering valid UTF-8, multi-byte Unicode, BOM stripping, corrupted bytes, and `ReadDocument` integration.
+
+### Actions Taken:
+1. **Implemented DecodeUTF8 (`internal/documents/reader.go`):**
+   - Implemented `DecodeUTF8(raw []byte) (string, bool)` stripping UTF-8 BOM if present.
+   - Replaced invalid byte sequences with `\uFFFD` via `strings.ToValidUTF8(string(raw), "\uFFFD")` and returned boolean warning flag `hasEncodingErrors`.
+2. **Integrated into ReadDocument (`internal/documents/service.go`):**
+   - Opened validated path, wrapped with `io.LimitReader(f, s.maxSizeBytes+1)` to guard against TOCTOU concurrent growth, and handled read-only file mode check.
+   - Normalized file contents via `DecodeUTF8` and populated `DocumentDTO` (`Content`, `HasEncodingErrors`, `FileSizeBytes`, `LastModified`, `IsReadOnly`).
+3. **Created Unit Tests (`internal/documents/reader_test.go`):**
+   - Implemented `TestUTF8Reader` with subtests for valid UTF-8 (ASCII, Persian, German umlauts, Emoji), BOM stripping (text with BOM, BOM-only file), corrupted bytes replacement with U+FFFD, and end-to-end `ReadDocument` integration on disk.
+4. **Verification and Linting:**
+   - Ran `go test -v -run TestUTF8Reader ./internal/documents/...` (all subtests passed in 0.004s).
+   - Ran `golangci-lint run ./internal/documents/...` (0 issues).
+5. **Documentation Synchronization:**
+   - Updated `docs/stories/US-005-native-document-service.md`: marked Task `US-005.3` as `DONE`, recorded verification output.
+   - Updated `docs/implementation/CURRENT-STATE.md`: advanced last completed work item to `US-005.3` and next eligible task to `US-005.4`.
+
+### Verification Results:
+- `go test -v -run TestUTF8Reader ./internal/documents/...`: all subtests PASS (PASS).
+- `golangci-lint run ./internal/documents/...`: 0 issues (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **Phase:** Phase 2 (Core Application Structure).
+- **Active Story:** `US-005: Native Document Service & Secure File Loading` (`IN_PROGRESS`).
+- **Completed Tasks:** `US-005.1` (`DONE`), `US-005.2` (`DONE`), `US-005.3` (`DONE`).
+- **Next Eligible Task:** `US-005.4: Write comprehensive Go unit test suite` under [`US-005`](../stories/US-005-native-document-service.md) (`READY`).
+- **Phase Gate Status:** In progress under approved Linux-only implementation policy; cross-platform validation deferred.

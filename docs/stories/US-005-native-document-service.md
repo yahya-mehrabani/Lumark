@@ -78,7 +78,7 @@ Implement the Go backend `DocumentService` in `internal/documents/` to:
 
 ### Task US-005.3: Implement UTF-8 reader with BOM stripping and replacement
 - **Task ID:** `US-005.3`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-005.2`
 - **Completion Criteria:** Reader handles UTF-8 BOM, replaces corrupted bytes, returns normalized string.
 - **Verification Command:** `go test -v -run TestUTF8Reader ./internal/documents/...`
@@ -156,3 +156,36 @@ $ golangci-lint run ./internal/documents/...
 0 issues.
 ```
 Verification verdict: PASS (All 8 subtests passed; files > 20 MiB and unsupported extensions rejected without full memory allocation).
+
+### Task US-005.3 Verification Evidence
+```text
+$ go test -v -run TestUTF8Reader ./internal/documents/...
+=== RUN   TestUTF8Reader
+=== RUN   TestUTF8Reader/valid_UTF-8_without_BOM
+=== RUN   TestUTF8Reader/valid_UTF-8_without_BOM/plain_ascii
+=== RUN   TestUTF8Reader/valid_UTF-8_without_BOM/persian_unicode
+=== RUN   TestUTF8Reader/valid_UTF-8_without_BOM/german_umlauts
+=== RUN   TestUTF8Reader/valid_UTF-8_without_BOM/emoji_unicode
+=== RUN   TestUTF8Reader/BOM_stripping
+=== RUN   TestUTF8Reader/BOM_stripping/text_with_UTF-8_BOM_prefix
+=== RUN   TestUTF8Reader/BOM_stripping/only_BOM_without_text
+=== RUN   TestUTF8Reader/invalid_UTF-8_replacement_with_U+FFFD
+=== RUN   TestUTF8Reader/ReadDocument_integration_with_BOM_and_invalid_bytes
+--- PASS: TestUTF8Reader (0.00s)
+    --- PASS: TestUTF8Reader/valid_UTF-8_without_BOM (0.00s)
+        --- PASS: TestUTF8Reader/valid_UTF-8_without_BOM/plain_ascii (0.00s)
+        --- PASS: TestUTF8Reader/valid_UTF-8_without_BOM/persian_unicode (0.00s)
+        --- PASS: TestUTF8Reader/valid_UTF-8_without_BOM/german_umlauts (0.00s)
+        --- PASS: TestUTF8Reader/valid_UTF-8_without_BOM/emoji_unicode (0.00s)
+    --- PASS: TestUTF8Reader/BOM_stripping (0.00s)
+        --- PASS: TestUTF8Reader/BOM_stripping/text_with_UTF-8_BOM_prefix (0.00s)
+        --- PASS: TestUTF8Reader/BOM_stripping/only_BOM_without_text (0.00s)
+    --- PASS: TestUTF8Reader/invalid_UTF-8_replacement_with_U+FFFD (0.00s)
+    --- PASS: TestUTF8Reader/ReadDocument_integration_with_BOM_and_invalid_bytes (0.00s)
+PASS
+ok  	markdown-viewer/internal/documents	0.004s
+
+$ golangci-lint run ./internal/documents/...
+0 issues.
+```
+Verification verdict: PASS (BOM cleanly stripped, invalid UTF-8 sequences replaced with U+FFFD, and warning flag set).
