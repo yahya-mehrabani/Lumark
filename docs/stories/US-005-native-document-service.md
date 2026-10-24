@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-005`
 - **Parent Epic:** [EPIC-002: Core Native Application Lifecycle & Tab Management](../epics/EPIC-002-native-lifecycle-tabs.md)
-- **Status:** `DRAFT` (Awaits EPIC-001 completion)
+- **Status:** `IN_PROGRESS` (Phase 2 core native service implementation in progress)
 - **Assigned Phase:** Phase 2 (Core Application Structure)
 
 ---
@@ -58,7 +58,7 @@ Implement the Go backend `DocumentService` in `internal/documents/` to:
 
 ### Task US-005.1: Define DocumentDTO and DocumentService interface
 - **Task ID:** `US-005.1`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** Interface defined with `ReadDocument(path string) (*DocumentDTO, error)`.
 - **Verification Command:** `go vet ./internal/documents/... && golangci-lint run ./internal/documents/...`
@@ -114,11 +114,16 @@ Implement the Go backend `DocumentService` in `internal/documents/` to:
 
 ## 9. Implementation Notes and Validation Evidence
 
-*(To be filled by implementation agent during execution)*
-- **Execution Date:** Not yet executed
-- **Agent ID:** N/A
-- **Changed Files:** None
-- **Terminal Output & Verification Evidence:**
+- **Execution Date:** 2026-10-24
+- **Active Task:** `US-005.1` (Completed)
+- **Changed Files:** `internal/documents/dto.go`, `internal/documents/service.go`
+
+### Task US-005.1 Verification Evidence
 ```text
-(Awaiting execution in Phase 2)
+$ go vet ./internal/documents/... && golangci-lint run ./internal/documents/...
+0 issues.
+
+$ go test ./internal/documents/...
+?   	markdown-viewer/internal/documents	[no test files]
 ```
+Verification verdict: PASS (DocumentDTO, DocumentError, and DocumentService interface compiled and verified with zero linter warnings).

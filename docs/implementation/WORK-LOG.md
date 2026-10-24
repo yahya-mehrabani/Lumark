@@ -998,3 +998,40 @@ This log is an append-only chronological record of all significant actions, veri
 - **Phase 1 User Stories Completed:** `US-001` (`DONE`), `US-002` (`DONE`), `US-003` (`DONE`), `US-004` (`DONE`).
 - **Next Eligible Work Item:** Phase 1 Multi-Platform Feasibility Review & Phase 2 Gate Decision (Product Owner review of Phase 1 evidence in `docs/decisions/ADR-0001-technology-baseline.md` and dedicated CI runner execution for native Windows/macOS validation).
 - **Phase 1 Readiness Verdict:** **`NOT_READY`** (Contingent on multi-platform feasibility evidence across Windows 10/11 x64, macOS Apple Silicon, and Ubuntu 24.04/26.04).
+
+---
+
+## [2026-10-24] — Phase 2: Define DocumentDTO and DocumentService Interface (US-005.1)
+
+- **Work Item ID:** `US-005.1` (Story `US-005: Native Document Service & Secure File Loading`, `EPIC-002`)
+- **Agent:** Antigravity Autonomous Story Runner
+- **Summary:** Defined `DocumentDTO`, structured error types (`DocumentError`, error codes), and the `DocumentService` interface in `internal/documents/`. Established constants for 20 MiB file size limit (`MaxFileSizeBytes`) and supported Markdown file extensions (`.md`, `.markdown`, `.mdown`, `.mkd`). Verified package compilation and static analysis with zero linter issues under `go vet` and `golangci-lint`.
+
+### Actions Taken:
+1. **Defined DTO and Structured Errors (`internal/documents/dto.go`):**
+   - Created `DocumentDTO` struct (`Path`, `FileName`, `Content`, `FileSizeBytes`, `LastModified`, `IsReadOnly`, `HasEncodingErrors`).
+   - Created `DocumentError` structured error type with `Code`, `Message`, `Path`, and wrapped `Err` implementing `Error()` and `Unwrap()`.
+   - Defined error codes: `ErrCodeFileTooLarge`, `ErrCodeUnsupportedType`, `ErrCodeFileNotFound`, `ErrCodePermissionDenied`, `ErrCodeReadFailed`, `ErrCodeInvalidPath`.
+2. **Defined DocumentService Interface and Service Shell (`internal/documents/service.go`):**
+   - Defined `DocumentService` interface with `ReadDocument(path string) (*DocumentDTO, error)`.
+   - Defined `MaxFileSizeBytes` (20 MiB) and `SupportedExtensions` list.
+   - Defined `Service` struct with constructors `NewService()` and `NewServiceWithLimit()`.
+3. **Verification and Linting:**
+   - Ran `go vet ./internal/documents/... && golangci-lint run ./internal/documents/...` (0 issues).
+4. **Documentation Synchronization:**
+   - Updated `docs/stories/US-005-native-document-service.md`: set story status to `IN_PROGRESS`, marked Task `US-005.1` as `DONE`, recorded verification output.
+   - Updated `docs/implementation/BACKLOG.md`: set `EPIC-002` and `US-005` to `IN_PROGRESS`.
+   - Updated `docs/implementation/CURRENT-STATE.md`: advanced last completed work item to `US-005.1` and next eligible task to `US-005.2`.
+
+### Verification Results:
+- `go vet ./internal/documents/... && golangci-lint run ./internal/documents/...`: 0 issues (PASS).
+- `go test ./internal/documents/...`: Compiled cleanly (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **Phase:** Phase 2 (Core Application Structure).
+- **Active Story:** `US-005: Native Document Service & Secure File Loading` (`IN_PROGRESS`).
+- **Completed Tasks:** `US-005.1` (`DONE`).
+- **Next Eligible Task:** `US-005.2: Implement file validation and size limiter` under [`US-005`](../stories/US-005-native-document-service.md) (`READY`).
+- **Phase Gate Status:** In progress under approved Linux-only implementation policy; cross-platform validation deferred.

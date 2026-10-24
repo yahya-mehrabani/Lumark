@@ -20,7 +20,7 @@ This document is the authoritative index of all Epics and User Stories for `mark
 | Epic ID | Title | Target Phase | Status | Authoritative Document |
 |---|---|---|---|---|
 | `EPIC-001` | Technical Feasibility Spike & Platform Foundation | Phase 1 | `IN_PROGRESS` (Authorized for Feasibility Spike) | [EPIC-001-feasibility-spike.md](../epics/EPIC-001-feasibility-spike.md) |
-| `EPIC-002` | Core Native Application Lifecycle & Tab Management | Phase 2 | `DRAFT` | [EPIC-002-native-lifecycle-tabs.md](../epics/EPIC-002-native-lifecycle-tabs.md) |
+| `EPIC-002` | Core Native Application Lifecycle & Tab Management | Phase 2 | `IN_PROGRESS` | [EPIC-002-native-lifecycle-tabs.md](../epics/EPIC-002-native-lifecycle-tabs.md) |
 | `EPIC-003` | CommonMark, GFM & Core Document Rendering | Phase 3 | `DRAFT` | [EPIC-003-commonmark-gfm-rendering.md](../epics/EPIC-003-commonmark-gfm-rendering.md) |
 | `EPIC-004` | Advanced Rendering & Security Sanitization | Phase 4 | `DRAFT` | [EPIC-004-advanced-rendering-security.md](../epics/EPIC-004-advanced-rendering-security.md) |
 | `EPIC-005` | Bidirectional Text & Layout Engine (RTL/LTR) | Phase 4 | `DRAFT` | [EPIC-005-bidirectional-layout.md](../epics/EPIC-005-bidirectional-layout.md) |
@@ -47,7 +47,7 @@ This document is the authoritative index of all Epics and User Stories for `mark
 
 | Story ID | Title | Priority | Status | Dependencies | Story Link |
 |---|---|---|---|---|---|
-| `US-005` | Native Document Service & Secure File Loading | P0 | `DRAFT` | `EPIC-001` | [US-005.md](../stories/US-005-native-document-service.md) |
+| `US-005` | Native Document Service & Secure File Loading | P0 | `IN_PROGRESS` | `EPIC-001` | [US-005.md](../stories/US-005-native-document-service.md) |
 | `US-006` | Application Lifecycle, Command-Line Parsing & Single-Instance Routing | P0 | `DRAFT` | `US-005` | [US-006.md](../stories/US-006-lifecycle-cli-single-instance.md) |
 | `US-007` | Frontend Application Shell, Tab State Management & Empty State | P0 | `DRAFT` | `US-005`, `US-006` | [US-007.md](../stories/US-007-app-shell-tabs-empty-state.md) |
 | `US-008` | Native File Picker & Drag-and-Drop Integration | P0 | `DRAFT` | `US-005`, `US-007` | [US-008.md](../stories/US-008-file-picker-drag-drop.md) |
