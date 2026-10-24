@@ -70,7 +70,7 @@ Create and maintain an extensive corpus of adversarial security fixtures and aut
 
 ### Task US-016.2: Implement automated adversarial test runner
 - **Task ID:** `US-016.2`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-016.1`
 - **Completion Criteria:** Vitest test suite loads each fixture, renders through pipeline, and queries DOM for forbidden tags/attributes.
 - **Verification Command:** `npm run test:security -- dos-corpus`
@@ -80,7 +80,7 @@ Create and maintain an extensive corpus of adversarial security fixtures and aut
 
 ### Task US-016.3: Add fuzzing and pathological nesting checks
 - **Task ID:** `US-016.3`
-- **Status:** `DRAFT`
+- **Status:** `READY`
 - **Dependencies:** `US-016.2`
 - **Completion Criteria:** Tests assert parser termination on deeply nested blocks.
 - **Verification Command:** `npm run test:security`
@@ -143,4 +143,47 @@ Create and maintain an extensive corpus of adversarial security fixtures and aut
  Test Files  4 passed (4)
       Tests  51 passed (51)
    Duration  9.53s
+```
+
+### Task US-016.2 Validation Evidence
+- **Execution Date:** 2026-10-24
+- **Agent ID:** Antigravity Autonomous Story Runner
+- **Status:** `DONE`
+- **Changed Files:**
+  - `frontend/src/features/rendering/security/adversarial-corpus.test.tsx`
+  - `fixtures/security/mermaid-injection.md`
+  - `docs/stories/US-016-adversarial-security-corpus.md`
+- **Actions Executed:**
+  1. Implemented automated Vitest adversarial test runner `frontend/src/features/rendering/security/adversarial-corpus.test.tsx` covering all 6 fixtures in `fixtures/security/`:
+     - `xss-scripts.md`: Asserts 100% of `<script>`, `<iframe>`, `<object>`, `<embed>`, `<form>`, `<base>`, `<meta>` tags are stripped; asserts `window.__malicious_executed` and `window.__svg_script_executed` are undefined; verifies safe prose preserved.
+     - `event-handlers.md`: Queries all DOM elements to assert zero attributes starting with `on*` exist; verifies `onerror`, `onload`, `onclick`, `onmouseover` never execute; preserves safe text.
+     - `protocols.md`: Asserts `javascript:`, `vbscript:`, `data:text/html` schemes are neutralized to safe `#` links; clicks blocked link and verifies zero execution and no unhandled navigation; verifies safe HTTPS/HTTP/anchor links work.
+     - `css-overlays.md`: Asserts CSS rules are scoped to `.markdown-content`; asserts `body`/`html`/`:root` selectors are scoped; asserts `@import` and external `url()` background images are stripped; asserts `position: fixed` is neutralized to `position: absolute`; verifies application chrome remains visible.
+     - `mermaid-injection.md`: Asserts Mermaid diagrams render without executing injected script tags or callbacks; verifies SVG links strip `javascript:` and `data:text/html`; verifies malicious click callbacks do not fire `alert`.
+     - `deep-nesting-dos.md`: Asserts 120-level blockquotes, 100-level lists, and oversized line render cleanly in bounded time (350ms < 1000ms) without stack overflow.
+  2. Executed `npm run test:security` (5 test files, 65/65 tests PASS).
+  3. Executed `npm run test:security -- xss-corpus` (PASS).
+  4. Executed `npm run test:security -- dos-corpus` (PASS).
+  5. Executed `npm run build:dev` (TypeScript typecheck & Vite build passed cleanly in 4.20s).
+- **Terminal Output & Verification Evidence:**
+```text
+> markdown-viewer-frontend@0.1.0 test:security
+> vitest run src/features/rendering/security/
+
+ ✓ src/features/rendering/security/adversarial-corpus.test.tsx (14 tests) 1530ms
+   ✓ Adversarial Security Test Corpus & Fault Isolation Runner (US-016.2) (14)
+     ✓ XSS & Script Injection Corpus (xss-corpus / xss-scripts.md) (4)
+     ✓ Event Handlers Corpus (event-handlers.md) (2)
+     ✓ Protocol Smuggling Corpus (protocols.md) (3)
+     ✓ CSS Escape & Overlay Hijacking Corpus (css-overlays.md) (2)
+     ✓ Mermaid Script Injection Corpus (mermaid-injection.md) (2)
+     ✓ Pathological Deep Nesting Corpus (dos-corpus / deep-nesting-dos.md) (1)
+ ✓ src/features/rendering/security/sanitization.test.tsx (15 tests) 575ms
+ ✓ src/features/rendering/security/style-scoping.test.tsx (7 tests) 310ms
+ ✓ src/features/rendering/security/html-allowlist.test.ts (10 tests) 83ms
+ ✓ src/features/rendering/security/css-sanitizer.test.ts (19 tests) 38ms
+
+ Test Files  5 passed (5)
+      Tests  65 passed (65)
+   Duration  12.79s
 ```
