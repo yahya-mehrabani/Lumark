@@ -79,7 +79,7 @@ Render Mermaid diagrams offline with strict security sandboxing and fault isolat
 
 ### Task US-013.3: Implement theme synchronization (Light/Dark)
 - **Task ID:** `US-013.3`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-013.2`
 - **Completion Criteria:** Diagram colors adapt when app theme changes between light and dark.
 - **Verification Command:** `npm run test:unit -- mermaid-diagram-types`
@@ -175,4 +175,38 @@ $ npm --prefix frontend run test:unit -- mermaid-error-fallback
 
 $ npm --prefix frontend run build
 ✓ built in 7.52s (exit code 0)
+```
+
+### Task US-013.3 Validation Evidence
+- **Execution Date:** 2026-10-24
+- **Agent ID:** Antigravity Autonomous Runner
+- **Changed Files:**
+  - `frontend/src/features/rendering/mermaid-adapter.ts` (added `detectAppTheme` and `MermaidTheme` export)
+  - `frontend/src/features/rendering/components/MermaidBlock.tsx` (integrated dynamic theme synchronization via MutationObserver on `data-theme` attribute and `data-mermaid-theme` tracking)
+  - `frontend/src/test-setup.ts` (added SVGElement and SVGPathElement `getTotalLength` and `getPointAtLength` polyfills for headless layout)
+  - `fixtures/golden/diagrams-mermaid.md` (comprehensive golden fixture suite with flowchart, sequence, class, state, ER, and Gantt charts)
+  - `frontend/src/features/rendering/mermaid-diagram-types.test.tsx` (9 tests verifying clean rendering for all diagram types and dynamic theme adaptation)
+- **Verification Command & Output:**
+```text
+$ npm --prefix frontend run test:unit -- mermaid-diagram-types
+
+ ✓ src/features/rendering/mermaid-diagram-types.test.tsx (9 tests) 1803ms
+   ✓ Mermaid Diagram Types & Theme Synchronization (US-013.3) (9)
+     ✓ renders a flowchart diagram cleanly into SVG 816ms
+     ✓ renders a sequence diagram cleanly into SVG 150ms
+     ✓ renders a class diagram cleanly into SVG 175ms
+     ✓ renders a state diagram cleanly into SVG 141ms
+     ✓ renders an entity-relationship (ER) diagram cleanly into SVG 88ms
+     ✓ renders a Gantt chart cleanly into SVG 80ms
+     ✓ adapts diagram styling and attributes when rendered with light vs dark themes 92ms
+     ✓ detects app theme correctly from documentElement data-theme attribute 1ms
+     ✓ dynamically adapts MermaidBlock when document theme attribute changes 254ms
+
+ Test Files  1 passed (1)
+      Tests  9 passed (9)
+   Start at  17:24:14
+   Duration  3.82s
+
+$ npm --prefix frontend run build
+✓ built in 2.47s (exit code 0)
 ```

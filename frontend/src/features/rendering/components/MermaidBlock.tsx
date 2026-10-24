@@ -1,10 +1,10 @@
 import React, { useEffect, useState, Component, type ErrorInfo, type ReactNode } from 'react';
-import { renderMermaid, type RenderMermaidOptions } from '../mermaid-adapter';
+import { renderMermaid, detectAppTheme, type MermaidTheme } from '../mermaid-adapter';
 
 export interface MermaidBlockProps {
   rawCode: string;
   className?: string;
-  theme?: RenderMermaidOptions['theme'];
+  theme?: MermaidTheme;
   onError?: (err: Error) => void;
 }
 
@@ -97,16 +97,56 @@ export const MermaidBlockInner: React.FC<MermaidBlockProps> = ({
   theme,
   onError,
 }) => {
+  const [activeTheme, setActiveTheme] = useState<MermaidTheme>(
+    theme || (detectAppTheme() as MermaidTheme)
+  );
   const [svgHtml, setSvgHtml] = useState<string | null>(null);
   const [error, setError] = useState<{ message: string; rawCode: string } | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  // Synchronize theme with application theme changes
+  useEffect(() => {
+    if (theme) {
+      setActiveTheme(theme);
+      return;
+    }
+
+    const updateTheme = () => {
+      setActiveTheme(detectAppTheme() as MermaidTheme);
+    };
+
+    updateTheme();
+
+    if (typeof window !== 'undefined' && typeof MutationObserver !== 'undefined') {
+      const observer = new MutationObserver(() => {
+        updateTheme();
+      });
+
+      if (document.documentElement) {
+        observer.observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ['data-theme'],
+        });
+      }
+      if (document.body) {
+        observer.observe(document.body, {
+          attributes: true,
+          attributeFilter: ['class'],
+        });
+      }
+
+      return () => {
+        observer.disconnect();
+      };
+    }
+  }, [theme]);
 
   useEffect(() => {
     let isCancelled = false;
     setIsLoading(true);
     setError(null);
 
-    renderMermaid(rawCode, { theme })
+    renderMermaid(rawCode, { theme: activeTheme })
       .then((res) => {
         if (!isCancelled) {
           setSvgHtml(res.svg);
@@ -129,7 +169,7 @@ export const MermaidBlockInner: React.FC<MermaidBlockProps> = ({
     return () => {
       isCancelled = true;
     };
-  }, [rawCode, theme, onError]);
+  }, [rawCode, activeTheme, onError]);
 
   if (error) {
     return <MermaidErrorCard errorMessage={error.message} rawCode={error.rawCode} />;
@@ -140,6 +180,7 @@ export const MermaidBlockInner: React.FC<MermaidBlockProps> = ({
       <div
         className={`mermaid-container loading ${className}`.trim()}
         data-testid="mermaid-loading"
+        data-mermaid-theme={activeTheme}
         dir="ltr"
         role="region"
         aria-label="Loading diagram"
@@ -153,6 +194,7 @@ export const MermaidBlockInner: React.FC<MermaidBlockProps> = ({
     <div
       className={`mermaid-container ${className}`.trim()}
       data-testid="mermaid-container"
+      data-mermaid-theme={activeTheme}
       dir="ltr"
       role="region"
       tabIndex={0}

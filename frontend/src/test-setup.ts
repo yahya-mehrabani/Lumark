@@ -22,4 +22,29 @@ if (typeof SVGElement !== 'undefined') {
       return (this.textContent || '').length * 8;
     };
   }
+
+  if (!('getTotalLength' in SVGElement.prototype)) {
+    (SVGElement.prototype as any).getTotalLength = function () {
+      return 100;
+    };
+  }
+
+  if (!('getPointAtLength' in SVGElement.prototype)) {
+    (SVGElement.prototype as any).getPointAtLength = function (len: number) {
+      return { x: len, y: len };
+    };
+  }
+}
+
+if (typeof SVGPathElement !== 'undefined') {
+  if (!('getTotalLength' in SVGPathElement.prototype)) {
+    (SVGPathElement.prototype as any).getTotalLength = function () {
+      return 100;
+    };
+  }
+  if (!('getPointAtLength' in SVGPathElement.prototype)) {
+    (SVGPathElement.prototype as any).getPointAtLength = function (len: number) {
+      return { x: len, y: len };
+    };
+  }
 }

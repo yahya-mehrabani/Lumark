@@ -49,6 +49,27 @@ export function initMermaid(config?: Partial<MermaidConfig>): MermaidConfig {
   return { ...currentConfig };
 }
 
+export type MermaidTheme = 'default' | 'dark' | 'neutral' | 'forest' | 'base';
+
+/**
+ * Detects current application theme from DOM attributes or system preferences.
+ */
+export function detectAppTheme(): 'dark' | 'default' {
+  if (typeof document !== 'undefined') {
+    const htmlTheme = document.documentElement.getAttribute('data-theme');
+    if (htmlTheme === 'light') return 'default';
+    if (htmlTheme === 'dark') return 'dark';
+    if (document.body?.classList.contains('theme-light')) return 'default';
+    if (document.body?.classList.contains('theme-dark')) return 'dark';
+  }
+  if (typeof window !== 'undefined' && window.matchMedia) {
+    if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+      return 'default';
+    }
+  }
+  return 'dark';
+}
+
 /**
  * Retrieves a snapshot of the current active Mermaid configuration.
  */
@@ -65,7 +86,7 @@ export interface MermaidRenderResult {
 }
 
 export interface RenderMermaidOptions {
-  theme?: 'default' | 'dark' | 'neutral' | 'forest' | 'base';
+  theme?: MermaidTheme;
   id?: string;
 }
 

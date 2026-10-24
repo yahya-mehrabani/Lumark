@@ -1979,3 +1979,28 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Task:
 - Task `US-013.3: Implement theme synchronization (Light/Dark)` under Story [`US-013`](../stories/US-013-mermaid-offline-rendering.md).
+
+---
+
+## 2026-10-24: Task US-013.3 Execution — Implement Theme Synchronization (Light/Dark)
+
+- **Task ID:** `US-013.3`
+- **Parent Story:** [`US-013: Mermaid Diagrams Offline Rendering & Error Isolation`](../stories/US-013-mermaid-offline-rendering.md)
+- **Status:** Task `US-013.3` marked `DONE`. Story `US-013` marked `IN_PROGRESS`. Epic `EPIC-004` marked `IN_PROGRESS`.
+
+### Actions Taken:
+1. **Implemented App Theme Detection:** Added `detectAppTheme` in `frontend/src/features/rendering/mermaid-adapter.ts` inspecting `document.documentElement` attributes (`data-theme`), body class names, and `prefers-color-scheme`.
+2. **Integrated Dynamic Theme Adaptation:** Updated `MermaidBlock.tsx` with a `MutationObserver` watching `data-theme` and `class` mutations on the document root, automatically triggering diagram re-rendering with light (`default`) or `dark` Mermaid themes and setting `data-mermaid-theme`.
+3. **Enhanced Headless Layout Polyfills:** Updated `frontend/src/test-setup.ts` with `SVGElement` and `SVGPathElement` layout polyfills (`getTotalLength` and `getPointAtLength`) to ensure seamless ER diagram layout calculation in headless jsdom without DOM exceptions.
+4. **Assembled Mermaid Golden Fixture:** Created `fixtures/golden/diagrams-mermaid.md` specifying flowchart, sequence, class, state, entity-relationship (ER), and Gantt chart diagrams per FR-RENDER-005 and PRD Section 5.4.
+5. **Authored Comprehensive Diagram Types & Theme Tests:** Created `frontend/src/features/rendering/mermaid-diagram-types.test.tsx` containing 9 tests validating clean SVG rendering across flowchart, sequence, class, state, ER, and Gantt charts, as well as dynamic theme adaptation.
+6. **Verified Unit Tests & Production Build:** Executed `npm --prefix frontend run test:unit -- mermaid-diagram-types` (9/9 tests passed in 1803ms) and verified clean TypeScript compilation and production bundle build with `npm --prefix frontend run build` (clean build in 2.47s).
+
+### Verification Results:
+- `npm --prefix frontend run test:unit -- mermaid-diagram-types`: 9 passed across 1 test file in 1803ms (PASS).
+- `npm --prefix frontend run build`: Clean production bundle built in 2.47s (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Task:
+- Task `US-013.4: Write unit tests for Mermaid rendering and error fallbacks` under Story [`US-013`](../stories/US-013-mermaid-offline-rendering.md).
