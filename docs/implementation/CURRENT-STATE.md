@@ -11,10 +11,10 @@
 
 - **Current Overall Phase:** **Phase 1 (Technical Feasibility Spike)**.
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
-- **Application Implementation Status:** **PHASE 2 (EPIC-002), PHASE 3 (EPIC-003), AND STORIES US-013, US-014, US-015 (EPIC-004) COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) through [`US-004`](../stories/US-004-packaging-association-spike.md) (Phase 1 Spike), Stories [`US-005`](../stories/US-005-native-document-service.md) through [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Phase 2 Core Lifecycle & Tabs), Stories [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) through [`US-012`](../stories/US-012-headings-anchors-fixtures.md) (Phase 3 Core Rendering Core), and Stories [`US-013`](../stories/US-013-mermaid-offline-rendering.md), [`US-014`](../stories/US-014-katex-math-rendering.md), & [`US-015`](../stories/US-015-html-css-sanitization.md) (Phase 4 Mermaid Diagrams, KaTeX Math Rendering, and HTML/CSS Sanitization Engine) fully verified across all implementation tasks under Linux/WSLg.
+- **Application Implementation Status:** **PHASE 2 (EPIC-002), PHASE 3 (EPIC-003), AND PHASE 4 EXTENDED RENDERING & SECURITY (EPIC-004: STORIES US-013, US-014, US-015, US-016) COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) through [`US-004`](../stories/US-004-packaging-association-spike.md) (Phase 1 Spike), Stories [`US-005`](../stories/US-005-native-document-service.md) through [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Phase 2 Core Lifecycle & Tabs), Stories [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) through [`US-012`](../stories/US-012-headings-anchors-fixtures.md) (Phase 3 Core Rendering Core), and Stories [`US-013`](../stories/US-013-mermaid-offline-rendering.md), [`US-014`](../stories/US-014-katex-math-rendering.md), [`US-015`](../stories/US-015-html-css-sanitization.md), & [`US-016`](../stories/US-016-adversarial-security-corpus.md) (Phase 4 `EPIC-004`: Mermaid Diagrams, KaTeX Math Rendering, HTML/CSS Sanitization Engine, & Adversarial Security Corpus) fully verified across all implementation tasks under Linux/WSLg.
 - **Feasibility Spike Status:** **SPIKE IMPLEMENTATION COMPLETE / AWAITING CROSS-PLATFORM GATES**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-015.4: Write unit tests for HTML and CSS sanitization` under Story [`US-015: HTML & CSS Sanitization and Scope Isolation Engine`](../stories/US-015-html-css-sanitization.md) (Story `US-015` `DONE`). Created golden fixture `fixtures/golden/html-css-sanitization.md`, comprehensive Vitest test suite `sanitization.test.tsx` (15/15 tests passing), verified all 7 ACs, AST sanitization, overlay neutralization, scope isolation, and regression-free full test suite (34/34 test files, 313/313 tests passing).
-- **Active / Next Eligible Work Item:** Task `US-016.1: Curate malicious Markdown & HTML adversarial corpus` under Story [`US-016: Adversarial Security Test Corpus & Fault Isolation`](../stories/US-016-adversarial-security-corpus.md) (Phase 4 / `EPIC-004`).
+- **Last Completed Work Item:** Task `US-016.3: Add fuzzing and pathological nesting checks` under Story [`US-016: Adversarial Security Test Corpus & Fault Isolation`](../stories/US-016-adversarial-security-corpus.md) (Story `US-016` `DONE`; `EPIC-004` `DONE`). Authored extensive pathological nesting and fuzzing test suite `pathological-dos.test.tsx` (15/15 tests passing), verified bounded execution time without stack overflow, full security suite passing (6/6 test files, 80/80 tests), and regression-free full frontend test suite (36/36 test files, 342/342 tests passing).
+- **Active / Next Eligible Work Item:** Task `US-017.1: Implement unicode direction classifier` under Story [`US-017: Unicode Automatic Direction Detection Engine`](../stories/US-017-auto-direction-engine.md) (Phase 4 / `EPIC-005: Bi-directional & Multi-lingual Text Support`).
 
 ---
 
@@ -80,12 +80,12 @@ All planning remediation artifacts must be preserved:
 
 ## 5. Exact Next Action for the Next Agent
 
-1. **Confirm Story US-015 Complete:**
-   - Story [`US-015: HTML & CSS Sanitization and Scope Isolation Engine`](../stories/US-015-html-css-sanitization.md) is **`DONE`** across all four tasks:
-     - `US-015.1`: `rehype-sanitize` schema allowlist configured and verified (`html-allowlist.test.ts`, 10/10 PASS).
-     - `US-015.2`: PostCSS CSS sanitizer & scoper implemented and verified (`css-sanitizer.test.ts`, 19/19 PASS).
-     - `US-015.3`: Rendering pipeline integrated and verified (`style-scoping.test.tsx`, 7/7 PASS).
-     - `US-015.4`: Golden fixture and unit test suite verified (`sanitization.test.tsx`, 15/15 PASS, full suite 34/34 files, 313/313 tests PASS).
-2. **Execute Story US-016 (Next Eligible Story):**
-   - Active work item: Task `US-016.1: Curate malicious Markdown & HTML adversarial corpus` under Story [`US-016: Adversarial Security Test Corpus & Fault Isolation`](../stories/US-016-adversarial-security-corpus.md) (Phase 4 / `EPIC-004`).
+1. **Confirm Story US-016 Complete & EPIC-004 Complete:**
+   - Story [`US-016: Adversarial Security Test Corpus & Fault Isolation`](../stories/US-016-adversarial-security-corpus.md) is **`DONE`** across all three tasks:
+     - `US-016.1`: Authored comprehensive adversarial security fixture corpus in `fixtures/security/` (`xss-scripts.md`, `event-handlers.md`, `protocols.md`, `css-overlays.md`, `mermaid-injection.md`, `deep-nesting-dos.md`).
+     - `US-016.2`: Implemented automated adversarial test runner `adversarial-corpus.test.tsx` (14/14 PASS).
+     - `US-016.3`: Added fuzzing and pathological nesting checks `pathological-dos.test.tsx` (15/15 PASS; full security suite 6/6 files, 80/80 PASS; full frontend suite 36/36 files, 342/342 PASS).
+   - Epic [`EPIC-004: Advanced Rendering & Security Sanitization`](../epics/EPIC-004-advanced-rendering-security.md) is **`DONE`** across all four stories (`US-013`, `US-014`, `US-015`, `US-016`).
+2. **Execute Story US-017 (Next Eligible Story):**
+   - Active work item: Task `US-017.1: Implement unicode direction classifier` under Story [`US-017: Unicode Automatic Direction Detection Engine`](../stories/US-017-auto-direction-engine.md) (Phase 4 / `EPIC-005`).
 3. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.

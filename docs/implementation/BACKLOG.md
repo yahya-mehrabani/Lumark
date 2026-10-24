@@ -72,7 +72,7 @@ This document is the authoritative index of all Epics and User Stories for `mark
 | `US-013` | Mermaid Diagrams Offline Rendering & Error Isolation | P0 | `DONE` | `US-009` | [US-013.md](../stories/US-013-mermaid-offline-rendering.md) |
 | `US-014` | LaTeX Math Offline Rendering with KaTeX | P0 | `DONE` | `US-009` | [US-014.md](../stories/US-014-katex-math-rendering.md) |
 | `US-015` | HTML & CSS Sanitization and Scope Isolation Engine | P0 | `DONE` | `US-009` | [US-015.md](../stories/US-015-html-css-sanitization.md) |
-| `US-016` | Adversarial Security Test Corpus & Fault Isolation | P0 | `DRAFT` | `US-013`, `US-015` | [US-016.md](../stories/US-016-adversarial-security-corpus.md) |
+| `US-016` | Adversarial Security Test Corpus & Fault Isolation | P0 | `DONE` | `US-013`, `US-015` | [US-016.md](../stories/US-016-adversarial-security-corpus.md) |
 | `US-017` | Unicode Automatic Direction Detection Engine | P0 | `DRAFT` | `US-009` | [US-017.md](../stories/US-017-auto-direction-engine.md) |
 | `US-018` | Explicit HTML `dir` & Scoped CSS Direction Precedence | P0 | `DRAFT` | `US-015`, `US-017` | [US-018.md](../stories/US-018-explicit-dir-css-precedence.md) |
 | `US-019` | User Direction Preference & Non-Prose Bidi Protection | P0 | `DRAFT` | `US-017`, `US-018` | [US-019.md](../stories/US-019-direction-preference-non-prose.md) |

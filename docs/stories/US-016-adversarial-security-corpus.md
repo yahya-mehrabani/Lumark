@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-016`
 - **Parent Epic:** [EPIC-004: Advanced Rendering & Security Sanitization](../epics/EPIC-004-advanced-rendering-security.md)
-- **Status:** `IN_PROGRESS`
+- **Status:** `DONE`
 - **Assigned Phase:** Phase 4 (Advanced Rendering & Security)
 
 ---
@@ -80,7 +80,7 @@ Create and maintain an extensive corpus of adversarial security fixtures and aut
 
 ### Task US-016.3: Add fuzzing and pathological nesting checks
 - **Task ID:** `US-016.3`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-016.2`
 - **Completion Criteria:** Tests assert parser termination on deeply nested blocks.
 - **Verification Command:** `npm run test:security`
@@ -186,4 +186,66 @@ Create and maintain an extensive corpus of adversarial security fixtures and aut
  Test Files  5 passed (5)
       Tests  65 passed (65)
    Duration  12.79s
+```
+
+### Task US-016.3 Validation Evidence
+- **Execution Date:** 2026-10-24
+- **Agent ID:** Antigravity Autonomous Story Runner
+- **Status:** `DONE`
+- **Changed Files:**
+  - `frontend/src/features/rendering/security/pathological-dos.test.tsx`
+  - `docs/stories/US-016-adversarial-security-corpus.md`
+- **Actions Executed:**
+  1. Authored extensive pathological nesting, fuzzing, and fault isolation test suite in `frontend/src/features/rendering/security/pathological-dos.test.tsx`:
+     - 200 levels of nested blockquotes (`> > > ...`) terminating in 196ms with content intact.
+     - 150 levels of nested unordered lists terminating in 748ms with target content intact.
+     - 100 levels of nested inline formatting/spans terminating in 84ms.
+     - 50 levels of deeply nested HTML table structures terminating in 67ms.
+     - 100,000-character continuous alphanumeric line terminating in 180ms without freezing.
+     - 5,000 repeating delimiter characters terminating in 768ms without catastrophic regex backtracking.
+     - 30,000 dollar signs terminating in 60ms without exponential math escaping backtracking.
+     - 5,000 nested brackets and parentheses terminating in bounded time without parser freeze.
+     - 7 fuzzed malformed inputs (unclosed link targets, corrupted entity sequences, unclosed HTML tag barrages, 200-column tables, unclosed fences, 50KB attribute values, Unicode surrogate/control sequences) all terminating cleanly without exceptions.
+  2. Executed `npm run test:security` (6 test files, 80/80 tests PASS).
+  3. Executed full frontend test suite `npm run test:unit` (36 test files, 342/342 tests PASS).
+  4. Executed `npm run build:dev` (Clean build in 3.22s, 0 errors).
+  5. Verified all 5 Acceptance Criteria of Story `US-016`:
+     - AC 1: 100% of malicious script tags and event handlers stripped.
+     - AC 2: CSS overlays neutralized and scoped; chrome remains visible.
+     - AC 3: Obfuscated protocol URLs neutralized or blocked upon click.
+     - AC 4: Deeply nested and pathological inputs finish within bounded time (< 1s) without stack overflow.
+     - AC 5: All security tests pass in CI.
+- **Terminal Output & Verification Evidence:**
+```text
+> markdown-viewer-frontend@0.1.0 test:security
+> vitest run src/features/rendering/security/
+
+ ✓ src/features/rendering/security/pathological-dos.test.tsx (15 tests) 3064ms
+   ✓ Pathological Nesting, Fuzzing & Fault Isolation (US-016.3) (15)
+     ✓ Extreme Structural Nesting Checks (4)
+     ✓ Oversized Single-Line Inputs & ReDoS Resistance (4)
+     ✓ Fuzzing & Malformed Syntax Fault Isolation (7)
+ ✓ src/features/rendering/security/adversarial-corpus.test.tsx (14 tests) 1755ms
+ ✓ src/features/rendering/security/sanitization.test.tsx (15 tests) 951ms
+ ✓ src/features/rendering/security/style-scoping.test.tsx (7 tests) 319ms
+ ✓ src/features/rendering/security/html-allowlist.test.ts (10 tests) 101ms
+ ✓ src/features/rendering/security/css-sanitizer.test.ts (19 tests) 27ms
+
+ Test Files  6 passed (6)
+      Tests  80 passed (80)
+   Duration  17.64s
+```
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run
+
+ Test Files  36 passed (36)
+      Tests  342 passed (342)
+   Duration  77.76s
+```
+```text
+> markdown-viewer-frontend@0.1.0 build:dev
+> tsc && vite build --minify false --mode development
+
+✓ built in 3.22s
 ```

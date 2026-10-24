@@ -2312,3 +2312,90 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-016.1: Curate malicious Markdown & HTML adversarial corpus` under Story [`US-016: Adversarial Security Test Corpus & Fault Isolation`](../stories/US-016-adversarial-security-corpus.md) (Phase 4 / `EPIC-004`).
+
+---
+
+## 2026-10-24 — Task US-016.1: Author adversarial fixture files
+
+- **Task ID:** `US-016.1`
+- **Story ID:** [`US-016: Adversarial Security Test Corpus & Fault Isolation`](../stories/US-016-adversarial-security-corpus.md)
+- **Status:** `DONE`
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Authored comprehensive adversarial security fixture corpus in `fixtures/security/`:
+  - `xss-scripts.md`: Direct scripts, nested scripts, SVG scripts, CDATA, `<iframe>`, `<object>`, `<embed>`, `<form>`, `<base>`, `<meta>`.
+  - `event-handlers.md`: Image `onerror`/`onload`, mouse `onmouseover`/`onclick`/`onmouseenter`, focus `onfocus`/`onblur`, obfuscated casings (`ONERROR`, `OnMouseOver`), and SVG handlers.
+  - `protocols.md`: Direct `javascript:`, mixed-case `JavaScriPt:`, whitespace/control-character obfuscations, `data:text/html`, `vbscript:`, dangerous system protocols (`file:`, `shell:`, `ms-msdt:`), and safe link benchmarks.
+  - `css-overlays.md`: Fixed positioning overlay (`position: fixed`, z-index 999999), application chrome selectors (`.tab-bar`, `.app-shell`, `body`, `#app`), `@import` injection, external `url()` background exfiltration, and safe scoped styles.
+  - `mermaid-injection.md`: Mermaid click callbacks, JavaScript URIs, Data URIs, and safe baseline diagrams.
+  - `deep-nesting-dos.md`: Deeply nested blockquotes (120 levels), nested unordered lists (100 levels), nested HTML tags (50 levels), and 10,000-character line.
+- Added `"test:security": "vitest run src/features/rendering/security/"` to `frontend/package.json`.
+- Verified runner execution and baseline security tests (4 files, 51 tests passed).
+- Committed as `3f2a95b`.
+
+### Verification Results:
+- `npm run test:security`: 51 passed across 4 test files in 9.53s (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+---
+
+## 2026-10-24 — Task US-016.2: Implement automated adversarial test runner
+
+- **Task ID:** `US-016.2`
+- **Story ID:** [`US-016: Adversarial Security Test Corpus & Fault Isolation`](../stories/US-016-adversarial-security-corpus.md)
+- **Status:** `DONE`
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Implemented comprehensive Vitest adversarial security test suite in `frontend/src/features/rendering/security/adversarial-corpus.test.tsx`:
+  - `xss-scripts.md`: Asserts 100% of `<script>`, `<iframe>`, `<object>`, `<embed>`, `<form>`, `<base>`, `<meta>` tags are stripped; asserts `window.__malicious_executed` and `window.__svg_script_executed` are undefined; verifies safe prose preserved.
+  - `event-handlers.md`: Queries all elements to assert zero attributes starting with `on*` exist; confirms `onerror`, `onload`, `onclick`, `onmouseover` never execute; preserves safe text.
+  - `protocols.md`: Asserts `javascript:`, `vbscript:`, `data:text/html` schemes are neutralized to safe `#` links; confirms clicking blocked links triggers zero script execution and no unhandled navigation; verifies safe HTTPS/HTTP/anchor links work.
+  - `css-overlays.md`: Asserts CSS selectors are scoped to `.markdown-content`; confirms `body`/`html`/`:root` selectors are scoped; confirms `@import` and external `url()` background images are stripped; confirms `position: fixed` is neutralized; verifies chrome remains visible.
+  - `mermaid-injection.md`: Asserts Mermaid diagrams render without executing script tags or callbacks; confirms SVG links strip `javascript:` and `data:text/html`; verifies callbacks do not execute alert.
+  - `deep-nesting-dos.md`: Asserts 120-level blockquotes, 100-level lists, and oversized line render cleanly in bounded time (<1s) without stack overflow.
+- Committed as `9021953`.
+
+### Verification Results:
+- `npm run test:security`: 65 passed across 5 test files in 12.79s (PASS).
+- `npm run test:security -- xss-corpus`: 65 passed across 5 test files (PASS).
+- `npm run test:security -- dos-corpus`: 65 passed across 5 test files (PASS).
+- `npm run build:dev`: TypeScript typecheck and Vite build succeeded in 4.20s (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+---
+
+## 2026-10-24 — Task US-016.3: Add fuzzing and pathological nesting checks (Story US-016 & Epic EPIC-004 Completion)
+
+- **Task ID:** `US-016.3`
+- **Story ID:** [`US-016: Adversarial Security Test Corpus & Fault Isolation`](../stories/US-016-adversarial-security-corpus.md)
+- **Status:** `DONE`
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Authored extensive pathological nesting, fuzzing, and fault isolation test suite in `frontend/src/features/rendering/security/pathological-dos.test.tsx`:
+  - 200 levels of nested blockquotes (`> > > ...`) terminating in 196ms with content intact without stack overflow.
+  - 150 levels of nested unordered lists terminating in 748ms with target content intact.
+  - 100 levels of nested inline formatting/spans terminating in 84ms.
+  - 50 levels of deeply nested HTML table structures terminating in 67ms.
+  - 100,000-character continuous alphanumeric line terminating in 180ms without freezing.
+  - 5,000 repeating delimiter characters terminating in 768ms without catastrophic regex backtracking.
+  - 30,000 dollar signs terminating in 60ms without exponential math escaping backtracking.
+  - 5,000 nested brackets and parentheses terminating in bounded time without parser freeze.
+  - 7 fuzzed malformed inputs (unclosed link targets, corrupted entity sequences, unclosed HTML tag barrages, 200-column tables, unclosed fences, 50KB attribute values, Unicode surrogate/control sequences) all terminating cleanly without exceptions.
+- Executed full security suite (`npm run test:security`: 6/6 files, 80/80 tests passing).
+- Executed full frontend test suite (`npm run test:unit`: 36/36 files, 342/342 tests passing).
+- Executed dev build (`npm run build:dev`: clean build in 3.22s).
+- Verified all 5 Acceptance Criteria of Story `US-016` and all Exit Criteria of `EPIC-004`.
+- Updated `REQUIREMENT-TRACEABILITY.md` (`SEC-INVAR-01`, `SEC-INVAR-04`, `SEC-INVAR-07` marked `VERIFIED`).
+- Concluded Story `US-016: Adversarial Security Test Corpus & Fault Isolation` (`DONE`) and Epic [`EPIC-004: Advanced Rendering & Security Sanitization`](../epics/EPIC-004-advanced-rendering-security.md) (`DONE`).
+
+### Verification Results:
+- `npm run test:security`: 80 passed across 6 test files in 17.64s (PASS).
+- `npm run test:unit`: 342 passed across 36 test files in 77.76s (PASS).
+- `npm run build:dev`: Clean build in 3.22s (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-017.1: Implement unicode direction classifier` under Story [`US-017: Unicode Automatic Direction Detection Engine`](../stories/US-017-auto-direction-engine.md) (Phase 4 / `EPIC-005: Bi-directional & Multi-lingual Text Support`).
