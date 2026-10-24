@@ -1685,3 +1685,31 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-010.4: Write unit tests for code rendering and copy` under [`docs/stories/US-010-code-blocks-highlighting.md`](../stories/US-010-code-blocks-highlighting.md).
+
+---
+
+## [2026-10-24] — Phase 3: Write Unit Tests for Code Rendering & Copy and Complete Story US-010 (Task US-010.4)
+
+- **Work Item ID:** `US-010.4`
+- **Agent:** Autonomous Story Runner
+- **Summary:** Created golden code blocks fixture in `fixtures/golden/code-blocks.md` showcasing Go, TypeScript, Python with RTL/Unicode comments, custom unknown language fallback, plain log blocks without language identifier, and long lines with horizontal scrolling. Created comprehensive end-to-end integration test suite in `frontend/src/features/rendering/code-block.test.tsx` verifying MarkdownViewer code block parsing, Shiki syntax highlighting, language badge labels, line number counts, container horizontal scrolling (`overflow-x: auto`), exact clipboard copy fidelity (preserving tabs, spaces, newlines, and Unicode without markup), and accessible feedback. Updated `docs/implementation/REQUIREMENT-TRACEABILITY.md` marking `FR-RENDER-003` (Code highlighting) and `FR-RENDER-004` (Copy code) as `IMPLEMENTED` and `VERIFIED`. Verified 15 passing tests across `code-block` suites via `npm run test:unit -- code-block`, 108 total passing frontend unit tests across all 14 test suites, clean production build via `npm run build`, and passing backend Go test suite.
+- **Status:** Task `US-010.4` marked `DONE`. Story `US-010` transitioned to `DONE`.
+
+### Actions Taken:
+1. **Created Golden Code Blocks Fixture:** Created `fixtures/golden/code-blocks.md` demonstrating Go, TypeScript, Python with Unicode comments, custom unknown languages, unadorned code blocks, and horizontal scrolling commands.
+2. **Created Integration Test Suite:** Created `frontend/src/features/rendering/code-block.test.tsx` with 6 test cases verifying all acceptance criteria of US-010 and testing against the golden fixture.
+3. **Synchronized Requirement Traceability:** Updated `FR-RENDER-003` and `FR-RENDER-004` to `IMPLEMENTED` / `VERIFIED` in `docs/implementation/REQUIREMENT-TRACEABILITY.md`.
+4. **Verified Full Test Suites & Build:** Ran `npm run test:unit -- code-block` (15 passed across 2 files in 3.97s), full test suite `npm run test:unit` (108 passed across 14 test files in 23.10s), `npm run build` (clean bundle built in 1.62s), and full backend `go test ./...` (all Go packages PASS).
+5. **Documentation Synchronization:** Updated `docs/stories/US-010-code-blocks-highlighting.md`, `docs/implementation/BACKLOG.md`, `docs/implementation/CURRENT-STATE.md`, and `docs/implementation/WORK-LOG.md`.
+
+### Verification Results:
+- `npm run test:unit -- code-block`: 15 passed across 2 test files in 3.97s (PASS).
+- `npm run test:unit`: 108 passed across 14 test files in 23.10s (PASS).
+- `npm run build`: Clean production bundle built in 1.62s (PASS).
+- `go test ./...`: All backend packages PASS.
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Story US-010 Completion Status:
+- **Story Status:** `DONE` (All 4 implementation tasks `US-010.1`, `US-010.2`, `US-010.3`, and `US-010.4` completed, independently verified, and committed).
+- **Next Eligible Story:** Story [`US-011: Local Asset Resolution & Safe Link Handling`](../stories/US-011-local-assets-safe-links.md) under Phase 3 / `EPIC-003` (Status: `READY`).

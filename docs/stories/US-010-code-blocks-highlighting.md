@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-010`
 - **Parent Epic:** [EPIC-003: CommonMark, GFM & Core Document Rendering](../epics/EPIC-003-commonmark-gfm-rendering.md)
-- **Status:** `IN_PROGRESS`
+- **Status:** `DONE`
 - **Assigned Phase:** Phase 3 (Baseline Markdown Rendering)
 
 ---
@@ -86,7 +86,7 @@ Provide syntax highlighting and copy capabilities for fenced code blocks:
 
 ### Task US-010.4: Write unit tests for code rendering and copy
 - **Task ID:** `US-010.4`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-010.3`
 - **Completion Criteria:** Tests assert exact text copied and fallback behavior on unknown languages.
 - **Verification Command:** `npm run test:unit -- code-block`
@@ -204,3 +204,36 @@ Provide syntax highlighting and copy capabilities for fenced code blocks:
    Duration  1.91s
 ```
   - **Status:** `DONE` (Clipboard copy action copies exact raw code preserving tabs, spaces, newlines, and Unicode without markup; provides accessible feedback with "Copied!" dismissing after 2 seconds, and handles clipboard errors gracefully with "Failed" state).
+- **Task US-010.4 Execution & Verification Evidence:**
+  - **Changed Files:**
+    - `fixtures/golden/code-blocks.md`
+    - `frontend/src/features/rendering/code-block.test.tsx`
+    - `docs/implementation/REQUIREMENT-TRACEABILITY.md`
+  - **Verification Command:** `npm run test:unit -- code-block`
+  - **Output:**
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run code-block
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/rendering/code-block.test.tsx (6 tests) 834ms
+   ✓ Fenced Code Blocks, Syntax Highlighting & Copy Action Integration (US-010.4) (6)
+     ✓ renders Go code block with language badge, line numbers, and accurate Shiki highlighting (AC 1) 336ms
+     ✓ renders unknown language in readable monospaced font without errors (AC 2) 8ms
+     ✓ ensures long lines scroll horizontally inside container without stretching layout (AC 3, PRD 5.4) 15ms
+     ✓ copies exact original code to clipboard preserving tabs, spaces, newlines, and Unicode (AC 4, FR-RENDER-004) 52ms
+     ✓ renders all code blocks from the golden fixture suite successfully 367ms
+     ✓ displays accessible feedback on copy and provides localized error handling 56ms
+ ✓ src/features/rendering/components/code-block-component.test.tsx (9 tests) 452ms
+
+ Test Files  2 passed (2)
+      Tests  15 passed (15)
+   Start at  14:34:58
+   Duration  3.97s
+```
+  - **Status:** `DONE` (Full integration unit test suite verified: accurate Go highlighting with Shiki, unknown language fallback, horizontal scroll container, exact tab/space/newline/Unicode copy fidelity, golden code block fixture suite, and accessible copy button feedback).
+
+### Story US-010 Completion Status:
+- **Story Status:** `DONE` (All 4 implementation tasks `US-010.1`, `US-010.2`, `US-010.3`, and `US-010.4` completed, independently verified with 15 passing tests across `code-block` suites, 108 total passing frontend unit tests, passing backend Go tests, and clean production build).
+- **Next Eligible Story:** Story [`US-011: Local Asset Resolution & Safe Link Handling`](US-011-local-assets-safe-links.md) under Phase 3 / `EPIC-003` (Status: `READY`).
