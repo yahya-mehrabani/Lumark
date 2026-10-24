@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-007`
 - **Parent Epic:** [EPIC-002: Core Native Application Lifecycle & Tab Management](../epics/EPIC-002-native-lifecycle-tabs.md)
-- **Status:** `DRAFT`
+- **Status:** `IN_PROGRESS`
 - **Assigned Phase:** Phase 2 (Core Application Structure)
 
 ---
@@ -57,7 +57,7 @@ Build the React frontend application shell, tab navigation system, and empty sta
 
 ### Task US-007.1: Implement TabStateStore in React
 - **Task ID:** `US-007.1`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** Store handles `openTab`, `closeTab`, `switchTab`, and `focusExistingTab`.
 - **Verification Command:** `npm run test:unit -- tab-store`
@@ -113,11 +113,46 @@ Build the React frontend application shell, tab navigation system, and empty sta
 
 ## 9. Implementation Notes and Validation Evidence
 
-*(To be filled by implementation agent during execution)*
-- **Execution Date:** Not yet executed
-- **Agent ID:** N/A
-- **Changed Files:** None
+- **Execution Date:** 2026-10-24
+- **Agent ID:** Autonomous Story Runner
+- **Changed Files:**
+  - `frontend/package.json`
+  - `frontend/package-lock.json`
+  - `frontend/vitest.config.ts`
+  - `frontend/src/test-setup.ts`
+  - `frontend/src/features/tabs/types.ts`
+  - `frontend/src/features/tabs/tabUtils.ts`
+  - `frontend/src/features/tabs/tabStore.ts`
+  - `frontend/src/features/tabs/useTabStore.ts`
+  - `frontend/src/features/tabs/tab-store.test.ts`
 - **Terminal Output & Verification Evidence:**
+
+### Task US-007.1 Evidence (`npm run test:unit -- tab-store`)
 ```text
-(Awaiting execution in Phase 2)
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run tab-store
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/tabs/tab-store.test.ts (13 tests) 56ms
+   ✓ TabStateStore (US-007.1) (13)
+     ✓ initializes with empty state (0 tabs, activeTabId = null) 7ms
+     ✓ opens a tab and sets it as active 5ms
+     ✓ opens multiple tabs sequentially and updates active tab to the latest opened 1ms
+     ✓ prevents duplicate tabs and focuses existing tab without altering order 1ms
+     ✓ normalizes paths with backslashes and redundant slashes for duplicate detection 1ms
+     ✓ focusExistingTab returns true and focuses tab if present, false otherwise 1ms
+     ✓ switches active tab cleanly 1ms
+     ✓ closes a tab and focuses adjacent tab 1ms
+     ✓ closing the last remaining tab returns to empty state (0 tabs, activeTabId = null) 2ms
+     ✓ disambiguates tab display titles when filenames collide across directories 1ms
+     ✓ updates tab status badge and error message 1ms
+     ✓ closeAllTabs clears all tabs and returns to empty state 1ms
+     ✓ integrates with React hook useTabStore 27ms
+
+ Test Files  1 passed (1)
+      Tests  13 passed (13)
+   Start at  10:32:53
+   Duration  1.48s (environment 66%, import 10%, transform 9%, setup 9%, tests 5%, worker 1%)
 ```
+Exit Code: 0 (PASS)

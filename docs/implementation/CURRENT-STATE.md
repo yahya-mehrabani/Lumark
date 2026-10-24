@@ -13,8 +13,8 @@
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
 - **Application Implementation Status:** **FEASIBILITY SPIKE COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md), [`US-002`](../stories/US-002-cli-single-instance-spike.md), [`US-003`](../stories/US-003-webview-asset-security-spike.md), and [`US-004`](../stories/US-004-packaging-association-spike.md) fully verified across all implementation tasks under WSLg. Platform packaging prototypes for Linux (.deb), Windows (NSIS), and macOS (Info.plist) delivered.
 - **Feasibility Spike Status:** **SPIKE IMPLEMENTATION COMPLETE / AWAITING CROSS-PLATFORM GATES**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-006.4: Write unit and integration tests for instance coordinator` under [`US-006`](../stories/US-006-lifecycle-cli-single-instance.md) (Story `US-006` complete across all implementation tasks; `internal/instance/` CLI parser, coordinator, router, and comprehensive test suite verified with `go test -count=1 -v -race`, `golangci-lint`, and `govulncheck`).
-- **Active / Next Eligible Work Item:** Story [`US-007: Frontend Application Shell, Tab State Management & Empty State`](../stories/US-007-app-shell-tabs-empty-state.md) (Task `US-007.1: Scaffold React application shell with Tailwind/CSS layout` ready for execution under approved Linux-only implementation policy).
+- **Last Completed Work Item:** Task `US-007.1: Implement TabStateStore in React` under [`US-007`](../stories/US-007-app-shell-tabs-empty-state.md) (Tab state store, duplicate prevention, path normalization, title disambiguation, and hook verified via `npm run test:unit -- tab-store` with 13 passing unit tests).
+- **Active / Next Eligible Work Item:** Task `US-007.2: Create TabBar and TabItem components` under [`US-007`](../stories/US-007-app-shell-tabs-empty-state.md).
 
 ---
 
@@ -81,10 +81,7 @@ All planning remediation artifacts must be preserved:
 ## 5. Exact Next Action for the Next Agent
 
 The next incoming agent must:
-1. **Confirm Story US-006 Complete:**
-   - Confirm Story `US-006` is `DONE` across all implementation tasks (`US-006.1` through `US-006.4`).
-   - Confirm backend `internal/instance/` package is verified with `go test -count=1 -v -race`, `golangci-lint`, and `govulncheck`.
-2. **Begin Story US-007 (Task US-007.1):**
-   - Active work item: Task `US-007.1: Scaffold React application shell with Tailwind/CSS layout` under [`docs/stories/US-007-app-shell-tabs-empty-state.md`](../stories/US-007-app-shell-tabs-empty-state.md).
-   - Implement frontend app shell layout and empty state.
-3. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.
+1. **Continue Story US-007 (Task US-007.2):**
+   - Active work item: Task `US-007.2: Create TabBar and TabItem components` under [`docs/stories/US-007-app-shell-tabs-empty-state.md`](../stories/US-007-app-shell-tabs-empty-state.md).
+   - Implement accessible TabBar and TabItem components with active tab styling, close buttons, and middle-click to close.
+2. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.
