@@ -3,6 +3,7 @@ import { TabStore, tabStore as defaultStore } from '../tabs/tabStore';
 import { useTabStore, useActiveTab, useTabActions } from '../tabs/useTabStore';
 import { TabBar } from '../tabs/TabBar';
 import { EmptyState, RecentFileItem } from './EmptyState';
+import { DropZone } from './DropZone';
 import { TabItem } from '../tabs/types';
 import './shell.css';
 
@@ -44,28 +45,13 @@ export const AppShell: React.FC<AppShellProps> = ({
     };
   }, [onOpenFile]);
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const files = Array.from(e.dataTransfer.files);
-      onFileDrop?.(files);
-    }
-  };
-
   const hasTabs = state.tabs.length > 0;
 
   return (
-    <div
+    <DropZone
+      onFilesDropped={(files) => onFileDrop?.(files)}
       className={`app-shell-root ${className}`}
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
+      testId="app-shell-root"
     >
       {/* Top Header / Menu Bar Chrome */}
       <header className="app-header" role="banner">
@@ -169,6 +155,6 @@ export const AppShell: React.FC<AppShellProps> = ({
           <span>{activeTab && activeTab.isReadOnly ? 'Read-Only' : 'Markdown'}</span>
         </div>
       </footer>
-    </div>
+    </DropZone>
   );
 };

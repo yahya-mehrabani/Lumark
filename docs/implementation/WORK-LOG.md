@@ -1470,3 +1470,30 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-008.3: Implement multi-file batch loader and error notifier` under [`docs/stories/US-008-file-picker-drag-drop.md`](../stories/US-008-file-picker-drag-drop.md).
+
+---
+
+## [2026-10-24] — Phase 2: Implement Multi-File Batch Loader & Error Notifier (Task US-008.3)
+
+- **Work Item ID:** `US-008.3`
+- **Agent:** Autonomous Story Runner
+- **Summary:** Implemented multi-file batch loader in `frontend/src/features/shell/batchLoader.ts` with extension filtering (`.md`, `.markdown`, `.mdown`, `.mkd`), file partitioning (`partitionFiles`), sequential TabStore dispatching (`loadDroppedFiles`), and non-intrusive warning message formatting (`formatRejectedFilesMessage`). Integrated `DropZone` as root wrapper in `frontend/src/features/shell/AppShell.tsx` and wired native file picker (`DialogService.OpenFiles()`) and dropped file batch loader into `frontend/src/App.tsx`. Wrote comprehensive unit tests in `frontend/src/features/shell/mixed-drop.test.tsx` verifying batch loading of 3 `.md` files (Acceptance Criteria 4), mixed valid/invalid drop with actionable warning notification and intact open documents (Acceptance Criteria 5), all-unsupported drop, empty list drop, and duplicate path refocusing.
+- **Status:** Task `US-008.3` marked `DONE`.
+
+### Actions Taken:
+1. **Implemented Batch Loader Utility:** Created `frontend/src/features/shell/batchLoader.ts` with `isSupportedMarkdownFile`, `partitionFiles`, `formatRejectedFilesMessage`, and `loadDroppedFiles`.
+2. **Integrated DropZone into AppShell:** Wrapped `AppShell.tsx` with `<DropZone>` container so dropping anywhere on the window activates the glassmorphism overlay and triggers file drop callbacks.
+3. **Wired File Open & Drop in App.tsx:** Connected native OS dialog `DialogService.OpenFiles()` and `loadDroppedFiles()` with `tabStore` and `showToast()` in `frontend/src/App.tsx`.
+4. **Wrote Unit Tests for Mixed Drop:** Created `frontend/src/features/shell/mixed-drop.test.tsx` with 10 test cases covering extension filtering, 3-file batch loading, mixed valid/invalid drop, unsupported rejection toasts, and duplicate tab refocusing.
+5. **Verified Full Frontend Suite and Build:** Ran `npm run test:unit -- mixed-drop` (10 passed in 28ms), full suite `npm run test:unit` (51 passed across 6 files), and `npm run build` (62 modules transformed).
+6. **Documentation Synchronization:** Updated `docs/stories/US-008-file-picker-drag-drop.md` and `docs/implementation/CURRENT-STATE.md`.
+
+### Verification Results:
+- `npm run test:unit -- mixed-drop`: 10 passed in 28ms (PASS).
+- `npm run test:unit`: 51 passed across 6 test files in 7.84s (PASS).
+- `npm run build`: 62 modules transformed in 276ms (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-008.4: Write unit and integration tests` under [`docs/stories/US-008-file-picker-drag-drop.md`](../stories/US-008-file-picker-drag-drop.md).

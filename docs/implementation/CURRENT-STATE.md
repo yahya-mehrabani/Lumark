@@ -13,8 +13,8 @@
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
 - **Application Implementation Status:** **FEASIBILITY SPIKE COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md), [`US-002`](../stories/US-002-cli-single-instance-spike.md), [`US-003`](../stories/US-003-webview-asset-security-spike.md), and [`US-004`](../stories/US-004-packaging-association-spike.md) fully verified across all implementation tasks under WSLg. Platform packaging prototypes for Linux (.deb), Windows (NSIS), and macOS (Info.plist) delivered.
 - **Feasibility Spike Status:** **SPIKE IMPLEMENTATION COMPLETE / AWAITING CROSS-PLATFORM GATES**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-008.2: Implement frontend file drop handler` under [`US-008`](../stories/US-008-file-picker-drag-drop.md) (`DropZone` component implemented with nested drag tracking, visual glassmorphism overlay, and tested with 7 passing tests via `npm run test:unit -- drag-drop`).
-- **Active / Next Eligible Work Item:** Story [`US-008: Native File Picker & Drag-and-Drop Integration`](../stories/US-008-file-picker-drag-drop.md) (Task `US-008.3: Implement multi-file batch loader and error notifier` ready for execution under approved Linux-only implementation policy).
+- **Last Completed Work Item:** Task `US-008.3: Implement multi-file batch loader and error notifier` under [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Multi-file batch loader and error notifier implemented in `features/shell/batchLoader.ts`, wired to `AppShell` and `App.tsx`, and verified with 10 passing tests via `npm run test:unit -- mixed-drop`).
+- **Active / Next Eligible Work Item:** Story [`US-008: Native File Picker & Drag-and-Drop Integration`](../stories/US-008-file-picker-drag-drop.md) (Task `US-008.4: Write unit and integration tests` ready for execution under approved Linux-only implementation policy).
 
 ---
 
@@ -81,10 +81,10 @@ All planning remediation artifacts must be preserved:
 ## 5. Exact Next Action for the Next Agent
 
 The next incoming agent must:
-1. **Confirm Task US-008.2 Complete:**
-   - Confirm Task `US-008.2: Implement frontend file drop handler` is `DONE`.
-   - Confirm `npm run test:unit -- drag-drop` passes with 7 passing tests and `npm run build` succeeds.
-2. **Begin Task US-008.3 (Implement multi-file batch loader and error notifier):**
-   - Active work item: Task `US-008.3` under [`docs/stories/US-008-file-picker-drag-drop.md`](../stories/US-008-file-picker-drag-drop.md).
-   - Implement multi-file batch loader, extension filtering, TabStore dispatching, and non-intrusive error notifications.
+1. **Confirm Task US-008.3 Complete:**
+   - Confirm Task `US-008.3: Implement multi-file batch loader and error notifier` is `DONE`.
+   - Confirm `npm run test:unit -- mixed-drop` passes with 10 passing tests and `npm run build` succeeds.
+2. **Begin Task US-008.4 (Write unit and integration tests):**
+   - Active work item: Task `US-008.4` under [`docs/stories/US-008-file-picker-drag-drop.md`](../stories/US-008-file-picker-drag-drop.md).
+   - Write comprehensive component and integration tests in `frontend/src/features/shell/dropzone.test.tsx` verifying full drag-drop lifecycle, error states, and file filtering logic.
 3. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.

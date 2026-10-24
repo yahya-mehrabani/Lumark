@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { Events, WML } from "@wailsio/runtime";
 import { SpikeDocumentService } from "../bindings/markdown-viewer";
+import * as DialogService from "../bindings/markdown-viewer/internal/dialogs/service";
 import { MarkdownViewer } from './MarkdownViewer';
 import { AppShell } from './features/shell/AppShell';
+import { loadDroppedFiles } from './features/shell/batchLoader';
 import { tabStore } from './features/tabs/tabStore';
 
 export function App() {
@@ -104,11 +106,36 @@ export function App() {
     WML.Reload();
   }, []);
 
+  const handleOpenFile = async () => {
+    try {
+      const paths = await DialogService.OpenFiles();
+      if (paths && paths.length > 0) {
+        for (const p of paths) {
+          if (p && p.trim()) {
+            loadDocumentPath(p);
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Failed to open file dialog:', err);
+      showToast(`Dialog error: ${err}`);
+    }
+  };
+
+  const handleFileDrop = async (files: File[]) => {
+    await loadDroppedFiles(files, {
+      store: tabStore,
+      notifyWarning: (msg) => showToast(msg),
+      notifySuccess: (msg) => showToast(msg),
+    });
+  };
+
   return (
     <>
       <AppShell
         store={tabStore}
-        onOpenFile={() => loadDocumentPath('fixtures/spike/monolithic-fixture.md')}
+        onOpenFile={handleOpenFile}
+        onFileDrop={handleFileDrop}
         renderDocument={(tab) => (
           <div className="markdown-viewport">
             <MarkdownViewer

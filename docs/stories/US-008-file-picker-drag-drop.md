@@ -75,7 +75,7 @@ Enable users to open Markdown files through:
 
 ### Task US-008.3: Implement multi-file batch loader and error notifier
 - **Task ID:** `US-008.3`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-008.2`
 - **Completion Criteria:** Dispatches valid files to TabStore; displays warning toast for rejected files.
 - **Verification Command:** `npm run test:unit -- mixed-drop`
@@ -170,6 +170,43 @@ PASS
  Test Files  1 passed (1)
       Tests  7 passed (7)
    Start at  11:04:27
-   Duration  1.31s (environment 59%, import 12%, tests 11%, transform 10%, setup 8%, worker 1%)
-```
 - **Full Test Suite & Build:** `npm run test:unit` (41 passed across 5 files), `npm run build` (58 modules transformed, zero TypeScript/Vite errors).
+
+### Task US-008.3: Implement multi-file batch loader and error notifier
+- **Execution Date:** 2026-10-24
+- **Status:** `DONE`
+- **Changed Files:**
+  - `frontend/src/features/shell/batchLoader.ts`: Multi-file batch loader with extension filtering, file partitioning, `loadDroppedFiles`, and actionable warning formatting (`formatRejectedFilesMessage`).
+  - `frontend/src/features/shell/mixed-drop.test.tsx`: Unit tests verifying 3 `.md` files drop batch loading (Acceptance Criteria 4), mixed drop with valid `.md` and unsupported `.exe` (Acceptance Criteria 5), multiple unsupported files, empty list, and duplicate path refocusing.
+  - `frontend/src/features/shell/AppShell.tsx`: Wrapped root shell in `DropZone`.
+  - `frontend/src/App.tsx`: Wired `handleOpenFile` via `DialogService.OpenFiles()` and `handleFileDrop` via `loadDroppedFiles()` into `<AppShell>`.
+- **Terminal Output & Verification Evidence:**
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run mixed-drop
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/shell/mixed-drop.test.tsx (10 tests) 28ms
+   ✓ Multi-File Batch Loader & Error Notifier (10)
+     ✓ isSupportedMarkdownFile (2)
+       ✓ accepts standard markdown extensions case-insensitively 5ms
+       ✓ rejects unsupported extensions and empty strings 1ms
+     ✓ partitionFiles (1)
+       ✓ correctly splits valid and invalid files 5ms
+     ✓ formatRejectedFilesMessage (2)
+       ✓ formats single unsupported file notification 1ms
+       ✓ formats multiple unsupported files notification 1ms
+     ✓ loadDroppedFiles (5)
+       ✓ opens 3 valid .md files in the specified order (Acceptance Criteria 4) 5ms
+       ✓ handles mixed valid and invalid drop: opens valid file and notifies warning without crashing (Acceptance Criteria 5) 2ms
+       ✓ displays warning and opens zero tabs when all dropped files are unsupported 1ms
+       ✓ handles empty dropped files list without state change or error 2ms
+       ✓ refocuses existing tab when dropping an already-opened file without duplicating tabs 2ms
+
+ Test Files  1 passed (1)
+      Tests  10 passed (10)
+   Start at  11:09:56
+   Duration  1.15s (environment 79%, setup 12%, tests 3%, transform 3%, import 2%, worker 1%)
+```
+- **Full Test Suite & Build:** `npm run test:unit` (51 passed across 6 files), `npm run build` (62 modules transformed, zero TypeScript/Vite errors).
