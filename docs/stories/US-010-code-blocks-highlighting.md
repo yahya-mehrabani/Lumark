@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-010`
 - **Parent Epic:** [EPIC-003: CommonMark, GFM & Core Document Rendering](../epics/EPIC-003-commonmark-gfm-rendering.md)
-- **Status:** `DRAFT`
+- **Status:** `IN_PROGRESS`
 - **Assigned Phase:** Phase 3 (Baseline Markdown Rendering)
 
 ---
@@ -56,7 +56,7 @@ Provide syntax highlighting and copy capabilities for fenced code blocks:
 
 ### Task US-010.1: Integrate Shiki with local grammar bundle
 - **Task ID:** `US-010.1`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** Shiki highlighter initialized locally with offline grammars and dual light/dark themes.
 - **Verification Command:** `npm run test:unit -- shiki-highlighter`
@@ -111,11 +111,36 @@ Provide syntax highlighting and copy capabilities for fenced code blocks:
 
 ## 9. Implementation Notes and Validation Evidence
 
-*(To be filled by implementation agent during execution)*
-- **Execution Date:** Not yet executed
-- **Agent ID:** N/A
-- **Changed Files:** None
-- **Terminal Output & Verification Evidence:**
+- **Execution Date:** 2026-10-24
+- **Agent ID:** Autonomous Story Runner
+- **Task US-010.1 Execution & Verification Evidence:**
+  - **Changed Files:**
+    - `frontend/package.json`
+    - `frontend/package-lock.json`
+    - `frontend/src/features/rendering/shiki-highlighter.ts`
+    - `frontend/src/features/rendering/shiki-highlighter.test.ts`
+  - **Verification Command:** `npm run test:unit -- shiki-highlighter`
+  - **Output:**
 ```text
-(Awaiting execution in Phase 3)
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run shiki-highlighter
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/rendering/shiki-highlighter.test.ts (8 tests) 285ms
+   ✓ Shiki Syntax Highlighter Service (US-010.1) (8)
+     ✓ initializes highlighter with offline bundled languages and dual themes 6ms
+     ✓ normalizes common language names and aliases 1ms
+     ✓ verifies language support checks 1ms
+     ✓ generates syntax tokens for supported languages with offline bundled grammars 50ms
+     ✓ highlights code with dual themes generating both light and dark styles 74ms
+     ✓ falls back to clean escaped plain text for unknown languages 1ms
+     ✓ falls back to clean escaped plain text when no language is specified 0ms
+     ✓ enforces safe size limits to prevent UI freezing (FR-RENDER-003) 1ms
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Start at  14:09:40
+   Duration  1.47s
 ```
+  - **Status:** `DONE` (Offline Shiki highlighter initialized with dual `github-light` / `github-dark` themes, offline language grammars, aliases, unknown language fallback, and safe size boundaries).

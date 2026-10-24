@@ -11,10 +11,10 @@
 
 - **Current Overall Phase:** **Phase 1 (Technical Feasibility Spike)**.
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
-- **Application Implementation Status:** **PHASE 2 (EPIC-002) AND STORY US-009 (PHASE 3) COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) through [`US-004`](../stories/US-004-packaging-association-spike.md) (Phase 1 Spike), Stories [`US-005`](../stories/US-005-native-document-service.md) through [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Phase 2 Core Lifecycle & Tabs), and Story [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) (Phase 3 Baseline Markdown Rendering) fully verified across all implementation tasks under Linux/WSLg.
+- **Application Implementation Status:** **PHASE 2 (EPIC-002) AND PHASE 3 (EPIC-003) IN PROGRESS UNDER LINUX**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) through [`US-004`](../stories/US-004-packaging-association-spike.md) (Phase 1 Spike), Stories [`US-005`](../stories/US-005-native-document-service.md) through [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Phase 2 Core Lifecycle & Tabs), and Story [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) complete. Story [`US-010`](../stories/US-010-code-blocks-highlighting.md) actively in progress.
 - **Feasibility Spike Status:** **SPIKE IMPLEMENTATION COMPLETE / AWAITING CROSS-PLATFORM GATES**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-009.3: Add component tests for CommonMark and GFM constructs` under [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) (Story `US-009` complete across all 3 implementation tasks; CommonMark and GFM rendering, responsive typography viewport, table scroll-wrapper, task lists, and script neutralization verified with 80 passing tests via `npm run test:unit`, full backend `go test ./...`, and clean production build).
-- **Active / Next Eligible Work Item:** Story [`US-010: Fenced Code Blocks, Syntax Highlighting & Copy Action`](../stories/US-010-code-blocks-highlighting.md) under Phase 3 / `EPIC-003` (Task `US-010.1: Integrate Shiki syntax highlighter in frontend` ready for execution under approved Linux-only implementation policy).
+- **Last Completed Work Item:** Task `US-010.1: Integrate Shiki with local grammar bundle` under [`US-010`](../stories/US-010-code-blocks-highlighting.md) (Shiki syntax highlighter initialized locally with offline grammars, dual light/dark themes, language normalization, unknown language fallback, and safe size boundaries; verified with 8 passing tests via `npm run test:unit -- shiki-highlighter`).
+- **Active / Next Eligible Work Item:** Task `US-010.2: Implement CodeBlock React component` under Story [`US-010: Fenced Code Blocks, Syntax Highlighting & Copy Action`](../stories/US-010-code-blocks-highlighting.md) (EPIC-003 / Phase 3).
 
 ---
 
@@ -81,10 +81,9 @@ All planning remediation artifacts must be preserved:
 ## 5. Exact Next Action for the Next Agent
 
 The next incoming agent must:
-1. **Confirm Story US-009 Complete:**
-   - Confirm Story `US-009: CommonMark & GitHub Flavored Markdown Rendering Pipeline` is `DONE` across all 3 implementation tasks (`US-009.1` through `US-009.3`).
-   - Confirm frontend unit test suite passes with `npm run test:unit` (80 passed across 10 test files), `npm run build` succeeds, and `go test ./...` passes.
-2. **Begin Story US-010 (Task US-010.1):**
-   - Active work item: Story [`docs/stories/US-010-code-blocks-highlighting.md`](../stories/US-010-code-blocks-highlighting.md) (Task `US-010.1: Integrate Shiki syntax highlighter in frontend`).
-   - Integrate Shiki syntax highlighter with local language grammars and theme support.
+1. **Confirm Task US-010.1 Complete:**
+   - Shiki syntax highlighter service verified with offline bundled grammars, dual themes, and safe size thresholds (8 passing tests in `shiki-highlighter.test.ts`).
+2. **Execute Task US-010.2:**
+   - Active work item: Story [`docs/stories/US-010-code-blocks-highlighting.md`](../stories/US-010-code-blocks-highlighting.md) (Task `US-010.2: Implement CodeBlock React component`).
+   - Implement `frontend/src/features/rendering/components/CodeBlock.tsx` rendering highlighted HTML, language badge, line numbers, and horizontal scroll container (`overflow-x: auto`).
 3. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.

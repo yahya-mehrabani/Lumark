@@ -1605,3 +1605,29 @@ This log is an append-only chronological record of all significant actions, veri
 ### Story US-009 Completion Status:
 - **Story Status:** `DONE` (All 3 tasks `US-009.1`, `US-009.2`, and `US-009.3` verified and committed).
 - **Next Eligible Story:** Story [`US-010: Fenced Code Blocks, Syntax Highlighting & Copy Action`](../stories/US-010-code-blocks-highlighting.md) under Phase 3 / `EPIC-003` (Status: `READY`).
+
+---
+
+## [2026-10-24] — Phase 3: Integrate Shiki with Local Grammar Bundle (Task US-010.1)
+
+- **Work Item ID:** `US-010.1`
+- **Agent:** Autonomous Story Runner
+- **Summary:** Installed and configured local Shiki syntax highlighting engine (`shiki@3.1.0`) in the frontend with offline bundled grammars (Go, TypeScript, JavaScript, Python, Rust, HTML, CSS, JSON, YAML, Bash, SQL, Markdown) and dual light/dark themes (`github-light` and `github-dark`). Implemented `frontend/src/features/rendering/shiki-highlighter.ts` providing singleton highlighter management, language normalization/alias resolution (`golang` -> `go`, `ts` -> `typescript`, `py` -> `python`, etc.), graceful plain text fallback for unknown/unspecified languages with HTML character escaping, and UI freeze protection thresholds (>50,000 characters or >2,000 lines) per PRD FR-RENDER-003. Created comprehensive unit tests in `frontend/src/features/rendering/shiki-highlighter.test.ts`. Verified 8 tests passing via `npm run test:unit -- shiki-highlighter`, 88 tests passing across all 11 frontend test suites, clean production build via `npm run build`, and passing backend Go test suite.
+- **Status:** Task `US-010.1` marked `DONE`. Story `US-010` transitioned to `IN_PROGRESS`.
+
+### Actions Taken:
+1. **Installed Shiki Dependency:** Installed exact pinned version `shiki@3.1.0` in `frontend/package.json`.
+2. **Implemented Syntax Highlighter Service:** Created `frontend/src/features/rendering/shiki-highlighter.ts` with singleton `getHighlighter()`, `highlightCode()`, `tokenizeCode()`, language normalization, unknown language fallback, and safe code size thresholds.
+3. **Created Shiki Unit Tests:** Created `frontend/src/features/rendering/shiki-highlighter.test.ts` with 8 test cases verifying offline bundled grammars, dual themes, alias resolution, token generation, dual-theme CSS variables, unknown language HTML escaping, and large file threshold enforcement.
+4. **Verified Unit Tests & Production Build:** Ran `npm run test:unit -- shiki-highlighter` (8 passed in 285ms), full test suite `npm run test:unit` (88 passed across 11 test files), and `npm run build` (316 modules transformed cleanly in 316ms).
+5. **Documentation Synchronization:** Updated `docs/stories/US-010-code-blocks-highlighting.md`, `docs/implementation/CURRENT-STATE.md`, and `docs/implementation/WORK-LOG.md`.
+
+### Verification Results:
+- `npm run test:unit -- shiki-highlighter`: 8 passed in 285ms (PASS).
+- `npm run test:unit`: 88 passed across 11 test files in 15.74s (PASS).
+- `npm run build`: 316 modules transformed in 316ms (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-010.2: Implement CodeBlock React component` under [`docs/stories/US-010-code-blocks-highlighting.md`](../stories/US-010-code-blocks-highlighting.md).
