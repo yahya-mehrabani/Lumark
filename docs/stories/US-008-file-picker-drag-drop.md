@@ -65,7 +65,7 @@ Enable users to open Markdown files through:
 
 ### Task US-008.2: Implement frontend file drop handler
 - **Task ID:** `US-008.2`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-008.1`
 - **Completion Criteria:** Handles `dragover`, `dragleave`, and `drop` events with visual drop-target feedback.
 - **Verification Command:** `npm run test:unit -- drag-drop`
@@ -141,6 +141,35 @@ Enable users to open Markdown files through:
     --- PASS: TestNativeFileDialog/custom_title_configuration (0.00s)
     --- PASS: TestNativeFileDialog/wails_runner_without_running_application_returns_ErrNoApplication (0.00s)
 PASS
-ok      markdown-viewer/internal/dialogs        0.047s
-```
 - **Linter Status:** `golangci-lint run ./internal/dialogs/...` passed with 0 issues.
+
+### Task US-008.2: Implement frontend file drop handler
+- **Execution Date:** 2026-10-24
+- **Status:** `DONE`
+- **Changed Files:**
+  - `frontend/src/features/shell/DropZone.tsx`: `DropZone` component with nested counter tracking, `is-drag-over` state, accessible ARIA attributes, and visual drop overlay.
+  - `frontend/src/features/shell/dropzone.css`: Modern glassmorphism overlay with pulsating dashed border and drop icon badge.
+  - `frontend/src/features/shell/drag-drop.test.tsx`: Comprehensive component tests for dragenter, dragover, nested child tracking, dragleave, drop, and disabled state.
+- **Terminal Output & Verification Evidence:**
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run drag-drop
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/shell/drag-drop.test.tsx (7 tests) 111ms
+   ✓ DropZone Component (7)
+     ✓ renders children correctly without overlay initially 42ms
+     ✓ shows visual feedback overlay on dragenter and dragover 28ms
+     ✓ hides visual overlay on dragleave when leaving the dropzone boundary 10ms
+     ✓ handles nested drag enter/leave without prematurely hiding overlay 9ms
+     ✓ calls onFilesDropped with single dropped file and clears overlay 10ms
+     ✓ calls onFilesDropped with multiple dropped files preserving order 4ms
+     ✓ ignores drag events and does not trigger onFilesDropped when disabled 3ms
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  11:04:27
+   Duration  1.31s (environment 59%, import 12%, tests 11%, transform 10%, setup 8%, worker 1%)
+```
+- **Full Test Suite & Build:** `npm run test:unit` (41 passed across 5 files), `npm run build` (58 modules transformed, zero TypeScript/Vite errors).
