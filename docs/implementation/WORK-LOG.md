@@ -1826,3 +1826,26 @@ This log is an append-only chronological record of all significant actions, veri
 ### Story US-011 Completion Status:
 - **Story Status:** `DONE` (All 4 implementation tasks `US-011.1`, `US-011.2`, `US-011.3`, and `US-011.4` completed, independently verified, and committed).
 - **Next Eligible Story:** Story [`US-012: Headings, Stable Anchor Generation & Core Fixture Suite`](../stories/US-012-headings-anchors-fixtures.md) under Phase 3 / `EPIC-003` (Status: `READY`).
+
+---
+
+## [2026-10-24] — Phase 3: Implement Deterministic Slug Generator (Task US-012.1)
+
+- **Work Item ID:** `US-012.1`
+- **Agent:** Autonomous Story Runner
+- **Summary:** Implemented deterministic URL-safe slug generator with stateful duplicate suffix disambiguation and Unicode \p{L}/\p{N}/\p{M} preservation in `frontend/src/features/rendering/utils/slugify.ts`. Verified against 21 unit tests in `heading-slugs.test.ts`.
+- **Status:** Task `US-012.1` marked `DONE`. Story `US-012` marked `IN_PROGRESS`.
+
+### Actions Taken:
+1. **Implemented Slugify Utility & Tracker:** Created `frontend/src/features/rendering/utils/slugify.ts` providing `slugify`, `extractTextFromNode`, `normalizeAuthorId`, and `SlugTracker`. Preserves Unicode characters (e.g. Persian/Arabic/CJK), handles HTML tag stripping, collapses whitespace and hyphens, and disambiguates duplicate headings with incremental suffixes (`-1`, `-2`).
+2. **Created Unit Test Suite:** Created `frontend/src/features/rendering/heading-slugs.test.ts` with 21 unit tests verifying plain text conversion, punctuation handling, Persian/Arabic Unicode slugs, React node text extraction, author-defined custom IDs, and stateful duplicate suffixing.
+3. **Synchronized Documentation:** Updated `docs/stories/US-012-headings-anchors-fixtures.md` (Story `IN_PROGRESS`, Task `US-012.1` `DONE`, Section 9 evidence), `docs/implementation/BACKLOG.md` (`US-012` `IN_PROGRESS`), `docs/implementation/CURRENT-STATE.md`, and `docs/implementation/WORK-LOG.md`.
+
+### Verification Results:
+- `npm --prefix frontend run test:unit -- heading-slugs`: 21 passed across 1 test file in 27ms (PASS).
+- `npm --prefix frontend run build:dev`: Type checking and build passed cleanly in 1.32s (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-012.2: Implement custom Heading components with anchor IDs` under [`docs/stories/US-012-headings-anchors-fixtures.md`](../stories/US-012-headings-anchors-fixtures.md).

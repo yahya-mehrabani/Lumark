@@ -61,7 +61,7 @@ This document is the authoritative index of all Epics and User Stories for `mark
 | `US-009` | CommonMark & GitHub Flavored Markdown Rendering Pipeline | P0 | `DONE` | `US-007` | [US-009.md](../stories/US-009-commonmark-gfm-pipeline.md) |
 | `US-010` | Fenced Code Blocks, Syntax Highlighting & Copy Action | P0 | `DONE` | `US-009` | [US-010.md](../stories/US-010-code-blocks-highlighting.md) |
 | `US-011` | Local Asset Resolution & Safe Link Handling | P0 | `DONE` | `US-009`, `US-007` | [US-011.md](../stories/US-011-local-assets-safe-links.md) |
-| `US-012` | Headings, Stable Anchor Generation & Core Fixture Suite | P0 | `DRAFT` | `US-009` | [US-012.md](../stories/US-012-headings-anchors-fixtures.md) |
+| `US-012` | Headings, Stable Anchor Generation & Core Fixture Suite | P0 | `IN_PROGRESS` | `US-009` | [US-012.md](../stories/US-012-headings-anchors-fixtures.md) |
 
 ---
 

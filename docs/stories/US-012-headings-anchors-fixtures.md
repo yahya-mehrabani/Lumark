@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-012`
 - **Parent Epic:** [EPIC-003: CommonMark, GFM & Core Document Rendering](../epics/EPIC-003-commonmark-gfm-rendering.md)
-- **Status:** `DRAFT`
+- **Status:** `IN_PROGRESS`
 - **Assigned Phase:** Phase 3 (Baseline Markdown Rendering)
 
 ---
@@ -56,7 +56,7 @@ Implement stable heading anchor generation and establish the baseline golden fix
 
 ### Task US-012.1: Implement deterministic slug generator
 - **Task ID:** `US-012.1`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** Function converts strings to lowercase slugs, removes special chars, tracks occurrences.
 - **Verification Command:** `npm run test:unit -- heading-slugs`
@@ -111,11 +111,49 @@ Implement stable heading anchor generation and establish the baseline golden fix
 
 ## 9. Implementation Notes and Validation Evidence
 
-*(To be filled by implementation agent during execution)*
-- **Execution Date:** Not yet executed
-- **Agent ID:** N/A
-- **Changed Files:** None
+### Task US-012.1 Validation Evidence
+- **Execution Date:** 2026-10-24
+- **Agent ID:** Autonomous Implementation Agent
+- **Changed Files:**
+  - `frontend/src/features/rendering/utils/slugify.ts`: Deterministic URL-safe slug generator with Unicode \p{L}/\p{N}/\p{M} preservation, author ID sanitizer, recursive node text extractor, and stateful `SlugTracker` for collision/duplicate disambiguation.
+  - `frontend/src/features/rendering/heading-slugs.test.ts`: 21 comprehensive unit tests covering ASCII transformations, punctuation/special char handling, Persian/Arabic Unicode slugs, mixed-script slugs, React node text extraction, author-defined IDs, and stateful duplicate suffixing (`# Introduction` -> `introduction`, `introduction-1`, `introduction-2`).
 - **Terminal Output & Verification Evidence:**
 ```text
-(Awaiting execution in Phase 3)
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run heading-slugs
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/rendering/heading-slugs.test.ts (21 tests) 27ms
+   ✓ Deterministic Slug Generator (US-012.1) (21)
+     ✓ slugify basic transformation (6)
+       ✓ converts basic English headings to lowercase hyphenated slugs 11ms
+       ✓ collapses multiple whitespace characters and hyphens 1ms
+       ✓ removes punctuation and special characters 1ms
+       ✓ strips leading and trailing punctuation and hyphens 1ms
+       ✓ removes embedded HTML tags before slugifying 1ms
+       ✓ handles empty strings and strings with only punctuation with safe fallback 0ms
+     ✓ Unicode & Multilingual Support (PRD Section 6.3 & FR-RENDER-008) (3)
+       ✓ preserves Persian and Arabic script characters in slug 2ms
+       ✓ handles mixed Persian and English headings 0ms
+       ✓ handles CJK and European accented characters 1ms
+     ✓ extractTextFromNode helper (3)
+       ✓ extracts text from strings, numbers, and arrays 1ms
+       ✓ extracts text recursively from nested React elements 1ms
+       ✓ handles null, undefined, and boolean values gracefully 0ms
+     ✓ normalizeAuthorId helper (2)
+       ✓ preserves clean author-defined IDs 0ms
+       ✓ replaces spaces with hyphens and removes unsafe characters 0ms
+     ✓ SlugTracker duplicate disambiguation (7)
+       ✓ returns the base slug for the first occurrence 0ms
+       ✓ adds numerical suffixes for duplicate headings deterministically 0ms
+       ✓ disambiguates independently across different heading texts 0ms
+       ✓ avoids collision when heading text already contains a numeric suffix 0ms
+       ✓ supports author-provided custom ID with disambiguation 0ms
+       ✓ resets state when reset() is called 0ms
+       ✓ reports whether an ID exists via has() 0ms
+
+ Test Files  1 passed (1)
+      Tests  21 passed (21)
+   Duration  1.36s
 ```
