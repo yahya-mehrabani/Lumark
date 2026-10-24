@@ -1797,3 +1797,32 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-011.4: Write unit and integration tests` under [`docs/stories/US-011-local-assets-safe-links.md`](../stories/US-011-local-assets-safe-links.md).
+
+---
+
+## [2026-10-24] — Phase 3: Write Unit & Integration Tests and Complete Story US-011 (Task US-011.4)
+
+- **Work Item ID:** `US-011.4`
+- **Agent:** Autonomous Story Runner
+- **Summary:** Implemented comprehensive unit and integration test suite `link-asset.test.tsx` and golden fixture `fixtures/golden/links-and-assets.md` covering all 6 acceptance criteria for Story `US-011`. Verified local relative asset resolution to `/local-asset/...`, structured fallback placeholders on missing assets ("Image not found: {src}"), path traversal defenses, remote image blocking ("Remote image blocked: {src}"), relative Markdown link tab routing, external URL OS browser launching via `@wailsio/runtime` `Browser.OpenURL`, and dangerous scheme blocking (`javascript:`). Synchronized requirement traceability for `FR-ASSET-001`, `FR-ASSET-002`, `FR-ASSET-003`, `FR-LINK-001`, `FR-ASSET-004`, and `SEC-INVAR-03` to `IMPLEMENTED` / `VERIFIED`. Completed Story `US-011`.
+- **Status:** Task `US-011.4` marked `DONE`. Story `US-011` marked `DONE`.
+
+### Actions Taken:
+1. **Created Golden Links & Assets Fixture:** Authored `fixtures/golden/links-and-assets.md` providing comprehensive coverage of relative images (normal, paths with spaces `<...>`, and Unicode filenames), missing relative images, remote images, relative `.md` links, external links (`https`, `http`, `mailto`), in-page anchor links, and malicious schemes (`javascript:`, `data:`).
+2. **Created Integration Test Suite:** Created `frontend/src/features/rendering/link-asset.test.tsx` containing 7 test cases verifying AC 1 through AC 6 and validating all elements of the golden fixture end-to-end within `MarkdownViewer`.
+3. **Synchronized Requirement Traceability:** Updated `FR-ASSET-001`, `FR-ASSET-002`, `FR-ASSET-003`, `FR-LINK-001`, `FR-ASSET-004`, and `SEC-INVAR-03` to `IMPLEMENTED` / `VERIFIED` in `docs/implementation/REQUIREMENT-TRACEABILITY.md`.
+4. **Verified Full Test Suites & Build:** Executed `npm --prefix frontend run test:unit -- link-asset` (7 passed in 353ms), full frontend test suite `npm --prefix frontend run test:unit` (158 passed across 18 test files in 27.81s), production build `npm --prefix frontend run build` (clean bundle), backend tests `go test ./...` (all Go packages PASS), and static analysis `golangci-lint run ./...` (0 issues).
+5. **Documentation Synchronization:** Updated `docs/stories/US-011-local-assets-safe-links.md`, `docs/implementation/BACKLOG.md`, `docs/implementation/CURRENT-STATE.md`, and `docs/implementation/WORK-LOG.md`.
+
+### Verification Results:
+- `npm --prefix frontend run test:unit -- link-asset`: 7 passed across 1 test file in 353ms (PASS).
+- `npm --prefix frontend run test:unit`: 158 passed across 18 test files in 27.81s (PASS).
+- `npm --prefix frontend run build`: Clean production bundle built (PASS).
+- `go test ./...`: All backend packages PASS.
+- `golangci-lint run ./...`: 0 issues (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Story US-011 Completion Status:
+- **Story Status:** `DONE` (All 4 implementation tasks `US-011.1`, `US-011.2`, `US-011.3`, and `US-011.4` completed, independently verified, and committed).
+- **Next Eligible Story:** Story [`US-012: Headings, Stable Anchor Generation & Core Fixture Suite`](../stories/US-012-headings-anchors-fixtures.md) under Phase 3 / `EPIC-003` (Status: `READY`).

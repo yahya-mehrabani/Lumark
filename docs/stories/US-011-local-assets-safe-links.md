@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-011`
 - **Parent Epic:** [EPIC-003: CommonMark, GFM & Core Document Rendering](../epics/EPIC-003-commonmark-gfm-rendering.md)
-- **Status:** `IN_PROGRESS`
+- **Status:** `DONE`
 - **Assigned Phase:** Phase 3 (Baseline Markdown Rendering)
 
 ---
@@ -92,7 +92,7 @@ Implement safe resolution for local assets and external links:
 
 ### Task US-011.4: Write unit and integration tests
 - **Task ID:** `US-011.4`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-011.3`
 - **Completion Criteria:** Tests assert link routing behavior and asset resolution boundaries.
 - **Verification Command:** `npm run test:unit -- link-asset`
@@ -136,6 +136,9 @@ Implement safe resolution for local assets and external links:
   - `frontend/src/features/rendering/MarkdownViewer.tsx`: Integrated `MarkdownLink` into ReactMarkdown components and configured `urlTransform`.
   - `frontend/src/features/rendering/markdown.css`: Added styling for `.external-link`, `.blocked-link`, and `.external-link-icon`.
   - `frontend/src/App.tsx`: Wired `onOpenDocument` callback to `loadDocumentPath`.
+  - `fixtures/golden/links-and-assets.md`: Golden test fixture demonstrating relative images, paths with spaces and Unicode, missing assets, remote assets, relative markdown links, external links, in-page anchors, and malicious schemes.
+  - `frontend/src/features/rendering/link-asset.test.tsx`: Comprehensive integration test suite verifying AC 1 through AC 6 and complete fixture rendering.
+  - `docs/implementation/REQUIREMENT-TRACEABILITY.md`: Synchronized FR-ASSET-001 through 004, FR-LINK-001, and SEC-INVAR-03 to `IMPLEMENTED` / `VERIFIED`.
 - **Terminal Output & Verification Evidence:**
 ```text
 === RUN   TestAssetResolver_ValidAssets
@@ -167,4 +170,13 @@ ok      markdown-viewer/internal/assets 0.014s
  ✓ src/features/rendering/link-router.test.tsx (16 tests) 215ms
  Test Files  1 passed (1)
       Tests  16 passed (16)
+
+> vitest run link-asset
+ ✓ src/features/rendering/link-asset.test.tsx (7 tests) 353ms
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+
+> vitest run (full regression)
+ Test Files  18 passed (18)
+      Tests  158 passed (158)
 ```
