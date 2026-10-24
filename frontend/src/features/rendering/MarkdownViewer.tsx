@@ -3,6 +3,10 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import rehypeRaw from 'rehype-raw';
+import rehypeSanitize from 'rehype-sanitize';
+import { SANITY_HTML_SCHEMA } from './security/htmlSanitizer';
+import { rehypeScopedCss } from './security/cssSanitizer';
 import { remarkStrictMath, escapeCurrencyDollars } from './utils/remark-strict-math';
 import { STRICT_KATEX_OPTIONS } from './katex-adapter';
 import { CodeBlock } from './components/CodeBlock';
@@ -67,7 +71,12 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
         <SlugContext.Provider value={slugTracker}>
           <ReactMarkdown
             remarkPlugins={[remarkGfm, remarkMath, remarkStrictMath]}
-            rehypePlugins={[[rehypeKatex, STRICT_KATEX_OPTIONS]]}
+            rehypePlugins={[
+              rehypeRaw,
+              [rehypeSanitize, SANITY_HTML_SCHEMA],
+              rehypeScopedCss,
+              [rehypeKatex, STRICT_KATEX_OPTIONS],
+            ]}
             urlTransform={(url) => url}
             components={{
               h1: ({ node, ...props }) => <Heading level={1} {...props} />,
@@ -76,6 +85,15 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
               h4: ({ node, ...props }) => <Heading level={4} {...props} />,
               h5: ({ node, ...props }) => <Heading level={5} {...props} />,
               h6: ({ node, ...props }) => <Heading level={6} {...props} />,
+              style: ({ node, children, ...props }) => {
+                const cssText =
+                  typeof children === 'string'
+                    ? children
+                    : Array.isArray(children)
+                      ? children.join('')
+                      : String(children ?? '');
+                return <style dangerouslySetInnerHTML={{ __html: cssText }} {...props} />;
+              },
               table: ({ node, ...props }) => (
                 <div className="table-wrapper" role="region" tabIndex={0} aria-label="Table">
                   <table {...props} />

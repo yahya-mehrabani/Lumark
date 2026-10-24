@@ -2259,3 +2259,28 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Task:
 - Task `US-015.3: Integrate sanitizers into Markdown rendering pipeline` under Story [`US-015: HTML & CSS Sanitization and Scope Isolation Engine`](../stories/US-015-html-css-sanitization.md).
+
+---
+
+## 2026-10-24 — Task US-015.3: Integrate sanitizers into Markdown rendering pipeline
+
+- **Task ID:** `US-015.3`
+- **Story ID:** [`US-015: HTML & CSS Sanitization and Scope Isolation Engine`](../stories/US-015-html-css-sanitization.md)
+- **Status:** `DONE`
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Integrated `rehypeRaw`, `rehypeSanitize` with `SANITY_HTML_SCHEMA`, and `rehypeScopedCss` sequentially into `MarkdownViewer.tsx`.
+- Configured custom `<style>` element component mapping in `ReactMarkdown` using `dangerouslySetInnerHTML` for clean React 18 style node injection.
+- Verified that embedded `<style>` blocks are scoped strictly within `.markdown-content`, preventing author styles from altering or hiding application chrome (`.tab-bar`, `.document-header-bar`, etc.).
+- Verified overlay neutralization in rendering pipeline (`position: fixed` converted to `position: absolute`), `@import` stripping, and inline style sanitization.
+- Verified graceful degradation on malformed/unparseable CSS blocks without breaking or blanking the rest of the Markdown document.
+- Created unit test suite in `frontend/src/features/rendering/security/style-scoping.test.tsx` (7 tests covering author style scoping, position conversion, @import removal, inline styles, safe HTML, chrome isolation, and malformed CSS tolerance).
+
+### Verification Results:
+- `npm --prefix frontend run test:unit -- style-scoping`: 7 passed across 1 test file in 2.30s (PASS).
+- `npx --prefix frontend tsc --noEmit`: 0 errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Task:
+- Task `US-015.4: Write unit tests for HTML and CSS sanitization` under Story [`US-015: HTML & CSS Sanitization and Scope Isolation Engine`](../stories/US-015-html-css-sanitization.md).

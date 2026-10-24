@@ -80,7 +80,7 @@ Implement the AST-based HTML and CSS sanitization engine:
 
 ### Task US-015.3: Integrate sanitizers into Markdown rendering pipeline
 - **Task ID:** `US-015.3`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-015.2`
 - **Completion Criteria:** HTML and CSS sanitizers execute sequentially before node rendering.
 - **Verification Command:** `npm run test:unit -- style-scoping`
@@ -124,6 +124,8 @@ Implement the AST-based HTML and CSS sanitization engine:
   - `frontend/src/features/rendering/security/html-allowlist.test.ts`
   - `frontend/src/features/rendering/security/cssSanitizer.ts`
   - `frontend/src/features/rendering/security/css-sanitizer.test.ts`
+  - `frontend/src/features/rendering/MarkdownViewer.tsx`
+  - `frontend/src/features/rendering/security/style-scoping.test.tsx`
   - `docs/stories/US-015-html-css-sanitization.md`
 - **Terminal Output & Verification Evidence:**
 
@@ -194,5 +196,30 @@ Command: `npm run test:unit -- css-sanitizer`
       Tests  19 passed (19)
    Start at  18:36:21
    Duration  1.59s (environment 65%, setup 11%, tests 9%, transform 9%, import 3%, worker 2%)
+```
+TypeScript compilation check (`npx tsc --noEmit`): Exit code 0 (zero errors).
+
+#### Task US-015.3: Integrate sanitizers into Markdown rendering pipeline
+Command: `npm run test:unit -- style-scoping`
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run style-scoping
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/rendering/security/style-scoping.test.tsx (7 tests) 257ms
+   ✓ Markdown Pipeline Style Scoping & Sanitizer Integration (US-015.3) (7)
+     ✓ scopes author <style> blocks to .markdown-content container (AC 4) 93ms
+     ✓ neutralizes position: fixed in <style> blocks to position: absolute (AC 5) 11ms
+     ✓ completely strips @import at-rules from rendered <style> blocks (AC 6) 10ms
+     ✓ sanitizes inline style attributes on HTML elements 26ms
+     ✓ renders safe HTML with direction, class, and styling intact (AC 1) 11ms
+     ✓ prevents author styles from escaping to application chrome or header bar 16ms
+     ✓ gracefully handles malformed CSS without crashing the document render (AC 7 & AUD-010) 85ms
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  18:42:29
+   Duration  2.30s (import 42%, environment 33%, tests 13%, transform 7%, setup 5%, worker 1%)
 ```
 TypeScript compilation check (`npx tsc --noEmit`): Exit code 0 (zero errors).
