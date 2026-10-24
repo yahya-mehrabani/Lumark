@@ -45,7 +45,8 @@ describe('Custom Headings & Anchor Scrolling (US-012.2)', () => {
       render(<Heading level={2}>Architecture Overview</Heading>);
       const anchor = screen.getByTestId('heading-anchor');
       expect(anchor).toHaveAttribute('href', '#architecture-overview');
-      expect(anchor).toHaveAttribute('aria-label', 'Direct link to Architecture Overview');
+      expect(anchor).toHaveAttribute('title', 'Direct link to Architecture Overview');
+      expect(anchor).toHaveAttribute('aria-hidden', 'true');
     });
   });
 

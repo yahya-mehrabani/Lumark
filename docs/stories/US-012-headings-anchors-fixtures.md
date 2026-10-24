@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-012`
 - **Parent Epic:** [EPIC-003: CommonMark, GFM & Core Document Rendering](../epics/EPIC-003-commonmark-gfm-rendering.md)
-- **Status:** `IN_PROGRESS`
+- **Status:** `DONE`
 - **Assigned Phase:** Phase 3 (Baseline Markdown Rendering)
 
 ---
@@ -86,7 +86,7 @@ Implement stable heading anchor generation and establish the baseline golden fix
 
 ### Task US-012.4: Write unit and visual tests for fixtures
 - **Task ID:** `US-012.4`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-012.2`, `US-012.3`
 - **Completion Criteria:** Vitest suite verifies all golden fixture elements render properly.
 - **Verification Command:** `npm run test:unit -- fixtures`
@@ -224,3 +224,45 @@ Implement stable heading anchor generation and establish the baseline golden fix
       Tests  7 passed (7)
    Duration  3.63s
 ```
+
+### Task US-012.4 Validation Evidence
+- **Execution Date:** 2026-10-24
+- **Agent ID:** Autonomous Implementation Agent
+- **Changed Files:**
+  - `frontend/src/features/rendering/fixtures.test.tsx`: 6 comprehensive integration tests covering all golden fixture elements (CommonMark typography, lists, quotes, hr; Headings h1-h6 with deterministic and Persian IDs; GFM tables, task lists, strikethrough, autolinks; Code blocks with language badges and copy button; Local images, error placeholders, external link icons; and Persian RTL sample documents).
+  - `frontend/src/features/rendering/components/Heading.tsx`: Updated heading-anchor with `aria-hidden="true"` and `tabIndex={-1}` so that heading accessible name remains exact for screen readers and DOM selectors.
+  - `docs/implementation/REQUIREMENT-TRACEABILITY.md`: Synchronized `FR-RENDER-008` to `IMPLEMENTED` and `VERIFIED`.
+- **Terminal Output & Verification Evidence:**
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run fixtures
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/rendering/fixtures.test.tsx (6 tests) 663ms
+   ✓ Comprehensive Golden Fixtures Test Suite (US-012.4) (6)
+     ✓ 1. CommonMark Specification Fixture (1)
+       ✓ renders CommonMark fixture without crashing and verifies expected DOM nodes 254ms
+     ✓ 2. Headings & Anchors Fixture (1)
+       ✓ renders Headings fixture with deterministic IDs and duplicate disambiguation 62ms
+     ✓ 3. GFM Extensions Fixture (1)
+       ✓ renders GFM tables, task lists, strikethrough, and autolinks accurately 53ms
+     ✓ 4. Code Blocks Fixture (1)
+       ✓ renders code blocks with badges and copy buttons 166ms
+     ✓ 5. Links and Assets Fixture (1)
+       ✓ renders relative images, missing placeholders on error, and external link routing 84ms
+     ✓ 6. Persian / RTL Sample Fixture (1)
+       ✓ renders Persian RTL markdown cleanly without crashing 33ms
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Duration  3.16s
+```
+
+### Story US-012 Completion & Acceptance Criteria Summary
+All 5 Acceptance Criteria for Story US-012 have been verified with concrete evidence:
+- **AC 1 (Predictable IDs):** Verified in `heading-slugs.test.ts`, `anchor-scroll.test.tsx`, `golden-headings.test.tsx`, and `fixtures.test.tsx` (`# Getting Started` -> `id="getting-started"`).
+- **AC 2 (Duplicate Suffixes):** Verified across all unit and fixture suites (`id="section-one"`, `id="section-one-1"`, `id="section-one-2"`).
+- **AC 3 (Unicode Slugs):** Verified with Persian/Arabic (`id="راهنمای-کاربری"`), German (`id="über-die-entwickler"`), and Japanese (`id="ユーザーガイド"`).
+- **AC 4 (Internal Hash Scrolling):** Verified via `scrollIntoView({ behavior: 'smooth' })` execution across plain, duplicate, and Persian anchor link clicks.
+- **AC 5 (Golden Fixture Suite):** Verified across full suite (`fixtures/golden/headings-and-anchors.md`, `commonmark-spec.md`, `gfm-extensions.md`, `code-blocks.md`, `links-and-assets.md`, `نمونه سند.md`) in `fixtures.test.tsx` with zero crashes.

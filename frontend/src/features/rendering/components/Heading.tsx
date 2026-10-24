@@ -46,11 +46,12 @@ export const Heading: React.FC<HeadingProps> = ({
       <a
         href={`#${headingId}`}
         className="heading-anchor"
-        aria-label={`Direct link to ${rawText || headingId}`}
+        aria-hidden="true"
+        tabIndex={-1}
         title={`Direct link to ${rawText || headingId}`}
         data-testid="heading-anchor"
       >
-        <span className="heading-anchor-icon" aria-hidden="true">
+        <span className="heading-anchor-icon">
           #
         </span>
       </a>

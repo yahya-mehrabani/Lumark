@@ -1899,3 +1899,33 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-012.4: Write unit and visual tests for fixtures` under [`docs/stories/US-012-headings-anchors-fixtures.md`](../stories/US-012-headings-anchors-fixtures.md).
+
+---
+
+## [2026-10-24] — Phase 3: Write Unit & Visual Tests for Fixtures and Complete Story US-012 (Task US-012.4)
+
+- **Work Item ID:** `US-012.4`
+- **Agent:** Autonomous Story Runner
+- **Summary:** Implemented comprehensive golden fixture test suite `frontend/src/features/rendering/fixtures.test.tsx` verifying CommonMark, Headings with anchors and duplicate suffixing, GFM tables/tasks/strikethrough/autolinks, Code blocks with badges/copy, local images/placeholders/external links, and Persian RTL documents without crashes. Updated heading-anchor accessibility with `aria-hidden="true"` and `tabIndex={-1}`. Synchronized requirement traceability for `FR-RENDER-008` to `IMPLEMENTED` / `VERIFIED`. Completed Story `US-012` and `EPIC-003`.
+- **Status:** Task `US-012.4` marked `DONE`. Story `US-012` marked `DONE`. Epic `EPIC-003` marked `DONE`.
+
+### Actions Taken:
+1. **Created Comprehensive Fixtures Test Suite:** Authored `frontend/src/features/rendering/fixtures.test.tsx` containing 6 test suites validating all golden fixture elements end-to-end within `MarkdownViewer`.
+2. **Refined Heading Anchor Accessibility:** Updated `frontend/src/features/rendering/components/Heading.tsx` so heading-anchor elements use `aria-hidden="true"` and `tabIndex={-1}`, preserving the exact accessible heading name for screen readers and DOM role selectors.
+3. **Synchronized Requirement Traceability:** Updated `FR-RENDER-008` to `IMPLEMENTED` / `VERIFIED` in `docs/implementation/REQUIREMENT-TRACEABILITY.md`.
+4. **Verified Full Test Suites & Production Build:** Executed `npm --prefix frontend run test:unit -- fixtures` (6 passed in 539ms), full frontend test suite `npm --prefix frontend run test:unit` (203 passed across 22 test files in 41.36s), production bundle build `npm --prefix frontend run build` (clean build in 1.35s), Go backend tests `go test ./...` (all Go packages PASS), and Go linter `golangci-lint run ./...` (0 issues).
+5. **Synchronized Documentation:** Updated `docs/stories/US-012-headings-anchors-fixtures.md` (Story `DONE`, Task `US-012.4` `DONE`, Section 9 completion summary), `docs/epics/EPIC-003-commonmark-gfm-rendering.md` (Epic `DONE`), `docs/implementation/BACKLOG.md` (`US-012` `DONE`), `docs/implementation/CURRENT-STATE.md`, and `docs/implementation/WORK-LOG.md`.
+
+### Verification Results:
+- `npm --prefix frontend run test:unit -- fixtures`: 6 passed across 1 test file in 539ms (PASS).
+- `npm --prefix frontend run test:unit`: 203 passed across 22 test files in 41.36s (PASS).
+- `npm --prefix frontend run build`: Clean production bundle built in 1.35s (PASS).
+- `go test ./...`: All backend packages PASS (cached/clean).
+- `golangci-lint run ./...`: 0 issues (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Story US-012 and EPIC-003 Completion Status:
+- **Story Status:** `DONE` (All 4 implementation tasks `US-012.1`, `US-012.2`, `US-012.3`, and `US-012.4` completed, independently verified, and committed).
+- **Parent Epic Status:** `EPIC-003` `DONE` (All 4 user stories `US-009`, `US-010`, `US-011`, and `US-012` completed and verified).
+- **Next Eligible Work Item:** Story [`US-013: Mermaid Diagrams Offline Rendering & Error Isolation`](../stories/US-013-mermaid-offline-rendering.md) under Phase 4 / `EPIC-004`.

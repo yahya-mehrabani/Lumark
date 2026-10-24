@@ -2,7 +2,7 @@
 
 - **Epic ID:** `EPIC-003`
 - **Title:** CommonMark, GFM & Core Document Rendering
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Phase:** Phase 3 (Baseline Markdown Rendering)
 - **Target Release:** MVP Rendering Core
 
