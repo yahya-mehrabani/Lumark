@@ -13,8 +13,8 @@
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
 - **Application Implementation Status:** **PHASE 2 (EPIC-002) AND PHASE 3 (EPIC-003: US-009, US-010, US-011, US-012) COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) through [`US-004`](../stories/US-004-packaging-association-spike.md) (Phase 1 Spike), Stories [`US-005`](../stories/US-005-native-document-service.md) through [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Phase 2 Core Lifecycle & Tabs), and Stories [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) through [`US-012`](../stories/US-012-headings-anchors-fixtures.md) (Phase 3 Core Rendering Core) fully verified across all implementation tasks under Linux/WSLg.
 - **Feasibility Spike Status:** **SPIKE IMPLEMENTATION COMPLETE / AWAITING CROSS-PLATFORM GATES**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-012.4: Write unit and visual tests for fixtures` under [`US-012`](../stories/US-012-headings-anchors-fixtures.md) (Created `frontend/src/features/rendering/fixtures.test.tsx` passing all 6 tests, verified all golden fixtures without crashes, updated heading-anchor accessibility, synchronized FR-RENDER-008 to IMPLEMENTED/VERIFIED, and completed Story `US-012` and `EPIC-003`).
-- **Active / Next Eligible Work Item:** Story [`US-013: Mermaid Diagrams Offline Rendering & Error Isolation`](../stories/US-013-mermaid-offline-rendering.md) (Task `US-013.1`) under Phase 4 / `EPIC-004`.
+- **Last Completed Work Item:** Task `US-013.1: Bundle Mermaid locally with strict configuration` under [`US-013`](../stories/US-013-mermaid-offline-rendering.md) (Installed `mermaid@11.4.1`, implemented strict offline Mermaid adapter with `securityLevel: 'strict'`, `startOnLoad: false`, DOM-based SVG sanitizer stripping scripts/event handlers, and 7 passing unit tests).
+- **Active / Next Eligible Work Item:** Story [`US-013: Mermaid Diagrams Offline Rendering & Error Isolation`](../stories/US-013-mermaid-offline-rendering.md) (Task `US-013.2: Implement MermaidBlock React component with error boundary`) under Phase 4 / `EPIC-004`.
 
 ---
 
@@ -80,11 +80,9 @@ All planning remediation artifacts must be preserved:
 
 ## 5. Exact Next Action for the Next Agent
 
-1. **Confirm Story US-012 and EPIC-003 Complete:**
-   - Confirm Story `US-012: Headings, Stable Anchor Generation & Core Fixture Suite` is `DONE` across all 4 tasks (`US-012.1`, `US-012.2`, `US-012.3`, `US-012.4`).
-   - Confirm Parent Epic `EPIC-003: CommonMark, GFM & Core Document Rendering` is `DONE` (all stories US-009, US-010, US-011, US-012 complete).
-   - Confirm `npm --prefix frontend run test:unit` passes (203 tests across 22 test files) and backend tests pass (`go test ./...`).
-2. **Execute Story US-013 (Next Active):**
-   - Active work item: Story [`US-013: Mermaid Diagrams Offline Rendering & Error Isolation`](../stories/US-013-mermaid-offline-rendering.md) under Phase 4 / `EPIC-004`.
-   - Begin with Task `US-013.1: Install and configure local Mermaid bundle and renderer`.
+1. **Confirm Task US-013.1 Complete:**
+   - Task `US-013.1: Bundle Mermaid locally with strict configuration` is `DONE`.
+   - `npm --prefix frontend run test:unit -- mermaid-adapter` passes (7 tests).
+2. **Execute Task US-013.2 (Next Active):**
+   - Active work item: Task `US-013.2: Implement MermaidBlock React component with error boundary` under Story [`US-013`](../stories/US-013-mermaid-offline-rendering.md) (Phase 4 / `EPIC-004`).
 3. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.

@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-013`
 - **Parent Epic:** [EPIC-004: Advanced Rendering & Security Sanitization](../epics/EPIC-004-advanced-rendering-security.md)
-- **Status:** `DRAFT`
+- **Status:** `IN_PROGRESS`
 - **Assigned Phase:** Phase 4 (Advanced Rendering & Security)
 
 ---
@@ -59,7 +59,7 @@ Render Mermaid diagrams offline with strict security sandboxing and fault isolat
 
 ### Task US-013.1: Bundle Mermaid locally with strict configuration
 - **Task ID:** `US-013.1`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** Mermaid initialized with `securityLevel: 'strict'`, `startOnLoad: false`.
 - **Verification Command:** `npm run test:unit -- mermaid-adapter`
@@ -115,11 +115,35 @@ Render Mermaid diagrams offline with strict security sandboxing and fault isolat
 
 ## 9. Implementation Notes and Validation Evidence
 
-*(To be filled by implementation agent during execution)*
-- **Execution Date:** Not yet executed
-- **Agent ID:** N/A
-- **Changed Files:** None
-- **Terminal Output & Verification Evidence:**
+### Task US-013.1 Validation Evidence
+- **Execution Date:** 2026-10-24
+- **Agent ID:** Antigravity Autonomous Runner
+- **Changed Files:**
+  - `frontend/package.json` (installed `mermaid@11.4.1`)
+  - `frontend/package-lock.json`
+  - `frontend/src/test-setup.ts` (polyfilled SVGElement layout methods for jsdom)
+  - `frontend/src/features/rendering/utils/sanitize-svg.ts` (DOM-based SVG sanitizer enforcing SEC-INVAR-07)
+  - `frontend/src/features/rendering/mermaid-adapter.ts` (strict offline Mermaid adapter)
+  - `frontend/src/features/rendering/mermaid-adapter.test.ts` (7 unit tests covering strict config and offline rendering)
+- **Verification Command & Output:**
 ```text
-(Awaiting execution in Phase 4)
+$ npm --prefix frontend run test:unit -- mermaid-adapter
+
+ ✓ src/features/rendering/mermaid-adapter.test.ts (7 tests) 732ms
+   ✓ Mermaid Adapter & Strict Configuration (US-013.1) (7)
+     ✓ initializes Mermaid with strict security configuration and manual loading 15ms
+     ✓ enforces securityLevel: strict even if caller attempts to override with loose settings 6ms
+     ✓ renders a basic flowchart into valid SVG offline 483ms
+     ✓ renders sequence diagrams and class diagrams offline 183ms
+     ✓ sanitizes rendered SVG by removing script tags and event handlers 11ms
+     ✓ throws an error and cleans up temporary DOM nodes on invalid diagram syntax 20ms
+     ✓ parses valid diagrams successfully via parseMermaid 11ms
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  17:12:28
+   Duration  2.31s
+
+$ npm --prefix frontend run build
+✓ built in 1.95s (exit code 0)
 ```

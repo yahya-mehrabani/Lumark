@@ -1929,3 +1929,28 @@ This log is an append-only chronological record of all significant actions, veri
 - **Story Status:** `DONE` (All 4 implementation tasks `US-012.1`, `US-012.2`, `US-012.3`, and `US-012.4` completed, independently verified, and committed).
 - **Parent Epic Status:** `EPIC-003` `DONE` (All 4 user stories `US-009`, `US-010`, `US-011`, and `US-012` completed and verified).
 - **Next Eligible Work Item:** Story [`US-013: Mermaid Diagrams Offline Rendering & Error Isolation`](../stories/US-013-mermaid-offline-rendering.md) under Phase 4 / `EPIC-004`.
+
+---
+
+## 2026-10-24: Task US-013.1 Execution — Bundle Mermaid Locally with Strict Configuration
+
+- **Task ID:** `US-013.1`
+- **Parent Story:** [`US-013: Mermaid Diagrams Offline Rendering & Error Isolation`](../stories/US-013-mermaid-offline-rendering.md)
+- **Status:** Task `US-013.1` marked `DONE`. Story `US-013` marked `IN_PROGRESS`. Epic `EPIC-004` marked `IN_PROGRESS`.
+
+### Actions Taken:
+1. **Installed Pinned Mermaid Dependency:** Installed `mermaid@11.4.1` with `--save-exact` into `frontend/package.json` and committed `package-lock.json`.
+2. **Polyfilled SVGElement in JSDOM:** Added `getBBox` and `getComputedTextLength` polyfills to `frontend/src/test-setup.ts` to allow headless SVG diagram layout testing in Vitest/jsdom without layout crashes.
+3. **Implemented DOM-Based SVG Sanitizer:** Created `frontend/src/features/rendering/utils/sanitize-svg.ts` parsing SVG via `DOMParser` and stripping `<script>`, interactive event handlers (`on*`), and dangerous protocols (`javascript:`, `vbscript:`, `data:text/html:`), enforcing `SEC-INVAR-07` and PRD Section 8 invariants.
+4. **Implemented Offline Mermaid Adapter:** Authored `frontend/src/features/rendering/mermaid-adapter.ts` with strict immutable security invariants (`securityLevel: 'strict'`, `startOnLoad: false`, `suppressErrorRendering: true`, `flowchart: { htmlLabels: false }`), error cleanup, and theme support.
+5. **Authored Comprehensive Unit Tests:** Created `frontend/src/features/rendering/mermaid-adapter.test.ts` with 7 test cases validating initialization invariants, security override rejection, flowchart/sequence/class diagram rendering, SVG sanitization, error isolation cleanup, and syntax parsing.
+6. **Verified Unit Tests & Bundle Build:** Executed `npm --prefix frontend run test:unit -- mermaid-adapter` (7/7 tests passed in 732ms) and `npm --prefix frontend run build` (clean bundle build in 1.95s).
+
+### Verification Results:
+- `npm --prefix frontend run test:unit -- mermaid-adapter`: 7 passed across 1 test file in 732ms (PASS).
+- `npm --prefix frontend run build`: Clean production bundle built in 1.95s (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Task:
+- Task `US-013.2: Implement MermaidBlock React component with error boundary` under Story [`US-013`](../stories/US-013-mermaid-offline-rendering.md).
