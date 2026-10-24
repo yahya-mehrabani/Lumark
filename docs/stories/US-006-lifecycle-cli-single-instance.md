@@ -75,7 +75,7 @@ Implement the production application startup lifecycle, CLI argument parsing, an
 
 ### Task US-006.3: Wire Wails window focus and event dispatching
 - **Task ID:** `US-006.3`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-006.2`
 - **Completion Criteria:** Primary instance calls `runtime.WindowShow` and emits `wails:open-document` event.
 - **Verification Command:** `go test -v -run TestWindowEventDispatch ./internal/instance/...`
@@ -85,7 +85,7 @@ Implement the production application startup lifecycle, CLI argument parsing, an
 
 ### Task US-006.4: Write unit and integration tests for instance coordinator
 - **Task ID:** `US-006.4`
-- **Status:** `DRAFT`
+- **Status:** `READY`
 - **Dependencies:** `US-006.3`
 - **Completion Criteria:** Unit tests verify concurrency, payload serialization, and stale cleanup.
 - **Verification Command:** `go test -v -race ./internal/instance/...`
@@ -174,6 +174,34 @@ ok      markdown-viewer/internal/instance       0.004s
     --- PASS: TestInstanceCoordinator/DoubleClose (0.00s)
 PASS
 ok      markdown-viewer/internal/instance       0.007s
+```
+- **Linter Output:** `golangci-lint run ./internal/instance/...` -> 0 issues.
+- **Vulnerability Check:** `govulncheck ./internal/instance/...` -> No vulnerabilities found.
+- **Cross-Platform Verification Boundary:** Linux WSL2 execution PASS. Windows native execution deferred to post-implementation cross-platform validation (NOT RUN).
+
+### Task US-006.3 Evidence (2026-10-24)
+- **Execution Date:** 2026-10-24
+- **Agent ID:** Autonomous Story Runner
+- **Changed Files:** `internal/instance/router.go`, `internal/instance/router_test.go`
+- **Verification Command:** `go test -v -run TestWindowEventDispatch ./internal/instance/...`
+- **Terminal Output & Verification Evidence:**
+```text
+=== RUN   TestWindowEventDispatch
+=== RUN   TestWindowEventDispatch/SingleDocumentDispatch
+=== RUN   TestWindowEventDispatch/MultipleDocumentsDispatch
+=== RUN   TestWindowEventDispatch/MinimisedWindowRestoration
+=== RUN   TestWindowEventDispatch/NilWindowSafe
+=== RUN   TestWindowEventDispatch/CustomEventName
+=== RUN   TestWindowEventDispatch/CoordinatorIntegration
+--- PASS: TestWindowEventDispatch (0.00s)
+    --- PASS: TestWindowEventDispatch/SingleDocumentDispatch (0.00s)
+    --- PASS: TestWindowEventDispatch/MultipleDocumentsDispatch (0.00s)
+    --- PASS: TestWindowEventDispatch/MinimisedWindowRestoration (0.00s)
+    --- PASS: TestWindowEventDispatch/NilWindowSafe (0.00s)
+    --- PASS: TestWindowEventDispatch/CustomEventName (0.00s)
+    --- PASS: TestWindowEventDispatch/CoordinatorIntegration (0.00s)
+PASS
+ok      markdown-viewer/internal/instance       0.006s
 ```
 - **Linter Output:** `golangci-lint run ./internal/instance/...` -> 0 issues.
 - **Vulnerability Check:** `govulncheck ./internal/instance/...` -> No vulnerabilities found.

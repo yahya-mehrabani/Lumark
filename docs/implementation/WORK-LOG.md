@@ -1226,3 +1226,41 @@ This log is an append-only chronological record of all significant actions, veri
 - **Completed Tasks:** `US-006.1` (`DONE`), `US-006.2` (`DONE`).
 - **Next Eligible Task:** `US-006.3: Wire Wails window focus and event dispatching` under [`US-006`](../stories/US-006-lifecycle-cli-single-instance.md) (`READY`).
 - **Phase Gate Status:** In progress under approved Linux-only implementation policy; cross-platform validation deferred.
+
+---
+
+## [2026-10-24] — Phase 2: Wire Wails Window Focus and Event Dispatching (US-006.3)
+
+- **Work Item ID:** `US-006.3` (under Story `US-006: Application Lifecycle, Command-Line Parsing & Single-Instance Routing`, `EPIC-002`)
+- **Agent:** Antigravity Autonomous Story Runner
+- **Summary:** Implemented `internal/instance/router.go` and unit test suite `internal/instance/router_test.go` supporting `FR-OPEN-004`, `FR-OPEN-005`, and PRD Section 5.3 & 9.1. Defined `WindowController` and `EventDispatcher` interfaces to abstract native Wails window operations and event emissions. Implemented `DocumentRouter` handling path normalization, document open event dispatching (`wails:open-document`), minimized window restoration, and window focus/activation. Successfully integrated with the IPC Coordinator so that secondary instances trigger event emission and window activation on primary. Verified 100% pass rate via `go test -v -run TestWindowEventDispatch ./internal/instance/...`, zero issues with `golangci-lint`, and zero vulnerabilities with `govulncheck`.
+
+### Actions Taken:
+1. **Implemented DocumentRouter (`internal/instance/router.go`):**
+   - Defined `WindowController` interface (`Show()`, `Focus()`, `Restore()`, `IsMinimised()`).
+   - Defined `EventDispatcher` interface (`Emit(eventName string, data ...any)`).
+   - Implemented `DocumentRouter` with `RouteFiles()`, `RouteMessage()`, and `activateWindow()`.
+   - Supported canonical event `wails:open-document` and configurable event names.
+2. **Created Unit Test Suite (`internal/instance/router_test.go`):**
+   - Implemented `TestWindowEventDispatch` verifying: `SingleDocumentDispatch`, `MultipleDocumentsDispatch`, `MinimisedWindowRestoration`, `NilWindowSafe`, `CustomEventName`, and `CoordinatorIntegration`.
+3. **Quality, Linting & Vulnerability Verification:**
+   - Ran `go test -v -run TestWindowEventDispatch ./internal/instance/...` (all 6 subtests PASS).
+   - Ran `golangci-lint run ./internal/instance/...` (0 issues).
+   - Ran `govulncheck ./internal/instance/...` (0 vulnerabilities found).
+4. **Documentation Synchronization:**
+   - Updated `docs/stories/US-006-lifecycle-cli-single-instance.md`: marked Task `US-006.3` as `DONE`, advanced Task `US-006.4` to `READY`, and recorded verification output.
+   - Updated `docs/implementation/CURRENT-STATE.md`: advanced last completed work item to `US-006.3` and next eligible work item to `US-006.4`.
+
+### Verification Results:
+- `go test -v -run TestWindowEventDispatch ./internal/instance/...`: PASS (exit code 0).
+- `golangci-lint run ./internal/instance/...`: 0 issues (PASS).
+- `govulncheck ./internal/instance/...`: No vulnerabilities found (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **Phase:** Phase 2 (Core Application Structure).
+- **Active Story:** `US-006: Application Lifecycle, Command-Line Parsing & Single-Instance Routing` (`IN_PROGRESS`).
+- **Completed Tasks:** `US-006.1` (`DONE`), `US-006.2` (`DONE`), `US-006.3` (`DONE`).
+- **Next Eligible Task:** `US-006.4: Write unit and integration tests for instance coordinator` under [`US-006`](../stories/US-006-lifecycle-cli-single-instance.md) (`READY`).
+- **Phase Gate Status:** In progress under approved Linux-only implementation policy; cross-platform validation deferred.
