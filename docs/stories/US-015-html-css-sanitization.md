@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-015`
 - **Parent Epic:** [EPIC-004: Advanced Rendering & Security Sanitization](../epics/EPIC-004-advanced-rendering-security.md)
-- **Status:** `DRAFT`
+- **Status:** `IN_PROGRESS`
 - **Assigned Phase:** Phase 4 (Advanced Rendering & Security)
 
 ---
@@ -60,7 +60,7 @@ Implement the AST-based HTML and CSS sanitization engine:
 
 ### Task US-015.1: Configure rehype-sanitize schema allowlist
 - **Task ID:** `US-015.1`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** Allowlist allows semantic tags and attributes (`dir`, `lang`, `class`, `style`), strips active elements.
 - **Verification Command:** `npm run test:unit -- html-allowlist`
@@ -115,11 +115,40 @@ Implement the AST-based HTML and CSS sanitization engine:
 
 ## 9. Implementation Notes and Validation Evidence
 
-*(To be filled by implementation agent during execution)*
-- **Execution Date:** Not yet executed
-- **Agent ID:** N/A
-- **Changed Files:** None
+- **Execution Date:** 2026-10-24
+- **Agent ID:** Autonomous Implementation Agent
+- **Changed Files:**
+  - `frontend/package.json`
+  - `frontend/package-lock.json`
+  - `frontend/src/features/rendering/security/htmlSanitizer.ts`
+  - `frontend/src/features/rendering/security/html-allowlist.test.ts`
+  - `docs/stories/US-015-html-css-sanitization.md`
 - **Terminal Output & Verification Evidence:**
+
+#### Task US-015.1: Configure rehype-sanitize schema allowlist
+Command: `npm run test:unit -- html-allowlist`
 ```text
-(Awaiting execution in Phase 4)
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run html-allowlist
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/rendering/security/html-allowlist.test.ts (10 tests) 91ms
+   ✓ Rehype-Sanitize Schema Allowlist (US-015.1) (10)
+     ✓ allows safe semantic HTML tags and attributes 29ms
+     ✓ preserves tables, lists, and formatting tags from raw HTML 11ms
+     ✓ completely strips <script> tags and active script content 9ms
+     ✓ strips inline event handler attributes (onerror, onclick, onload) 7ms
+     ✓ strips active executable tags (iframe, object, embed, form, button, base, meta) 5ms
+     ✓ strips arbitrary input elements outside of task lists 3ms
+     ✓ preserves GFM task list checkboxes inside list items 8ms
+     ✓ strips dangerous href protocols like javascript:, vbscript:, and data: 7ms
+     ✓ preserves safe img src protocols and relative paths while stripping javascript: 4ms
+     ✓ retains MathML tags and <style> in schema for subsequent pipeline stages 5ms
+
+ Test Files  1 passed (1)
+      Tests  10 passed (10)
+   Start at  18:29:11
+   Duration  1.45s (environment 58%, import 18%, tests 8%, transform 8%, setup 7%, worker 1%)
 ```
+TypeScript compilation check (`npx tsc --noEmit`): Exit code 0 (zero errors).

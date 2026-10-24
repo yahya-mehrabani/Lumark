@@ -2203,3 +2203,31 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Task:
 - Task `US-015.1: Configure rehype-sanitize schema for safe HTML` under Story [`US-015: HTML & CSS Sanitization and Scope Isolation Engine`](../stories/US-015-html-css-sanitization.md) (Phase 4 / `EPIC-004`).
+
+---
+
+## 2026-10-24 — Task US-015.1: Configure rehype-sanitize schema allowlist
+
+- **Task ID:** `US-015.1`
+- **Story ID:** [`US-015: HTML & CSS Sanitization and Scope Isolation Engine`](../stories/US-015-html-css-sanitization.md)
+- **Status:** `DONE`
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Implemented `SANITY_HTML_SCHEMA` in `frontend/src/features/rendering/security/htmlSanitizer.ts` based on `rehype-sanitize`'s `defaultSchema`.
+- Configured allowlist for safe semantic HTML tags (`h1`-`h6`, `p`, `div`, `span`, `table`, `thead`, `tbody`, `tr`, `th`, `td`, `pre`, `code`, `em`, `strong`, `del`, `hr`, `br`, `img`, `a`, `details`, `summary`, `figure`, `figcaption`, etc.).
+- Permitted MathML elements (`math`, `semantics`, `mrow`, `mi`, `mo`, etc.) and `<style>` in schema for downstream math and scoped CSS stages.
+- Strictly prohibited and stripped active executable elements (`<script>`, `<iframe>`, `<object>`, `<embed>`, `<form>`, `<button>`, `<base>`, `<meta>`, `<link>`, `<noscript>`, `<template>`).
+- Constrained `<input>` elements via `ancestors: { input: ['li'] }` and `required: { input: { type: 'checkbox', disabled: true } }` to strictly permit inert GFM task list checkboxes while stripping arbitrary user inputs.
+- Stripped all inline event handler attributes (`onerror`, `onclick`, `onload`, `onmouseover`, etc.).
+- Constrained `protocols`: allowed safe schemes for `href` (`http`, `https`, `mailto`, `irc`, `ircs`, `xmpp` and relative links/anchors) while stripping `javascript:`, `vbscript:`, and `data:` links; allowed safe schemes for `src` (`http`, `https`, `data`, `local-asset` and relative paths) while stripping `javascript:` image sources.
+- Pinned frontend dependencies in `frontend/package.json`: `postcss` (8.5.31), `rehype-raw` (7.0.0), `rehype-sanitize` (6.0.0).
+- Created unit test suite in `frontend/src/features/rendering/security/html-allowlist.test.ts` (10 tests covering semantic tags, script stripping, event handler removal, active tag stripping, input constraints, protocol schemes, and MathML/style tag retention).
+
+### Verification Results:
+- `npm --prefix frontend run test:unit -- html-allowlist`: 10 passed across 1 test file in 1.45s (PASS).
+- `npx --prefix frontend tsc --noEmit`: 0 errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Task:
+- Task `US-015.2: Implement AST-based CSS sanitizer and selector scoper` under Story [`US-015: HTML & CSS Sanitization and Scope Isolation Engine`](../stories/US-015-html-css-sanitization.md).
