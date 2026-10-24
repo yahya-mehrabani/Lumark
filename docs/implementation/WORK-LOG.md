@@ -1741,3 +1741,29 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-011.2: Implement custom Image component with error placeholder` under [`docs/stories/US-011-local-assets-safe-links.md`](../stories/US-011-local-assets-safe-links.md).
+
+---
+
+## [2026-10-24] — Phase 3: Implement Custom Image Component with Error Placeholder (Task US-011.2)
+
+- **Work Item ID:** `US-011.2`
+- **Agent:** Autonomous Story Runner
+- **Summary:** Implemented custom `MarkdownImage` component in `frontend/src/features/rendering/components/MarkdownImage.tsx` handling relative local asset resolution, remote image blocking by default per FR-ASSET-004, path traversal blocking, dangerous protocol rejection, and structured accessible fallback placeholder badges (`Image not found: ...` and `Remote image blocked: ...`) with valid DOM nesting. Wired `MarkdownImage` into `MarkdownViewer.tsx` ReactMarkdown component mappings. Added responsive CSS styling in `markdown.css`. Implemented 8 unit and integration tests in `missing-asset.test.tsx` verifying AC 1, AC 2, AC 3, and full pipeline rendering.
+- **Status:** Task `US-011.2` marked `DONE`. Story `US-011` remains `IN_PROGRESS`.
+
+### Actions Taken:
+1. **Implemented MarkdownImage Component:** Created `frontend/src/features/rendering/components/MarkdownImage.tsx` with resolution checks, remote blocking cards, path traversal cards, and runtime `onError` handlers rendering structured `<span className="missing-asset-badge">` badges with accessible SVG icons and sanitized message text.
+2. **Added CSS Styling:** Extended `frontend/src/features/rendering/markdown.css` with `.missing-asset-container`, `.missing-asset-badge`, `.not-found-asset`, `.blocked-asset`, `.missing-asset-icon`, and `.missing-asset-alt` adhering to design tokens.
+3. **Integrated into MarkdownViewer:** Updated `frontend/src/features/rendering/MarkdownViewer.tsx` to route `img` AST nodes through `MarkdownImage`.
+4. **Created Unit Tests:** Created `frontend/src/features/rendering/missing-asset.test.tsx` covering normal rendering, runtime `onError` state transitions, remote blocking, traversal defenses, dangerous protocol blocking, and MarkdownViewer end-to-end integration.
+5. **Verified Builds and Tests:** Ran `npm --prefix frontend run test:unit -- missing-asset` (8 passed in 151ms) and `npm --prefix frontend run build` (clean bundle generated in 2.10s).
+6. **Synchronized Documentation:** Updated `docs/stories/US-011-local-assets-safe-links.md`, `docs/implementation/CURRENT-STATE.md`, and `docs/implementation/WORK-LOG.md`.
+
+### Verification Results:
+- `npm --prefix frontend run test:unit -- missing-asset`: 8 passed across 1 test file in 151ms (PASS).
+- `npm --prefix frontend run build`: Clean production bundle built in 2.10s (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-011.3: Implement custom Link component with protocol dispatcher` under [`docs/stories/US-011-local-assets-safe-links.md`](../stories/US-011-local-assets-safe-links.md).

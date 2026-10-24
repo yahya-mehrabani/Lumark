@@ -442,10 +442,55 @@
 }
 
 /* Image styling */
-.markdown-content img {
+.markdown-content img,
+.markdown-image {
   max-width: 100%;
   height: auto;
   border-radius: 6px;
   display: block;
   margin: 1.5em 0;
+}
+
+/* Missing & Blocked Asset Placeholders (FR-ASSET-001, FR-ASSET-004) */
+.missing-asset-container {
+  margin: 1.5em 0;
+  padding: 0;
+  display: block;
+  max-width: 100%;
+}
+
+.missing-asset-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  line-height: 1.4;
+  word-break: break-all;
+}
+
+.not-found-asset .missing-asset-badge {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+}
+
+.blocked-asset .missing-asset-badge {
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #fcd34d;
+}
+
+.missing-asset-icon {
+  flex-shrink: 0;
+}
+
+.missing-asset-alt {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin-top: 6px;
+  font-style: italic;
+  padding-left: 4px;
 }

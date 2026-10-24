@@ -13,8 +13,8 @@
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
 - **Application Implementation Status:** **PHASE 2 (EPIC-002) AND STORIES US-009, US-010 (PHASE 3) COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) through [`US-004`](../stories/US-004-packaging-association-spike.md) (Phase 1 Spike), Stories [`US-005`](../stories/US-005-native-document-service.md) through [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Phase 2 Core Lifecycle & Tabs), Story [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) (CommonMark & GFM pipeline), and Story [`US-010`](../stories/US-010-code-blocks-highlighting.md) (Fenced Code Blocks & Highlighting) fully verified across all implementation tasks under Linux/WSLg.
 - **Feasibility Spike Status:** **SPIKE IMPLEMENTATION COMPLETE / AWAITING CROSS-PLATFORM GATES**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-011.1: Implement Go AssetResolver with path traversal checks` under [`US-011`](../stories/US-011-local-assets-safe-links.md) (`internal/assets` canonical package with path traversal checks, symlink defense, MIME detection, Wails asset middleware, and frontend `image-loader` engine verified via `go test -v -run TestAssetResolver ./internal/assets/...` and `vitest run image-loader`).
-- **Active / Next Eligible Work Item:** Task `US-011.2: Implement custom Image component with error placeholder` under [`US-011`](../stories/US-011-local-assets-safe-links.md).
+- **Last Completed Work Item:** Task `US-011.2: Implement custom Image component with error placeholder` under [`US-011`](../stories/US-011-local-assets-safe-links.md) (`MarkdownImage` component with structured fallback placeholder badge on error, remote image blocking, path traversal guards, and CSS integration verified via `vitest run missing-asset`).
+- **Active / Next Eligible Work Item:** Task `US-011.3: Implement custom Link component with protocol dispatcher` under [`US-011`](../stories/US-011-local-assets-safe-links.md).
 
 ---
 
@@ -81,10 +81,10 @@ All planning remediation artifacts must be preserved:
 ## 5. Exact Next Action for the Next Agent
 
 The next incoming agent must:
-1. **Confirm Task US-011.1 Complete:**
-   - Confirm Task `US-011.1: Implement Go AssetResolver with path traversal checks` is `DONE` (`internal/assets` resolver and frontend `image-loader`).
-   - Confirm `go test -v -run TestAssetResolver ./internal/assets/...` and `npm --prefix frontend run test:unit -- image-loader` pass.
-2. **Execute Task US-011.2:**
-   - Active work item: Task `US-011.2: Implement custom Image component with error placeholder` under [`US-011`](../stories/US-011-local-assets-safe-links.md).
-   - Implement custom Image component in `features/rendering/components/Image.tsx` with error/missing asset placeholder card, constrained dimensions, and integration into `MarkdownViewer.tsx`.
+1. **Confirm Task US-011.2 Complete:**
+   - Confirm Task `US-011.2: Implement custom Image component with error placeholder` is `DONE` (`MarkdownImage` component and missing-asset tests).
+   - Confirm `npm --prefix frontend run test:unit -- missing-asset` passes (8 tests).
+2. **Execute Task US-011.3:**
+   - Active work item: Task `US-011.3: Implement custom Link component with protocol dispatcher` under [`US-011`](../stories/US-011-local-assets-safe-links.md).
+   - Implement custom Link component intercepting `onClick`, routing relative `.md` links to `TabStore`, delegating `http`/`https`/`mailto` to OS browser via `Browser.OpenURL`, and blocking dangerous schemes.
 3. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.

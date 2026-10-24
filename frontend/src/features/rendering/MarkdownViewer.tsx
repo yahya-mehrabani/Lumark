@@ -2,6 +2,7 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { CodeBlock } from './components/CodeBlock';
+import { MarkdownImage } from './components/MarkdownImage';
 import './markdown.css';
 
 export interface DocumentInfo {
@@ -51,6 +52,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
                 <table {...props} />
               </div>
             ),
+            img: ({ node, ...props }) => <MarkdownImage docDir={document?.dir} {...props} />,
             pre: ({ children, node, ...props }) => {
               if (React.isValidElement(children)) {
                 const codeProps = children.props as { className?: string; children?: React.ReactNode };

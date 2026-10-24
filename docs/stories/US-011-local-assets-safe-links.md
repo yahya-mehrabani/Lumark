@@ -72,10 +72,10 @@ Implement safe resolution for local assets and external links:
 
 ### Task US-011.2: Implement custom Image component with error placeholder
 - **Task ID:** `US-011.2`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-011.1`
 - **Completion Criteria:** Renders image or displays structured fallback card with path.
-- **Verification Command:** `npm run test:unit -- missing-asset`
+- **Verification Command:** `npm --prefix frontend run test:unit -- missing-asset`
 - **Expected Observable Result:** Missing image renders accessible placeholder badge without breaking document layout.
 - **Evidence to Record:** Component test execution output.
 - **Environment Handling:** Node.js / Vitest environment.
@@ -126,6 +126,10 @@ Implement safe resolution for local assets and external links:
   - `main.go`, `spike_service.go`: Migrated asset resolver imports to canonical `internal/assets`.
   - `frontend/src/features/rendering/image-loader.ts`: Frontend image resolution engine enforcing FR-ASSET-001, FR-ASSET-004, and PRD 8.1.
   - `frontend/src/features/rendering/image-loader.test.ts`: 19 Vitest unit tests verifying resolution, traversal blocking, dangerous protocol blocking, and remote blocking.
+  - `frontend/src/features/rendering/components/MarkdownImage.tsx`: Custom ReactMarkdown image component with error fallback placeholder, remote blocking card, and path traversal defense.
+  - `frontend/src/features/rendering/missing-asset.test.tsx`: 8 Vitest unit tests covering valid rendering, missing image placeholders, remote blocked states, traversal guards, and MarkdownViewer integration.
+  - `frontend/src/features/rendering/MarkdownViewer.tsx`: Integrated `MarkdownImage` into ReactMarkdown components.
+  - `frontend/src/features/rendering/markdown.css`: Structured CSS styling for `.missing-asset-container`, `.missing-asset-badge`, and blocked cards.
 - **Terminal Output & Verification Evidence:**
 ```text
 === RUN   TestAssetResolver_ValidAssets
@@ -147,4 +151,9 @@ ok      markdown-viewer/internal/assets 0.014s
  ✓ src/features/rendering/image-loader.test.ts (19 tests) 21ms
  Test Files  1 passed (1)
       Tests  19 passed (19)
+
+> vitest run missing-asset
+ ✓ src/features/rendering/missing-asset.test.tsx (8 tests) 151ms
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
 ```
