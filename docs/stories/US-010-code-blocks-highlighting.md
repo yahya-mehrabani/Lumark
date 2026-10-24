@@ -66,7 +66,7 @@ Provide syntax highlighting and copy capabilities for fenced code blocks:
 
 ### Task US-010.2: Implement CodeBlock React component
 - **Task ID:** `US-010.2`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-010.1`
 - **Completion Criteria:** Renders highlighted HTML, language badge, and container with `overflow-x: auto`.
 - **Verification Command:** `npm run test:unit -- code-block-component`
@@ -144,3 +144,35 @@ Provide syntax highlighting and copy capabilities for fenced code blocks:
    Duration  1.47s
 ```
   - **Status:** `DONE` (Offline Shiki highlighter initialized with dual `github-light` / `github-dark` themes, offline language grammars, aliases, unknown language fallback, and safe size boundaries).
+- **Task US-010.2 Execution & Verification Evidence:**
+  - **Changed Files:**
+    - `frontend/src/features/rendering/components/CodeBlock.tsx`
+    - `frontend/src/features/rendering/components/code-block-component.test.tsx`
+    - `frontend/src/features/rendering/MarkdownViewer.tsx`
+    - `frontend/src/features/rendering/markdown.css`
+  - **Verification Command:** `npm run test:unit -- code-block-component`
+  - **Output:**
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run code-block-component
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/rendering/components/code-block-component.test.tsx (9 tests) 553ms
+   ✓ CodeBlock React Component (US-010.2) (9)
+     ✓ renders code block container with overflow-x auto styling 241ms
+     ✓ renders language badge for known language 7ms
+     ✓ renders language badge for unknown language gracefully 18ms
+     ✓ renders default TEXT badge when no language is specified 10ms
+     ✓ renders line numbers matching code line count 215ms
+     ✓ omits line numbers when showLineNumbers is false 14ms
+     ✓ renders syntax highlighted HTML asynchronously for supported language 23ms
+     ✓ falls back to readable plain text without error for unknown language 5ms
+     ✓ renders accessible copy code button in header 11ms
+
+ Test Files  1 passed (1)
+      Tests  9 passed (9)
+   Start at  14:16:41
+   Duration  2.04s
+```
+  - **Status:** `DONE` (CodeBlock React component renders highlighted HTML, uppercase language badge, line numbers column, horizontal scroll container with `overflow-x: auto`, and accessible copy button header; integrated into MarkdownViewer).

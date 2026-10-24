@@ -1631,3 +1631,30 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-010.2: Implement CodeBlock React component` under [`docs/stories/US-010-code-blocks-highlighting.md`](../stories/US-010-code-blocks-highlighting.md).
+
+---
+
+## [2026-10-24] — Phase 3: Implement CodeBlock React Component (Task US-010.2)
+
+- **Work Item ID:** `US-010.2`
+- **Agent:** Autonomous Story Runner
+- **Summary:** Implemented `frontend/src/features/rendering/components/CodeBlock.tsx` rendering syntax-highlighted code blocks with dual-theme Shiki integration, uppercase language badge, line numbers column, horizontal scroll container (`overflow-x: auto`), accessible copy button header, and graceful plain-text fallback. Enhanced `frontend/src/features/rendering/markdown.css` with container styling, header toolbar, line numbers column, and Shiki CSS variable tokens. Integrated `CodeBlock` into `frontend/src/features/rendering/MarkdownViewer.tsx` via `components.pre` markdown custom renderer. Created unit test suite in `frontend/src/features/rendering/components/code-block-component.test.tsx` verifying container styling, language badges (known, unknown, default TEXT), line number counts, async Shiki HTML rendering, plain text fallback, and accessible copy button. Verified 9 tests passing via `npm run test:unit -- code-block-component`, 97 passing tests across all 12 frontend test suites, clean production build via `npm run build`, and passing backend Go test suite.
+- **Status:** Task `US-010.2` marked `DONE`.
+
+### Actions Taken:
+1. **Implemented CodeBlock Component:** Created `frontend/src/features/rendering/components/CodeBlock.tsx` supporting syntax highlighting via Shiki, uppercase language badge, line numbers column, horizontal scroll container with `overflow-x: auto`, and copy button header.
+2. **Enhanced Typography & Code Block CSS:** Updated `frontend/src/features/rendering/markdown.css` with styling for `.code-block-container`, `.code-block-header`, `.code-language-badge`, `.code-copy-button`, `.code-line-numbers`, `.code-scroll-container`, and `.shiki` dual theme variables.
+3. **Integrated CodeBlock into MarkdownViewer:** Updated `frontend/src/features/rendering/MarkdownViewer.tsx` to route markdown fenced code blocks to `CodeBlock`.
+4. **Created Component Unit Tests:** Created `frontend/src/features/rendering/components/code-block-component.test.tsx` with 9 test cases verifying container properties, badge labels, line numbers, async Shiki rendering, and unknown language fallback.
+5. **Verified Unit Tests & Production Build:** Ran `npm run test:unit -- code-block-component` (9 passed in 553ms), full test suite `npm run test:unit` (97 passed across 12 test files), and `npm run build` (399 modules transformed cleanly in 1.00s).
+6. **Documentation Synchronization:** Updated `docs/stories/US-010-code-blocks-highlighting.md`, `docs/implementation/CURRENT-STATE.md`, and `docs/implementation/WORK-LOG.md`.
+
+### Verification Results:
+- `npm run test:unit -- code-block-component`: 9 passed in 553ms (PASS).
+- `npm run test:unit`: 97 passed across 12 test files in 19.28s (PASS).
+- `npm run build`: Clean production bundle built in 1.00s (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-010.3: Implement clipboard copy action and feedback` under [`docs/stories/US-010-code-blocks-highlighting.md`](../stories/US-010-code-blocks-highlighting.md).
