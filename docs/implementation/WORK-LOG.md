@@ -2231,3 +2231,31 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Task:
 - Task `US-015.2: Implement AST-based CSS sanitizer and selector scoper` under Story [`US-015: HTML & CSS Sanitization and Scope Isolation Engine`](../stories/US-015-html-css-sanitization.md).
+
+---
+
+## 2026-10-24 — Task US-015.2: Implement AST-based CSS sanitizer and selector scoper
+
+- **Task ID:** `US-015.2`
+- **Story ID:** [`US-015: HTML & CSS Sanitization and Scope Isolation Engine`](../stories/US-015-html-css-sanitization.md)
+- **Status:** `DONE`
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Implemented AST-based PostCSS CSS sanitizer and selector scoper in `frontend/src/features/rendering/security/cssSanitizer.ts`.
+- Implemented container selector scoping: prepends `.markdown-content` to all CSS selectors in `<style>` blocks, rewrites `body`, `html`, `:root` to `.markdown-content`, preventing author styles from affecting application chrome or tab navigation.
+- Stripped all at-rules (`@import`, `@font-face`, `@keyframes`, `@media`) preventing remote stylesheet fetching and CPU-intensive animations.
+- Neutralized viewport overlays: converts `position: fixed` to `position: absolute` (AC 5), strips `position: sticky`.
+- Enforced declaration safety: clamped `z-index` to maximum 10, stripped all `url(...)` declarations (preventing remote tracking/asset leak), stripped `expression(...)`, `javascript:...`, `behavior:...`, `-moz-binding:...`, and non-allowlisted properties.
+- Implemented inline style sanitization `sanitizeInlineStyle` for element `style` attributes.
+- Implemented graceful syntax error handling (AC 7 & AUD-010) catching PostCSS syntax errors and returning safe empty strings without crashing or aborting document rendering.
+- Implemented `rehypeScopedCss` plugin for Hast AST traversal and in-place node transformation of `<style>` blocks and `style` properties.
+- Created comprehensive test suite in `frontend/src/features/rendering/security/css-sanitizer.test.ts` (19 tests covering selector scoping, at-rules stripping, overlay neutralization, inline styles, error handling, and rehype plugin AST transformation).
+
+### Verification Results:
+- `npm --prefix frontend run test:unit -- css-sanitizer`: 19 passed across 1 test file in 1.59s (PASS).
+- `npx --prefix frontend tsc --noEmit`: 0 errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Task:
+- Task `US-015.3: Integrate sanitizers into Markdown rendering pipeline` under Story [`US-015: HTML & CSS Sanitization and Scope Isolation Engine`](../stories/US-015-html-css-sanitization.md).

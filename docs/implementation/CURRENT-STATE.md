@@ -13,8 +13,8 @@
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
 - **Application Implementation Status:** **PHASE 2 (EPIC-002), PHASE 3 (EPIC-003), AND STORIES US-013 & US-014 (EPIC-004) COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) through [`US-004`](../stories/US-004-packaging-association-spike.md) (Phase 1 Spike), Stories [`US-005`](../stories/US-005-native-document-service.md) through [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Phase 2 Core Lifecycle & Tabs), Stories [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) through [`US-012`](../stories/US-012-headings-anchors-fixtures.md) (Phase 3 Core Rendering Core), and Stories [`US-013`](../stories/US-013-mermaid-offline-rendering.md) & [`US-014`](../stories/US-014-katex-math-rendering.md) (Phase 4 Mermaid Diagrams & KaTeX Math Rendering) fully verified across all implementation tasks under Linux/WSLg.
 - **Feasibility Spike Status:** **SPIKE IMPLEMENTATION COMPLETE / AWAITING CROSS-PLATFORM GATES**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-015.1: Configure rehype-sanitize schema allowlist` under Story [`US-015: HTML & CSS Sanitization and Scope Isolation Engine`](../stories/US-015-html-css-sanitization.md) (Story `US-015` `IN_PROGRESS`). Configured strict `SANITY_HTML_SCHEMA` in `frontend/src/features/rendering/security/htmlSanitizer.ts`, pinned dependencies (`rehype-raw`, `rehype-sanitize`, `postcss`), verified stripping of scripts, active executable elements, inline event handlers, and dangerous URL protocols with 10 unit tests passing in `html-allowlist.test.ts`.
-- **Active / Next Eligible Work Item:** Task `US-015.2: Implement AST-based CSS sanitizer and selector scoper` under Story [`US-015: HTML & CSS Sanitization and Scope Isolation Engine`](../stories/US-015-html-css-sanitization.md) (Phase 4 / `EPIC-004`).
+- **Last Completed Work Item:** Task `US-015.2: Implement AST-based CSS sanitizer and selector scoper` under Story [`US-015: HTML & CSS Sanitization and Scope Isolation Engine`](../stories/US-015-html-css-sanitization.md) (Story `US-015` `IN_PROGRESS`). Implemented AST-based CSS sanitizer and selector scoper in `frontend/src/features/rendering/security/cssSanitizer.ts`, scoping selectors to `.markdown-content`, stripping `@import`, converting `position: fixed` to `absolute`, clamping `z-index` to 10, stripping remote `url()`, and providing graceful error fallbacks with 19 unit tests passing in `css-sanitizer.test.ts`.
+- **Active / Next Eligible Work Item:** Task `US-015.3: Integrate sanitizers into Markdown rendering pipeline` under Story [`US-015: HTML & CSS Sanitization and Scope Isolation Engine`](../stories/US-015-html-css-sanitization.md) (Phase 4 / `EPIC-004`).
 
 ---
 
@@ -80,8 +80,8 @@ All planning remediation artifacts must be preserved:
 
 ## 5. Exact Next Action for the Next Agent
 
-1. **Confirm Task US-015.1 Complete:**
-   - Task `US-015.1: Configure rehype-sanitize schema allowlist` under Story [`US-015: HTML & CSS Sanitization and Scope Isolation Engine`](../stories/US-015-html-css-sanitization.md) is `DONE`. Strict `SANITY_HTML_SCHEMA` configured, package versions pinned, and 10 unit tests pass.
-2. **Execute Task US-015.2 (Next Active):**
-   - Active work item: Task `US-015.2: Implement AST-based CSS sanitizer and selector scoper` under Story [`US-015: HTML & CSS Sanitization and Scope Isolation Engine`](../stories/US-015-html-css-sanitization.md) (Phase 4 / `EPIC-004`).
+1. **Confirm Task US-015.2 Complete:**
+   - Task `US-015.2: Implement AST-based CSS sanitizer and selector scoper` under Story [`US-015: HTML & CSS Sanitization and Scope Isolation Engine`](../stories/US-015-html-css-sanitization.md) is `DONE`. AST-based PostCSS scoping to `.markdown-content`, `@import` and overlay neutralization, and graceful error handling verified with 19 unit tests passing.
+2. **Execute Task US-015.3 (Next Active):**
+   - Active work item: Task `US-015.3: Integrate sanitizers into Markdown rendering pipeline` under Story [`US-015: HTML & CSS Sanitization and Scope Isolation Engine`](../stories/US-015-html-css-sanitization.md) (Phase 4 / `EPIC-004`).
 3. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.

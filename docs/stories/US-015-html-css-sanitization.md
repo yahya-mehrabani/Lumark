@@ -70,7 +70,7 @@ Implement the AST-based HTML and CSS sanitization engine:
 
 ### Task US-015.2: Implement AST-based CSS sanitizer and selector scoper
 - **Task ID:** `US-015.2`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-015.1`
 - **Completion Criteria:** Parses CSS AST, prepends root class, strips disallowed declarations and at-rules.
 - **Verification Command:** `npm run test:unit -- css-sanitizer`
@@ -122,6 +122,8 @@ Implement the AST-based HTML and CSS sanitization engine:
   - `frontend/package-lock.json`
   - `frontend/src/features/rendering/security/htmlSanitizer.ts`
   - `frontend/src/features/rendering/security/html-allowlist.test.ts`
+  - `frontend/src/features/rendering/security/cssSanitizer.ts`
+  - `frontend/src/features/rendering/security/css-sanitizer.test.ts`
   - `docs/stories/US-015-html-css-sanitization.md`
 - **Terminal Output & Verification Evidence:**
 
@@ -150,5 +152,47 @@ Command: `npm run test:unit -- html-allowlist`
       Tests  10 passed (10)
    Start at  18:29:11
    Duration  1.45s (environment 58%, import 18%, tests 8%, transform 8%, setup 7%, worker 1%)
+```
+TypeScript compilation check (`npx tsc --noEmit`): Exit code 0 (zero errors).
+
+#### Task US-015.2: Implement AST-based CSS sanitizer and selector scoper
+Command: `npm run test:unit -- css-sanitizer`
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run css-sanitizer
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/rendering/security/css-sanitizer.test.ts (19 tests) 115ms
+   ✓ AST-Based CSS Sanitizer & Selector Scoper (US-015.2) (19)
+     ✓ Selector Scoping (5)
+       ✓ prepends .markdown-content to class selectors 19ms
+       ✓ scopes multi-selector rules separated by commas 2ms
+       ✓ rewrites body, html, and :root selectors to .markdown-content 14ms
+       ✓ prevents styles from escaping container by scoping chrome selectors 4ms
+       ✓ supports custom container selector prefix 8ms
+     ✓ At-Rules and Overlay Neutralization (8)
+       ✓ completely strips @import at-rules (AC 6) 3ms
+       ✓ strips @font-face and @keyframes at-rules 3ms
+       ✓ converts position: fixed to position: absolute to prevent viewport overlays (AC 5) 1ms
+       ✓ strips position: sticky 10ms
+       ✓ clamps excessive z-index declarations to max 10 3ms
+       ✓ strips remote url() declarations from background images 4ms
+       ✓ strips executable expressions, javascript: and -moz-binding 10ms
+       ✓ removes rule completely if all declarations are stripped 1ms
+     ✓ Inline Style Sanitization (3)
+       ✓ sanitizes inline styles and neutralizes position: fixed 2ms
+       ✓ strips url() declarations and clamps z-index from inline styles 1ms
+       ✓ returns empty string for invalid inline styles 1ms
+     ✓ Graceful Degradation on Malformed CSS (AC 7 & AUD-010) (2)
+       ✓ returns empty string for malformed or unparseable CSS without throwing 14ms
+       ✓ returns empty string for empty or non-string inputs 2ms
+     ✓ Rehype Plugin Transform (rehypeScopedCss) (1)
+       ✓ transforms <style> tags and inline style attributes in Hast tree 2ms
+
+ Test Files  1 passed (1)
+      Tests  19 passed (19)
+   Start at  18:36:21
+   Duration  1.59s (environment 65%, setup 11%, tests 9%, transform 9%, import 3%, worker 2%)
 ```
 TypeScript compilation check (`npx tsc --noEmit`): Exit code 0 (zero errors).
