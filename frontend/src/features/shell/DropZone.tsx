@@ -9,6 +9,7 @@ export interface DropZoneProps {
   overlayTitle?: string;
   overlaySubtitle?: string;
   testId?: string;
+  ariaLabel?: string;
 }
 
 export const DropZone: React.FC<DropZoneProps> = ({
@@ -19,6 +20,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
   overlayTitle = 'Drop Markdown files here to open',
   overlaySubtitle = 'Supports .md, .markdown, .mdown, .mkd',
   testId = 'app-dropzone',
+  ariaLabel = 'Application drop zone',
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const dragCounterRef = useRef<number>(0);
@@ -95,7 +97,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
       onDrop={handleDrop}
       data-testid={testId}
       role="region"
-      aria-label="Dropzone for Markdown files"
+      aria-label={ariaLabel}
       aria-dropeffect={disabled ? 'none' : 'copy'}
     >
       {children}

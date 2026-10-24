@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-008`
 - **Parent Epic:** [EPIC-002: Core Native Application Lifecycle & Tab Management](../epics/EPIC-002-native-lifecycle-tabs.md)
-- **Status:** `IN_PROGRESS`
+- **Status:** `DONE`
 - **Assigned Phase:** Phase 2 (Core Application Structure)
 
 ---
@@ -85,7 +85,7 @@ Enable users to open Markdown files through:
 
 ### Task US-008.4: Write unit and integration tests
 - **Task ID:** `US-008.4`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-008.3`
 - **Completion Criteria:** Tests verify drag event states and file filtering logic.
 - **Verification Command:** `npm run test:unit -- dropzone`
@@ -210,3 +210,39 @@ PASS
    Duration  1.15s (environment 79%, setup 12%, tests 3%, transform 3%, import 2%, worker 1%)
 ```
 - **Full Test Suite & Build:** `npm run test:unit` (51 passed across 6 files), `npm run build` (62 modules transformed, zero TypeScript/Vite errors).
+
+### Task US-008.4: Write unit and integration tests
+- **Execution Date:** 2026-10-24
+- **Status:** `DONE`
+- **Changed Files:**
+  - `frontend/src/features/shell/DropZone.tsx`: Added `ariaLabel` prop with default `'Application drop zone'` to prevent ARIA naming collisions with nested EmptyState dropzones.
+  - `frontend/src/features/shell/dropzone.test.tsx`: Comprehensive integration test suite covering DropZone states (clean init, dragenter/dragover overlay, boundary dragleave reset, drop dispatch), full AppShell 3-file batch drop (Acceptance Criteria 4), mixed drop of valid .md and invalid .exe without crashing (Acceptance Criteria 5), native open file triggers (header button, Ctrl+O, Cmd+O), EmptyState open/drop clicks, and Unicode/spaced filenames.
+- **Terminal Output & Verification Evidence:**
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run dropzone
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/shell/dropzone.test.tsx (9 tests) 348ms
+   ✓ DropZone & AppShell Drag-and-Drop Integration Tests (US-008.4) (9)
+     ✓ DropZone Drag Event States & Visual Feedback (4)
+       ✓ initializes in clean state without active overlay 44ms
+       ✓ transitions to is-drag-over on dragenter and maintains on dragover 23ms
+       ✓ restores normal state on dragleave when boundary counter reaches zero 8ms
+       ✓ resets drag state and dispatches files on drop 13ms
+     ✓ Full AppShell Drag-and-Drop & File Filtering Integration (5)
+       ✓ handles 3 dropped Markdown files opening them as tabs in order (AC 4) 161ms
+       ✓ handles mixed drop of valid .md and invalid .exe without crashing (AC 5) 24ms
+       ✓ triggers onOpenFile when clicking header Open File button or Ctrl+O shortcut 30ms
+       ✓ triggers onOpenFile when clicking EmptyState button or dropzone 18ms
+       ✓ supports filenames with spaces and unicode characters 19ms
+
+ Test Files  1 passed (1)
+      Tests  9 passed (9)
+   Start at  11:14:19
+   Duration  1.70s (environment 51%, tests 26%, import 9%, transform 8%, setup 6%, worker 1%)
+```
+- **Full Test Suite & Build:** `npm run test:unit` (60 passed across 7 files), `npm run build` (62 modules transformed, zero errors).
+- **Backend Tests:** `go test ./...` passed across all packages.
+- **Story US-008 Completion Status:** `DONE` across all 4 tasks (`US-008.1` through `US-008.4`).

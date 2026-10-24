@@ -2,7 +2,7 @@
 
 - **Epic ID:** `EPIC-002`
 - **Title:** Core Native Application Lifecycle & Tab Management
-- **Status:** `DRAFT` (Awaits EPIC-001 completion)
+- **Status:** `DONE` (All 4 child stories US-005 through US-008 complete and verified)
 - **Phase:** Phase 2 (Core Application Structure)
 - **Target Release:** MVP Core
 

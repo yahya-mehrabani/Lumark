@@ -11,10 +11,10 @@
 
 - **Current Overall Phase:** **Phase 1 (Technical Feasibility Spike)**.
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
-- **Application Implementation Status:** **FEASIBILITY SPIKE COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md), [`US-002`](../stories/US-002-cli-single-instance-spike.md), [`US-003`](../stories/US-003-webview-asset-security-spike.md), and [`US-004`](../stories/US-004-packaging-association-spike.md) fully verified across all implementation tasks under WSLg. Platform packaging prototypes for Linux (.deb), Windows (NSIS), and macOS (Info.plist) delivered.
+- **Application Implementation Status:** **PHASE 2 (EPIC-002) COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) through [`US-004`](../stories/US-004-packaging-association-spike.md) (Phase 1 Spike) and Stories [`US-005`](../stories/US-005-native-document-service.md), [`US-006`](../stories/US-006-lifecycle-cli-single-instance.md), [`US-007`](../stories/US-007-app-shell-tabs-empty-state.md), and [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Phase 2 Core Lifecycle & Tabs) fully verified across all implementation tasks under Linux/WSLg.
 - **Feasibility Spike Status:** **SPIKE IMPLEMENTATION COMPLETE / AWAITING CROSS-PLATFORM GATES**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-008.3: Implement multi-file batch loader and error notifier` under [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Multi-file batch loader and error notifier implemented in `features/shell/batchLoader.ts`, wired to `AppShell` and `App.tsx`, and verified with 10 passing tests via `npm run test:unit -- mixed-drop`).
-- **Active / Next Eligible Work Item:** Story [`US-008: Native File Picker & Drag-and-Drop Integration`](../stories/US-008-file-picker-drag-drop.md) (Task `US-008.4: Write unit and integration tests` ready for execution under approved Linux-only implementation policy).
+- **Last Completed Work Item:** Task `US-008.4: Write unit and integration tests` under [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Story `US-008` and `EPIC-002` complete across all implementation tasks; native file dialogs, DropZone overlay, multi-file batch loader, and error notifier verified with 60 passing tests via `npm run test:unit`, full backend `go test ./...`, and clean production build).
+- **Active / Next Eligible Work Item:** Story [`US-009: CommonMark & GitHub Flavored Markdown Rendering Pipeline`](../stories/US-009-commonmark-gfm-pipeline.md) under Phase 3 / `EPIC-003` (Task `US-009.1: Build goldmark Markdown parsing engine in Go` ready for execution under approved Linux-only implementation policy).
 
 ---
 
@@ -81,10 +81,11 @@ All planning remediation artifacts must be preserved:
 ## 5. Exact Next Action for the Next Agent
 
 The next incoming agent must:
-1. **Confirm Task US-008.3 Complete:**
-   - Confirm Task `US-008.3: Implement multi-file batch loader and error notifier` is `DONE`.
-   - Confirm `npm run test:unit -- mixed-drop` passes with 10 passing tests and `npm run build` succeeds.
-2. **Begin Task US-008.4 (Write unit and integration tests):**
-   - Active work item: Task `US-008.4` under [`docs/stories/US-008-file-picker-drag-drop.md`](../stories/US-008-file-picker-drag-drop.md).
-   - Write comprehensive component and integration tests in `frontend/src/features/shell/dropzone.test.tsx` verifying full drag-drop lifecycle, error states, and file filtering logic.
+1. **Confirm Story US-008 & EPIC-002 Complete:**
+   - Confirm Story `US-008: Native File Picker & Drag-and-Drop Integration` is `DONE` across all 4 implementation tasks (`US-008.1` through `US-008.4`).
+   - Confirm `EPIC-002: Core Native Application Lifecycle & Tab Management` is `DONE`.
+   - Confirm frontend unit test suite passes with `npm run test:unit` (60 passed across 7 test files), `npm run build` succeeds, and `go test ./...` passes.
+2. **Begin Story US-009 (Task US-009.1):**
+   - Active work item: Story [`docs/stories/US-009-commonmark-gfm-pipeline.md`](../stories/US-009-commonmark-gfm-pipeline.md) (Task `US-009.1: Build goldmark Markdown parsing engine in Go`).
+   - Implement CommonMark & GitHub Flavored Markdown (GFM) parsing engine using `goldmark` in Go backend.
 3. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.

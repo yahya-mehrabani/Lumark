@@ -1497,3 +1497,31 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-008.4: Write unit and integration tests` under [`docs/stories/US-008-file-picker-drag-drop.md`](../stories/US-008-file-picker-drag-drop.md).
+
+---
+
+## [2026-10-24] — Phase 2: Write Unit and Integration Tests & Complete Story US-008 (Task US-008.4)
+
+- **Work Item ID:** `US-008.4`
+- **Agent:** Autonomous Story Runner
+- **Summary:** Added `ariaLabel` prop to `DropZone` component to prevent ARIA region label collisions with nested EmptyState dropzones. Created comprehensive unit and integration test suite in `frontend/src/features/shell/dropzone.test.tsx` verifying DropZone event states (clean init, dragenter/dragover overlay, boundary dragleave reset, drop dispatch), full AppShell 3-file batch drop in order (Acceptance Criteria 4), mixed drop of valid .md and invalid .exe without crashing (Acceptance Criteria 5), native open file triggers (header button, Ctrl+O, Cmd+O), EmptyState open/drop clicks, and Unicode/spaced filenames. Verified 60 passing tests across all 7 frontend test files, clean frontend build, and passing backend Go test suite.
+- **Status:** Task `US-008.4` marked `DONE`. Story `US-008` transitioned to `DONE`. `EPIC-002` transitioned to `DONE`.
+
+### Actions Taken:
+1. **Enhanced DropZone Accessibility:** Added customizable `ariaLabel` prop in `DropZone.tsx` defaulting to `'Application drop zone'`.
+2. **Wrote Comprehensive Integration Tests:** Created `frontend/src/features/shell/dropzone.test.tsx` with 9 test cases verifying all acceptance criteria of US-008.
+3. **Verified Full Test Suites & Build:** Ran `npm run test:unit -- dropzone` (9 passed in 348ms), full suite `npm run test:unit` (60 passed across 7 files), `npm run build` (62 modules transformed), and full backend `go test ./...` (all Go packages PASS).
+4. **Documentation Synchronization:** Updated `docs/stories/US-008-file-picker-drag-drop.md`, `docs/epics/EPIC-002-native-lifecycle-tabs.md`, `docs/implementation/BACKLOG.md`, and `docs/implementation/CURRENT-STATE.md`.
+
+### Verification Results:
+- `npm run test:unit -- dropzone`: 9 passed in 348ms (PASS).
+- `npm run test:unit`: 60 passed across 7 test files in 10.39s (PASS).
+- `npm run build`: 62 modules transformed in 265ms (PASS).
+- `go test ./...`: All backend packages PASS.
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Story US-008 & EPIC-002 Completion Status:
+- **Story Status:** `DONE` (All 4 tasks `US-008.1`, `US-008.2`, `US-008.3`, `US-008.4` verified and committed).
+- **Epic Status:** `DONE` (All child stories `US-005`, `US-006`, `US-007`, `US-008` complete).
+- **Next Eligible Story:** Story [`US-009: CommonMark & GitHub Flavored Markdown Rendering Pipeline`](../stories/US-009-commonmark-gfm-pipeline.md) under Phase 3 / `EPIC-003` (Status: `READY`).
