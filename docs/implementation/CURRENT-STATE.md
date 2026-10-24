@@ -13,8 +13,8 @@
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
 - **Application Implementation Status:** **PHASE 2 (EPIC-002) COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) through [`US-004`](../stories/US-004-packaging-association-spike.md) (Phase 1 Spike) and Stories [`US-005`](../stories/US-005-native-document-service.md), [`US-006`](../stories/US-006-lifecycle-cli-single-instance.md), [`US-007`](../stories/US-007-app-shell-tabs-empty-state.md), and [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Phase 2 Core Lifecycle & Tabs) fully verified across all implementation tasks under Linux/WSLg.
 - **Feasibility Spike Status:** **SPIKE IMPLEMENTATION COMPLETE / AWAITING CROSS-PLATFORM GATES**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-008.4: Write unit and integration tests` under [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Story `US-008` and `EPIC-002` complete across all implementation tasks; native file dialogs, DropZone overlay, multi-file batch loader, and error notifier verified with 60 passing tests via `npm run test:unit`, full backend `go test ./...`, and clean production build).
-- **Active / Next Eligible Work Item:** Story [`US-009: CommonMark & GitHub Flavored Markdown Rendering Pipeline`](../stories/US-009-commonmark-gfm-pipeline.md) under Phase 3 / `EPIC-003` (Task `US-009.1: Build goldmark Markdown parsing engine in Go` ready for execution under approved Linux-only implementation policy).
+- **Last Completed Work Item:** Task `US-009.1: Configure react-markdown and remark-gfm pipeline` under [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) (Core CommonMark & GFM AST rendering pipeline configured with `react-markdown` 9.0.3 and `remark-gfm` 4.0.0; verified with 9 unit tests passing via `npm run test:unit -- commonmark-pipeline` and clean production build).
+- **Active / Next Eligible Work Item:** Task `US-009.2: Implement responsive document viewport and typography CSS` under [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) under Phase 3 / `EPIC-003` (Ready for execution under approved Linux-only implementation policy).
 
 ---
 
@@ -81,11 +81,10 @@ All planning remediation artifacts must be preserved:
 ## 5. Exact Next Action for the Next Agent
 
 The next incoming agent must:
-1. **Confirm Story US-008 & EPIC-002 Complete:**
-   - Confirm Story `US-008: Native File Picker & Drag-and-Drop Integration` is `DONE` across all 4 implementation tasks (`US-008.1` through `US-008.4`).
-   - Confirm `EPIC-002: Core Native Application Lifecycle & Tab Management` is `DONE`.
-   - Confirm frontend unit test suite passes with `npm run test:unit` (60 passed across 7 test files), `npm run build` succeeds, and `go test ./...` passes.
-2. **Begin Story US-009 (Task US-009.1):**
-   - Active work item: Story [`docs/stories/US-009-commonmark-gfm-pipeline.md`](../stories/US-009-commonmark-gfm-pipeline.md) (Task `US-009.1: Build goldmark Markdown parsing engine in Go`).
-   - Implement CommonMark & GitHub Flavored Markdown (GFM) parsing engine using `goldmark` in Go backend.
+1. **Confirm Task US-009.1 Complete:**
+   - Confirm Task `US-009.1: Configure react-markdown and remark-gfm pipeline` is `DONE`.
+   - Confirm CommonMark pipeline tests pass with `npm run test:unit -- commonmark-pipeline` (9 tests passed), full test suite passes with 69 tests, and `npm run build` succeeds.
+2. **Execute Task US-009.2:**
+   - Active work item: Task `US-009.2: Implement responsive document viewport and typography CSS` under [`docs/stories/US-009-commonmark-gfm-pipeline.md`](../stories/US-009-commonmark-gfm-pipeline.md).
+   - Implement responsive document viewport and typography CSS for GFM tables, strikethrough, autolinks, and task lists.
 3. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.

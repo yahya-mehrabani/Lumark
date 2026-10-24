@@ -21,7 +21,7 @@ This document is the authoritative index of all Epics and User Stories for `mark
 |---|---|---|---|---|
 | `EPIC-001` | Technical Feasibility Spike & Platform Foundation | Phase 1 | `IN_PROGRESS` (Authorized for Feasibility Spike) | [EPIC-001-feasibility-spike.md](../epics/EPIC-001-feasibility-spike.md) |
 | `EPIC-002` | Core Native Application Lifecycle & Tab Management | Phase 2 | `DONE` | [EPIC-002-native-lifecycle-tabs.md](../epics/EPIC-002-native-lifecycle-tabs.md) |
-| `EPIC-003` | CommonMark, GFM & Core Document Rendering | Phase 3 | `READY` | [EPIC-003-commonmark-gfm-rendering.md](../epics/EPIC-003-commonmark-gfm-rendering.md) |
+| `EPIC-003` | CommonMark, GFM & Core Document Rendering | Phase 3 | `IN_PROGRESS` | [EPIC-003-commonmark-gfm-rendering.md](../epics/EPIC-003-commonmark-gfm-rendering.md) |
 | `EPIC-004` | Advanced Rendering & Security Sanitization | Phase 4 | `DRAFT` | [EPIC-004-advanced-rendering-security.md](../epics/EPIC-004-advanced-rendering-security.md) |
 | `EPIC-005` | Bidirectional Text & Layout Engine (RTL/LTR) | Phase 4 | `DRAFT` | [EPIC-005-bidirectional-layout.md](../epics/EPIC-005-bidirectional-layout.md) |
 | `EPIC-006` | Navigation, Search & User Reading Tools | Phase 5 | `DRAFT` | [EPIC-006-navigation-reading-tools.md](../epics/EPIC-006-navigation-reading-tools.md) |
@@ -58,7 +58,7 @@ This document is the authoritative index of all Epics and User Stories for `mark
 
 | Story ID | Title | Priority | Status | Dependencies | Story Link |
 |---|---|---|---|---|---|
-| `US-009` | CommonMark & GitHub Flavored Markdown Rendering Pipeline | P0 | `READY` | `US-007` | [US-009.md](../stories/US-009-commonmark-gfm-pipeline.md) |
+| `US-009` | CommonMark & GitHub Flavored Markdown Rendering Pipeline | P0 | `IN_PROGRESS` | `US-007` | [US-009.md](../stories/US-009-commonmark-gfm-pipeline.md) |
 | `US-010` | Fenced Code Blocks, Syntax Highlighting & Copy Action | P0 | `DRAFT` | `US-009` | [US-010.md](../stories/US-010-code-blocks-highlighting.md) |
 | `US-011` | Local Asset Resolution & Safe Link Handling | P0 | `DRAFT` | `US-009`, `US-007` | [US-011.md](../stories/US-011-local-assets-safe-links.md) |
 | `US-012` | Headings, Stable Anchor Generation & Core Fixture Suite | P0 | `DRAFT` | `US-009` | [US-012.md](../stories/US-012-headings-anchors-fixtures.md) |

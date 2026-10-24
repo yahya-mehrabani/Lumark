@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-009`
 - **Parent Epic:** [EPIC-003: CommonMark, GFM & Core Document Rendering](../epics/EPIC-003-commonmark-gfm-rendering.md)
-- **Status:** `DRAFT`
+- **Status:** `IN_PROGRESS`
 - **Assigned Phase:** Phase 3 (Baseline Markdown Rendering)
 
 ---
@@ -57,7 +57,7 @@ Implement the core Markdown rendering pipeline in React using `react-markdown` a
 
 ### Task US-009.1: Configure react-markdown and remark-gfm pipeline
 - **Task ID:** `US-009.1`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** Component parses Markdown string and returns React DOM tree.
 - **Verification Command:** `npm run test:unit -- commonmark-pipeline`
@@ -102,11 +102,49 @@ Implement the core Markdown rendering pipeline in React using `react-markdown` a
 
 ## 9. Implementation Notes and Validation Evidence
 
-*(To be filled by implementation agent during execution)*
-- **Execution Date:** Not yet executed
-- **Agent ID:** N/A
-- **Changed Files:** None
+### Task US-009.1 Validation Evidence
+- **Execution Date:** 2026-10-24
+- **Agent ID:** Autonomous Story Runner (Pair Programmer)
+- **Status:** `DONE`
+- **Changed Files:**
+  - `frontend/package.json`
+  - `frontend/package-lock.json`
+  - `frontend/src/features/rendering/MarkdownViewer.tsx`
+  - `frontend/src/features/rendering/commonmark-pipeline.test.tsx`
+  - `frontend/src/MarkdownViewer.tsx`
 - **Terminal Output & Verification Evidence:**
 ```text
-(Awaiting execution in Phase 3)
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run commonmark-pipeline
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/rendering/commonmark-pipeline.test.tsx (9 tests) 258ms
+   ✓ CommonMark Pipeline (US-009.1) (9)
+     ✓ parses headings h1 through h6 to appropriate HTML elements 167ms
+     ✓ parses paragraphs and inline styling (bold, italic, code) 14ms
+     ✓ parses blockquotes to <blockquote> elements 8ms
+     ✓ parses unordered and ordered lists with nested items 13ms
+     ✓ parses thematic breaks (horizontal rules) to <hr> elements 6ms
+     ✓ parses links and preserves link destinations 16ms
+     ✓ parses fenced code blocks to <pre> and <code> elements 5ms
+     ✓ neutralizes raw HTML script tags without executing active code 3ms
+     ✓ renders document header when document metadata is provided 19ms
+
+ Test Files  1 passed (1)
+      Tests  9 passed (9)
+   Start at  13:46:28
+   Duration  1.61s
+```
+- **Build Verification:**
+```text
+> markdown-viewer-frontend@0.1.0 build
+> tsc && vite build --mode production
+
+vite v8.3.5 building client environment for production...
+✓ 315 modules transformed.
+dist/index.html                   0.58 kB │ gzip:   0.34 kB
+dist/assets/index-D1n-9jn8.css    8.32 kB │ gzip:   2.27 kB
+dist/assets/index-D4d3bE9L.js   342.79 kB │ gzip: 106.60 kB
+✓ built in 378ms
 ```
