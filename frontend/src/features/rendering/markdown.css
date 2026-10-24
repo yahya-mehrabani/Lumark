@@ -227,6 +227,12 @@
   color: #34d399;
 }
 
+.code-copy-button.error {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #f87171;
+}
+
 .code-block-body {
   display: flex;
   position: relative;

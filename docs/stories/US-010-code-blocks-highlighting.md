@@ -76,7 +76,7 @@ Provide syntax highlighting and copy capabilities for fenced code blocks:
 
 ### Task US-010.3: Implement clipboard copy action and feedback
 - **Task ID:** `US-010.3`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-010.2`
 - **Completion Criteria:** Copies raw source text; handles clipboard errors gracefully.
 - **Verification Command:** `npm run test:unit -- copy-code`
@@ -176,3 +176,31 @@ Provide syntax highlighting and copy capabilities for fenced code blocks:
    Duration  2.04s
 ```
   - **Status:** `DONE` (CodeBlock React component renders highlighted HTML, uppercase language badge, line numbers column, horizontal scroll container with `overflow-x: auto`, and accessible copy button header; integrated into MarkdownViewer).
+- **Task US-010.3 Execution & Verification Evidence:**
+  - **Changed Files:**
+    - `frontend/src/features/rendering/clipboard.ts`
+    - `frontend/src/features/rendering/copy-code.test.tsx`
+    - `frontend/src/features/rendering/components/CodeBlock.tsx`
+    - `frontend/src/features/rendering/markdown.css`
+  - **Verification Command:** `npm run test:unit -- copy-code`
+  - **Output:**
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run copy-code
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/rendering/copy-code.test.tsx (5 tests) 486ms
+   ✓ Clipboard Copy Action and Feedback (US-010.3) (5)
+     ✓ copies exact raw code preserving tabs, spaces, newlines, and Unicode to clipboard 347ms
+     ✓ automatically dismisses "Copied!" feedback and reverts to "Copy" after 2 seconds 78ms
+     ✓ handles clipboard errors gracefully and shows "Failed" state 49ms
+     ✓ copyToClipboard utility directly preserves exact raw string without modification 1ms
+     ✓ copyToClipboard falls back to execCommand if navigator.clipboard throws 6ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  14:28:06
+   Duration  1.91s
+```
+  - **Status:** `DONE` (Clipboard copy action copies exact raw code preserving tabs, spaces, newlines, and Unicode without markup; provides accessible feedback with "Copied!" dismissing after 2 seconds, and handles clipboard errors gracefully with "Failed" state).

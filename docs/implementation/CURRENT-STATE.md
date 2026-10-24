@@ -13,8 +13,8 @@
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
 - **Application Implementation Status:** **PHASE 2 (EPIC-002) AND PHASE 3 (EPIC-003) IN PROGRESS UNDER LINUX**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) through [`US-004`](../stories/US-004-packaging-association-spike.md) (Phase 1 Spike), Stories [`US-005`](../stories/US-005-native-document-service.md) through [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Phase 2 Core Lifecycle & Tabs), and Story [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) complete. Story [`US-010`](../stories/US-010-code-blocks-highlighting.md) actively in progress.
 - **Feasibility Spike Status:** **SPIKE IMPLEMENTATION COMPLETE / AWAITING CROSS-PLATFORM GATES**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-010.2: Implement CodeBlock React component` under [`US-010`](../stories/US-010-code-blocks-highlighting.md) (CodeBlock component renders highlighted HTML via Shiki, language badge, line numbers column, horizontal scrolling `overflow-x: auto`, and copy button header; integrated into MarkdownViewer and verified with 9 passing tests via `npm run test:unit -- code-block-component`).
-- **Active / Next Eligible Work Item:** Task `US-010.3: Implement clipboard copy action and feedback` under Story [`US-010: Fenced Code Blocks, Syntax Highlighting & Copy Action`](../stories/US-010-code-blocks-highlighting.md) (EPIC-003 / Phase 3).
+- **Last Completed Work Item:** Task `US-010.3: Implement clipboard copy action and feedback` under [`US-010`](../stories/US-010-code-blocks-highlighting.md) (Clipboard copy utility and feedback action preserving exact raw code, tabs, spaces, newlines, and Unicode without markup; accessible feedback dismissing after 2 seconds and error fallback; verified with 5 passing tests via `npm run test:unit -- copy-code`).
+- **Active / Next Eligible Work Item:** Task `US-010.4: Write unit tests for code rendering and copy` under Story [`US-010: Fenced Code Blocks, Syntax Highlighting & Copy Action`](../stories/US-010-code-blocks-highlighting.md) (EPIC-003 / Phase 3).
 
 ---
 
@@ -81,9 +81,9 @@ All planning remediation artifacts must be preserved:
 ## 5. Exact Next Action for the Next Agent
 
 The next incoming agent must:
-1. **Confirm Task US-010.2 Complete:**
-   - CodeBlock component verified with syntax highlighting, language badge, line numbers, and horizontal scrolling (`overflow-x: auto`) (9 passing tests in `code-block-component.test.tsx`).
-2. **Execute Task US-010.3:**
-   - Active work item: Story [`docs/stories/US-010-code-blocks-highlighting.md`](../stories/US-010-code-blocks-highlighting.md) (Task `US-010.3: Implement clipboard copy action and feedback`).
-   - Implement clipboard copy action preserving exact raw code (tabs, spaces, newlines, Unicode) and accessible feedback ("Copied!" tooltip/icon dismissing after 2 seconds) with robust error handling.
+1. **Confirm Task US-010.3 Complete:**
+   - Clipboard copy action and accessible feedback verified preserving exact raw tabs, spaces, newlines, and Unicode (5 passing tests in `copy-code.test.tsx`).
+2. **Execute Task US-010.4:**
+   - Active work item: Story [`docs/stories/US-010-code-blocks-highlighting.md`](../stories/US-010-code-blocks-highlighting.md) (Task `US-010.4: Write unit tests for code rendering and copy`).
+   - Create golden code block fixture (`fixtures/golden/code-blocks.md`) and comprehensive integration unit tests (`code-block.test.tsx`) asserting exact code rendering, fallback behavior for unknown languages, and clipboard copy preservation.
 3. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.
