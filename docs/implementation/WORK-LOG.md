@@ -1035,3 +1035,39 @@ This log is an append-only chronological record of all significant actions, veri
 - **Completed Tasks:** `US-005.1` (`DONE`).
 - **Next Eligible Task:** `US-005.2: Implement file validation and size limiter` under [`US-005`](../stories/US-005-native-document-service.md) (`READY`).
 - **Phase Gate Status:** In progress under approved Linux-only implementation policy; cross-platform validation deferred.
+
+---
+
+## [2026-10-24] — Phase 2: Implement File Validation and Size Limiter (US-005.2)
+
+- **Work Item ID:** `US-005.2` (Story `US-005: Native Document Service & Secure File Loading`, `EPIC-002`)
+- **Agent:** Antigravity Autonomous Story Runner
+- **Summary:** Implemented `ValidatePath` in `internal/documents/service.go` enforcing case-insensitive extension checking (`.md`, `.markdown`, `.mdown`, `.mkd`), safe symlink resolution, and the 20 MiB file size limit (`MaxFileSizeBytes`) per PRD Section 9.5 without full file allocation into memory. Added unit test suite `TestFileValidation` in `internal/documents/validate_test.go` covering 8 distinct scenarios.
+
+### Actions Taken:
+1. **Implemented Path and Size Validation (`internal/documents/service.go`):**
+   - Implemented `IsSupportedExtension(ext string) bool` handling `.md`, `.markdown`, `.mdown`, `.mkd` (case-insensitive).
+   - Implemented `ValidatePath(path string) (string, os.FileInfo, error)` returning structured `DocumentError` with actionable error codes (`ErrCodeInvalidPath`, `ErrCodeUnsupportedType`, `ErrCodeFileNotFound`, `ErrCodePermissionDenied`, `ErrCodeFileTooLarge`).
+   - Guarded against oversized files (> 20 MiB) via `os.FileInfo.Size()` check before file read.
+   - Handled symlink evaluation safely via `filepath.EvalSymlinks`.
+2. **Created Unit Tests (`internal/documents/validate_test.go`):**
+   - Implemented `TestFileValidation` with subtests for empty path, unsupported extensions, supported extensions with various casings, non-existent files, directory paths, files exceeding 20 MiB default limit (using sparse files), custom size limits, and symlink resolution (including dangling symlinks).
+3. **Verification and Linting:**
+   - Ran `go test -v -run TestFileValidation ./internal/documents/...` (8/8 subtests passed in 0.005s).
+   - Ran `golangci-lint run ./internal/documents/...` (0 issues).
+4. **Documentation Synchronization:**
+   - Updated `docs/stories/US-005-native-document-service.md`: marked Task `US-005.2` as `DONE`, recorded verification output.
+   - Updated `docs/implementation/CURRENT-STATE.md`: advanced last completed work item to `US-005.2` and next eligible task to `US-005.3`.
+
+### Verification Results:
+- `go test -v -run TestFileValidation ./internal/documents/...`: 8 subtests PASS (PASS).
+- `golangci-lint run ./internal/documents/...`: 0 issues (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **Phase:** Phase 2 (Core Application Structure).
+- **Active Story:** `US-005: Native Document Service & Secure File Loading` (`IN_PROGRESS`).
+- **Completed Tasks:** `US-005.1` (`DONE`), `US-005.2` (`DONE`).
+- **Next Eligible Task:** `US-005.3: Implement UTF-8 reader with BOM stripping and replacement` under [`US-005`](../stories/US-005-native-document-service.md) (`READY`).
+- **Phase Gate Status:** In progress under approved Linux-only implementation policy; cross-platform validation deferred.

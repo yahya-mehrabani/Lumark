@@ -13,8 +13,8 @@
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
 - **Application Implementation Status:** **FEASIBILITY SPIKE COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md), [`US-002`](../stories/US-002-cli-single-instance-spike.md), [`US-003`](../stories/US-003-webview-asset-security-spike.md), and [`US-004`](../stories/US-004-packaging-association-spike.md) fully verified across all implementation tasks under WSLg. Platform packaging prototypes for Linux (.deb), Windows (NSIS), and macOS (Info.plist) delivered.
 - **Feasibility Spike Status:** **SPIKE IMPLEMENTATION COMPLETE / AWAITING CROSS-PLATFORM GATES**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-005.1: Define DocumentDTO and DocumentService interface` under [`US-005`](../stories/US-005-native-document-service.md) (`internal/documents/dto.go` and `internal/documents/service.go` defined and verified with `go vet` and `golangci-lint`).
-- **Active / Next Eligible Work Item:** Task `US-005.2: Implement file validation and size limiter` under [`US-005`](../stories/US-005-native-document-service.md) (in progress under approved Linux-only implementation policy; cross-platform validation deferred).
+- **Last Completed Work Item:** Task `US-005.2: Implement file validation and size limiter` under [`US-005`](../stories/US-005-native-document-service.md) (`ValidatePath` and size limiter verified with `go test -v -run TestFileValidation` and `golangci-lint`).
+- **Active / Next Eligible Work Item:** Task `US-005.3: Implement UTF-8 reader with BOM stripping and replacement` under [`US-005`](../stories/US-005-native-document-service.md) (in progress under approved Linux-only implementation policy; cross-platform validation deferred).
 
 ---
 
@@ -81,7 +81,7 @@ All planning remediation artifacts must be preserved:
 ## 5. Exact Next Action for the Next Agent
 
 The next incoming agent must:
-1. **Continue Story US-005 Execution (Task US-005.2):**
-   - Implement file validation and size limiter in `internal/documents/`.
-   - Verify with `go test -v -run TestFileValidation ./internal/documents/...`.
+1. **Continue Story US-005 Execution (Task US-005.3):**
+   - Implement UTF-8 reader with BOM stripping and replacement in `internal/documents/`.
+   - Verify with `go test -v -run TestUTF8Reader ./internal/documents/...`.
 2. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.

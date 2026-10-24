@@ -68,7 +68,7 @@ Implement the Go backend `DocumentService` in `internal/documents/` to:
 
 ### Task US-005.2: Implement file validation and size limiter
 - **Task ID:** `US-005.2`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-005.1`
 - **Completion Criteria:** File stat checks file size <= 20*1024*1024 bytes and extension in allowed list.
 - **Verification Command:** `go test -v -run TestFileValidation ./internal/documents/...`
@@ -115,8 +115,8 @@ Implement the Go backend `DocumentService` in `internal/documents/` to:
 ## 9. Implementation Notes and Validation Evidence
 
 - **Execution Date:** 2026-10-24
-- **Active Task:** `US-005.1` (Completed)
-- **Changed Files:** `internal/documents/dto.go`, `internal/documents/service.go`
+- **Active Task:** `US-005.2` (Completed)
+- **Changed Files:** `internal/documents/service.go`, `internal/documents/validate_test.go`
 
 ### Task US-005.1 Verification Evidence
 ```text
@@ -127,3 +127,32 @@ $ go test ./internal/documents/...
 ?   	markdown-viewer/internal/documents	[no test files]
 ```
 Verification verdict: PASS (DocumentDTO, DocumentError, and DocumentService interface compiled and verified with zero linter warnings).
+
+### Task US-005.2 Verification Evidence
+```text
+$ go test -v -run TestFileValidation ./internal/documents/...
+=== RUN   TestFileValidation
+=== RUN   TestFileValidation/empty_path
+=== RUN   TestFileValidation/unsupported_extensions
+=== RUN   TestFileValidation/supported_extensions_with_various_casings
+=== RUN   TestFileValidation/non-existent_file
+=== RUN   TestFileValidation/directory_path
+=== RUN   TestFileValidation/file_exceeding_20_MiB_default_limit
+=== RUN   TestFileValidation/custom_size_limit
+=== RUN   TestFileValidation/symlink_resolution
+--- PASS: TestFileValidation (0.00s)
+    --- PASS: TestFileValidation/empty_path (0.00s)
+    --- PASS: TestFileValidation/unsupported_extensions (0.00s)
+    --- PASS: TestFileValidation/supported_extensions_with_various_casings (0.00s)
+    --- PASS: TestFileValidation/non-existent_file (0.00s)
+    --- PASS: TestFileValidation/directory_path (0.00s)
+    --- PASS: TestFileValidation/file_exceeding_20_MiB_default_limit (0.00s)
+    --- PASS: TestFileValidation/custom_size_limit (0.00s)
+    --- PASS: TestFileValidation/symlink_resolution (0.00s)
+PASS
+ok  	markdown-viewer/internal/documents	0.005s
+
+$ golangci-lint run ./internal/documents/...
+0 issues.
+```
+Verification verdict: PASS (All 8 subtests passed; files > 20 MiB and unsupported extensions rejected without full memory allocation).
