@@ -2153,3 +2153,53 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Task:
 - Task `US-014.4: Write unit tests for math rendering` under Story [`US-014`](../stories/US-014-katex-math-rendering.md).
+
+---
+
+## 2026-10-24: Task US-014.4 Execution — Write Unit and Golden Fixture Tests for KaTeX Math & Complete Story US-014
+
+- **Task ID:** `US-014.4` (Completing Story `US-014`)
+- **Parent Story:** [`US-014: LaTeX Math Offline Rendering with KaTeX`](../stories/US-014-katex-math-rendering.md)
+- **Status:** Task `US-014.4` marked `DONE`. Story `US-014` marked `DONE`.
+
+### Actions Taken:
+1. **Authored KaTeX Math Golden Fixture Suite:** Created `fixtures/golden/math-katex.md` covering all mandatory math rendering requirements per PRD FR-RENDER-006, FR-RENDER-009, and PRD Section 5.4:
+   - Inline formulas: `$E = mc^2$`, `$a^2 + b^2 = c^2$`, `$\alpha + \beta = \gamma$`, `$x_i^2 + y_j^3 = z_k^5$`.
+   - Display math blocks: Fourier transform integral, quadratic formula, and matrix notation with separated delimiter lines.
+   - Currency coexistence: `$10 and $20`, `$100 and $200`, `$5.00 and $10.00` in prose coexisting with genuine math `$x + y = 10$`.
+   - Wide display equations: polynomial expansion testing container horizontal scrolling (`overflow-x: auto`).
+   - Fault isolation & partial rendering: malformed formula `$\frac{1}{$` alongside valid formulas and subsequent sections.
+   - Persian RTL prose integration with inline and Gaussian distribution display math.
+2. **Authored Comprehensive Unit & Golden Fixture Test Suite:** Created `frontend/src/features/rendering/math.test.tsx` containing 12 unit tests across 3 sub-suites:
+   - End-to-end rendering of `math-katex.md` golden fixture without crashing.
+   - Retention of MathML accessibility markup (`<annotation encoding="application/x-tex">`) for screen readers.
+   - Prevention of false math conversion on currency expressions in prose.
+   - Scrolling container `.katex-display` for wide display formulas.
+   - Safe error badges (`.katex-error`) and fault isolation for malformed formulas.
+   - Clean math formula rendering in Persian RTL context.
+   - Strict configuration assertions (`output: 'htmlAndMathml'`, `trust: false`, `throwOnError: false`).
+   - Syntax validation with `isMathValid`.
+   - CSS rules verification for `.katex-display` and `.katex-error`.
+   - Bundled offline font assets verification (20 WOFF2 fonts, zero remote URLs).
+3. **Executed Verification Checks:**
+   - Ran `npm --prefix frontend run test:unit -- math` (12/12 tests passed).
+   - Ran `npm --prefix frontend run test:unit` (262 tests passed across all 30 test files).
+   - Ran `npm --prefix frontend run build` (built in 4.26s, 0 errors).
+   - Ran `go test ./...` (all Go packages passed cleanly).
+4. **Synchronized Tracking Documents:**
+   - Marked Story `US-014` as `DONE` and Task `US-014.4` as `DONE` in `docs/stories/US-014-katex-math-rendering.md`.
+   - Updated `docs/implementation/REQUIREMENT-TRACEABILITY.md`: transitioned `FR-RENDER-006` to `IMPLEMENTED` / `VERIFIED`.
+   - Updated `docs/implementation/BACKLOG.md`: advanced `US-014` to `DONE`.
+   - Updated `docs/implementation/CURRENT-STATE.md`: advanced last completed work item to `US-014.4` (Story `US-014` `DONE`) and next eligible work item to `US-015.1`.
+   - Appended to `docs/implementation/WORK-LOG.md`.
+
+### Verification Results:
+- `npm --prefix frontend run test:unit -- math`: 12 passed across 1 test file in 1507ms (PASS).
+- `npm --prefix frontend run test:unit`: 262 passed across all 30 test files in 68.85s (PASS).
+- `npm --prefix frontend run build`: Clean production bundle built in 4.26s (PASS).
+- `go test ./...`: All packages passed (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Task:
+- Task `US-015.1: Configure rehype-sanitize schema for safe HTML` under Story [`US-015: HTML & CSS Sanitization and Scope Isolation Engine`](../stories/US-015-html-css-sanitization.md) (Phase 4 / `EPIC-004`).

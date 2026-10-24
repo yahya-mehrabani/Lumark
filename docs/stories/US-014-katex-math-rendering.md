@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-014`
 - **Parent Epic:** [EPIC-004: Advanced Rendering & Security Sanitization](../epics/EPIC-004-advanced-rendering-security.md)
-- **Status:** `IN_PROGRESS`
+- **Status:** `DONE`
 - **Assigned Phase:** Phase 4 (Advanced Rendering & Security)
 
 ---
@@ -87,7 +87,7 @@ Render mathematical expressions offline using locally bundled KaTeX:
 
 ### Task US-014.4: Write unit tests for math rendering
 - **Task ID:** `US-014.4`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-014.3`
 - **Completion Criteria:** Tests assert math HTML generation, currency protection, and error handling.
 - **Verification Command:** `npm run test:unit -- math`
@@ -228,3 +228,56 @@ Render mathematical expressions offline using locally bundled KaTeX:
 ✓ built in 5.00s
 ```
 - **Deferred Cross-Platform Checks:** Native Windows WebView2 and macOS WKWebView touch scroll metrics deferred to post-implementation cross-platform validation workflow (`NOT RUN`).
+
+### Task US-014.4: Write unit tests for math rendering
+- **Execution Date:** 2026-10-24
+- **Agent ID:** Antigravity Autonomous Story Runner
+- **Changed Files:**
+  - `fixtures/golden/math-katex.md` (golden fixture suite covering inline math, display equations, currency coexistence, wide scrollable formulas, graceful error handling, and Persian RTL integration)
+  - `frontend/src/features/rendering/math.test.tsx` (12 comprehensive unit and golden fixture tests covering end-to-end rendering, MathML retention, currency protection, overflow scrolling, error badges, strict configuration, and offline fonts)
+- **Terminal Output & Verification Evidence:**
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run math
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/rendering/math.test.tsx (12 tests) 1507ms
+   ✓ KaTeX Math Rendering Pipeline & Golden Fixture (US-014.4) (12)
+     ✓ 1. Golden math-katex.md Fixture End-to-End Rendering (6)
+       ✓ renders all mathematical constructs from golden fixture without crashing 606ms
+       ✓ retains MathML accessibility markup with TeX annotations per PRD FR-RENDER-006 222ms
+       ✓ preserves currency notation without false math conversion ($10 and $20, $100 and $200) 191ms
+       ✓ renders scrollable wide display equations inside .katex-display 158ms
+       ✓ isolates malformed formulas with safe .katex-error badges while preserving adjacent content 165ms
+       ✓ renders math formulas correctly within Persian RTL prose 145ms
+     ✓ 2. KaTeX Configuration & Strict Security Controls (3)
+       ✓ enforces strict configuration defaults per PRD FR-RENDER-006 1ms
+       ✓ validates syntax correctly with isMathValid 4ms
+       ✓ generates HTML and MathML through renderMath adapter function 2ms
+     ✓ 3. CSS & Offline Assets Verification (3)
+       ✓ verifies that katex.css defines horizontal overflow scrolling on .katex-display 1ms
+       ✓ verifies that markdown.css styles .katex-error warning badge 0ms
+       ✓ verifies that offline font assets are locally bundled and contain zero remote URLs 3ms
+
+ Test Files  1 passed (1)
+      Tests  12 passed (12)
+   Start at  18:12:44
+   Duration  3.51s
+```
+- **Full Frontend Suite Verification:**
+```text
+ Test Files  30 passed (30)
+      Tests  262 passed (262)
+```
+- **Build Verification:**
+```text
+> markdown-viewer-frontend@0.1.0 build
+> tsc && vite build --mode production
+✓ built in 4.26s
+```
+- **Go Backend Verification:**
+```text
+go test ./... -> ok (exit code 0)
+```
+- **Deferred Cross-Platform Checks:** Native Windows WebView2 and macOS WKWebView rendering and MathML accessibility layer validation deferred to post-implementation cross-platform validation workflow (`NOT RUN`).
