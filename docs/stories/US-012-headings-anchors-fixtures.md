@@ -66,7 +66,7 @@ Implement stable heading anchor generation and establish the baseline golden fix
 
 ### Task US-012.2: Implement custom Heading components with anchor IDs
 - **Task ID:** `US-012.2`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-012.1`
 - **Completion Criteria:** React components render `h1`-`h6` with attached `id` attributes.
 - **Verification Command:** `npm run test:unit -- anchor-scroll`
@@ -156,4 +156,42 @@ Implement stable heading anchor generation and establish the baseline golden fix
  Test Files  1 passed (1)
       Tests  21 passed (21)
    Duration  1.36s
+```
+
+### Task US-012.2 Validation Evidence
+- **Execution Date:** 2026-10-24
+- **Agent ID:** Autonomous Implementation Agent
+- **Changed Files:**
+  - `frontend/src/features/rendering/components/Heading.tsx`: Custom `Heading` component rendering `h1`-`h6` with unique deterministic anchor `id`, `data-heading-id`, `data-testid="heading-{level}"`, and `.heading-anchor` links.
+  - `frontend/src/features/rendering/MarkdownViewer.tsx`: Integrated `Heading` components for all heading levels, wrapped Markdown tree with `SlugContext.Provider`, and added `onNavigateAnchor` property.
+  - `frontend/src/features/rendering/link-router.ts`: Enhanced internal anchor navigation to support URI decoding, element selection by ID or escaped CSS name, and smooth scrolling via `scrollIntoView({ behavior: 'smooth' })`.
+  - `frontend/src/features/rendering/markdown.css`: Added styles for `.markdown-heading`, `.heading-anchor`, hover transition, and RTL layout adjustments.
+  - `frontend/src/features/rendering/anchor-scroll.test.tsx`: 11 integration tests verifying isolated heading tags, MarkdownViewer deterministic heading IDs, duplicate suffixing, Unicode Persian heading IDs, smooth scroll execution on internal links, suffixed duplicate anchor scrolling, Persian/Arabic anchor scrolling, percent-encoded anchor resolution, and `onNavigateAnchor` delegation.
+- **Terminal Output & Verification Evidence:**
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run anchor-scroll
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/rendering/anchor-scroll.test.tsx (11 tests) 346ms
+   ✓ Custom Headings & Anchor Scrolling (US-012.2) (11)
+     ✓ Heading Component Isolated Tests (2)
+       ✓ renders heading levels 1 through 6 with corresponding HTML tag and classes 60ms
+       ✓ includes a clickable heading-anchor with direct link href 5ms
+     ✓ Deterministic ID Assignment & Duplicate Disambiguation in MarkdownViewer (3)
+       ✓ assigns unique predictable IDs to headings 127ms
+       ✓ disambiguates duplicate heading text with incrementing suffixes 23ms
+       ✓ generates valid IDs for Unicode / Persian / Arabic headings 14ms
+     ✓ Internal Anchor Link Smooth Scrolling (6)
+       ✓ scrolls smoothly to matching heading ID when anchor link is clicked 38ms
+       ✓ scrolls to duplicate heading when anchor link references suffixed ID 19ms
+       ✓ scrolls to Unicode heading when anchor link contains Persian characters 16ms
+       ✓ handles percent-encoded anchor link and scrolls to matching heading 16ms
+       ✓ delegates to onNavigateAnchor callback when provided on MarkdownViewer 11ms
+       ✓ does not throw or crash when anchor target does not exist in DOM 11ms
+
+ Test Files  1 passed (1)
+      Tests  11 passed (11)
+   Duration  1.92s
 ```

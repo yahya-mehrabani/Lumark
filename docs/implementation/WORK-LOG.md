@@ -1849,3 +1849,29 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-012.2: Implement custom Heading components with anchor IDs` under [`docs/stories/US-012-headings-anchors-fixtures.md`](../stories/US-012-headings-anchors-fixtures.md).
+
+---
+
+## [2026-10-24] — Phase 3: Implement Custom Heading Components with Anchor IDs (Task US-012.2)
+
+- **Work Item ID:** `US-012.2`
+- **Agent:** Autonomous Story Runner
+- **Summary:** Implemented custom `Heading` component (`h1`-`h6`) with deterministic unique anchor IDs, clickable heading anchors, and smooth anchor scrolling in `MarkdownViewer`. Verified against 11 unit and integration tests in `anchor-scroll.test.tsx`.
+- **Status:** Task `US-012.2` marked `DONE`. Story `US-012` marked `IN_PROGRESS`.
+
+### Actions Taken:
+1. **Implemented Heading Component:** Created `frontend/src/features/rendering/components/Heading.tsx` rendering heading tags `h1` through `h6` with unique deterministic anchor `id`, `data-heading-id`, `data-testid="heading-{level}"`, and `.heading-anchor` link.
+2. **Integrated Headings into MarkdownViewer:** Updated `MarkdownViewer.tsx` to mount `Heading` across all levels `h1`-`h6`, wrapped Markdown tree with `SlugContext.Provider`, and exposed `onNavigateAnchor`.
+3. **Enhanced Link Router Anchor Navigation:** Updated `link-router.ts` to decode URL-encoded anchors, select elements by ID or CSS-escaped name, and execute smooth scroll via `scrollIntoView({ behavior: 'smooth' })`.
+4. **Added Heading Anchor CSS:** Updated `markdown.css` with `.markdown-heading`, `.heading-anchor`, hover/focus opacity transitions, and RTL layout adjustments.
+5. **Created Integration Test Suite:** Created `frontend/src/features/rendering/anchor-scroll.test.tsx` with 11 tests verifying heading level rendering, heading-anchor presence, deterministic IDs in MarkdownViewer, duplicate disambiguation suffixes, Persian/Arabic Unicode IDs, internal link smooth scrolling, duplicate anchor scrolling, Unicode anchor scrolling, percent-encoded anchor resolution, `onNavigateAnchor` delegation, and graceful handling of missing anchor targets.
+6. **Synchronized Documentation:** Updated `docs/stories/US-012-headings-anchors-fixtures.md` (Task `US-012.2` `DONE`, Section 9 evidence), `docs/implementation/CURRENT-STATE.md`, and `docs/implementation/WORK-LOG.md`.
+
+### Verification Results:
+- `npm --prefix frontend run test:unit -- anchor-scroll`: 11 passed across 1 test file in 346ms (PASS).
+- `npm --prefix frontend run build:dev`: Clean TypeScript compilation and Vite build in 1.33s (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-012.3: Assemble baseline golden fixture suite` under [`docs/stories/US-012-headings-anchors-fixtures.md`](../stories/US-012-headings-anchors-fixtures.md).

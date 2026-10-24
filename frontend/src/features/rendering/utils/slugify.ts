@@ -131,3 +131,9 @@ export class SlugTracker {
 export function createSlugTracker(): SlugTracker {
   return new SlugTracker();
 }
+
+export const SlugContext = React.createContext<SlugTracker | null>(null);
+
+export function useSlugTracker(): SlugTracker | null {
+  return React.useContext(SlugContext);
+}

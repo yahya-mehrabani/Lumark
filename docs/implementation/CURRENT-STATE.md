@@ -13,8 +13,8 @@
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
 - **Application Implementation Status:** **PHASE 2 (EPIC-002) AND STORIES US-009, US-010, US-011 (PHASE 3) COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) through [`US-004`](../stories/US-004-packaging-association-spike.md) (Phase 1 Spike), Stories [`US-005`](../stories/US-005-native-document-service.md) through [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Phase 2 Core Lifecycle & Tabs), Story [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) (CommonMark & GFM pipeline), Story [`US-010`](../stories/US-010-code-blocks-highlighting.md) (Fenced Code Blocks & Highlighting), and Story [`US-011`](../stories/US-011-local-assets-safe-links.md) (Local Asset Resolution & Safe Link Handling) fully verified across all implementation tasks under Linux/WSLg.
 - **Feasibility Spike Status:** **SPIKE IMPLEMENTATION COMPLETE / AWAITING CROSS-PLATFORM GATES**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-012.1: Implement deterministic slug generator` under [`US-012`](../stories/US-012-headings-anchors-fixtures.md) (Created `frontend/src/features/rendering/utils/slugify.ts`, `frontend/src/features/rendering/heading-slugs.test.ts` passing all 21 unit tests verifying deterministic URL-safe slug generation, duplicate suffix disambiguation, and multilingual Unicode preservation).
-- **Active / Next Eligible Work Item:** Story [`US-012: Headings, Stable Anchor Generation & Core Fixture Suite`](../stories/US-012-headings-anchors-fixtures.md) (Task `US-012.2: Implement custom Heading components with anchor IDs`) under Phase 3 / `EPIC-003`.
+- **Last Completed Work Item:** Task `US-012.2: Implement custom Heading components with anchor IDs` under [`US-012`](../stories/US-012-headings-anchors-fixtures.md) (Created `frontend/src/features/rendering/components/Heading.tsx`, integrated `Heading` and `SlugContext` into `MarkdownViewer.tsx`, enhanced `link-router.ts` anchor navigation with decoded/CSS selection, updated `markdown.css`, and verified via `anchor-scroll.test.tsx` passing all 11 tests).
+- **Active / Next Eligible Work Item:** Story [`US-012: Headings, Stable Anchor Generation & Core Fixture Suite`](../stories/US-012-headings-anchors-fixtures.md) (Task `US-012.3: Assemble baseline golden fixture suite`) under Phase 3 / `EPIC-003`.
 
 ---
 
@@ -82,7 +82,7 @@ All planning remediation artifacts must be preserved:
 
 The next incoming agent must:
 1. **Execute Story US-012 (In Progress):**
-   - Completed Task: `US-012.1: Implement deterministic slug generator` (DONE).
-   - Next Task: `US-012.2: Implement custom Heading components with anchor IDs`.
-   - Subsequent Tasks: `US-012.3: Assemble baseline golden fixture suite`, `US-012.4: Write unit and visual tests for fixtures`.
+   - Completed Tasks: `US-012.1: Implement deterministic slug generator` (DONE), `US-012.2: Implement custom Heading components with anchor IDs` (DONE).
+   - Next Task: `US-012.3: Assemble baseline golden fixture suite`.
+   - Subsequent Task: `US-012.4: Write unit and visual tests for fixtures`.
 2. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.

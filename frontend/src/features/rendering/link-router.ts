@@ -193,9 +193,29 @@ export async function dispatchLink(
       if (options.onNavigateAnchor && link.anchor) {
         options.onNavigateAnchor(link.anchor);
       } else if (link.anchor) {
+        const decodedAnchor = (() => {
+          try {
+            return decodeURIComponent(link.anchor);
+          } catch {
+            return link.anchor;
+          }
+        })();
+        let nameMatch: Element | null = null;
+        try {
+          if (typeof CSS !== 'undefined') {
+            nameMatch =
+              document.querySelector(`[name="${CSS.escape(link.anchor)}"]`) ||
+              document.querySelector(`[name="${CSS.escape(decodedAnchor)}"]`);
+          }
+        } catch {
+          nameMatch = null;
+        }
+
         const targetElement =
           document.getElementById(link.anchor) ||
-          document.querySelector(`[name="${CSS.escape(link.anchor)}"]`);
+          document.getElementById(decodedAnchor) ||
+          nameMatch;
+
         if (targetElement) {
           targetElement.scrollIntoView({ behavior: 'smooth' });
         }
