@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import { remarkStrictMath, escapeCurrencyDollars } from './utils/remark-strict-math';
 import { STRICT_KATEX_OPTIONS } from './katex-adapter';
 import { CodeBlock } from './components/CodeBlock';
 import { Heading } from './components/Heading';
@@ -37,7 +38,8 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
   onOpenExternalUrl,
   onNavigateAnchor,
 }) => {
-  const content = document ? document.content : (rawContent ?? '');
+  const rawMarkdown = document ? document.content : (rawContent ?? '');
+  const content = React.useMemo(() => escapeCurrencyDollars(rawMarkdown), [rawMarkdown]);
   const filename = document?.filename;
   const filePath = document?.filePath;
 
@@ -64,7 +66,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
       <main className="markdown-content" data-testid="markdown-content">
         <SlugContext.Provider value={slugTracker}>
           <ReactMarkdown
-            remarkPlugins={[remarkGfm, remarkMath]}
+            remarkPlugins={[remarkGfm, remarkMath, remarkStrictMath]}
             rehypePlugins={[[rehypeKatex, STRICT_KATEX_OPTIONS]]}
             urlTransform={(url) => url}
             components={{

@@ -1211,6 +1211,11 @@
   display: block;
   margin: 1em 0;
   text-align: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  padding: 0.5rem 0;
+  -webkit-overflow-scrolling: touch;
 }
 .katex-display > .katex {
   display: block;

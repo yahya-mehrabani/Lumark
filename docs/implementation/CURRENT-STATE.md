@@ -13,8 +13,8 @@
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
 - **Application Implementation Status:** **PHASE 2 (EPIC-002), PHASE 3 (EPIC-003), AND STORY US-013 (EPIC-004) COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) through [`US-004`](../stories/US-004-packaging-association-spike.md) (Phase 1 Spike), Stories [`US-005`](../stories/US-005-native-document-service.md) through [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Phase 2 Core Lifecycle & Tabs), Stories [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) through [`US-012`](../stories/US-012-headings-anchors-fixtures.md) (Phase 3 Core Rendering Core), and Story [`US-013`](../stories/US-013-mermaid-offline-rendering.md) (Phase 4 Mermaid Diagrams Offline Rendering) fully verified across all implementation tasks under Linux/WSLg.
 - **Feasibility Spike Status:** **SPIKE IMPLEMENTATION COMPLETE / AWAITING CROSS-PLATFORM GATES**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-014.2: Integrate remark-math and rehype-katex into pipeline` under Story [`US-014: LaTeX Math Offline Rendering with KaTeX`](../stories/US-014-katex-math-rendering.md) completed & verified (`remark-math: 6.0.0` and `rehype-katex: 7.0.1` integrated into `MarkdownViewer.tsx` with `throwOnError: false` and `STRICT_KATEX_OPTIONS`; warning badge styled for `.katex-error`; 5 unit tests passing in `katex-error-fallback.test.tsx`).
-- **Active / Next Eligible Work Item:** Task `US-014.3: Implement horizontal scrolling for display equations` under Story [`US-014`](../stories/US-014-katex-math-rendering.md) (Phase 4 / `EPIC-004`).
+- **Last Completed Work Item:** Task `US-014.3: Implement horizontal scrolling for display equations` under Story [`US-014: LaTeX Math Offline Rendering with KaTeX`](../stories/US-014-katex-math-rendering.md) completed & verified (`escapeCurrencyDollars` and `remarkStrictMath` implemented for strict currency avoidance like `$10 and $20`; `.katex-display` styled with `overflow-x: auto` and padding; 6 unit tests passing in `katex-currency-avoidance.test.tsx`).
+- **Active / Next Eligible Work Item:** Task `US-014.4: Write unit tests for math rendering` under Story [`US-014`](../stories/US-014-katex-math-rendering.md) (Phase 4 / `EPIC-004`).
 
 ---
 
@@ -80,8 +80,8 @@ All planning remediation artifacts must be preserved:
 
 ## 5. Exact Next Action for the Next Agent
 
-1. **Confirm Task US-014.2 Complete:**
-   - Task `US-014.2: Integrate remark-math and rehype-katex into pipeline` under Story [`US-014`](../stories/US-014-katex-math-rendering.md) is `DONE` (`remark-math: 6.0.0` and `rehype-katex: 7.0.1` integrated into `MarkdownViewer.tsx` with `throwOnError: false` and `STRICT_KATEX_OPTIONS`; warning badge styled for `.katex-error`; 5 unit tests passing in `katex-error-fallback.test.tsx`).
-2. **Execute Task US-014.3 (Next Active):**
-   - Active work item: Task `US-014.3: Implement horizontal scrolling for display equations` under Story [`US-014`](../stories/US-014-katex-math-rendering.md) (Phase 4 / `EPIC-004`).
+1. **Confirm Task US-014.3 Complete:**
+   - Task `US-014.3: Implement horizontal scrolling for display equations` under Story [`US-014`](../stories/US-014-katex-math-rendering.md) is `DONE` (`escapeCurrencyDollars` and `remarkStrictMath` implemented for strict currency avoidance like `$10 and $20`; `.katex-display` styled with `overflow-x: auto` and padding; 6 unit tests passing in `katex-currency-avoidance.test.tsx`).
+2. **Execute Task US-014.4 (Next Active):**
+   - Active work item: Task `US-014.4: Write unit tests for math rendering` under Story [`US-014`](../stories/US-014-katex-math-rendering.md) (Phase 4 / `EPIC-004`).
 3. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.

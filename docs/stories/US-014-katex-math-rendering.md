@@ -77,7 +77,7 @@ Render mathematical expressions offline using locally bundled KaTeX:
 
 ### Task US-014.3: Implement horizontal scrolling for display equations
 - **Task ID:** `US-014.3`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-014.2`
 - **Completion Criteria:** Container `.katex-display` has `overflow-x: auto` and padding.
 - **Verification Command:** `npm run test:unit -- katex-currency-avoidance`
@@ -191,3 +191,40 @@ Render mathematical expressions offline using locally bundled KaTeX:
 ✓ built in 4.28s
 ```
 - **Deferred Cross-Platform Checks:** Native Windows WebView2 and macOS WKWebView math presentation deferred to post-implementation cross-platform validation workflow (`NOT RUN`).
+
+### Task US-014.3: Implement horizontal scrolling for display equations
+- **Execution Date:** 2026-10-24
+- **Agent ID:** Antigravity Autonomous Story Runner
+- **Changed Files:**
+  - `frontend/src/features/rendering/utils/remark-strict-math.ts` (implemented `escapeCurrencyDollars` preprocessor and strict spacing rules)
+  - `frontend/src/features/rendering/MarkdownViewer.tsx` (integrated `escapeCurrencyDollars` preprocessor and `remarkStrictMath` plugin)
+  - `frontend/src/styles/katex.css` (configured `.katex-display` with `overflow-x: auto`, `padding: 0.5rem 0`, `max-width: 100%`)
+  - `frontend/src/features/rendering/katex-currency-avoidance.test.tsx` (6 unit tests covering currency avoidance for `$10 and $20`, `$100 and $200`, decimal `$5.00`, math co-existence, display equation scrolling, and CSS rules)
+- **Terminal Output & Verification Evidence:**
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run katex-currency-avoidance
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/rendering/katex-currency-avoidance.test.tsx (6 tests) 248ms
+   ✓ KaTeX Currency Avoidance & Display Scrolling (US-014.3) (6)
+     ✓ prevents accidental math rendering for currency symbols in prose ($10 and $20) 78ms
+     ✓ prevents accidental math rendering for large currency amounts ($100 and $200) 13ms
+     ✓ prevents accidental math conversion for decimal currency ($5.00 and $10.00) 8ms
+     ✓ preserves legitimate mathematical expressions alongside currency prose 55ms
+     ✓ renders long display equations inside scrollable .katex-display container 88ms
+     ✓ verifies that .katex-display container has overflow-x auto and padding in CSS 1ms
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  18:00:34
+   Duration  3.36s (environment 40%, import 37%, transform 9%, tests 9%, setup 4%, worker 1%)
+```
+- **Build Verification:**
+```text
+> markdown-viewer-frontend@0.1.0 build
+> tsc && vite build --mode production
+✓ built in 5.00s
+```
+- **Deferred Cross-Platform Checks:** Native Windows WebView2 and macOS WKWebView touch scroll metrics deferred to post-implementation cross-platform validation workflow (`NOT RUN`).

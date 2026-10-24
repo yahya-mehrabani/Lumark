@@ -2121,3 +2121,35 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Task:
 - Task `US-014.3: Implement horizontal scrolling for display equations` under Story [`US-014`](../stories/US-014-katex-math-rendering.md).
+
+---
+
+## 2026-10-24: Task US-014.3 Execution — Implement Horizontal Scrolling and Currency Avoidance for Math
+
+- **Task ID:** `US-014.3`
+- **Parent Story:** [`US-014: LaTeX Math Offline Rendering with KaTeX`](../stories/US-014-katex-math-rendering.md)
+- **Status:** Task `US-014.3` marked `DONE`. Story `US-014` remains `IN_PROGRESS`.
+
+### Actions Taken:
+1. **Implemented Currency Avoidance Preprocessor:** Created `escapeCurrencyDollars` in `frontend/src/features/rendering/utils/remark-strict-math.ts` to identify currency expressions outside code blocks/display math (e.g. `$10 and $20`, `$100 and $200`, `$5.00`) and escape them to `\$`, preventing CommonMark/remark-math from misinterpreting prose prices as inline math delimiters (PRD Section 5.4, Acceptance Criteria 3).
+2. **Implemented Remark Strict Math AST Plugin:** Created `remarkStrictMath` plugin verifying math AST nodes, guarding against whitespace violations around dollar delimiters.
+3. **Integrated into MarkdownViewer:** Hooked `escapeCurrencyDollars` into `MarkdownViewer.tsx` via `React.useMemo` and added `remarkStrictMath` to `remarkPlugins`.
+4. **Configured Horizontal Overflow Scrolling:** Added `overflow-x: auto`, `overflow-y: hidden`, `max-width: 100%`, and `padding: 0.5rem 0` to `.katex-display` in `frontend/src/styles/katex.css` ensuring wide display equations scroll horizontally without clipping or overflowing the viewport.
+5. **Authored Comprehensive Unit Tests:** Created `frontend/src/features/rendering/katex-currency-avoidance.test.tsx` verifying:
+   - Currency expressions in prose (`$10 and $20`) are not rendered as math.
+   - Large currency amounts (`$100 and $200`) remain plain text.
+   - Decimal currency amounts (`$5.00 and $10.00`) remain plain text.
+   - Legitimate mathematical formulas (`$a^2 + b^2 = c^2$`) render properly alongside currency text.
+   - Display math equations render inside `.katex-display` containers.
+   - CSS rules define `overflow-x: auto` and padding on `.katex-display`.
+6. **Synchronized Tracking Documents:** Updated `docs/stories/US-014-katex-math-rendering.md` (Task `US-014.3` `DONE`), `docs/implementation/CURRENT-STATE.md`, and `docs/implementation/WORK-LOG.md`.
+
+### Verification Results:
+- `npm --prefix frontend run test:unit -- katex-currency-avoidance`: 6 passed across 1 test file in 248ms (PASS).
+- `npm --prefix frontend run test:unit -- katex`: 21 passed across 3 test files in 462ms (PASS).
+- `npm --prefix frontend run build`: Clean production bundle built in 5.00s (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Task:
+- Task `US-014.4: Write unit tests for math rendering` under Story [`US-014`](../stories/US-014-katex-math-rendering.md).
