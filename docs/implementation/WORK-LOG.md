@@ -2051,3 +2051,42 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Story & Task:
 - Story [`US-014: LaTeX Math Offline Rendering with KaTeX`](../stories/US-014-katex-math-rendering.md) (Task `US-014.1: Bundle KaTeX locally with strict configuration and CSS/fonts`) under Phase 4 / `EPIC-004`.
+
+---
+
+## 2026-10-24: Task US-014.1 Execution — Bundle KaTeX CSS and Fonts Locally
+
+- **Task ID:** `US-014.1`
+- **Parent Story:** [`US-014: LaTeX Math Offline Rendering with KaTeX`](../stories/US-014-katex-math-rendering.md)
+- **Status:** Task `US-014.1` marked `DONE`. Story `US-014` transitioned to `IN_PROGRESS`.
+
+### Actions Taken:
+1. **Installed KaTeX and Type Declarations:** Added `katex: "0.16.47"` to `dependencies`, `@types/katex: "^0.16.7"` and `@types/node` to `devDependencies` in `frontend/package.json`.
+2. **Bundled WOFF2 Fonts Locally:** Copied all 20 KaTeX WOFF2 web fonts to `frontend/src/assets/fonts/katex/` for completely offline asset loading with zero external network requests per PRD FR-RENDER-006.
+3. **Generated Local Stylesheet:** Created `frontend/src/styles/katex.css` with `@font-face` definitions pointing to relative `../assets/fonts/katex/*.woff2` paths and verified zero external HTTP/HTTPS/CDN references.
+4. **Implemented KaTeX Adapter:** Created `frontend/src/features/rendering/katex-adapter.ts` with:
+   - `STRICT_KATEX_OPTIONS`: `throwOnError: false`, `output: 'htmlAndMathml'`, `trust: false`, `strict: false`.
+   - `renderMath(latex, options)`: Returns accessible HTML/MathML string with graceful inline error fallback.
+   - `isMathValid(latex, options)`: Syntax validation utility.
+   - `renderMathToElement(latex, el, options)`: Direct DOM rendering utility.
+5. **Authored Comprehensive Unit Tests:** Created `frontend/src/features/rendering/katex-adapter.test.ts` with 10 unit tests covering:
+   - Strict default configuration invariants.
+   - Inline math with MathML accessibility layer and HTML presentation layer.
+   - Display math rendering (`displayMode: true`).
+   - Empty/whitespace string handling.
+   - Safe inline error fallback on malformed LaTeX when `throwOnError: false`.
+   - Error throwing when `throwOnError: true` is explicitly configured.
+   - Syntax validation via `isMathValid`.
+   - Direct DOM rendering and error fallback in `renderMathToElement`.
+   - Integrity check verifying all 20 WOFF2 font files exist in `assets/fonts/katex/`.
+   - Integrity check verifying `styles/katex.css` uses relative font URLs and contains zero remote CDN references.
+6. **Synchronized Tracking Documents:** Updated `docs/stories/US-014-katex-math-rendering.md` (Story `IN_PROGRESS`, Task `US-014.1` `DONE`), `docs/implementation/BACKLOG.md` (Story `US-014` `IN_PROGRESS`), and `docs/implementation/CURRENT-STATE.md`.
+
+### Verification Results:
+- `npm --prefix frontend run test:unit -- katex-adapter`: 10 passed across 1 test file in 93ms (PASS).
+- `npm --prefix frontend run build`: Clean production bundle built in 2.35s (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Task:
+- Task `US-014.2: Integrate remark-math and rehype-katex into pipeline` under Story [`US-014`](../stories/US-014-katex-math-rendering.md).

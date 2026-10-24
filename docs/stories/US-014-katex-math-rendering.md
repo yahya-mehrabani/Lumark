@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-014`
 - **Parent Epic:** [EPIC-004: Advanced Rendering & Security Sanitization](../epics/EPIC-004-advanced-rendering-security.md)
-- **Status:** `DRAFT`
+- **Status:** `IN_PROGRESS`
 - **Assigned Phase:** Phase 4 (Advanced Rendering & Security)
 
 ---
@@ -57,7 +57,7 @@ Render mathematical expressions offline using locally bundled KaTeX:
 
 ### Task US-014.1: Bundle KaTeX CSS and fonts locally
 - **Task ID:** `US-014.1`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** WOFF2 fonts committed and referenced via local `@font-face` relative URLs.
 - **Verification Command:** `npm run test:unit -- katex-adapter`
@@ -112,11 +112,45 @@ Render mathematical expressions offline using locally bundled KaTeX:
 
 ## 9. Implementation Notes and Validation Evidence
 
-*(To be filled by implementation agent during execution)*
-- **Execution Date:** Not yet executed
-- **Agent ID:** N/A
-- **Changed Files:** None
+### Task US-014.1: Bundle KaTeX CSS and fonts locally
+- **Execution Date:** 2026-10-24
+- **Agent ID:** Antigravity Autonomous Story Runner
+- **Changed Files:**
+  - `frontend/package.json` (added `katex: 0.16.47`, `@types/katex: ^0.16.7`, `@types/node`)
+  - `frontend/package-lock.json`
+  - `frontend/src/assets/fonts/katex/` (20 WOFF2 font files copied for offline rendering)
+  - `frontend/src/styles/katex.css` (local `@font-face` definitions pointing to relative `../assets/fonts/katex/*.woff2`, zero remote network URLs)
+  - `frontend/src/features/rendering/katex-adapter.ts` (strict options, MathML retention, fault isolation, syntax validation)
+  - `frontend/src/features/rendering/katex-adapter.test.ts` (10 unit tests for adapter, font bundling, and offline CSS)
 - **Terminal Output & Verification Evidence:**
 ```text
-(Awaiting execution in Phase 4)
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run katex-adapter
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/rendering/katex-adapter.test.ts (10 tests) 93ms
+   ✓ KaTeX Adapter & Offline Bundling (US-014.1) (10)
+     ✓ has strict default configuration conforming to PRD FR-RENDER-006 7ms
+     ✓ renders inline math into HTML with MathML accessibility layer 10ms
+     ✓ renders display math when displayMode is true 14ms
+     ✓ handles empty or whitespace-only math without crashing 1ms
+     ✓ provides safe inline error fallback on malformed LaTeX when throwOnError is false 3ms
+     ✓ throws error on malformed LaTeX when throwOnError is explicitly true 1ms
+     ✓ validates syntax correctly with isMathValid 5ms
+     ✓ renders directly into a DOM element with renderMathToElement 43ms
+     ✓ verifies all 20 KaTeX WOFF2 fonts are locally bundled in assets/fonts/katex 4ms
+     ✓ verifies styles/katex.css references local relative fonts with zero external network URLs 2ms
+
+ Test Files  1 passed (1)
+      Tests  10 passed (10)
+   Start at  17:45:16
+   Duration  1.27s (environment 65%, setup 10%, transform 10%, tests 10%, import 4%, worker 1%)
 ```
+- **Build Verification:**
+```text
+> markdown-viewer-frontend@0.1.0 build
+> tsc && vite build --mode production
+✓ built in 2.35s
+```
+- **Deferred Cross-Platform Checks:** Native Windows WebView2 and macOS WKWebView visual font rendering deferred to post-implementation cross-platform process (`NOT RUN`).
