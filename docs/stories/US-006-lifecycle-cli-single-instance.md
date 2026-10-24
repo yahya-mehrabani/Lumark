@@ -65,7 +65,7 @@ Implement the production application startup lifecycle, CLI argument parsing, an
 
 ### Task US-006.2: Implement production instance coordinator with fallback
 - **Task ID:** `US-006.2`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-006.1`
 - **Completion Criteria:** IPC server and client handle connect, transmit, ack, and stale socket recovery.
 - **Verification Command:** `go test -v -run TestInstanceCoordinator ./internal/instance/...`
@@ -75,7 +75,7 @@ Implement the production application startup lifecycle, CLI argument parsing, an
 
 ### Task US-006.3: Wire Wails window focus and event dispatching
 - **Task ID:** `US-006.3`
-- **Status:** `DRAFT`
+- **Status:** `READY`
 - **Dependencies:** `US-006.2`
 - **Completion Criteria:** Primary instance calls `runtime.WindowShow` and emits `wails:open-document` event.
 - **Verification Command:** `go test -v -run TestWindowEventDispatch ./internal/instance/...`
@@ -146,6 +146,34 @@ Implement the production application startup lifecycle, CLI argument parsing, an
     --- PASS: TestCLIArgParsing/WindowsStyleDriveLetter (0.00s)
 PASS
 ok      markdown-viewer/internal/instance       0.004s
+```
+- **Linter Output:** `golangci-lint run ./internal/instance/...` -> 0 issues.
+- **Vulnerability Check:** `govulncheck ./internal/instance/...` -> No vulnerabilities found.
+- **Cross-Platform Verification Boundary:** Linux WSL2 execution PASS. Windows native execution deferred to post-implementation cross-platform validation (NOT RUN).
+
+### Task US-006.2 Evidence (2026-10-24)
+- **Execution Date:** 2026-10-24
+- **Agent ID:** Autonomous Story Runner
+- **Changed Files:** `internal/instance/types.go`, `internal/instance/protocol.go`, `internal/instance/lock.go`, `internal/instance/lock_unix.go`, `internal/instance/lock_windows.go`, `internal/instance/dir.go`, `internal/instance/coordinator.go`, `internal/instance/coordinator_test.go`
+- **Verification Command:** `go test -v -run TestInstanceCoordinator ./internal/instance/...`
+- **Terminal Output & Verification Evidence:**
+```text
+=== RUN   TestInstanceCoordinator
+=== RUN   TestInstanceCoordinator/PrimaryStartup
+=== RUN   TestInstanceCoordinator/SecondaryConnectAndTransmit
+=== RUN   TestInstanceCoordinator/StaleSocketRecovery
+=== RUN   TestInstanceCoordinator/MultiFileForwarding
+=== RUN   TestInstanceCoordinator/UnicodeAndSpaces
+=== RUN   TestInstanceCoordinator/DoubleClose
+--- PASS: TestInstanceCoordinator (0.00s)
+    --- PASS: TestInstanceCoordinator/PrimaryStartup (0.00s)
+    --- PASS: TestInstanceCoordinator/SecondaryConnectAndTransmit (0.00s)
+    --- PASS: TestInstanceCoordinator/StaleSocketRecovery (0.00s)
+    --- PASS: TestInstanceCoordinator/MultiFileForwarding (0.00s)
+    --- PASS: TestInstanceCoordinator/UnicodeAndSpaces (0.00s)
+    --- PASS: TestInstanceCoordinator/DoubleClose (0.00s)
+PASS
+ok      markdown-viewer/internal/instance       0.007s
 ```
 - **Linter Output:** `golangci-lint run ./internal/instance/...` -> 0 issues.
 - **Vulnerability Check:** `govulncheck ./internal/instance/...` -> No vulnerabilities found.

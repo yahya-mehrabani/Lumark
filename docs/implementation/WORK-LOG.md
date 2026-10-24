@@ -1187,3 +1187,42 @@ This log is an append-only chronological record of all significant actions, veri
 - **Completed Tasks:** `US-006.1` (`DONE`).
 - **Next Eligible Task:** `US-006.2: Implement production instance coordinator with fallback` under [`US-006`](../stories/US-006-lifecycle-cli-single-instance.md) (`READY`).
 - **Phase Gate Status:** In progress under approved Linux-only implementation policy; cross-platform validation deferred.
+
+---
+
+## [2026-10-24] — Phase 2: Implement Production Instance Coordinator with Fallback (US-006.2)
+
+- **Work Item ID:** `US-006.2` (under Story `US-006: Application Lifecycle, Command-Line Parsing & Single-Instance Routing`, `EPIC-002`)
+- **Agent:** Antigravity Autonomous Story Runner
+- **Summary:** Implemented production single-instance coordinator in `internal/instance/` fulfilling `FR-OPEN-005` and PRD Sections 5.3 & 9.1. Delivered `types.go`, `protocol.go`, `lock.go`, `lock_unix.go`, `lock_windows.go`, `dir.go`, and `coordinator.go`. Implemented length-prefixed JSON framing with ASCII ACK protocol, XDG runtime directory resolution (`0700` directory and socket permissions), non-blocking advisory file locking (`syscall.Flock`), and stale socket detection/recovery. Verified all 6 subtests under `TestInstanceCoordinator` in `internal/instance/coordinator_test.go` (`PrimaryStartup`, `SecondaryConnectAndTransmit`, `StaleSocketRecovery`, `MultiFileForwarding`, `UnicodeAndSpaces`, `DoubleClose`) passing with zero issues on `golangci-lint` and zero vulnerabilities on `govulncheck`.
+
+### Actions Taken:
+1. **Implemented Instance Coordinator Components (`internal/instance/`):**
+   - `types.go`: defined `Role`, `Message`, `Options`, and `DefaultOptions()`.
+   - `protocol.go`: implemented `writeMessage`, `readMessage`, `sendAck`, and `readAck` with 1 MB payload limiter and 4-byte big-endian length prefix.
+   - `lock.go`, `lock_unix.go`, `lock_windows.go`: defined `FileLock` interface, non-blocking `syscall.Flock` implementation for Unix, and cross-compilation stub for Windows.
+   - `dir.go`: implemented `ResolveSocketDir()` and `ResolveDir()` with standard XDG runtime directory fallback hierarchy.
+   - `coordinator.go`: implemented `Coordinator` with `Start()`, `Send()`, `Messages()`, and graceful `Close()`. Added automated stale socket detection via short dial attempt and automatic cleanup before binding.
+2. **Created Unit Test Suite (`internal/instance/coordinator_test.go`):**
+   - Implemented `TestInstanceCoordinator` verifying `PrimaryStartup`, `SecondaryConnectAndTransmit`, `StaleSocketRecovery`, `MultiFileForwarding`, `UnicodeAndSpaces`, and `DoubleClose`.
+3. **Quality, Linting & Vulnerability Verification:**
+   - Ran `go test -v -run TestInstanceCoordinator ./internal/instance/...` (all 6 subtests PASS).
+   - Ran `golangci-lint run ./internal/instance/...` (0 issues).
+   - Ran `govulncheck ./internal/instance/...` (0 vulnerabilities found).
+4. **Documentation Synchronization:**
+   - Updated `docs/stories/US-006-lifecycle-cli-single-instance.md`: marked Task `US-006.2` as `DONE`, advanced Task `US-006.3` to `READY`, and recorded verification output.
+   - Updated `docs/implementation/CURRENT-STATE.md`: advanced last completed work item to `US-006.2` and next eligible work item to `US-006.3`.
+
+### Verification Results:
+- `go test -v -run TestInstanceCoordinator ./internal/instance/...`: PASS (exit code 0).
+- `golangci-lint run ./internal/instance/...`: 0 issues (PASS).
+- `govulncheck ./internal/instance/...`: No vulnerabilities found (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **Phase:** Phase 2 (Core Application Structure).
+- **Active Story:** `US-006: Application Lifecycle, Command-Line Parsing & Single-Instance Routing` (`IN_PROGRESS`).
+- **Completed Tasks:** `US-006.1` (`DONE`), `US-006.2` (`DONE`).
+- **Next Eligible Task:** `US-006.3: Wire Wails window focus and event dispatching` under [`US-006`](../stories/US-006-lifecycle-cli-single-instance.md) (`READY`).
+- **Phase Gate Status:** In progress under approved Linux-only implementation policy; cross-platform validation deferred.

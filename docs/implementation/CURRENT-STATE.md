@@ -13,8 +13,8 @@
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
 - **Application Implementation Status:** **FEASIBILITY SPIKE COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md), [`US-002`](../stories/US-002-cli-single-instance-spike.md), [`US-003`](../stories/US-003-webview-asset-security-spike.md), and [`US-004`](../stories/US-004-packaging-association-spike.md) fully verified across all implementation tasks under WSLg. Platform packaging prototypes for Linux (.deb), Windows (NSIS), and macOS (Info.plist) delivered.
 - **Feasibility Spike Status:** **SPIKE IMPLEMENTATION COMPLETE / AWAITING CROSS-PLATFORM GATES**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-006.1: Implement CLI argument parser and path normalizer` under [`US-006`](../stories/US-006-lifecycle-cli-single-instance.md) (`internal/instance/cli.go` and `cli_test.go` verified with `go test -v -run TestCLIArgParsing`, `golangci-lint`, and `govulncheck`).
-- **Active / Next Eligible Work Item:** Story [`US-006: Application Lifecycle, Command-Line Parsing & Single-Instance Routing`](../stories/US-006-lifecycle-cli-single-instance.md) (Task `US-006.2: Implement production instance coordinator with fallback` ready for execution under approved Linux-only implementation policy).
+- **Last Completed Work Item:** Task `US-006.2: Implement production instance coordinator with fallback` under [`US-006`](../stories/US-006-lifecycle-cli-single-instance.md) (`internal/instance/coordinator.go` and `coordinator_test.go` verified with `go test -v -run TestInstanceCoordinator`, `golangci-lint`, and `govulncheck`).
+- **Active / Next Eligible Work Item:** Story [`US-006: Application Lifecycle, Command-Line Parsing & Single-Instance Routing`](../stories/US-006-lifecycle-cli-single-instance.md) (Task `US-006.3: Wire Wails window focus and event dispatching` ready for execution under approved Linux-only implementation policy).
 
 ---
 
@@ -81,9 +81,9 @@ All planning remediation artifacts must be preserved:
 ## 5. Exact Next Action for the Next Agent
 
 The next incoming agent must:
-1. **Confirm Task US-006.1 Complete:**
-   - Confirm Task `US-006.1` is `DONE` (`internal/instance/cli.go` and `cli_test.go` verified with `go test -v -run TestCLIArgParsing`, `golangci-lint`, and `govulncheck`).
-2. **Begin Task US-006.2:**
-   - Active work item: Task `US-006.2: Implement production instance coordinator with fallback` under [`docs/stories/US-006-lifecycle-cli-single-instance.md`](../stories/US-006-lifecycle-cli-single-instance.md).
-   - Implement coordinator in `internal/instance/`.
+1. **Confirm Task US-006.2 Complete:**
+   - Confirm Task `US-006.2` is `DONE` (`internal/instance/coordinator.go` and `coordinator_test.go` verified with `go test -v -run TestInstanceCoordinator`, `golangci-lint`, and `govulncheck`).
+2. **Begin Task US-006.3:**
+   - Active work item: Task `US-006.3: Wire Wails window focus and event dispatching` under [`docs/stories/US-006-lifecycle-cli-single-instance.md`](../stories/US-006-lifecycle-cli-single-instance.md).
+   - Implement window focus and event dispatching logic.
 3. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.
