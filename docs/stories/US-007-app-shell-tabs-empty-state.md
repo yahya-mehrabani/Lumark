@@ -77,7 +77,7 @@ Build the React frontend application shell, tab navigation system, and empty sta
 
 ### Task US-007.3: Create EmptyState component
 - **Task ID:** `US-007.3`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-007.1`
 - **Completion Criteria:** Renders action buttons, drag-and-drop dropzone, and shortcut cheatsheet.
 - **Verification Command:** `npm run test:unit -- empty-state`
@@ -179,5 +179,28 @@ Exit Code: 0 (PASS)
       Tests  8 passed (8)
    Start at  10:41:29
    Duration  11.55s (environment 62%, import 11%, transform 11%, tests 10%, setup 6%, worker 1%)
+```
+Exit Code: 0 (PASS)
+
+### Task US-007.3 Evidence (`npm run test:unit -- empty-state`)
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run empty-state
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/shell/empty-state.test.tsx (6 tests) 555ms
+   ✓ EmptyState Component (US-007.3) (6)
+     ✓ renders title, subtitle, Open File button, and shortcut cheatsheet 339ms
+     ✓ triggers onOpenFile when the Open File button is clicked 60ms
+     ✓ handles drag-over and drag-leave state transitions on the dropzone 87ms
+     ✓ handles file drop and triggers onFileDrop with dropped files 24ms
+     ✓ renders recent files list and calls onSelectRecentFile when clicked 28ms
+     ✓ displays empty message when no recent files are present 7ms
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  10:45:14
+   Duration  1.79s (environment 40%, tests 37%, import 8%, transform 7%, setup 6%, worker 1%)
 ```
 Exit Code: 0 (PASS)
