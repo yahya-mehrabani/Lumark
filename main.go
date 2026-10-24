@@ -14,8 +14,8 @@ import (
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 
+	"markdown-viewer/internal/assets"
 	"markdown-viewer/internal/dialogs"
-	"markdown-viewer/spike/assets"
 	"markdown-viewer/spike/ipc"
 )
 

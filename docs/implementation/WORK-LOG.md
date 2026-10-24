@@ -1713,3 +1713,31 @@ This log is an append-only chronological record of all significant actions, veri
 ### Story US-010 Completion Status:
 - **Story Status:** `DONE` (All 4 implementation tasks `US-010.1`, `US-010.2`, `US-010.3`, and `US-010.4` completed, independently verified, and committed).
 - **Next Eligible Story:** Story [`US-011: Local Asset Resolution & Safe Link Handling`](../stories/US-011-local-assets-safe-links.md) under Phase 3 / `EPIC-003` (Status: `READY`).
+
+---
+
+## [2026-10-24] — Phase 3: Implement Go AssetResolver with Path Traversal Checks (Task US-011.1)
+
+- **Work Item ID:** `US-011.1`
+- **Agent:** Autonomous Story Runner
+- **Summary:** Implemented the canonical production scoped asset resolver in `internal/assets/resolver.go` with path traversal defenses, symlink escape detection, null-byte rejection, directory access prevention, MIME detection, and Wails asset middleware. Implemented 7 test suites in `internal/assets/resolver_test.go` covering valid assets, traversal rejection, symlink escape, 403/404 responses, HTTP server, and concurrent access. Migrated `main.go` and `spike_service.go` to import `internal/assets`. Implemented frontend asset resolution engine in `frontend/src/features/rendering/image-loader.ts` and test suite `image-loader.test.ts` with 19 tests enforcing FR-ASSET-001, FR-ASSET-004, and PRD 8.1.
+- **Status:** Task `US-011.1` marked `DONE`. Story `US-011` transitioned to `IN_PROGRESS`.
+
+### Actions Taken:
+1. **Implemented Canonical Go Scoped Asset Resolver:** Created `internal/assets/resolver.go` with `ScopedResolver`, `ResolvePath`, `Resolve`, `ServeHTTP`, and `Middleware`. Enforced root boundary checks via `filepath.Rel`, symlink evaluation via `filepath.EvalSymlinks`, path canonicalization, null byte checks, and MIME type mapping. Added security headers `X-Content-Type-Options: nosniff` and `Cache-Control: no-cache, no-store, must-revalidate`.
+2. **Created Go Unit Tests:** Created `internal/assets/resolver_test.go` with 7 test functions matching `TestAssetResolver*` covering valid images, traversal attempts (`../`, `\`, `C:`, UNC, null bytes), symlink escapes, missing assets (404), directory access (403), HTTP serving, and concurrent thread-safe access.
+3. **Migrated Service Imports:** Updated `main.go` and `spike_service.go` to import `markdown-viewer/internal/assets`.
+4. **Implemented Frontend Image Loader:** Created `frontend/src/features/rendering/image-loader.ts` with `resolveAssetUrl`, `encodeAssetPath`, `isPathTraversal`, `isDangerousProtocol`, and `isRemoteUrl`. Enforced blocking of remote images by default per FR-ASSET-004, blocking of dangerous protocols (`javascript:`, `data:`, `file:`, `vbscript:`), and safe relative asset resolution to `/local-asset/...`.
+5. **Created Frontend Unit Tests:** Created `frontend/src/features/rendering/image-loader.test.ts` with 19 tests verifying all resolver logic and acceptance criteria.
+6. **Synchronized Documentation:** Updated `docs/stories/US-011-local-assets-safe-links.md`, `docs/implementation/CURRENT-STATE.md`, `docs/implementation/BACKLOG.md`, and `docs/implementation/WORK-LOG.md`.
+
+### Verification Results:
+- `go test -v -run TestAssetResolver ./internal/assets/...`: 7 test suites PASS in 0.014s.
+- `golangci-lint run ./internal/assets/...`: 0 issues (PASS).
+- `npm --prefix frontend run test:unit -- image-loader`: 19 passed across 1 test file in 1.33s (PASS).
+- `go test ./...`: All backend packages PASS.
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-011.2: Implement custom Image component with error placeholder` under [`docs/stories/US-011-local-assets-safe-links.md`](../stories/US-011-local-assets-safe-links.md).

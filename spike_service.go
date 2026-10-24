@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"sync"
 
-	"markdown-viewer/spike/assets"
+	"markdown-viewer/internal/assets"
 )
 
 // DocumentData encapsulates document path, directory, filename, and markdown content.
