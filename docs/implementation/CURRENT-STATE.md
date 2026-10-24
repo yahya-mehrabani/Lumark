@@ -13,8 +13,8 @@
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
 - **Application Implementation Status:** **PHASE 2 (EPIC-002) COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) through [`US-004`](../stories/US-004-packaging-association-spike.md) (Phase 1 Spike) and Stories [`US-005`](../stories/US-005-native-document-service.md), [`US-006`](../stories/US-006-lifecycle-cli-single-instance.md), [`US-007`](../stories/US-007-app-shell-tabs-empty-state.md), and [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Phase 2 Core Lifecycle & Tabs) fully verified across all implementation tasks under Linux/WSLg.
 - **Feasibility Spike Status:** **SPIKE IMPLEMENTATION COMPLETE / AWAITING CROSS-PLATFORM GATES**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-009.1: Configure react-markdown and remark-gfm pipeline` under [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) (Core CommonMark & GFM AST rendering pipeline configured with `react-markdown` 9.0.3 and `remark-gfm` 4.0.0; verified with 9 unit tests passing via `npm run test:unit -- commonmark-pipeline` and clean production build).
-- **Active / Next Eligible Work Item:** Task `US-009.2: Implement responsive document viewport and typography CSS` under [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) under Phase 3 / `EPIC-003` (Ready for execution under approved Linux-only implementation policy).
+- **Last Completed Work Item:** Task `US-009.2: Implement responsive document viewport and typography CSS` under [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) (Responsive document viewport and typography CSS system implemented in `markdown.css`; GFM tables with horizontal scrolling, task lists, strikethrough, and autolinks verified with 5 unit tests passing via `npm run test:unit -- gfm-pipeline` and clean production build).
+- **Active / Next Eligible Work Item:** Task `US-009.3: Add component tests for CommonMark and GFM constructs` under [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) under Phase 3 / `EPIC-003` (Ready for execution under approved Linux-only implementation policy).
 
 ---
 
@@ -81,10 +81,10 @@ All planning remediation artifacts must be preserved:
 ## 5. Exact Next Action for the Next Agent
 
 The next incoming agent must:
-1. **Confirm Task US-009.1 Complete:**
-   - Confirm Task `US-009.1: Configure react-markdown and remark-gfm pipeline` is `DONE`.
-   - Confirm CommonMark pipeline tests pass with `npm run test:unit -- commonmark-pipeline` (9 tests passed), full test suite passes with 69 tests, and `npm run build` succeeds.
-2. **Execute Task US-009.2:**
-   - Active work item: Task `US-009.2: Implement responsive document viewport and typography CSS` under [`docs/stories/US-009-commonmark-gfm-pipeline.md`](../stories/US-009-commonmark-gfm-pipeline.md).
-   - Implement responsive document viewport and typography CSS for GFM tables, strikethrough, autolinks, and task lists.
+1. **Confirm Task US-009.2 Complete:**
+   - Confirm Task `US-009.2: Implement responsive document viewport and typography CSS` is `DONE`.
+   - Confirm GFM pipeline tests pass with `npm run test:unit -- gfm-pipeline` (5 tests passed), full test suite passes with 74 tests, and `npm run build` succeeds.
+2. **Execute Task US-009.3:**
+   - Active work item: Task `US-009.3: Add component tests for CommonMark and GFM constructs` under [`docs/stories/US-009-commonmark-gfm-pipeline.md`](../stories/US-009-commonmark-gfm-pipeline.md).
+   - Add end-to-end component tests for MarkdownViewer asserting full CommonMark & GFM constructs, error/empty handling, and responsive rendering.
 3. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.

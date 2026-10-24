@@ -1551,3 +1551,29 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-009.2: Implement responsive document viewport and typography CSS` under [`docs/stories/US-009-commonmark-gfm-pipeline.md`](../stories/US-009-commonmark-gfm-pipeline.md).
+
+---
+
+## [2026-10-24] — Phase 3: Implement Responsive Document Viewport and Typography CSS (Task US-009.2)
+
+- **Work Item ID:** `US-009.2`
+- **Agent:** Autonomous Story Runner
+- **Summary:** Implemented responsive document viewport and typography design system in `frontend/src/features/rendering/markdown.css` imported by `MarkdownViewer.tsx`. Designed readable maximum width (850px), system font fallbacks, robust word-breaking (`overflow-wrap: break-word`), and styled CommonMark headings, blockquotes, lists, links, inline code, and fenced code blocks. Implemented GFM table styling with horizontal overflow wrapper (`.table-wrapper` with `overflow-x: auto`), column alignments (`:---`, `:---:`, `---:`), alternating row zebra striping, and GFM task list items with styled checkboxes. Created unit tests in `frontend/src/features/rendering/gfm-pipeline.test.tsx` verifying GFM tables, task list checkboxes, strikethrough (`<del>`), and autolinks. Verified 5 unit tests passing via `npm run test:unit -- gfm-pipeline`, 74 total tests passing across all 9 frontend test files, and clean production build.
+- **Status:** Task `US-009.2` marked `DONE`.
+
+### Actions Taken:
+1. **Implemented Typography & Viewport CSS:** Created `frontend/src/features/rendering/markdown.css` enforcing max-width (850px), system font stack, line height (1.75), code block styling, and table wrapper horizontal scrolling (`overflow-x: auto`).
+2. **Integrated Stylesheet into MarkdownViewer:** Imported `markdown.css` in `frontend/src/features/rendering/MarkdownViewer.tsx`.
+3. **Wrote GFM Pipeline Unit Tests:** Created `frontend/src/features/rendering/gfm-pipeline.test.tsx` covering tables with column alignments and scroll wrappers, task list items (`[ ]` and `[x]`), strikethrough (`<del>`), raw URL autolinking, and composite documents.
+4. **Verified Unit Tests & Production Build:** Ran `npm run test:unit -- gfm-pipeline` (5 passed in 244ms), full test suite `npm run test:unit` (74 passed across 9 test files in 12.4s), and `npm run build` (316 modules transformed in 328ms).
+5. **Documentation Synchronization:** Updated `docs/stories/US-009-commonmark-gfm-pipeline.md`, `docs/implementation/CURRENT-STATE.md`, and `docs/implementation/WORK-LOG.md`.
+
+### Verification Results:
+- `npm run test:unit -- gfm-pipeline`: 5 passed in 244ms (PASS).
+- `npm run test:unit`: 74 passed across 9 test files in 12.40s (PASS).
+- `npm run build`: 316 modules transformed in 328ms (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-009.3: Add component tests for CommonMark and GFM constructs` under [`docs/stories/US-009-commonmark-gfm-pipeline.md`](../stories/US-009-commonmark-gfm-pipeline.md).

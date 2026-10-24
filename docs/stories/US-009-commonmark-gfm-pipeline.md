@@ -67,7 +67,7 @@ Implement the core Markdown rendering pipeline in React using `react-markdown` a
 
 ### Task US-009.2: Implement responsive document viewport and typography CSS
 - **Task ID:** `US-009.2`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-009.1`
 - **Completion Criteria:** CSS rules enforce max-width (e.g., 850px), system font fallbacks, and table overflow-x auto.
 - **Verification Command:** `npm run test:unit -- gfm-pipeline`
@@ -147,4 +147,45 @@ dist/index.html                   0.58 kB │ gzip:   0.34 kB
 dist/assets/index-D1n-9jn8.css    8.32 kB │ gzip:   2.27 kB
 dist/assets/index-D4d3bE9L.js   342.79 kB │ gzip: 106.60 kB
 ✓ built in 378ms
+```
+
+### Task US-009.2 Validation Evidence
+- **Execution Date:** 2026-10-24
+- **Agent ID:** Autonomous Story Runner (Pair Programmer)
+- **Status:** `DONE`
+- **Changed Files:**
+  - `frontend/src/features/rendering/markdown.css`
+  - `frontend/src/features/rendering/MarkdownViewer.tsx`
+  - `frontend/src/features/rendering/gfm-pipeline.test.tsx`
+- **Terminal Output & Verification Evidence:**
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run gfm-pipeline
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/rendering/gfm-pipeline.test.tsx (5 tests) 244ms
+   ✓ GitHub Flavored Markdown (GFM) Pipeline (US-009.2) (5)
+     ✓ parses tables and wraps them in a scrollable table-wrapper container 87ms
+     ✓ parses task list items with disabled checkboxes matching state 20ms
+     ✓ parses strikethrough syntax into <del> elements 10ms
+     ✓ automatically converts raw URLs into clickable links 85ms
+     ✓ renders a composite GFM document with all extensions correctly 37ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  13:52:19
+   Duration  1.65s
+```
+- **Build Verification:**
+```text
+> markdown-viewer-frontend@0.1.0 build
+> tsc && vite build --mode production
+
+vite v8.3.5 building client environment for production...
+✓ 316 modules transformed.
+dist/index.html                   0.58 kB │ gzip:   0.35 kB
+dist/assets/index-RMY3-iKt.css   13.25 kB │ gzip:   3.34 kB
+dist/assets/index-DqmTTRvN.js   342.79 kB │ gzip: 106.60 kB
+✓ built in 328ms
 ```
