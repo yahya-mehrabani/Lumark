@@ -237,7 +237,7 @@ describe('Link and Asset Integration Test Suite (US-011.4)', () => {
     // No navigation or external browser launcher triggered
     expect(Browser.OpenURL).not.toHaveBeenCalled();
     expect(console.warn).toHaveBeenCalledWith(
-      expect.stringContaining('[Security] Blocked navigation attempt to unsafe link: "javascript:alert(1)"')
+      expect.stringContaining('[Security] Blocked navigation attempt to unsafe link:')
     );
   });
 

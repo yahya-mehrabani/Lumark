@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-015`
 - **Parent Epic:** [EPIC-004: Advanced Rendering & Security Sanitization](../epics/EPIC-004-advanced-rendering-security.md)
-- **Status:** `IN_PROGRESS`
+- **Status:** `DONE`
 - **Assigned Phase:** Phase 4 (Advanced Rendering & Security)
 
 ---
@@ -90,7 +90,7 @@ Implement the AST-based HTML and CSS sanitization engine:
 
 ### Task US-015.4: Write unit tests for HTML and CSS sanitization
 - **Task ID:** `US-015.4`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-015.3`
 - **Completion Criteria:** Vitest suite verifies stripping of event handlers, scripts, and CSS overlay rules.
 - **Verification Command:** `npm run test:unit -- sanitization`
@@ -126,6 +126,9 @@ Implement the AST-based HTML and CSS sanitization engine:
   - `frontend/src/features/rendering/security/css-sanitizer.test.ts`
   - `frontend/src/features/rendering/MarkdownViewer.tsx`
   - `frontend/src/features/rendering/security/style-scoping.test.tsx`
+  - `fixtures/golden/html-css-sanitization.md`
+  - `frontend/src/features/rendering/security/sanitization.test.tsx`
+  - `frontend/src/features/rendering/link-asset.test.tsx`
   - `docs/stories/US-015-html-css-sanitization.md`
 - **Terminal Output & Verification Evidence:**
 
@@ -223,3 +226,40 @@ Command: `npm run test:unit -- style-scoping`
    Duration  2.30s (import 42%, environment 33%, tests 13%, transform 7%, setup 5%, worker 1%)
 ```
 TypeScript compilation check (`npx tsc --noEmit`): Exit code 0 (zero errors).
+
+#### Task US-015.4: Write unit tests for HTML and CSS sanitization
+Command: `npm run test:unit -- sanitization`
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run sanitization
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/rendering/security/sanitization.test.tsx (15 tests) 499ms
+   ✓ HTML & CSS Sanitization and Scope Isolation Engine (US-015.4) (15)
+     ✓ Golden Fixture End-to-End Validation (fixtures/golden/html-css-sanitization.md) (9)
+       ✓ renders the golden fixture without errors and with safe HTML intact (AC 1) 184ms
+       ✓ completely strips <script> tags and prevents script execution (AC 2) 39ms
+       ✓ strips inline event handlers like onerror from <img> tags (AC 3) 34ms
+       ✓ scopes author <style> blocks to .markdown-content (AC 4) 25ms
+       ✓ converts position: fixed in <style> to position: absolute to prevent viewport overlays (AC 5) 28ms
+       ✓ completely strips @import at-rules from author stylesheets (AC 6) 28ms
+       ✓ strips active executables (iframe, form, button, input) from raw HTML 28ms
+       ✓ strips javascript: protocol from raw <a> tags while preserving safe links 24ms
+       ✓ gracefully renders malformed HTML/CSS without blanking document (AC 7 & AUD-010) 32ms
+     ✓ Adversarial & Edge-Case Sanitization Tests (6)
+       ✓ neutralizes position: fixed in inline style attributes 7ms
+       ✓ clamps excessive z-index in inline styles to max 10 9ms
+       ✓ strips remote url() declarations from inline background styles 3ms
+       ✓ strips unknown, executable, and proprietary CSS properties 4ms
+       ✓ preserves KaTeX math formulas when combined with safe HTML and CSS 46ms
+       ✓ isolates tab navigation and window controls from document styles 3ms
+
+ Test Files  1 passed (1)
+      Tests  15 passed (15)
+   Start at  18:53:07
+   Duration  2.37s (import 37%, environment 30%, tests 24%, transform 5%, setup 4%)
+```
+TypeScript compilation check (`npx tsc --noEmit`): Exit code 0 (zero errors).
+Full test suite check (`npm run test:unit`): Exit code 0 (34/34 test files passed, 313/313 tests passed).
+Backend Go test check (`go test ./...`): Exit code 0 (all packages passed).

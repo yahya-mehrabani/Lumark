@@ -63,6 +63,52 @@ export const SANITY_HTML_SCHEMA: Options = {
     math: ['xmlns', 'display'],
     annotation: ['encoding'],
     mo: ['stretchy', 'fence', 'separator'],
+    a: [
+      ...((defaultSchema.attributes?.a || []).filter(
+        (attr) => !Array.isArray(attr) || attr[0] !== 'className'
+      )),
+      'className',
+      'class',
+      'href',
+      'title',
+      'ariaLabel',
+      'ariaDescribedBy',
+    ],
+    h2: [
+      ...((defaultSchema.attributes?.h2 || []).filter(
+        (attr) => !Array.isArray(attr) || attr[0] !== 'className'
+      )),
+      'className',
+      'class',
+    ],
+    li: [
+      ...((defaultSchema.attributes?.li || []).filter(
+        (attr) => !Array.isArray(attr) || attr[0] !== 'className'
+      )),
+      'className',
+      'class',
+    ],
+    ol: [
+      ...((defaultSchema.attributes?.ol || []).filter(
+        (attr) => !Array.isArray(attr) || attr[0] !== 'className'
+      )),
+      'className',
+      'class',
+    ],
+    ul: [
+      ...((defaultSchema.attributes?.ul || []).filter(
+        (attr) => !Array.isArray(attr) || attr[0] !== 'className'
+      )),
+      'className',
+      'class',
+    ],
+    section: [
+      ...((defaultSchema.attributes?.section || []).filter(
+        (attr) => !Array.isArray(attr) || attr[0] !== 'className'
+      )),
+      'className',
+      'class',
+    ],
   },
   ancestors: {
     ...defaultSchema.ancestors,

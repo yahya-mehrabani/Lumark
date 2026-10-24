@@ -2284,3 +2284,31 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Task:
 - Task `US-015.4: Write unit tests for HTML and CSS sanitization` under Story [`US-015: HTML & CSS Sanitization and Scope Isolation Engine`](../stories/US-015-html-css-sanitization.md).
+
+---
+
+## 2026-10-24 — Task US-015.4: Write unit tests for HTML and CSS sanitization (Story US-015 Completion)
+
+- **Task ID:** `US-015.4`
+- **Story ID:** [`US-015: HTML & CSS Sanitization and Scope Isolation Engine`](../stories/US-015-html-css-sanitization.md)
+- **Status:** `DONE`
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Created golden test fixture `fixtures/golden/html-css-sanitization.md` exercising all 7 acceptance criteria from US-015: safe HTML tags, attributes (`dir="rtl"`, `class`, `style`), stripped executable tags (`<script>`, `<iframe>`, `<object>`, `<embed>`, `<form>`, `<input>`, `<button>`), stripped event handlers (`onerror`, `onclick`), scoped `<style>` blocks (`.markdown-content` prepending), neutralized `position: fixed` to `position: absolute`, stripped `@import` and remote `url()` declarations, clamped `z-index`, stripped dangerous `href` protocols (`javascript:`) while preserving safe links, and graceful partial rendering of malformed HTML/CSS syntax (AC 7 & AUD-010).
+- Implemented comprehensive Vitest test suite `frontend/src/features/rendering/security/sanitization.test.tsx` (15 tests: 9 golden fixture end-to-end tests, 6 adversarial & edge-case unit tests).
+- Adjusted tag-specific attributes in `SANITY_HTML_SCHEMA` to allow generic `className` on `a`, `h2`, `li`, `ol`, `section`, and `ul` elements.
+- Updated `link-asset.test.tsx` to match sanitized blocked link warnings where dangerous protocol schemes are stripped at the AST level by `rehype-sanitize`.
+- Verified that all 34 frontend test suites (313 unit/integration tests) pass with 0 failures, TypeScript compiles with 0 errors, and all Go backend packages pass.
+- Concluded Story `US-015: HTML & CSS Sanitization and Scope Isolation Engine` with all 4 tasks `DONE`.
+
+### Verification Results:
+- `npm --prefix frontend run test:unit -- sanitization`: 15 passed across 1 test file in 2.37s (PASS).
+- `npm --prefix frontend run test:unit -- html-allowlist css-sanitizer style-scoping sanitization link-asset`: 58 passed across 5 test files in 8.85s (PASS).
+- `npx --prefix frontend tsc --noEmit`: 0 errors (PASS).
+- `npm --prefix frontend run test:unit`: 313 passed across 34 test files in 64.85s (PASS).
+- `go test ./...`: All backend packages pass with 0 failures (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-016.1: Curate malicious Markdown & HTML adversarial corpus` under Story [`US-016: Adversarial Security Test Corpus & Fault Isolation`](../stories/US-016-adversarial-security-corpus.md) (Phase 4 / `EPIC-004`).
