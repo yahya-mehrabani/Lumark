@@ -1149,3 +1149,41 @@ This log is an append-only chronological record of all significant actions, veri
 - **Phase 2 Stories Completed:** `US-005` (`DONE`).
 - **Next Eligible Story / Task:** Story [`US-006: Application Lifecycle, Command-Line Parsing & Single-Instance Routing`](../stories/US-006-lifecycle-cli-single-instance.md), starting with Task `US-006.1` (`READY`).
 - **Phase Gate Status:** In progress under approved Linux-only implementation policy; cross-platform validation deferred.
+
+---
+
+## [2026-10-24] — Phase 2: Implement CLI Argument Parser and Path Normalizer (US-006.1)
+
+- **Work Item ID:** `US-006.1` (under Story `US-006: Application Lifecycle, Command-Line Parsing & Single-Instance Routing`, `EPIC-002`)
+- **Agent:** Antigravity Autonomous Story Runner
+- **Summary:** Implemented `internal/instance/cli.go` and unit test suite `internal/instance/cli_test.go` supporting `FR-OPEN-004`. Implemented `ParseCLI` and `NormalizePath` functions to parse command-line arguments, handle standard flags (`-h`, `--help`, `-v`, `--version`), collect diagnostics on unknown flags, and normalize relative file paths against the current working directory to absolute canonical paths. Successfully handled Unicode paths, paths with spaces, path traversal with `..`, and Windows drive letters. Verified 100% pass rate via `go test -v -run TestCLIArgParsing ./internal/instance/...`, zero issues with `golangci-lint`, and zero vulnerabilities with `govulncheck`.
+
+### Actions Taken:
+1. **Implemented CLI Parser & Path Normalizer (`internal/instance/cli.go`):**
+   - Defined `ParsedCLI` struct containing `Files`, `Help`, `Version`, `Diagnostics`, `RawArgs`, and `WorkingDir`.
+   - Implemented `ParseCLI(workingDir string, args []string) (*ParsedCLI, error)` resolving default working directory when omitted, recognizing flags, and transforming relative paths to absolute canonical paths.
+   - Implemented `NormalizePath(baseDir, rawPath string) (string, error)` handling Windows drive letters, absolute POSIX paths, relative paths joined against `baseDir`, and cleaning paths with `filepath.Clean`.
+2. **Created Unit Test Suite (`internal/instance/cli_test.go`):**
+   - Implemented `TestCLIArgParsing` subtests: `EmptyArgs`, `SingleFileRelative`, `MultipleFilesRelative`, `AbsolutePaths`, `RelativeWithDotDot`, `PathsWithSpaces`, `UnicodePaths`, `HelpFlag`, `VersionFlag`, `UnrecognizedFlags`, `DefaultWorkingDirResolution`, and `WindowsStyleDriveLetter`.
+3. **Quality, Linting & Vulnerability Verification:**
+   - Ran `go test -v -run TestCLIArgParsing ./internal/instance/...` (all 12 subtests PASS).
+   - Ran `golangci-lint run ./internal/instance/...` (0 issues).
+   - Ran `govulncheck ./internal/instance/...` (0 vulnerabilities found).
+4. **Documentation Synchronization:**
+   - Updated `docs/stories/US-006-lifecycle-cli-single-instance.md`: transitioned Story `US-006` to `IN_PROGRESS`, marked Task `US-006.1` as `DONE`, and recorded verification output.
+   - Updated `docs/implementation/CURRENT-STATE.md`: advanced last completed work item to `US-006.1` and next eligible work item to `US-006.2`.
+   - Updated `docs/implementation/BACKLOG.md`: transitioned `US-006` to `IN_PROGRESS`.
+
+### Verification Results:
+- `go test -v -run TestCLIArgParsing ./internal/instance/...`: PASS (exit code 0).
+- `golangci-lint run ./internal/instance/...`: 0 issues (PASS).
+- `govulncheck ./internal/instance/...`: No vulnerabilities found (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **Phase:** Phase 2 (Core Application Structure).
+- **Active Story:** `US-006: Application Lifecycle, Command-Line Parsing & Single-Instance Routing` (`IN_PROGRESS`).
+- **Completed Tasks:** `US-006.1` (`DONE`).
+- **Next Eligible Task:** `US-006.2: Implement production instance coordinator with fallback` under [`US-006`](../stories/US-006-lifecycle-cli-single-instance.md) (`READY`).
+- **Phase Gate Status:** In progress under approved Linux-only implementation policy; cross-platform validation deferred.

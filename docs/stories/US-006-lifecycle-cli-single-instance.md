@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-006`
 - **Parent Epic:** [EPIC-002: Core Native Application Lifecycle & Tab Management](../epics/EPIC-002-native-lifecycle-tabs.md)
-- **Status:** `DRAFT`
+- **Status:** `IN_PROGRESS` (Task US-006.1 complete; CLI argument parsing and path normalization verified)
 - **Assigned Phase:** Phase 2 (Core Application Structure)
 
 ---
@@ -55,7 +55,7 @@ Implement the production application startup lifecycle, CLI argument parsing, an
 
 ### Task US-006.1: Implement CLI argument parser and path normalizer
 - **Task ID:** `US-006.1`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** Resolves relative paths to absolute canonical paths.
 - **Verification Command:** `go test -v -run TestCLIArgParsing ./internal/instance/...`
@@ -65,7 +65,7 @@ Implement the production application startup lifecycle, CLI argument parsing, an
 
 ### Task US-006.2: Implement production instance coordinator with fallback
 - **Task ID:** `US-006.2`
-- **Status:** `DRAFT`
+- **Status:** `READY`
 - **Dependencies:** `US-006.1`
 - **Completion Criteria:** IPC server and client handle connect, transmit, ack, and stale socket recovery.
 - **Verification Command:** `go test -v -run TestInstanceCoordinator ./internal/instance/...`
@@ -111,11 +111,42 @@ Implement the production application startup lifecycle, CLI argument parsing, an
 
 ## 9. Implementation Notes and Validation Evidence
 
-*(To be filled by implementation agent during execution)*
-- **Execution Date:** Not yet executed
-- **Agent ID:** N/A
-- **Changed Files:** None
+### Task US-006.1 Evidence (2026-10-24)
+- **Execution Date:** 2026-10-24
+- **Agent ID:** Autonomous Story Runner
+- **Changed Files:** `internal/instance/cli.go`, `internal/instance/cli_test.go`
+- **Verification Command:** `go test -v -run TestCLIArgParsing ./internal/instance/...`
 - **Terminal Output & Verification Evidence:**
 ```text
-(Awaiting execution in Phase 2)
+=== RUN   TestCLIArgParsing
+=== RUN   TestCLIArgParsing/EmptyArgs
+=== RUN   TestCLIArgParsing/SingleFileRelative
+=== RUN   TestCLIArgParsing/MultipleFilesRelative
+=== RUN   TestCLIArgParsing/AbsolutePaths
+=== RUN   TestCLIArgParsing/RelativeWithDotDot
+=== RUN   TestCLIArgParsing/PathsWithSpaces
+=== RUN   TestCLIArgParsing/UnicodePaths
+=== RUN   TestCLIArgParsing/HelpFlag
+=== RUN   TestCLIArgParsing/VersionFlag
+=== RUN   TestCLIArgParsing/UnrecognizedFlags
+=== RUN   TestCLIArgParsing/DefaultWorkingDirResolution
+=== RUN   TestCLIArgParsing/WindowsStyleDriveLetter
+--- PASS: TestCLIArgParsing (0.00s)
+    --- PASS: TestCLIArgParsing/EmptyArgs (0.00s)
+    --- PASS: TestCLIArgParsing/SingleFileRelative (0.00s)
+    --- PASS: TestCLIArgParsing/MultipleFilesRelative (0.00s)
+    --- PASS: TestCLIArgParsing/AbsolutePaths (0.00s)
+    --- PASS: TestCLIArgParsing/RelativeWithDotDot (0.00s)
+    --- PASS: TestCLIArgParsing/PathsWithSpaces (0.00s)
+    --- PASS: TestCLIArgParsing/UnicodePaths (0.00s)
+    --- PASS: TestCLIArgParsing/HelpFlag (0.00s)
+    --- PASS: TestCLIArgParsing/VersionFlag (0.00s)
+    --- PASS: TestCLIArgParsing/UnrecognizedFlags (0.00s)
+    --- PASS: TestCLIArgParsing/DefaultWorkingDirResolution (0.00s)
+    --- PASS: TestCLIArgParsing/WindowsStyleDriveLetter (0.00s)
+PASS
+ok      markdown-viewer/internal/instance       0.004s
 ```
+- **Linter Output:** `golangci-lint run ./internal/instance/...` -> 0 issues.
+- **Vulnerability Check:** `govulncheck ./internal/instance/...` -> No vulnerabilities found.
+- **Cross-Platform Verification Boundary:** Linux WSL2 execution PASS. Windows native execution deferred to post-implementation cross-platform validation (NOT RUN).
