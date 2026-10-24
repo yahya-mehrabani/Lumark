@@ -82,10 +82,10 @@ Implement safe resolution for local assets and external links:
 
 ### Task US-011.3: Implement custom Link component with protocol dispatcher
 - **Task ID:** `US-011.3`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-011.2`
 - **Completion Criteria:** Intercepts `onClick`, routes `.md` to TabStore, routes `http/https` to Go browser launcher, blocks dangerous schemes.
-- **Verification Command:** `npm run test:unit -- link-router`
+- **Verification Command:** `npm --prefix frontend run test:unit -- link-router`
 - **Expected Observable Result:** Relative .md links open in tabs; external http/https links delegated to OS browser.
 - **Evidence to Record:** Link router test output.
 - **Environment Handling:** Node.js / Vitest environment.
@@ -128,8 +128,14 @@ Implement safe resolution for local assets and external links:
   - `frontend/src/features/rendering/image-loader.test.ts`: 19 Vitest unit tests verifying resolution, traversal blocking, dangerous protocol blocking, and remote blocking.
   - `frontend/src/features/rendering/components/MarkdownImage.tsx`: Custom ReactMarkdown image component with error fallback placeholder, remote blocking card, and path traversal defense.
   - `frontend/src/features/rendering/missing-asset.test.tsx`: 8 Vitest unit tests covering valid rendering, missing image placeholders, remote blocked states, traversal guards, and MarkdownViewer integration.
-  - `frontend/src/features/rendering/MarkdownViewer.tsx`: Integrated `MarkdownImage` into ReactMarkdown components.
-  - `frontend/src/features/rendering/markdown.css`: Structured CSS styling for `.missing-asset-container`, `.missing-asset-badge`, and blocked cards.
+  - `frontend/src/features/rendering/link-router.ts`: Safe link classifier and protocol dispatcher routing relative `.md` to tabStore, delegating external links to OS browser, and blocking dangerous protocols.
+  - `frontend/src/features/rendering/components/MarkdownLink.tsx`: Custom ReactMarkdown link component with safe href mapping, external link badge indicator, and click interception.
+  - `frontend/src/features/rendering/link-router.test.tsx`: 16 Vitest unit tests verifying relative path resolution, link classification, dispatching, and MarkdownViewer integration.
+  - `internal/platform/url_opener.go`: Go external URL service with strict scheme allowlist (`http`, `https`, `mailto`) and Wails browser manager launcher.
+  - `internal/platform/url_opener_test.go`: Backend Go unit tests verifying URL scheme validation and browser dispatching.
+  - `frontend/src/features/rendering/MarkdownViewer.tsx`: Integrated `MarkdownLink` into ReactMarkdown components and configured `urlTransform`.
+  - `frontend/src/features/rendering/markdown.css`: Added styling for `.external-link`, `.blocked-link`, and `.external-link-icon`.
+  - `frontend/src/App.tsx`: Wired `onOpenDocument` callback to `loadDocumentPath`.
 - **Terminal Output & Verification Evidence:**
 ```text
 === RUN   TestAssetResolver_ValidAssets
@@ -156,4 +162,9 @@ ok      markdown-viewer/internal/assets 0.014s
  ✓ src/features/rendering/missing-asset.test.tsx (8 tests) 151ms
  Test Files  1 passed (1)
       Tests  8 passed (8)
+
+> vitest run link-router
+ ✓ src/features/rendering/link-router.test.tsx (16 tests) 215ms
+ Test Files  1 passed (1)
+      Tests  16 passed (16)
 ```

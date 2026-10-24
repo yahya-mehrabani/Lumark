@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { CodeBlock } from './components/CodeBlock';
 import { MarkdownImage } from './components/MarkdownImage';
+import { MarkdownLink } from './components/MarkdownLink';
 import './markdown.css';
 
 export interface DocumentInfo {
@@ -16,12 +17,16 @@ export interface MarkdownViewerProps {
   document?: DocumentInfo;
   content?: string;
   className?: string;
+  onOpenDocument?: (filePath: string, anchor?: string) => void;
+  onOpenExternalUrl?: (url: string) => Promise<void> | void;
 }
 
 export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
   document,
   content: rawContent,
   className = '',
+  onOpenDocument,
+  onOpenExternalUrl,
 }) => {
   const content = document ? document.content : (rawContent ?? '');
   const filename = document?.filename;
@@ -46,6 +51,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
       <main className="markdown-content" data-testid="markdown-content">
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
+          urlTransform={(url) => url}
           components={{
             table: ({ node, ...props }) => (
               <div className="table-wrapper" role="region" tabIndex={0} aria-label="Table">
@@ -53,6 +59,14 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
               </div>
             ),
             img: ({ node, ...props }) => <MarkdownImage docDir={document?.dir} {...props} />,
+            a: ({ node, ...props }) => (
+              <MarkdownLink
+                docDir={document?.dir}
+                onOpenMarkdown={onOpenDocument}
+                onOpenExternal={onOpenExternalUrl}
+                {...props}
+              />
+            ),
             pre: ({ children, node, ...props }) => {
               if (React.isValidElement(children)) {
                 const codeProps = children.props as { className?: string; children?: React.ReactNode };

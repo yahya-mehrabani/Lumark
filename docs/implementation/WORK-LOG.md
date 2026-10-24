@@ -1767,3 +1767,33 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-011.3: Implement custom Link component with protocol dispatcher` under [`docs/stories/US-011-local-assets-safe-links.md`](../stories/US-011-local-assets-safe-links.md).
+
+---
+
+## [2026-10-24] — Phase 3: Implement Custom Link Component with Protocol Dispatcher (Task US-011.3)
+
+- **Work Item ID:** `US-011.3`
+- **Agent:** Autonomous Story Runner
+- **Summary:** Implemented `link-router.ts` and `MarkdownLink.tsx` in `frontend/src/features/rendering/` to classify and dispatch links. Intercepts clicks, normalizes and resolves relative Markdown links (`.md`, `.markdown`, `.mdown`, `.mkd`) against the active document's parent directory, preserves anchor fragments, delegates external URLs (`http`, `https`, `mailto`) to default OS browser via `@wailsio/runtime` `Browser.OpenURL` without navigating the WebView, and strictly blocks dangerous schemes (`javascript:`, `data:`, `file:`, unknown schemes) with security warnings. Created `internal/platform/url_opener.go` in Go backend with strict scheme validation and browser launching. Integrated `MarkdownLink` into `MarkdownViewer.tsx` and wired `onOpenDocument` callback in `App.tsx`. Verified with 16 Vitest unit tests in `link-router.test.tsx`, full backend Go tests, and clean production build.
+- **Status:** Task `US-011.3` marked `DONE`. Story `US-011` remains `IN_PROGRESS`.
+
+### Actions Taken:
+1. **Implemented Link Router Engine:** Created `frontend/src/features/rendering/link-router.ts` with `classifyLink`, `resolveRelativePath`, and `dispatchLink`. Enforced scheme allowlist (`https:`, `http:`, `mailto:`), supported markdown extensions (`.md`, `.markdown`, `.mdown`, `.mkd`), anchor navigation, and blocking of executable/sensitive schemes.
+2. **Implemented MarkdownLink Component:** Created `frontend/src/features/rendering/components/MarkdownLink.tsx` intercepting link click events, routing to `dispatchLink`, rendering external link indicator icon (`↗`), and mapping blocked links to safe `#` href to prevent browser navigation and React XSS warnings.
+3. **Implemented Backend URL Opener:** Created `internal/platform/url_opener.go` and `url_opener_test.go` enforcing strict scheme validation and browser runner integration.
+4. **Wired into Viewport and App:** Updated `MarkdownViewer.tsx` to route `a` tags through `MarkdownLink` with `urlTransform={(url) => url}`, and updated `App.tsx` to forward `onOpenDocument` to `loadDocumentPath`.
+5. **Added Link CSS Styling:** Updated `markdown.css` with `.external-link`, `.blocked-link`, and `.external-link-icon`.
+6. **Created Unit Tests:** Created `frontend/src/features/rendering/link-router.test.tsx` with 16 tests covering relative path resolution, link classification, dispatching, browser delegation, security warning logging on XSS links, and MarkdownViewer integration.
+7. **Synchronized Documentation:** Updated `docs/stories/US-011-local-assets-safe-links.md`, `docs/implementation/CURRENT-STATE.md`, and `docs/implementation/WORK-LOG.md`.
+
+### Verification Results:
+- `npm --prefix frontend run test:unit -- link-router`: 16 passed across 1 test file in 215ms (PASS).
+- `go test -v ./internal/platform/...`: 2 test suites PASS in 0.051s (PASS).
+- `npm --prefix frontend run build`: Clean production bundle built in 1.79s (PASS).
+- `go test ./...`: All backend packages PASS.
+- `golangci-lint run ./...`: 0 issues (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-011.4: Write unit and integration tests` under [`docs/stories/US-011-local-assets-safe-links.md`](../stories/US-011-local-assets-safe-links.md).

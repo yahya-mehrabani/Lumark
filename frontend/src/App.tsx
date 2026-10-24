@@ -145,6 +145,7 @@ export function App() {
                 dir: tab.parentDir,
                 content: tab.content,
               }}
+              onOpenDocument={(targetPath) => loadDocumentPath(targetPath)}
             />
           </div>
         )}

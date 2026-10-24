@@ -157,6 +157,29 @@
   text-decoration: underline;
 }
 
+.markdown-content a.external-link {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
+}
+
+.external-link-icon {
+  font-size: 0.75em;
+  opacity: 0.75;
+  transition: opacity 0.15s ease;
+}
+
+.markdown-content a.external-link:hover .external-link-icon {
+  opacity: 1;
+}
+
+.markdown-content a.blocked-link {
+  color: #f87171;
+  text-decoration: line-through;
+  cursor: not-allowed;
+  opacity: 0.85;
+}
+
 /* Code (inline) */
 .markdown-content code:not(pre code) {
   background: rgba(15, 23, 42, 0.6);
