@@ -548,3 +548,106 @@
   font-style: italic;
   padding-left: 4px;
 }
+
+/* --- Mermaid Diagrams & Fault Isolation (FR-RENDER-005, FR-RENDER-009, PRD §5.4) --- */
+.mermaid-container {
+  margin: 2em 0;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: rgba(15, 23, 42, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 1.5em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  -webkit-overflow-scrolling: touch;
+  direction: ltr !important;
+}
+
+.mermaid-container.loading {
+  min-height: 80px;
+  color: #94a3b8;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.mermaid-svg-wrapper {
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.mermaid-svg-wrapper svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Localized Mermaid Syntax Error Fallback Card */
+.mermaid-error-card {
+  margin: 1.75em 0;
+  padding: 16px;
+  border-radius: 8px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+  direction: ltr !important;
+  text-align: left;
+}
+
+.mermaid-error-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.mermaid-error-icon {
+  flex-shrink: 0;
+  color: #ef4444;
+}
+
+.mermaid-error-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #f87171;
+}
+
+.mermaid-error-message {
+  margin: 0 0 12px 0;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: #fecaca;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.mermaid-raw-source-container {
+  margin-top: 10px;
+  border-top: 1px solid rgba(239, 68, 68, 0.2);
+  padding-top: 10px;
+}
+
+.mermaid-raw-source-label {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  margin-bottom: 6px;
+}
+
+.mermaid-raw-source {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  overflow-x: auto;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: #e2e8f0;
+}

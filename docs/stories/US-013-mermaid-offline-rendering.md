@@ -69,7 +69,7 @@ Render Mermaid diagrams offline with strict security sandboxing and fault isolat
 
 ### Task US-013.2: Implement MermaidBlock React component with error boundary
 - **Task ID:** `US-013.2`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-013.1`
 - **Completion Criteria:** Uses `mermaid.render`, sanitizes SVG output, and catches parse errors cleanly.
 - **Verification Command:** `npm run test:unit -- mermaid-error-fallback`
@@ -146,4 +146,33 @@ $ npm --prefix frontend run test:unit -- mermaid-adapter
 
 $ npm --prefix frontend run build
 ✓ built in 1.95s (exit code 0)
+```
+
+### Task US-013.2 Validation Evidence
+- **Execution Date:** 2026-10-24
+- **Agent ID:** Antigravity Autonomous Runner
+- **Changed Files:**
+  - `frontend/src/features/rendering/components/MermaidBlock.tsx` (MermaidBlock component with localized error boundary and MermaidErrorCard)
+  - `frontend/src/features/rendering/MarkdownViewer.tsx` (wired MermaidBlock for ````mermaid ... ```` code fences)
+  - `frontend/src/features/rendering/markdown.css` (styles for mermaid container, loading state, error card, and raw source)
+  - `frontend/src/features/rendering/mermaid-error-fallback.test.tsx` (5 unit/integration tests verifying error handling, isolation, error boundaries, and MarkdownViewer integration)
+- **Verification Command & Output:**
+```text
+$ npm --prefix frontend run test:unit -- mermaid-error-fallback
+
+ ✓ src/features/rendering/mermaid-error-fallback.test.tsx (5 tests) 2403ms
+   ✓ Mermaid Error Boundary & Fault Isolation (US-013.2) (5)
+     ✓ renders a valid diagram successfully into sanitized SVG container 1310ms
+     ✓ renders a formatted error card displaying syntax error and preserving raw code on invalid syntax 168ms
+     ✓ isolates diagram errors so one broken diagram does not break valid diagrams 377ms
+     ✓ catches unexpected React rendering errors via MermaidErrorBoundary 60ms
+     ✓ integrates seamlessly in MarkdownViewer with mixed Markdown, valid diagram, and broken diagram 477ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  17:17:58
+   Duration  7.24s
+
+$ npm --prefix frontend run build
+✓ built in 7.52s (exit code 0)
 ```

@@ -1954,3 +1954,28 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Task:
 - Task `US-013.2: Implement MermaidBlock React component with error boundary` under Story [`US-013`](../stories/US-013-mermaid-offline-rendering.md).
+
+---
+
+## 2026-10-24: Task US-013.2 Execution — Implement MermaidBlock React Component with Error Boundary
+
+- **Task ID:** `US-013.2`
+- **Parent Story:** [`US-013: Mermaid Diagrams Offline Rendering & Error Isolation`](../stories/US-013-mermaid-offline-rendering.md)
+- **Status:** Task `US-013.2` marked `DONE`. Story `US-013` marked `IN_PROGRESS`. Epic `EPIC-004` marked `IN_PROGRESS`.
+
+### Actions Taken:
+1. **Implemented MermaidBlock Component:** Created `frontend/src/features/rendering/components/MermaidBlock.tsx` rendering sanitized SVG inside an LTR bounded scrollable container with a localized `MermaidErrorBoundary` preventing document-wide crashes per FR-RENDER-009.
+2. **Implemented Formatted Error Fallback Card:** Built `MermaidErrorCard` displaying "Mermaid Syntax Error", concise error details, and raw diagram source code in a monospace block.
+3. **Integrated into Markdown Pipeline:** Updated `frontend/src/features/rendering/MarkdownViewer.tsx` to route ````mermaid ... ```` fenced code blocks to `MermaidBlock`.
+4. **Added Responsive and Dark-Mode Styles:** Extended `frontend/src/features/rendering/markdown.css` with responsive container styles (`overflow-x: auto`, `direction: ltr !important`), loading indicator styles, and error card styling.
+5. **Authored Comprehensive Unit/Integration Tests:** Created `frontend/src/features/rendering/mermaid-error-fallback.test.tsx` verifying valid diagram rendering, syntax error fallback card, raw source preservation, fault isolation across multiple diagrams, React error boundary catching, and MarkdownViewer end-to-end integration.
+6. **Verified Unit Tests & Production Build:** Executed `npm --prefix frontend run test:unit -- mermaid-error-fallback` (5/5 tests passed in 2403ms) and verified clean TypeScript compilation and production bundle build with `npm --prefix frontend run build` (clean build in 7.52s).
+
+### Verification Results:
+- `npm --prefix frontend run test:unit -- mermaid-error-fallback`: 5 passed across 1 test file in 2403ms (PASS).
+- `npm --prefix frontend run build`: Clean production bundle built in 7.52s (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Task:
+- Task `US-013.3: Implement theme synchronization (Light/Dark)` under Story [`US-013`](../stories/US-013-mermaid-offline-rendering.md).

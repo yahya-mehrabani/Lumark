@@ -5,6 +5,7 @@ import { CodeBlock } from './components/CodeBlock';
 import { Heading } from './components/Heading';
 import { MarkdownImage } from './components/MarkdownImage';
 import { MarkdownLink } from './components/MarkdownLink';
+import { MermaidBlock } from './components/MermaidBlock';
 import { SlugTracker, SlugContext } from './utils/slugify';
 import './markdown.css';
 
@@ -92,6 +93,9 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
                       : String(codeProps.children ?? '');
                   const match = /language-([a-zA-Z0-9_+-]+)/.exec(codeProps.className || '');
                   const language = match ? match[1] : undefined;
+                  if (language?.toLowerCase() === 'mermaid') {
+                    return <MermaidBlock rawCode={rawCode} />;
+                  }
                   return <CodeBlock rawCode={rawCode} language={language} />;
                 }
                 return <pre {...props}>{children}</pre>;
