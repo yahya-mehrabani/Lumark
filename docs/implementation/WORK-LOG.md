@@ -1264,3 +1264,50 @@ This log is an append-only chronological record of all significant actions, veri
 - **Completed Tasks:** `US-006.1` (`DONE`), `US-006.2` (`DONE`), `US-006.3` (`DONE`).
 - **Next Eligible Task:** `US-006.4: Write unit and integration tests for instance coordinator` under [`US-006`](../stories/US-006-lifecycle-cli-single-instance.md) (`READY`).
 - **Phase Gate Status:** In progress under approved Linux-only implementation policy; cross-platform validation deferred.
+
+---
+
+## [2026-10-24] — Phase 2: Write Unit and Integration Tests for Instance Coordinator (US-006.4)
+
+- **Work Item ID:** `US-006.4` (Completing Story `US-006: Application Lifecycle, Command-Line Parsing & Single-Instance Routing`, `EPIC-002`)
+- **Agent:** Antigravity Autonomous Story Runner
+- **Summary:** Implemented comprehensive unit and integration test suite in `internal/instance/` covering concurrency under `-race`, payload serialization, error boundaries, directory resolution fallback, and rapid sequential launches. Created `internal/instance/protocol_test.go` and `internal/instance/integration_test.go`, and ensured all test mocks in `internal/instance/router_test.go` are thread-safe with mutex protection. Verified 10 concurrent secondary processes sending payloads to primary simultaneously without race conditions, rapid shell-loop sequence of 5 launches without dropping paths, 1 MB payload limits, malformed JSON recovery, and directory resolution hierarchy. Executed `go test -count=1 -v -race ./internal/instance/...` with 100% passing tests, zero linter issues via `golangci-lint`, and zero vulnerabilities via `govulncheck`. Concluded User Story `US-006` with all 4 tasks (`US-006.1` through `US-006.4`) complete and verified.
+
+### Actions Taken:
+1. **Created Protocol Unit Tests (`internal/instance/protocol_test.go`):**
+   - Implemented `TestProtocol_Roundtrip` testing `StandardPaths`, `UnicodeAndSpaces`, and `EmptyArgs`.
+   - Implemented `TestProtocol_OversizedPayload` verifying rejection of payloads > 1 MB.
+   - Implemented `TestProtocol_TruncatedData` covering truncated length prefixes, truncated bodies, and malformed JSON payloads.
+   - Implemented `TestProtocol_AckByte` testing valid and invalid ACK responses.
+2. **Created Integration Tests (`internal/instance/integration_test.go`):**
+   - Implemented `TestCoordinator_ConcurrentSenders` with 10 concurrent secondary processes sending messages to primary under `go test -race`.
+   - Implemented `TestCoordinator_RapidSequentialLaunches` simulating shell loop launches with 5 files.
+   - Implemented `TestCoordinator_DirectoryResolution` verifying standard XDG runtime directory, user cache fallback, and temp directory UID fallback.
+   - Implemented `TestCoordinator_ContextCancellationDuringSend` and `TestCoordinator_SendFailsWhenNoPrimary`.
+3. **Hardened Thread Safety (`internal/instance/router_test.go`):**
+   - Added mutex protection and safe accessors to `mockWindowController` and `mockEventDispatcher` to guarantee zero data races during concurrent message routing.
+4. **Comprehensive Quality & Vulnerability Verification:**
+   - Ran `go test -count=1 -v -race ./internal/instance/...` (all subtests PASS, 0 race warnings).
+   - Ran full project tests `go test -v -race ./...` (all packages PASS).
+   - Ran `golangci-lint run ./internal/instance/...` (0 issues).
+   - Ran `govulncheck ./internal/instance/...` (0 vulnerabilities found).
+5. **Documentation Synchronization:**
+   - Updated `docs/stories/US-006-lifecycle-cli-single-instance.md`: marked Task `US-006.4` as `DONE`, transitioned Story `US-006` to `DONE`, and recorded verification output.
+   - Updated `docs/implementation/REQUIREMENT-TRACEABILITY.md`: updated `FR-OPEN-004` and `FR-OPEN-005` to `IN_PROGRESS` / `PARTIALLY_VERIFIED`.
+   - Updated `docs/implementation/BACKLOG.md`: advanced `US-006` to `DONE` and `US-007` to `READY`.
+   - Updated `docs/implementation/CURRENT-STATE.md`: advanced last completed work item to `US-006.4` (Story `US-006` `DONE`) and next eligible work item to `US-007.1`.
+
+### Verification Results:
+- `go test -count=1 -v -race ./internal/instance/...`: PASS (0 race warnings).
+- `go test -v -race ./...`: PASS across all packages.
+- `golangci-lint run ./internal/instance/...`: 0 issues (PASS).
+- `govulncheck ./internal/instance/...`: No vulnerabilities found (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **Phase:** Phase 2 (Core Application Structure).
+- **Completed Stories:** `US-005` (`DONE`), `US-006` (`DONE`).
+- **Active Story:** None (Story `US-006` complete).
+- **Next Eligible Story:** Story [`US-007: Frontend Application Shell, Tab State Management & Empty State`](../stories/US-007-app-shell-tabs-empty-state.md), starting with Task `US-007.1` (`READY`).
+- **Phase Gate Status:** In progress under approved Linux-only implementation policy; cross-platform validation deferred.

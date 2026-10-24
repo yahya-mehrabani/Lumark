@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-006`
 - **Parent Epic:** [EPIC-002: Core Native Application Lifecycle & Tab Management](../epics/EPIC-002-native-lifecycle-tabs.md)
-- **Status:** `IN_PROGRESS` (Task US-006.1 complete; CLI argument parsing and path normalization verified)
+- **Status:** `DONE` (Go backend CLI parser, single-instance coordinator, window focus/event router, and comprehensive unit/integration test suite verified under -race)
 - **Assigned Phase:** Phase 2 (Core Application Structure)
 
 ---
@@ -85,7 +85,7 @@ Implement the production application startup lifecycle, CLI argument parsing, an
 
 ### Task US-006.4: Write unit and integration tests for instance coordinator
 - **Task ID:** `US-006.4`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-006.3`
 - **Completion Criteria:** Unit tests verify concurrency, payload serialization, and stale cleanup.
 - **Verification Command:** `go test -v -race ./internal/instance/...`
@@ -206,3 +206,75 @@ ok      markdown-viewer/internal/instance       0.006s
 - **Linter Output:** `golangci-lint run ./internal/instance/...` -> 0 issues.
 - **Vulnerability Check:** `govulncheck ./internal/instance/...` -> No vulnerabilities found.
 - **Cross-Platform Verification Boundary:** Linux WSL2 execution PASS. Windows native execution deferred to post-implementation cross-platform validation (NOT RUN).
+
+### Task US-006.4 Evidence (2026-10-24)
+- **Execution Date:** 2026-10-24
+- **Agent ID:** Autonomous Story Runner
+- **Changed Files:** `internal/instance/protocol_test.go`, `internal/instance/integration_test.go`, `internal/instance/router_test.go`
+- **Verification Command:** `go test -count=1 -v -race ./internal/instance/...`
+- **Terminal Output & Verification Evidence:**
+```text
+=== RUN   TestCLIArgParsing
+=== RUN   TestCLIArgParsing/EmptyArgs
+=== RUN   TestCLIArgParsing/SingleFileRelative
+=== RUN   TestCLIArgParsing/MultipleFilesRelative
+=== RUN   TestCLIArgParsing/AbsolutePaths
+=== RUN   TestCLIArgParsing/RelativeWithDotDot
+=== RUN   TestCLIArgParsing/PathsWithSpaces
+=== RUN   TestCLIArgParsing/UnicodePaths
+=== RUN   TestCLIArgParsing/HelpFlag
+=== RUN   TestCLIArgParsing/VersionFlag
+=== RUN   TestCLIArgParsing/UnrecognizedFlags
+=== RUN   TestCLIArgParsing/DefaultWorkingDirResolution
+=== RUN   TestCLIArgParsing/WindowsStyleDriveLetter
+--- PASS: TestCLIArgParsing (0.00s)
+=== RUN   TestInstanceCoordinator
+=== RUN   TestInstanceCoordinator/PrimaryStartup
+=== RUN   TestInstanceCoordinator/SecondaryConnectAndTransmit
+=== RUN   TestInstanceCoordinator/StaleSocketRecovery
+=== RUN   TestInstanceCoordinator/MultiFileForwarding
+=== RUN   TestInstanceCoordinator/UnicodeAndSpaces
+=== RUN   TestInstanceCoordinator/DoubleClose
+--- PASS: TestInstanceCoordinator (0.01s)
+=== RUN   TestCoordinator_ConcurrentSenders
+--- PASS: TestCoordinator_ConcurrentSenders (0.00s)
+=== RUN   TestCoordinator_RapidSequentialLaunches
+--- PASS: TestCoordinator_RapidSequentialLaunches (0.00s)
+=== RUN   TestCoordinator_DirectoryResolution
+=== RUN   TestCoordinator_DirectoryResolution/XDGRuntimeDirPreferred
+=== RUN   TestCoordinator_DirectoryResolution/UserCacheFallback
+=== RUN   TestCoordinator_DirectoryResolution/TempDirUIDFallback
+--- PASS: TestCoordinator_DirectoryResolution (0.00s)
+=== RUN   TestCoordinator_ContextCancellationDuringSend
+--- PASS: TestCoordinator_ContextCancellationDuringSend (0.00s)
+=== RUN   TestCoordinator_SendFailsWhenNoPrimary
+--- PASS: TestCoordinator_SendFailsWhenNoPrimary (0.02s)
+=== RUN   TestProtocol_Roundtrip
+=== RUN   TestProtocol_Roundtrip/StandardPaths
+=== RUN   TestProtocol_Roundtrip/UnicodeAndSpaces
+=== RUN   TestProtocol_Roundtrip/EmptyArgs
+--- PASS: TestProtocol_Roundtrip (0.00s)
+=== RUN   TestProtocol_OversizedPayload
+--- PASS: TestProtocol_OversizedPayload (0.03s)
+=== RUN   TestProtocol_TruncatedData
+=== RUN   TestProtocol_TruncatedData/TruncatedLengthPrefix
+=== RUN   TestProtocol_TruncatedData/TruncatedPayloadData
+=== RUN   TestProtocol_TruncatedData/MalformedJSON
+--- PASS: TestProtocol_TruncatedData (0.00s)
+=== RUN   TestProtocol_AckByte
+--- PASS: TestProtocol_AckByte (0.00s)
+=== RUN   TestWindowEventDispatch
+=== RUN   TestWindowEventDispatch/SingleDocumentDispatch
+=== RUN   TestWindowEventDispatch/MultipleDocumentsDispatch
+=== RUN   TestWindowEventDispatch/MinimisedWindowRestoration
+=== RUN   TestWindowEventDispatch/NilWindowSafe
+=== RUN   TestWindowEventDispatch/CustomEventName
+=== RUN   TestWindowEventDispatch/CoordinatorIntegration
+--- PASS: TestWindowEventDispatch (0.02s)
+PASS
+ok      markdown-viewer/internal/instance       1.114s
+```
+- **Linter Output:** `golangci-lint run ./internal/instance/...` -> 0 issues.
+- **Vulnerability Check:** `govulncheck ./internal/instance/...` -> No vulnerabilities found.
+- **Cross-Platform Verification Boundary:** Linux WSL2 execution PASS. Windows native execution deferred to post-implementation cross-platform validation (NOT RUN).
+- **Story US-006 Completion Verdict:** DONE across all 4 implementation tasks (US-006.1 through US-006.4). All acceptance criteria AC-1 through AC-4 satisfied.

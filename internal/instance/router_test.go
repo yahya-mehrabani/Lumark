@@ -3,11 +3,13 @@ package instance
 import (
 	"context"
 	"path/filepath"
+	"sync"
 	"testing"
 	"time"
 )
 
 type mockWindowController struct {
+	mu             sync.Mutex
 	showCalled     int
 	focusCalled    int
 	restoreCalled  int
@@ -15,23 +17,38 @@ type mockWindowController struct {
 }
 
 func (m *mockWindowController) Show() {
+	m.mu.Lock()
+	defer m.mu.Unlock()
 	m.showCalled++
 }
 
 func (m *mockWindowController) Focus() {
+	m.mu.Lock()
+	defer m.mu.Unlock()
 	m.focusCalled++
 }
 
 func (m *mockWindowController) Restore() {
+	m.mu.Lock()
+	defer m.mu.Unlock()
 	m.restoreCalled++
 	m.isMinimisedVal = false
 }
 
 func (m *mockWindowController) IsMinimised() bool {
+	m.mu.Lock()
+	defer m.mu.Unlock()
 	return m.isMinimisedVal
 }
 
+func (m *mockWindowController) Counts() (show, focus, restore int) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	return m.showCalled, m.focusCalled, m.restoreCalled
+}
+
 type mockEventDispatcher struct {
+	mu            sync.Mutex
 	emittedEvents map[string][]any
 }
 
@@ -42,11 +59,22 @@ func newMockEventDispatcher() *mockEventDispatcher {
 }
 
 func (m *mockEventDispatcher) Emit(eventName string, data ...any) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
 	var payload any
 	if len(data) > 0 {
 		payload = data[0]
 	}
 	m.emittedEvents[eventName] = append(m.emittedEvents[eventName], payload)
+}
+
+func (m *mockEventDispatcher) Events(eventName string) []any {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	list := m.emittedEvents[eventName]
+	copied := make([]any, len(list))
+	copy(copied, list)
+	return copied
 }
 
 func TestWindowEventDispatch(t *testing.T) {
@@ -68,7 +96,7 @@ func TestWindowEventDispatch(t *testing.T) {
 		}
 
 		// Verify event was emitted
-		emitted := dispatcher.emittedEvents[DefaultOpenDocumentEvent]
+		emitted := dispatcher.Events(DefaultOpenDocumentEvent)
 		if len(emitted) != 1 {
 			t.Fatalf("expected 1 event, got %d", len(emitted))
 		}
@@ -77,14 +105,15 @@ func TestWindowEventDispatch(t *testing.T) {
 		}
 
 		// Verify window Show and Focus were invoked
-		if win.showCalled != 1 {
-			t.Errorf("expected Show() called 1 time, got %d", win.showCalled)
+		show, focus, restore := win.Counts()
+		if show != 1 {
+			t.Errorf("expected Show() called 1 time, got %d", show)
 		}
-		if win.focusCalled != 1 {
-			t.Errorf("expected Focus() called 1 time, got %d", win.focusCalled)
+		if focus != 1 {
+			t.Errorf("expected Focus() called 1 time, got %d", focus)
 		}
-		if win.restoreCalled != 0 {
-			t.Errorf("expected Restore() called 0 times, got %d", win.restoreCalled)
+		if restore != 0 {
+			t.Errorf("expected Restore() called 0 times, got %d", restore)
 		}
 	})
 
@@ -103,7 +132,7 @@ func TestWindowEventDispatch(t *testing.T) {
 			t.Fatalf("expected 3 paths, got %d", len(paths))
 		}
 
-		emitted := dispatcher.emittedEvents[DefaultOpenDocumentEvent]
+		emitted := dispatcher.Events(DefaultOpenDocumentEvent)
 		if len(emitted) != 3 {
 			t.Fatalf("expected 3 emitted events, got %d", len(emitted))
 		}
@@ -114,8 +143,9 @@ func TestWindowEventDispatch(t *testing.T) {
 			}
 		}
 
-		if win.showCalled != 1 || win.focusCalled != 1 {
-			t.Errorf("expected Show and Focus called once, got show=%d, focus=%d", win.showCalled, win.focusCalled)
+		show, focus, _ := win.Counts()
+		if show != 1 || focus != 1 {
+			t.Errorf("expected Show and Focus called once, got show=%d, focus=%d", show, focus)
 		}
 	})
 
@@ -129,14 +159,15 @@ func TestWindowEventDispatch(t *testing.T) {
 			t.Fatalf("unexpected error: %v", err)
 		}
 
-		if win.restoreCalled != 1 {
-			t.Errorf("expected Restore() called 1 time for minimised window, got %d", win.restoreCalled)
+		show, focus, restore := win.Counts()
+		if restore != 1 {
+			t.Errorf("expected Restore() called 1 time for minimised window, got %d", restore)
 		}
-		if win.showCalled != 1 {
-			t.Errorf("expected Show() called 1 time, got %d", win.showCalled)
+		if show != 1 {
+			t.Errorf("expected Show() called 1 time, got %d", show)
 		}
-		if win.focusCalled != 1 {
-			t.Errorf("expected Focus() called 1 time, got %d", win.focusCalled)
+		if focus != 1 {
+			t.Errorf("expected Focus() called 1 time, got %d", focus)
 		}
 	})
 
@@ -151,7 +182,7 @@ func TestWindowEventDispatch(t *testing.T) {
 		if len(paths) != 1 {
 			t.Errorf("expected 1 path, got %d", len(paths))
 		}
-		emitted := dispatcher.emittedEvents[DefaultOpenDocumentEvent]
+		emitted := dispatcher.Events(DefaultOpenDocumentEvent)
 		if len(emitted) != 1 {
 			t.Errorf("expected 1 event emitted, got %d", len(emitted))
 		}
@@ -172,8 +203,8 @@ func TestWindowEventDispatch(t *testing.T) {
 			t.Fatalf("unexpected error: %v", err)
 		}
 
-		if len(dispatcher.emittedEvents[customEvent]) != 1 {
-			t.Errorf("expected 1 event under %q, got %d", customEvent, len(dispatcher.emittedEvents[customEvent]))
+		if len(dispatcher.Events(customEvent)) != 1 {
+			t.Errorf("expected 1 event under %q, got %d", customEvent, len(dispatcher.Events(customEvent)))
 		}
 	})
 
@@ -243,8 +274,9 @@ func TestWindowEventDispatch(t *testing.T) {
 		expectedPath := filepath.Join(tempDir, "forwarded_doc.md")
 		success := false
 		for start := time.Now(); time.Since(start) < 2*time.Second; {
-			if len(dispatcher.emittedEvents[DefaultOpenDocumentEvent]) > 0 {
-				payload := dispatcher.emittedEvents[DefaultOpenDocumentEvent][0]
+			events := dispatcher.Events(DefaultOpenDocumentEvent)
+			if len(events) > 0 {
+				payload := events[0]
 				if payload == expectedPath {
 					success = true
 					break
@@ -254,11 +286,12 @@ func TestWindowEventDispatch(t *testing.T) {
 		}
 
 		if !success {
-			t.Fatalf("timed out waiting for event emission of %q; received: %v", expectedPath, dispatcher.emittedEvents)
+			t.Fatalf("timed out waiting for event emission of %q; received: %v", expectedPath, dispatcher.Events(DefaultOpenDocumentEvent))
 		}
 
-		if win.showCalled < 1 || win.focusCalled < 1 {
-			t.Errorf("expected window Show and Focus called, got show=%d, focus=%d", win.showCalled, win.focusCalled)
+		show, focus, _ := win.Counts()
+		if show < 1 || focus < 1 {
+			t.Errorf("expected window Show and Focus called, got show=%d, focus=%d", show, focus)
 		}
 	})
 }

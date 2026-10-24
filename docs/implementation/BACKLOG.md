@@ -48,8 +48,8 @@ This document is the authoritative index of all Epics and User Stories for `mark
 | Story ID | Title | Priority | Status | Dependencies | Story Link |
 |---|---|---|---|---|---|
 | `US-005` | Native Document Service & Secure File Loading | P0 | `DONE` | `EPIC-001` | [US-005.md](../stories/US-005-native-document-service.md) |
-| `US-006` | Application Lifecycle, Command-Line Parsing & Single-Instance Routing | P0 | `IN_PROGRESS` | `US-005` | [US-006.md](../stories/US-006-lifecycle-cli-single-instance.md) |
-| `US-007` | Frontend Application Shell, Tab State Management & Empty State | P0 | `DRAFT` | `US-005`, `US-006` | [US-007.md](../stories/US-007-app-shell-tabs-empty-state.md) |
+| `US-006` | Application Lifecycle, Command-Line Parsing & Single-Instance Routing | P0 | `DONE` | `US-005` | [US-006.md](../stories/US-006-lifecycle-cli-single-instance.md) |
+| `US-007` | Frontend Application Shell, Tab State Management & Empty State | P0 | `READY` | `US-005`, `US-006` | [US-007.md](../stories/US-007-app-shell-tabs-empty-state.md) |
 | `US-008` | Native File Picker & Drag-and-Drop Integration | P0 | `DRAFT` | `US-005`, `US-007` | [US-008.md](../stories/US-008-file-picker-drag-drop.md) |
 
 ---
