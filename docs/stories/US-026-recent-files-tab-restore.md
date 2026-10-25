@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-026`
 - **Parent Epic:** [EPIC-007: Settings, Persistence & Durability](../epics/EPIC-007-settings-durability.md)
-- **Status:** `DRAFT`
+- **Status:** `IN_PROGRESS`
 - **Assigned Phase:** Phase 5 (Reading Experience & Durability)
 
 ---
@@ -59,7 +59,7 @@ Manage recent documents and optional session tab restoration:
 
 ### Task US-026.1: Implement Go RecentFilesService
 - **Task ID:** `US-026.1`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** Manages slice of `RecentFileDTO`, bounded to 20, checks `os.Stat` for existence flag.
 - **Verification Command:** `go test -v -run TestRecentFilesList ./internal/recents/...`
@@ -69,7 +69,7 @@ Manage recent documents and optional session tab restoration:
 
 ### Task US-026.2: Integrate Recent Files in UI
 - **Task ID:** `US-026.2`
-- **Status:** `DRAFT`
+- **Status:** `READY`
 - **Dependencies:** `US-026.1`
 - **Completion Criteria:** Displays clickable list in EmptyState and File menu; includes "Clear Recents" button.
 - **Verification Command:** `npm run test:unit -- tab-restore`
@@ -116,11 +116,23 @@ Manage recent documents and optional session tab restoration:
 
 ## 9. Implementation Notes and Validation Evidence
 
-*(To be filled by implementation agent during execution)*
-- **Execution Date:** Not yet executed
-- **Agent ID:** N/A
-- **Changed Files:** None
+- **Execution Date:** 2026-10-25
+- **Agent ID:** Autonomous Story Runner (Phase 5 / EPIC-007)
+- **Changed Files:**
+  - `internal/recents/dto.go` (Defined `RecentFileDTO` and `NormalizePath`)
+  - `internal/recents/service.go` (Implemented `RecentFilesService` with 20-item bounding, deduplication, `os.Stat` dynamic existence checks, atomic JSON persistence, and corruption recovery)
+  - `internal/recents/service_test.go` (Unit test `TestRecentFilesList` testing bounded recents, deduplication, and missing-file detection)
 - **Terminal Output & Verification Evidence:**
+
 ```text
-(Awaiting execution in Phase 5)
+=== Task US-026.1 Verification ===
+Command: go test -v -run TestRecentFilesList ./internal/recents/...
+=== RUN   TestRecentFilesList
+--- PASS: TestRecentFilesList (0.04s)
+PASS
+ok      markdown-viewer/internal/recents        0.046s
+
+Static Analysis & Linters:
+Command: /root/go/bin/golangci-lint run ./internal/recents/... && /root/go/bin/goimports -l ./internal/recents/
+Output: 0 issues. Exit Code: 0
 ```

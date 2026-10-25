@@ -3361,3 +3361,38 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Story:
 - Story `US-026: Recent Files Tracking & Startup Tab Restoration` under Phase 5 / [EPIC-007](../epics/EPIC-007-settings-durability.md) (`READY`).
+
+---
+
+## [2026-10-25] — Phase 5: Implement Go RecentFilesService (US-026.1)
+
+- **Task ID:** `US-026.1`
+- **Story ID:** `US-026`
+- **Status:** `DONE`
+- **Agent ID:** Antigravity Autonomous Agent
+
+### Scope and Implementation Summary:
+- Backend:
+  - Created `internal/recents/dto.go`:
+    - Defined `RecentFileDTO` representing a recently opened document with `Path`, `LastOpenedAt` (ISO 8601 timestamp), `Filename`, and `Exists` boolean.
+    - Strictly adhered to `FR-SET-003` (Data Minimization): persists only normalized paths and timestamps, never document text, credentials, or telemetry.
+    - Defined `NormalizePath(path string) (string, error)` for robust cross-platform path cleanup and absolute resolution.
+  - Created `internal/recents/service.go`:
+    - Implemented `RecentFilesService` managing bounded list of recent files (default bound 20).
+    - `AddRecentFile(path string)`: deduplicates by moving existing paths to index 0, updates `LastOpenedAt` timestamp, checks file existence on disk via `os.Stat`, trims to `maxRecent`, and persists atomically.
+    - `GetRecentFiles()`: returns copy with dynamically evaluated `os.Stat` to reflect live disk state (marking deleted or moved files as `exists: false`).
+    - `RemoveRecentFile(path string)`: removes a specific entry and persists atomically.
+    - `ClearRecentFiles()`: clears all entries and persists atomically.
+    - `atomicWriteLocked()`: temporary file (`.tmp`) write with flush/sync and atomic rename.
+    - Corruption recovery: backs up corrupted or empty JSON to `.corrupt.<timestamp>` and starts clean without crashing.
+  - Created `internal/recents/service_test.go`:
+    - Implemented `TestRecentFilesList` testing 20-item bound, path deduplication, `os.Stat` missing-file detection, entry removal, persistence across restarts, and clear action.
+
+### Verification Results:
+- `go test -v -run TestRecentFilesList ./internal/recents/...`: PASS (0.046s)
+- `golangci-lint run ./internal/recents/...`: 0 issues (PASS)
+- `goimports -l ./internal/recents/`: 0 formatting issues (PASS)
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS)
+
+### Next Eligible Task:
+- Task `US-026.2: Integrate Recent Files in UI` under [`US-026`](../stories/US-026-recent-files-tab-restore.md) (`READY`).
