@@ -13,8 +13,8 @@
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
 - **Application Implementation Status:** **PHASE 2 (EPIC-002), PHASE 3 (EPIC-003), PHASE 4 (EPIC-004 & EPIC-005), PHASE 5 NAVIGATION TOOLS (EPIC-006: STORIES US-021, US-022, US-023 & US-024), SETTINGS PERSISTENCE (EPIC-007: STORY US-025), AND RECENT FILES & TAB RESTORATION (EPIC-007: STORY US-026) COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) through [`US-004`](../stories/US-004-packaging-association-spike.md) (Phase 1 Spike), Stories [`US-005`](../stories/US-005-native-document-service.md) through [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Phase 2 Core Lifecycle & Tabs), Stories [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) through [`US-012`](../stories/US-012-headings-anchors-fixtures.md) (Phase 3 Core Rendering Core), Stories [`US-013`](../stories/US-013-mermaid-offline-rendering.md) through [`US-016`](../stories/US-016-adversarial-security-corpus.md) (Phase 4 `EPIC-004`), Stories [`US-017`](../stories/US-017-auto-direction-engine.md) through [`US-020`](../stories/US-020-rtl-ltr-fixtures-suite.md) (Phase 4 `EPIC-005`), Stories [`US-021`](../stories/US-021-table-of-contents.md) through [`US-024`](../stories/US-024-print-workflow-styling.md) (Phase 5 `EPIC-006`), Story [`US-025`](../stories/US-025-settings-service-persistence.md) (Phase 5 `EPIC-007`), and Story [`US-026`](../stories/US-026-recent-files-tab-restore.md) (Phase 5 `EPIC-007`) fully verified across all implementation tasks under Linux/WSLg.
 - **Feasibility Spike Status:** **SPIKE IMPLEMENTATION COMPLETE / AWAITING CROSS-PLATFORM GATES**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task [`US-026.4: Write unit tests for recents management`](../stories/US-026-recent-files-tab-restore.md) (`DONE`; Story [`US-026`](../stories/US-026-recent-files-tab-restore.md) complete across all 4 tasks; Go tests, race detection, path normalization, corruption recovery, and registration verified).
-- **Active / Next Eligible Work Item:** Story [`US-027: File Change Watcher & Debounced Auto-Reload`](../stories/US-027-file-change-watcher.md) (`READY`; Task [`US-027.1: Setup fsnotify watcher service in Go`](../stories/US-027-file-change-watcher.md), Phase 5 / `EPIC-007: Settings, Persistence & Durability`).
+- **Last Completed Work Item:** Task [`US-027.1: Implement Go file watcher service with fsnotify`](../stories/US-027-file-change-watcher.md) (`DONE`; `internal/watcher/` service implemented with `fsnotify`, path deduplication, atomic save recovery, and 7 unit tests verified).
+- **Active / Next Eligible Work Item:** Task [`US-027.2: Implement event debouncer in Go`](../stories/US-027-file-change-watcher.md) (`READY`; Story [`US-027`](../stories/US-027-file-change-watcher.md), Phase 5 / `EPIC-007: Settings, Persistence & Durability`).
 
 ---
 
@@ -80,10 +80,9 @@ All planning remediation artifacts must be preserved:
 
 ## 5. Exact Next Action for the Next Agent
 
-1. **Confirm Tasks US-026.1 and US-026.2 Complete:**
-   - Task `US-026.1` is **`DONE`** (`internal/recents/` service with 20-item bound, path deduplication, `os.Stat` checks, atomic JSON persistence).
-   - Task `US-026.2` is **`DONE`** (`RecentFilesMenu` in header, `EmptyState` badges, clear/remove actions, `recentsStore`, 10/10 unit tests passing).
-2. **Execute Next Task (US-026.3):**
-   - Task [`US-026.3: Implement startup tab restoration logic`](../stories/US-026-recent-files-tab-restore.md) is `READY`.
-   - Implement startup tab restoration in `App.tsx` / `tabRestore.ts` when `restoreOpenTabs` is enabled in preferences, saving active tab paths on change and reopening them safely on restart.
+1. **Confirm Task US-027.1 Complete:**
+   - Task `US-027.1` is **`DONE`** (`internal/watcher/` service with `fsnotify`, path deduplication, atomic save recovery, and 7 unit tests verified).
+2. **Execute Next Task (US-027.2):**
+   - Task [`US-027.2: Implement event debouncer in Go`](../stories/US-027-file-change-watcher.md) is `READY`.
+   - Implement event debouncer in Go with 300ms window coalescing rapid writes into a single reload notification, and verify with `go test -v -run TestWatcherDebounce ./internal/watcher/...`.
 3. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.

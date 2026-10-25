@@ -3517,3 +3517,47 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Story:
 - Story `US-027: File Change Watcher & Debounced Auto-Reload` under Phase 5 / [EPIC-007](../epics/EPIC-007-settings-durability.md) (`READY`).
+
+---
+
+## [2026-10-25] — Phase 5: Implement Go File Watcher Service with fsnotify (Task US-027.1)
+
+- **Task ID:** `US-027.1`
+- **Story ID:** `US-027`
+- **Status:** `DONE`
+- **Agent ID:** Antigravity Autonomous Story Runner
+
+### Scope and Implementation Summary:
+- Backend:
+  - Installed pinned dependency `github.com/fsnotify/fsnotify v1.8.0` in `go.mod` and updated `go.sum`.
+  - Created `internal/watcher/types.go`:
+    - Defined `EventType` (`EventModified`, `EventDeleted`, `EventRenamed`).
+    - Defined `FileChangeEvent` struct (`Path`, `Type`, `Timestamp`).
+    - Defined `EventHandler` callback type.
+  - Created `internal/watcher/filewatcher.go`:
+    - Implemented `Service` with `WatchFile(path)` and `UnwatchFile(path)` managing canonical absolute paths.
+    - Added `IsWatching(path)` and `WatchedFiles()` helpers.
+    - Implemented `OnEvent(handler)` for event dispatching.
+    - Implemented atomic save recovery: when `fsnotify.Remove` or `fsnotify.Rename` is received, inspects disk for recreated files (re-attaching the watch handle if recreated, or emitting `EventDeleted` if missing).
+    - Enforced mutex thread-safety (`sync.RWMutex`) and clean teardown in `Close()`.
+  - Created `internal/watcher/filewatcher_test.go`:
+    - 7 comprehensive unit tests in `TestFileWatcher`:
+      1. `TestFileWatcher_WatchAndUnwatch`: Verifies adding, idempotency, querying, and unwatching files.
+      2. `TestFileWatcher_ModifyDetection`: Verifies detection of external modifications.
+      3. `TestFileWatcher_NonexistentAndInvalidFile`: Verifies rejection of empty or missing paths.
+      4. `TestFileWatcher_UnwatchStopsNotifications`: Verifies events cease upon unwatching.
+      5. `TestFileWatcher_Close`: Verifies proper shutdown and subsequent error returns.
+      6. `TestFileWatcher_AtomicSaveRecreation`: Verifies atomic save (temp file + rename) re-attachment.
+      7. `TestFileWatcher_Deletion`: Verifies true deletion detection and `EventDeleted` emission.
+- Documentation & Backlog:
+  - Updated `docs/stories/US-027-file-change-watcher.md` marking `US-027.1` as `DONE` and `US-027` as `IN_PROGRESS`.
+  - Updated `docs/implementation/BACKLOG.md` marking `US-027` as `IN_PROGRESS`.
+  - Updated `docs/implementation/CURRENT-STATE.md` advancing state to Task `US-027.2`.
+
+### Verification Results:
+- `go test -v -run TestFileWatcher ./internal/watcher/...`: 7/7 tests passed in 0.423s (PASS)
+- `golangci-lint run ./internal/watcher/...`: 0 issues found (PASS)
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS)
+
+### Next Eligible Task:
+- Task `US-027.2: Implement event debouncer in Go` under [`docs/stories/US-027-file-change-watcher.md`](../stories/US-027-file-change-watcher.md) (`READY`).

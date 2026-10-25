@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-027`
 - **Parent Epic:** [EPIC-007: Settings, Persistence & Durability](../epics/EPIC-007-settings-durability.md)
-- **Status:** `READY`
+- **Status:** `IN_PROGRESS`
 - **Assigned Phase:** Phase 5 (Reading Experience & Durability)
 
 ---
@@ -58,7 +58,7 @@ Automatically monitor open documents for external disk modifications:
 
 ### Task US-027.1: Implement Go file watcher service with fsnotify
 - **Task ID:** `US-027.1`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** Go service manages active watch list with `WatchFile(path)` and `UnwatchFile(path)`.
 - **Verification Command:** `go test -v -run TestFileWatcher ./internal/watcher/...`
@@ -68,23 +68,23 @@ Automatically monitor open documents for external disk modifications:
 
 ### Task US-027.2: Implement event debouncer in Go
 - **Task ID:** `US-027.2`
-- **Status:** `DRAFT`
+- **Status:** `READY`
 - **Dependencies:** `US-027.1`
 - **Completion Criteria:** Coalesces write events with a 300ms timer before emitting reload event.
-- **Verification Command:** `npm run test:unit -- reload-scroll-preservation`
-- **Expected Observable Result:** Document reload preserves current scroll position and active heading.
-- **Evidence to Record:** Scroll preservation test output.
-- **Environment Handling:** Node.js / Vitest environment.
+- **Verification Command:** `go test -v -run TestWatcherDebounce ./internal/watcher/...`
+- **Expected Observable Result:** Rapid file saves debounced into a single reload event.
+- **Evidence to Record:** Debounce test output.
+- **Environment Handling:** Standard Go toolchain environment.
 
 ### Task US-027.3: Implement frontend scroll preservation during tab reload
 - **Task ID:** `US-027.3`
 - **Status:** `DRAFT`
 - **Dependencies:** `US-027.2`
 - **Completion Criteria:** Records `scrollTop` or top visible heading, re-renders content, restores scroll offset.
-- **Verification Command:** `go test -v -run TestWatcherDebounce ./internal/watcher/...`
-- **Expected Observable Result:** Rapid file saves debounced into a single reload event.
-- **Evidence to Record:** Debounce test output.
-- **Environment Handling:** Standard Go toolchain environment.
+- **Verification Command:** `npm run test:unit -- reload-scroll-preservation`
+- **Expected Observable Result:** Document reload preserves current scroll position and active heading.
+- **Evidence to Record:** Scroll preservation test output.
+- **Environment Handling:** Node.js / Vitest environment.
 
 ### Task US-027.4: Write unit and integration tests for watcher
 - **Task ID:** `US-027.4`
@@ -114,11 +114,32 @@ Automatically monitor open documents for external disk modifications:
 
 ## 9. Implementation Notes and Validation Evidence
 
-*(To be filled by implementation agent during execution)*
-- **Execution Date:** Not yet executed
-- **Agent ID:** N/A
-- **Changed Files:** None
+- **Execution Date:** 2026-10-25
+- **Agent ID:** Antigravity Autonomous Story Runner
+- **Changed Files:**
+  - `go.mod`, `go.sum` (Added pinned `github.com/fsnotify/fsnotify v1.8.0`)
+  - `internal/watcher/types.go` (Defined `EventType`, `FileChangeEvent`, `EventHandler`)
+  - `internal/watcher/filewatcher.go` (Implemented `Service` with `WatchFile`, `UnwatchFile`, `IsWatching`, `WatchedFiles`, atomic save re-attachment, and graceful `Close`)
+  - `internal/watcher/filewatcher_test.go` (Added comprehensive tests in `TestFileWatcher`)
 - **Terminal Output & Verification Evidence:**
 ```text
-(Awaiting execution in Phase 5)
+=== RUN   TestFileWatcher_WatchAndUnwatch
+--- PASS: TestFileWatcher_WatchAndUnwatch (0.00s)
+=== RUN   TestFileWatcher_ModifyDetection
+--- PASS: TestFileWatcher_ModifyDetection (0.05s)
+=== RUN   TestFileWatcher_NonexistentAndInvalidFile
+--- PASS: TestFileWatcher_NonexistentAndInvalidFile (0.00s)
+=== RUN   TestFileWatcher_UnwatchStopsNotifications
+--- PASS: TestFileWatcher_UnwatchStopsNotifications (0.15s)
+=== RUN   TestFileWatcher_Close
+--- PASS: TestFileWatcher_Close (0.02s)
+=== RUN   TestFileWatcher_AtomicSaveRecreation
+--- PASS: TestFileWatcher_AtomicSaveRecreation (0.11s)
+=== RUN   TestFileWatcher_Deletion
+--- PASS: TestFileWatcher_Deletion (0.08s)
+PASS
+ok      markdown-viewer/internal/watcher        0.423s
+
+golangci-lint run ./internal/watcher/...:
+0 issues.
 ```
