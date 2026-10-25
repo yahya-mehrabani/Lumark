@@ -3972,3 +3972,40 @@ This log is an append-only chronological record of all significant actions, veri
 - **Active Story:** `US-030: macOS Application Bundle, UTIs & Launch Services Integration` (`IN_PROGRESS`).
 - **Completed Tasks:** `US-030.1` (`DONE`).
 - **Next Eligible Task:** `US-030.2: Implement Wails macOS open-file event delegate` under [`docs/stories/US-030-macos-packaging-associations.md`](../stories/US-030-macos-packaging-associations.md) (`READY`).
+
+---
+
+## [2026-10-25] — Phase 6: Implement Wails macOS Open-File Event Delegate (Task US-030.2 Complete)
+
+- **Task ID:** `US-030.2`
+- **Story ID:** `US-030`
+- **Status:** `DONE`
+- **Agent ID:** Antigravity Autonomous Story Runner
+
+### Scope and Implementation Summary:
+- Created Cocoa Launch Services open-file delegate bridge specification in `internal/platform/macos/bridge.m`:
+  - Documented `NSApplicationDelegate` methods `application:openFile:` and `application:openFiles:`.
+  - Defined bridge protocol dispatching paths through Wails v3 `HandleOpenFile` to `events.Common.ApplicationOpenedWithFile`.
+- Implemented macOS open-file event handling and window focus in `internal/platform/darwin.go`:
+  - Defined `DocumentLoader` and `WindowFocuser` interfaces.
+  - Implemented `HandleMacOpenFile` with path normalization, UTF-8 verification, document loading, event emission (`document:open` and `file:open`), and window restoration/focus.
+  - Implemented `SetupMacOpenFileHandler` hooking into Wails v3 `events.Common.ApplicationOpenedWithFile`.
+  - Added unit test suite in `internal/platform/darwin_test.go` covering normal open, empty paths, and error isolation.
+- Integrated macOS event delegate in `main.go`:
+  - Added `FileAssociations: []string{".md", ".markdown", ".mdown", ".mkd"}` to `application.Options`.
+  - Wired `platform.SetupMacOpenFileHandler` with `spikeDocLoaderAdapter` and `mainWindow`.
+- Updated `docs/stories/US-030-macos-packaging-associations.md`, `docs/implementation/CURRENT-STATE.md`, and `docs/implementation/WORK-LOG.md`.
+
+### Verification Results:
+- `grep -i 'application:openFile:' internal/platform/macos/bridge.m`: Exit code 0 (PASS).
+- `go test -v ./internal/platform/...`: All tests pass (PASS).
+- `go test ./...`: All repository packages pass (PASS).
+- `golangci-lint run`: 0 issues (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **Phase:** Phase 6 (Packaging, Platform Integration & Release Hardening).
+- **Active Story:** `US-030: macOS Application Bundle, UTIs & Launch Services Integration` (`IN_PROGRESS`).
+- **Completed Tasks:** `US-030.1` (`DONE`), `US-030.2` (`DONE`).
+- **Next Eligible Task:** `US-030.3: Create DMG packaging script` under [`docs/stories/US-030-macos-packaging-associations.md`](../stories/US-030-macos-packaging-associations.md) (`READY`).

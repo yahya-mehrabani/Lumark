@@ -16,6 +16,7 @@ import (
 
 	"markdown-viewer/internal/assets"
 	"markdown-viewer/internal/dialogs"
+	"markdown-viewer/internal/platform"
 	"markdown-viewer/internal/recents"
 	"markdown-viewer/internal/settings"
 	"markdown-viewer/internal/watcher"
@@ -146,6 +147,7 @@ func main() {
 		Mac: application.MacOptions{
 			ApplicationShouldTerminateAfterLastWindowClosed: true,
 		},
+		FileAssociations: []string{".md", ".markdown", ".mdown", ".mkd"},
 	})
 
 	// Forward watcher events to Wails frontend event bus
@@ -175,6 +177,9 @@ func main() {
 		BackgroundColour: application.NewRGB(6, 7, 15),
 		URL:              "/",
 	})
+
+	// Hook macOS Launch Services open-file delegate events
+	platform.SetupMacOpenFileHandler(app, &spikeDocLoaderAdapter{docService: docService}, mainWindow)
 
 	// Ensure coordinator and watcher are cleaned up on Wails shutdown
 	app.OnShutdown(func() {
@@ -255,4 +260,20 @@ func logReceivedFile(source, arg string) {
 	filenameByteSeq := fmt.Sprintf("% x", []byte(filename))
 	log.Printf("[%s] File received: %s (filename: %s, utf8 bytes: [%s], filename bytes: [%s], valid utf8: %t)",
 		source, arg, filename, byteSeq, filenameByteSeq, utf8.ValidString(arg))
+}
+
+// spikeDocLoaderAdapter adapts SpikeDocumentService to platform.DocumentLoader.
+type spikeDocLoaderAdapter struct {
+	docService *SpikeDocumentService
+}
+
+func (a *spikeDocLoaderAdapter) LoadFile(filePath string) (interface{}, error) {
+	if a.docService == nil {
+		return nil, nil
+	}
+	doc, err := a.docService.LoadFile(filePath)
+	if err != nil {
+		return nil, err
+	}
+	return doc, nil
 }

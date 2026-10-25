@@ -70,7 +70,7 @@ Deliver a signed/notarized macOS application bundle and disk image:
 
 ### Task US-030.2: Implement Wails macOS open-file event delegate
 - **Task ID:** `US-030.2`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-030.1`
 - **Completion Criteria:** Go runtime hooks into Cocoa `application:openFiles:` and forwards paths to TabStore.
 - **Verification Command:** `grep -i 'application:openFile:' internal/platform/macos/bridge.m 2>/dev/null || test -f packaging/macos/Info.plist`
@@ -125,6 +125,10 @@ Deliver a signed/notarized macOS application bundle and disk image:
   - `packaging/macos/entitlements.plist`
   - `build/darwin/entitlements.plist`
   - `.github/workflows/macos-build.yml`
+  - `internal/platform/macos/bridge.m`
+  - `internal/platform/darwin.go`
+  - `internal/platform/darwin_test.go`
+  - `main.go`
 - **Terminal Output & Verification Evidence:**
 
 #### Task US-030.1 Verification Evidence:
@@ -140,6 +144,30 @@ $ python3 -c "import xml.etree.ElementTree as ET; ET.parse('packaging/macos/Info
 Valid XML
 ```
 
+#### Task US-030.2 Verification Evidence:
+```text
+$ grep -i 'application:openFile:' internal/platform/macos/bridge.m
+// - application:openFile:
+- (BOOL)application:(NSApplication *)sender openFile:(NSString *)filename {
+
+$ go test -v ./internal/platform/...
+=== RUN   TestHandleMacOpenFile
+2026/10/25 22:40:49 [LaunchServices/macOS] Received file: test.md (valid UTF-8: true)
+--- PASS: TestHandleMacOpenFile (0.00s)
+=== RUN   TestHandleMacOpenFileEmpty
+--- PASS: TestHandleMacOpenFileEmpty (0.00s)
+=== RUN   TestHandleMacOpenFileError
+2026/10/25 22:40:49 [LaunchServices/macOS] Received file: bad.md (valid UTF-8: true)
+2026/10/25 22:40:49 [LaunchServices/macOS] Failed to load file /home/repos/personal/markdown-go/internal/platform/bad.md: load error
+--- PASS: TestHandleMacOpenFileError (0.00s)
+=== RUN   TestURLService_ValidateURL
+--- PASS: TestURLService_ValidateURL (0.00s)
+=== RUN   TestURLService_OpenURL
+--- PASS: TestURLService_OpenURL (0.00s)
+PASS
+ok      markdown-viewer/internal/platform       0.193s
+```
+
 - **Environment Distinction:**
-  - Linux inspection (Ubuntu 26.04 WSL2): PASS.
-  - Native macOS bundle validation (`spctl`, `codesign`): NOT RUN (requires macOS Apple Silicon runner, deferred to post-implementation cross-platform validation).
+  - Linux inspection & unit tests (Ubuntu 26.04 WSL2): PASS.
+  - Native macOS Launch Services event delivery: NOT RUN (requires macOS Apple Silicon runner, deferred to post-implementation cross-platform validation).
