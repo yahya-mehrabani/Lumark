@@ -2550,3 +2550,32 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-018.2: Support scoped class-based direction CSS` under Story [`US-018: Explicit HTML dir & Scoped CSS Direction Precedence`](../stories/US-018-explicit-dir-css-precedence.md) (Phase 4 / `EPIC-005: Bi-directional & Multi-lingual Text Support`).
+
+---
+
+## 2026-10-25 — Task US-018.2: Support scoped class-based direction CSS
+
+- **Task ID:** `US-018.2`
+- **Story ID:** [`US-018: Explicit HTML dir & Scoped CSS Direction Precedence`](../stories/US-018-explicit-dir-css-precedence.md)
+- **Status:** `DONE`
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Extended `parseCssDirectionRules` in `resolver.ts` to support `!important` flags and cleanly extract author-scoped CSS direction classes (`direction: rtl|ltr`, `text-align: right|left|center|justify|start|end`) from embedded `<style>` elements.
+- Integrated scoped class direction matching into `rehypeDirectionResolver`, checking element classes (`props.className`, `props.class`) against extracted CSS direction rules.
+- Maintained precedence order: explicit HTML `dir` attribute > scoped CSS class direction > container cascade > automatic detection (`dir="auto"`).
+- Verified container CSS class direction cascading (`.rtl-container` cascades to descendant blocks without `dir="auto"` override).
+- Verified child class override (`.force-ltr` child overrides `.force-rtl` container).
+- Verified HTML `dir="rtl"` attribute override over CSS class (`dir="rtl"` overrides `.force-ltr`).
+- Verified CSS scope containment within `.markdown-content` via PostCSS scoping (AC 5).
+- Authored test suite `scoped-dir-css.test.tsx` (13/13 tests passing in 2.30s).
+- Ran regression check on full direction suite: 6 passed test files, 107 passed tests.
+
+### Verification Results:
+- `npm run test:unit -- scoped-dir-css`: 13 passed in 2.30s (PASS).
+- `npx tsc --noEmit`: Clean typecheck with exit code 0 (PASS).
+- `npm run test:unit -- src/features/direction/`: 107 passed across 6 test files in 10.55s (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-018.3: Write unit tests for precedence order` under Story [`US-018: Explicit HTML dir & Scoped CSS Direction Precedence`](../stories/US-018-explicit-dir-css-precedence.md) (Phase 4 / `EPIC-005: Bi-directional & Multi-lingual Text Support`).

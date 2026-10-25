@@ -99,7 +99,7 @@ export function parseCssDirectionRules(cssText: string): Map<string, ScopedCssDi
 
       rule.walkDecls((decl) => {
         const prop = decl.prop.toLowerCase();
-        const val = decl.value.trim().toLowerCase();
+        const val = decl.value.replace(/\s*!important/i, '').trim().toLowerCase();
         if (prop === 'direction') {
           if (val === 'rtl' || val === 'ltr') {
             direction = val;

@@ -68,7 +68,7 @@ Enforce author-directed formatting and direction precedence:
 
 ### Task US-018.2: Support scoped class-based direction CSS
 - **Task ID:** `US-018.2`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-018.1`
 - **Completion Criteria:** CSS parser extracts direction classes and registers them with direction resolver.
 - **Verification Command:** `npm run test:unit -- scoped-dir-css`
@@ -78,7 +78,7 @@ Enforce author-directed formatting and direction precedence:
 
 ### Task US-018.3: Write unit tests for precedence order
 - **Task ID:** `US-018.3`
-- **Status:** `DRAFT`
+- **Status:** `READY`
 - **Dependencies:** `US-018.2`
 - **Completion Criteria:** Tests assert explicit `dir` wins over auto-direction across 15+ test cases.
 - **Verification Command:** `npm run test:unit -- dir-precedence`
@@ -109,6 +109,7 @@ Enforce author-directed formatting and direction precedence:
   - `frontend/src/features/direction/resolver.ts`
   - `frontend/src/features/direction/autoDirectionPlugin.ts`
   - `frontend/src/features/direction/explicit-html-dir.test.tsx`
+  - `frontend/src/features/direction/scoped-dir-css.test.tsx`
 - **Terminal Output & Verification Evidence:**
   - `npm run test:unit -- explicit-html-dir`:
 ```text
@@ -136,5 +137,29 @@ Enforce author-directed formatting and direction precedence:
       Tests  15 passed (15)
    Duration  2.11s
 ```
+  - `npm run test:unit -- scoped-dir-css`:
+```text
+ ✓ src/features/direction/scoped-dir-css.test.tsx (13 tests) 166ms
+   ✓ US-018.2: Scoped class-based direction CSS (13)
+     ✓ parseCssDirectionRules parser (6)
+       ✓ extracts direction: ltr from single class selector 10ms
+       ✓ extracts direction: rtl and text-align: right 2ms
+       ✓ handles !important on direction declarations 1ms
+       ✓ extracts multiple classes from comma-separated selector list 1ms
+       ✓ ignores container scope selector .markdown-content and extracts inner class 1ms
+       ✓ handles empty or malformed CSS without throwing 1ms
+     ✓ MarkdownViewer rendering with scoped CSS direction classes (7)
+       ✓ applies LTR base direction to Persian paragraph styled with .force-ltr class (AC 2) 88ms
+       ✓ applies RTL base direction to English paragraph styled with .force-rtl class 12ms
+       ✓ resolves direction when element has multiple classes including direction class 9ms
+       ✓ cascades container class direction to child paragraphs without dir="auto" override 13ms
+       ✓ allows a child paragraph with .force-ltr to override parent container with .force-rtl 10ms
+       ✓ enforces precedence: explicit HTML dir attribute overrides CSS direction class 6ms
+       ✓ ensures injected style rules are scoped to .markdown-content (AC 5) 7ms
+
+ Test Files  1 passed (1)
+      Tests  13 passed (13)
+   Duration  2.30s
+```
   - `npx tsc --noEmit`: Clean exit code 0.
-  - `npm run test:unit -- src/features/direction/`: 5 passed test files, 94 passed tests.
+  - `npm run test:unit -- src/features/direction/`: 6 passed test files, 107 passed tests.
