@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-027`
 - **Parent Epic:** [EPIC-007: Settings, Persistence & Durability](../epics/EPIC-007-settings-durability.md)
-- **Status:** `DRAFT`
+- **Status:** `READY`
 - **Assigned Phase:** Phase 5 (Reading Experience & Durability)
 
 ---

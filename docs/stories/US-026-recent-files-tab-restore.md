@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-026`
 - **Parent Epic:** [EPIC-007: Settings, Persistence & Durability](../epics/EPIC-007-settings-durability.md)
-- **Status:** `IN_PROGRESS`
+- **Status:** `DONE`
 - **Assigned Phase:** Phase 5 (Reading Experience & Durability)
 
 ---
@@ -89,7 +89,7 @@ Manage recent documents and optional session tab restoration:
 
 ### Task US-026.4: Write unit tests for recents management
 - **Task ID:** `US-026.4`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-026.3`
 - **Completion Criteria:** Go tests verify 20-item bounding, deduplication, and missing-file status.
 - **Verification Command:** `go test -v -race ./internal/recents/...`
@@ -183,4 +183,37 @@ Exit Code: 0
 TypeScript Typecheck:
 Command: npx tsc --noEmit
 Output: 0 errors. Exit Code: 0
+
+=== Task US-026.4 Verification ===
+Command: go test -count=1 -v -race ./internal/recents/...
+=== RUN   TestRecentFilesList
+--- PASS: TestRecentFilesList (0.05s)
+=== RUN   TestRecentFilesConcurrency
+--- PASS: TestRecentFilesConcurrency (0.08s)
+=== RUN   TestRecentFilesPathNormalization
+=== RUN   TestRecentFilesPathNormalization/empty_path
+=== RUN   TestRecentFilesPathNormalization/whitespace_only
+=== RUN   TestRecentFilesPathNormalization/redundant_slashes
+=== RUN   TestRecentFilesPathNormalization/forward_slash_normalization
+--- PASS: TestRecentFilesPathNormalization (0.00s)
+    --- PASS: TestRecentFilesPathNormalization/empty_path (0.00s)
+    --- PASS: TestRecentFilesPathNormalization/whitespace_only (0.00s)
+    --- PASS: TestRecentFilesPathNormalization/redundant_slashes (0.00s)
+    --- PASS: TestRecentFilesPathNormalization/forward_slash_normalization (0.00s)
+=== RUN   TestRecentFilesCorruptionRecovery
+--- PASS: TestRecentFilesCorruptionRecovery (0.00s)
+=== RUN   TestRecentFilesCustomBounds
+--- PASS: TestRecentFilesCustomBounds (0.00s)
+PASS
+ok      markdown-viewer/internal/recents        1.158s
+
+Static Analysis & Linters:
+Command: /root/go/bin/golangci-lint run ./internal/recents/... && /root/go/bin/golangci-lint run ./...
+Output: 0 issues. Exit Code: 0
+
+Repository-Wide Verification:
+Command: go test -count=1 -race ./...
+Output: ok markdown-viewer/internal/... (all packages passed)
+Command: npm --prefix frontend run test:unit
+Output: 66 test files passed, 737 tests passed (0 failures). Exit Code: 0
 ```

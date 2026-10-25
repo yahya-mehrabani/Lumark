@@ -3476,3 +3476,44 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Task:
 - Task `US-026.4: Write unit tests for recents management` under [`US-026`](../stories/US-026-recent-files-tab-restore.md) (`READY`).
+
+---
+
+## [2026-10-25] — Phase 5: Write Unit Tests for Recents Management (US-026.4)
+
+- **Task ID:** `US-026.4`
+- **Story ID:** `US-026`
+- **Status:** `DONE`
+- **Agent ID:** Antigravity Autonomous Agent
+
+### Scope and Implementation Summary:
+- Backend:
+  - Updated `internal/recents/service_test.go`:
+    - Added `TestRecentFilesConcurrency`: ran 10 concurrent goroutines executing 250 read, add, remove, and get operations under race detector (`go test -race`), verifying thread safety, bounded list invariant (<= 20 items), and valid on-disk JSON serialization across concurrent operations.
+    - Added `TestRecentFilesPathNormalization`: verified cross-platform path cleanup, resolution of redundant slashes and `..` components, rejection of empty or whitespace paths, and absolute path enforcement.
+    - Added `TestRecentFilesCorruptionRecovery`: verified that invalid or unparseable JSON files on disk trigger automatic recovery, generate a `.corrupt.<timestamp>` backup, initialize a clean empty list without panicking or crashing, and allow subsequent writes.
+    - Added `TestRecentFilesCustomBounds`: verified configurable capacity bounds, trimming behavior, and default bound fallback when passing non-positive values.
+  - Registered `recents.Service` in `main.go`:
+    - Initialized default `recents.NewService()` in primary instance.
+    - Exposed `recentsService` under `application.Options.Services` alongside document, dialogs, and settings services.
+- Documentation & Backlog:
+  - Updated `docs/stories/US-026-recent-files-tab-restore.md` marking `US-026.4` and Story `US-026` as `DONE`.
+  - Updated `docs/implementation/BACKLOG.md` marking `US-026` as `DONE` and `US-027` as `READY`.
+  - Updated `docs/stories/US-027-file-change-watcher.md` marking status as `READY`.
+  - Updated `docs/implementation/CURRENT-STATE.md` advancing implementation status to complete for `US-026`.
+
+### Verification Results:
+- `go test -count=1 -v -race ./internal/recents/...`: 5/5 test suites passed (0.13s, PASS under race detector)
+- `golangci-lint run ./internal/recents/...`: 0 issues found (PASS)
+- `golangci-lint run ./...`: 0 issues found across entire repository (PASS)
+- `go test -count=1 -race ./...`: All package tests passed under race detector (PASS)
+- `npm --prefix frontend run test:unit`: 66 test files passed, 737 tests passed (0 failures) (PASS)
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS)
+
+### Story US-026 Completion Summary:
+- All 4 tasks (`US-026.1`, `US-026.2`, `US-026.3`, `US-026.4`) are complete and verified (`DONE`).
+- Functional requirements `FR-OPEN-006` (Recent files bounding to 20, missing file handling, data minimization) and `FR-SET-001` (Startup tab restoration) verified.
+- Multi-platform checks for native Windows and macOS file managers and shortcuts remain explicitly documented as `NOT RUN` and deferred to the post-implementation qualification process.
+
+### Next Eligible Story:
+- Story `US-027: File Change Watcher & Debounced Auto-Reload` under Phase 5 / [EPIC-007](../epics/EPIC-007-settings-durability.md) (`READY`).
