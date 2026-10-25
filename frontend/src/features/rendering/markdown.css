@@ -64,6 +64,54 @@
   white-space: nowrap;
 }
 
+.doc-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.doc-toc-toggle-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.doc-toc-toggle-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+}
+
+.doc-toc-toggle-btn.active {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: #3b82f6;
+  color: #93c5fd;
+}
+
+.doc-toc-toggle-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.markdown-viewport-body {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  width: 100%;
+  position: relative;
+}
+
+.markdown-viewport-body > .markdown-content {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 .path-label {
   color: #38bdf8;
   font-weight: 600;

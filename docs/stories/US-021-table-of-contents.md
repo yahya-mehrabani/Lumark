@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-021`
 - **Parent Epic:** [EPIC-006: Navigation, Search & User Reading Tools](../epics/EPIC-006-navigation-reading-tools.md)
-- **Status:** `IN_PROGRESS`
+- **Status:** `DONE`
 - **Assigned Phase:** Phase 5 (Reading Experience & Durability)
 
 ---
@@ -86,7 +86,7 @@ Build an interactive document Table of Contents (TOC) sidebar:
 
 ### Task US-021.4: Write unit tests for TOC component
 - **Task ID:** `US-021.4`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-021.3`
 - **Completion Criteria:** Tests verify tree hierarchy and click handler behavior.
 - **Verification Command:** `npm run test:unit -- toc`
@@ -224,4 +224,39 @@ Build an interactive document Table of Contents (TOC) sidebar:
  Test Files  1 passed (1)
       Tests  6 passed (6)
    Duration  1.35s
+```
+
+### Task US-021.4: Write unit tests for TOC component
+- **Execution Date:** 2026-10-25
+- **Agent ID:** Antigravity Autonomous Runner
+- **Status:** `DONE`
+- **Changed Files:**
+  - `frontend/src/features/rendering/MarkdownViewer.tsx`
+  - `frontend/src/features/rendering/markdown.css`
+  - `frontend/src/features/navigation/toc.test.tsx`
+- **Verification Command:** `npm run test:unit -- toc`
+- **Result:** `PASS` (36/36 tests passing across all 4 TOC test files)
+- **Terminal Output:**
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run toc
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/navigation/toc.test.tsx (7 tests) 497ms
+   ✓ Table of Contents Acceptance Criteria & Integration Suite (US-021.4) (7)
+     ✓ Criterion 1: Opening a document with headings generates a matching tree structure in the TOC panel
+     ✓ Criterion 2 & Instruction 2: Large document with 10+ headings renders TOC and scrolls when 5th heading is clicked
+     ✓ Criterion 3: Scrolling down updates the highlighted TOC item to match the current viewport section
+     ✓ Criterion 4: Documents with identical heading titles link to distinct unique anchors
+     ✓ Criterion 5: Documents without headings collapse the TOC sidebar cleanly and disable the toggle
+     ✓ Bidirectional Support: Preserves Persian and Arabic script headings in TOC outline and anchors
+     ✓ Keyboard Navigation: Toggles outline on Ctrl+Shift+O keyboard shortcut
+ ✓ src/features/navigation/toc-scroll-spy.test.tsx (7 tests) 265ms
+ ✓ src/features/navigation/toc-sidebar-toggle.test.tsx (6 tests) 131ms
+ ✓ src/features/navigation/toc-generator.test.ts (16 tests) 327ms
+
+ Test Files  4 passed (4)
+      Tests  36 passed (36)
+   Duration  9.31s
 ```

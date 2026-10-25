@@ -20,6 +20,9 @@ import { MarkdownImage } from './components/MarkdownImage';
 import { MarkdownLink } from './components/MarkdownLink';
 import { MermaidBlock } from './components/MermaidBlock';
 import { SlugTracker, SlugContext } from './utils/slugify';
+import { TableOfContents } from '../navigation/TableOfContents';
+import { useTableOfContents } from '../navigation/useTableOfContents';
+import { useTocToggle } from '../navigation/useTocToggle';
 import '../../styles/katex.css';
 import './markdown.css';
 
@@ -38,6 +41,8 @@ export interface MarkdownViewerProps {
   onOpenDocument?: (filePath: string, anchor?: string) => void;
   onOpenExternalUrl?: (url: string) => Promise<void> | void;
   onNavigateAnchor?: (anchor: string) => void;
+  showToc?: boolean;
+  onToggleToc?: () => void;
 }
 
 export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
@@ -48,6 +53,8 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
   onOpenDocument,
   onOpenExternalUrl,
   onNavigateAnchor,
+  showToc,
+  onToggleToc,
 }) => {
   const [hookPref] = useDirectionPreference();
   const activePref = directionPreference ?? hookPref;
@@ -56,6 +63,15 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
   const content = React.useMemo(() => escapeCurrencyDollars(rawMarkdown), [rawMarkdown]);
   const filename = document?.filename;
   const filePath = document?.filePath;
+
+  const tocData = useTableOfContents({ markdown: rawMarkdown });
+  const tocToggle = useTocToggle({
+    initialOpen: showToc ?? false,
+    hasHeadings: tocData.hasHeadings,
+    onToggle: () => onToggleToc?.(),
+  });
+
+  const isTocOpen = showToc !== undefined ? (showToc && tocData.hasHeadings) : tocToggle.isOpen;
 
   const slugTracker = React.useMemo(() => new SlugTracker(), [content]);
   // Reset tracker on every render pass so re-renders of the same content yield deterministic IDs
@@ -69,88 +85,118 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
             <span className="doc-type-badge">MARKDOWN</span>
             <h1 className="doc-filename">{filename || 'Untitled Document'}</h1>
           </div>
-          {filePath && (
-            <div className="doc-path-badge" title={filePath}>
-              <span className="path-label">PATH:</span> {filePath}
-            </div>
-          )}
+          <div className="doc-header-right">
+            {filePath && (
+              <div className="doc-path-badge" title={filePath}>
+                <span className="path-label">PATH:</span> {filePath}
+              </div>
+            )}
+            <button
+              type="button"
+              className={`doc-toc-toggle-btn ${isTocOpen ? 'active' : ''}`}
+              onClick={tocToggle.toggle}
+              disabled={!tocData.hasHeadings}
+              aria-label="Table of Contents (Ctrl+Shift+O)"
+              title={
+                tocData.hasHeadings
+                  ? 'Table of Contents (Ctrl+Shift+O)'
+                  : 'No headings in document'
+              }
+              aria-expanded={isTocOpen}
+              data-testid="doc-toc-toggle"
+            >
+              Outline
+            </button>
+          </div>
         </header>
       )}
 
-      <main
-        className="markdown-content"
-        data-testid="markdown-content"
-        dir={activePref !== 'auto' ? activePref : undefined}
-      >
-        <SlugContext.Provider value={slugTracker}>
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm, remarkMath, remarkStrictMath]}
-            rehypePlugins={[
-              rehypeRaw,
-              [rehypeSanitize, SANITY_HTML_SCHEMA],
-              rehypeScopedCss,
-              [rehypeKatex, STRICT_KATEX_OPTIONS],
-              [rehypeAutoDirection, { userPreference: activePref }],
-            ]}
-            urlTransform={(url) => url}
-            components={{
-              h1: ({ node, ...props }) => <Heading level={1} {...props} />,
-              h2: ({ node, ...props }) => <Heading level={2} {...props} />,
-              h3: ({ node, ...props }) => <Heading level={3} {...props} />,
-              h4: ({ node, ...props }) => <Heading level={4} {...props} />,
-              h5: ({ node, ...props }) => <Heading level={5} {...props} />,
-              h6: ({ node, ...props }) => <Heading level={6} {...props} />,
-              code: ({ node, ...props }) => <code dir="ltr" {...props} />,
-              style: ({ node, children, ...props }) => {
-                const cssText =
-                  typeof children === 'string'
-                    ? children
-                    : Array.isArray(children)
-                      ? children.join('')
-                      : String(children ?? '');
-                return <style dangerouslySetInnerHTML={{ __html: cssText }} {...props} />;
-              },
-              table: ({ node, ...props }) => (
-                <div className="table-wrapper" role="region" tabIndex={0} aria-label="Table">
-                  <table {...props} />
-                </div>
-              ),
-              img: ({ node, ...props }) => <MarkdownImage docDir={document?.dir} {...props} />,
-              a: ({ node, ...props }) => (
-                <MarkdownLink
-                  docDir={document?.dir}
-                  onOpenMarkdown={onOpenDocument}
-                  onOpenExternal={onOpenExternalUrl}
-                  onNavigateAnchor={onNavigateAnchor}
-                  {...props}
-                />
-              ),
-              pre: ({ children, node, ...props }) => {
-                if (React.isValidElement(children)) {
-                  const codeProps = children.props as { className?: string; children?: React.ReactNode };
-                  const rawCode =
-                    typeof codeProps.children === 'string'
-                      ? codeProps.children
-                      : String(codeProps.children ?? '');
-                  const match = /language-([a-zA-Z0-9_+-]+)/.exec(codeProps.className || '');
-                  const language = match ? match[1] : undefined;
-                  if (language?.toLowerCase() === 'mermaid') {
-                    return <MermaidBlock rawCode={rawCode} />;
+      <div className="markdown-viewport-body">
+        <main
+          className="markdown-content"
+          data-testid="markdown-content"
+          dir={activePref !== 'auto' ? activePref : undefined}
+        >
+          <SlugContext.Provider value={slugTracker}>
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm, remarkMath, remarkStrictMath]}
+              rehypePlugins={[
+                rehypeRaw,
+                [rehypeSanitize, SANITY_HTML_SCHEMA],
+                rehypeScopedCss,
+                [rehypeKatex, STRICT_KATEX_OPTIONS],
+                [rehypeAutoDirection, { userPreference: activePref }],
+              ]}
+              urlTransform={(url) => url}
+              components={{
+                h1: ({ node, ...props }) => <Heading level={1} {...props} />,
+                h2: ({ node, ...props }) => <Heading level={2} {...props} />,
+                h3: ({ node, ...props }) => <Heading level={3} {...props} />,
+                h4: ({ node, ...props }) => <Heading level={4} {...props} />,
+                h5: ({ node, ...props }) => <Heading level={5} {...props} />,
+                h6: ({ node, ...props }) => <Heading level={6} {...props} />,
+                code: ({ node, ...props }) => <code dir="ltr" {...props} />,
+                style: ({ node, children, ...props }) => {
+                  const cssText =
+                    typeof children === 'string'
+                      ? children
+                      : Array.isArray(children)
+                        ? children.join('')
+                        : String(children ?? '');
+                  return <style dangerouslySetInnerHTML={{ __html: cssText }} {...props} />;
+                },
+                table: ({ node, ...props }) => (
+                  <div className="table-wrapper" role="region" tabIndex={0} aria-label="Table">
+                    <table {...props} />
+                  </div>
+                ),
+                img: ({ node, ...props }) => <MarkdownImage docDir={document?.dir} {...props} />,
+                a: ({ node, ...props }) => (
+                  <MarkdownLink
+                    docDir={document?.dir}
+                    onOpenMarkdown={onOpenDocument}
+                    onOpenExternal={onOpenExternalUrl}
+                    onNavigateAnchor={onNavigateAnchor}
+                    {...props}
+                  />
+                ),
+                pre: ({ children, node, ...props }) => {
+                  if (React.isValidElement(children)) {
+                    const codeProps = children.props as { className?: string; children?: React.ReactNode };
+                    const rawCode =
+                      typeof codeProps.children === 'string'
+                        ? codeProps.children
+                        : String(codeProps.children ?? '');
+                    const match = /language-([a-zA-Z0-9_+-]+)/.exec(codeProps.className || '');
+                    const language = match ? match[1] : undefined;
+                    if (language?.toLowerCase() === 'mermaid') {
+                      return <MermaidBlock rawCode={rawCode} />;
+                    }
+                    return <CodeBlock rawCode={rawCode} language={language} />;
                   }
-                  return <CodeBlock rawCode={rawCode} language={language} />;
-                }
-                return (
-                  <pre dir="ltr" {...props}>
-                    {children}
-                  </pre>
-                );
-              },
-            }}
-          >
-            {content}
-          </ReactMarkdown>
-        </SlugContext.Provider>
-      </main>
+                  return (
+                    <pre dir="ltr" {...props}>
+                      {children}
+                    </pre>
+                  );
+                },
+              }}
+            >
+              {content}
+            </ReactMarkdown>
+          </SlugContext.Provider>
+        </main>
+
+        {isTocOpen && (
+          <TableOfContents
+            items={tocData.items}
+            tree={tocData.tree}
+            isOpen={isTocOpen}
+            onClose={tocToggle.close}
+            onSelectHeading={onNavigateAnchor}
+          />
+        )}
+      </div>
     </div>
   );
 };

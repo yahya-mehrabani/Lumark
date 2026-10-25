@@ -2873,3 +2873,42 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-021.4: Write unit tests for TOC component` under Story [`US-021: Interactive Table of Contents & Heading Navigation`](../stories/US-021-table-of-contents.md).
+
+---
+
+## 2026-10-25 — Task US-021.4: Write unit tests for TOC component (Story US-021 Completion)
+
+- **Task ID:** `US-021.4`
+- **Story ID:** [`US-021: Interactive Table of Contents & Heading Navigation`](../stories/US-021-table-of-contents.md)
+- **Status:** `DONE`
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Integrated `TableOfContents` sidebar component and outline toggle into `MarkdownViewer.tsx`:
+  - Added Outline toggle button in document header bar with aria attributes (`aria-expanded`, `aria-label`, `data-testid="doc-toc-toggle"`), automatically disabled for zero-heading documents.
+  - Wrapped viewport in `.markdown-viewport-body` with flex row layout preserving responsive typography.
+  - Added styling in `markdown.css` for `.doc-header-right`, `.doc-toc-toggle-btn`, and `.markdown-viewport-body`.
+- Created comprehensive integration and acceptance test suite `frontend/src/features/navigation/toc.test.tsx` (7 tests) covering:
+  - Criterion 1: Opening document with headings generates matching tree structure in TOC panel.
+  - Criterion 2 & Instruction 2: Large document with 10+ headings renders TOC and smoothly scrolls when 5th heading is clicked.
+  - Criterion 3: Scrolling down updates highlighted TOC item to match current viewport section.
+  - Criterion 4: Duplicate heading disambiguation (`### Example`) links to unique predictable anchors (`#example`, `#example-1`, `#example-2`).
+  - Criterion 5: Zero headings cleanly collapses TOC sidebar and disables outline toggle.
+  - Directional Support: RTL/Persian script headings preserved with `dir="auto"` and Unicode slugs.
+  - Keyboard Navigation: `Ctrl+Shift+O` / `Cmd+Shift+O` toggles outline panel.
+- Verified all 4 TOC test files passing: 36/36 tests passing in 9.31s (`npm run test:unit -- toc`).
+- Executed frontend dev bundle build (`npm run build:dev` in 2.33s with 0 errors).
+- Executed Go backend tests (`go test ./...` all packages passing).
+- Updated `REQUIREMENT-TRACEABILITY.md`: marked `FR-NAV-001` as `IMPLEMENTED` and `VERIFIED`.
+- Updated `BACKLOG.md`: marked `US-021` as `DONE`, transitioned `US-022` to `READY`.
+- Concluded Story [`US-021: Interactive Table of Contents & Heading Navigation`](../stories/US-021-table-of-contents.md) (`DONE`).
+
+### Verification Results:
+- `npm run test:unit -- toc`: 36 passed across 4 test files in 9.31s with exit code 0 (PASS).
+- `npx tsc --noEmit`: Exited with code 0, 0 type errors (PASS).
+- `npm run build:dev`: Built dev bundle in 2.33s with exit code 0 (PASS).
+- `go test ./...`: All packages passed with exit code 0 (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Story [`US-022: In-Document Text Search with Match Highlighting`](../stories/US-022-in-document-search.md) (Phase 5 / `EPIC-006: Navigation, Search & User Reading Tools`).
