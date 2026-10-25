@@ -72,7 +72,7 @@ Create and maintain an extensive bidirectional regression fixture suite in `fixt
 
 ### Task US-020.2: Implement automated bidi fixture test suite
 - **Task ID:** `US-020.2`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-020.1`
 - **Completion Criteria:** Vitest suite verifies computed `dir` and computed text alignment on every fixture block.
 - **Verification Command:** `npm run test:unit -- bidi-alignment-precedence`
@@ -148,4 +148,36 @@ $ npm run test:unit -- src/features/direction
 
 $ npm run build:dev
 ✓ built in 1.73s (exit code 0)
+```
+
+### Task US-020.2 Verification Evidence
+- **Execution Date:** 2026-10-25
+- **Agent ID:** Autonomous Implementation Agent
+- **Changed Files:**
+  - `frontend/src/features/direction/bidi-alignment-precedence.test.tsx`
+  - `docs/stories/US-020-rtl-ltr-fixtures-suite.md`
+- **Terminal Output & Verification Evidence:**
+```text
+$ npm run test:unit -- bidi-alignment-precedence
+
+ ✓ src/features/direction/bidi-alignment-precedence.test.tsx (9 tests) 1778ms
+   ✓ Bidi Alignment Precedence & Fixture Block Suite (US-020.2) (9)
+     ✓ 1. Text Alignment Precedence Rules (AC 4 & FR-DIR-003) (3)
+       ✓ applies GFM table column alignment (:---, :---:, ---:) to th and td elements 106ms
+       ✓ scoped CSS text-align class overrides default natural alignment 42ms
+       ✓ blockquotes in RTL and LTR contexts maintain distinct directional borders and alignment 21ms
+     ✓ 2. Comprehensive Computed dir Verification Across All 6 Golden Fixtures (6)
+       ✓ verifies computed dir on every block element in persian-prose.md 91ms
+       ✓ verifies computed dir on every block element in arabic-prose.md 48ms
+       ✓ verifies non-prose LTR isolation across mixed-bidi-tech.md 536ms
+       ✓ verifies nested list and item directions in nested-bidi-lists.md 367ms
+       ✓ verifies table headers, cells, and alignment indicators in bidi-tables.md 283ms
+       ✓ verifies explicit dir, scoped CSS class, and container cascading in explicit-dir-styling.md 211ms
+
+ Test Files  1 passed (1)
+      Tests  9 passed (9)
+   Duration  4.23s
+
+$ npm run build:dev
+✓ built in 1.70s (exit code 0)
 ```
