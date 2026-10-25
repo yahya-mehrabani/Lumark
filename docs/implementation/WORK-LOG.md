@@ -2514,4 +2514,39 @@ This log is an append-only chronological record of all significant actions, veri
 - `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
 
 ### Next Eligible Work Item:
-- Task `US-018.1: Implement HTML dir attribute resolver in Rehype pipeline` under Story [`US-018: Explicit HTML dir & Scoped CSS Direction Precedence`](../stories/US-018-explicit-dir-css-precedence.md) (Phase 4 / `EPIC-005: Bi-directional & Multi-lingual Text Support`).
+- Task `US-018.1: Implement DirectionResolver pipeline stage` under Story [`US-018: Explicit HTML dir & Scoped CSS Direction Precedence`](../stories/US-018-explicit-dir-css-precedence.md) (Phase 4 / `EPIC-005: Bi-directional & Multi-lingual Text Support`).
+
+---
+
+## 2026-10-25 — Task US-018.1: Implement DirectionResolver pipeline stage
+
+- **Task ID:** `US-018.1`
+- **Story ID:** [`US-018: Explicit HTML dir & Scoped CSS Direction Precedence`](../stories/US-018-explicit-dir-css-precedence.md)
+- **Status:** `DONE`
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Implemented `resolver.ts` defining `rehypeDirectionResolver`, `resolveExplicitDir`, `getNodeClasses`, `parseCssDirectionRules`, and `extractScopedCssDirections`.
+- Updated `autoDirectionPlugin.ts` to delegate to `rehypeDirectionResolver`, establishing direction precedence architecture:
+  1. Author explicit `dir` attribute on element (`dir="rtl"`, `dir="ltr"`, `dir="auto"`) or inline `style` with `direction: rtl|ltr`.
+  2. Scoped CSS class direction rules from `<style>` blocks.
+  3. Cascading/inherited direction from explicitly directed ancestor containers (e.g. `<div dir="rtl">`).
+  4. Automatic block-level detection (`dir="auto"`) on un-directed textual blocks (`p`, `h1`-`h6`, `li`, `blockquote`, `td`, `th`, `caption`).
+- Ensured children of explicitly directed containers do not receive `dir="auto"`, maintaining author container direction unless a child explicitly overrides it.
+- Created `explicit-html-dir.test.tsx` (15/15 tests passing) verifying:
+  - Utility parsing of `dir` (case-insensitivity, normalization, invalid value rejection, inline style parsing).
+  - Explicit `dir="rtl"` and `dir="ltr"` on paragraphs without auto override.
+  - Cascading from `<div dir="rtl">` to child paragraphs without `dir="auto"` override.
+  - Nested child paragraph overriding parent container to `dir="ltr"` or `dir="auto"`.
+  - Un-directed blocks outside explicit containers receiving `dir="auto"`.
+  - Preservation of explicit `dir` on headings, blockquotes, and table cells.
+- Executed unit tests (`npm run test:unit -- explicit-html-dir`) and full direction regression suite (`94/94` passing across 5 test files).
+
+### Verification Results:
+- `npm run test:unit -- explicit-html-dir`: 15 passed in 2.11s (PASS).
+- `npx tsc --noEmit`: Clean typecheck with exit code 0 (PASS).
+- `npm run test:unit -- src/features/direction/`: 94 passed across 5 test files in 7.80s (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-018.2: Support scoped class-based direction CSS` under Story [`US-018: Explicit HTML dir & Scoped CSS Direction Precedence`](../stories/US-018-explicit-dir-css-precedence.md) (Phase 4 / `EPIC-005: Bi-directional & Multi-lingual Text Support`).

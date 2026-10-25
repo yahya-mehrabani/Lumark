@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-018`
 - **Parent Epic:** [EPIC-005: Bidirectional Text & Layout Engine (RTL/LTR)](../epics/EPIC-005-bidirectional-layout.md)
-- **Status:** `DRAFT`
+- **Status:** `IN_PROGRESS`
 - **Assigned Phase:** Phase 4 (Advanced Rendering & Direction)
 
 ---
@@ -58,7 +58,7 @@ Enforce author-directed formatting and direction precedence:
 
 ### Task US-018.1: Implement DirectionResolver pipeline stage
 - **Task ID:** `US-018.1`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** Checks node for existing `dir` attribute or computed style before running auto-detection.
 - **Verification Command:** `npm run test:unit -- explicit-html-dir`
@@ -68,7 +68,7 @@ Enforce author-directed formatting and direction precedence:
 
 ### Task US-018.2: Support scoped class-based direction CSS
 - **Task ID:** `US-018.2`
-- **Status:** `DRAFT`
+- **Status:** `READY`
 - **Dependencies:** `US-018.1`
 - **Completion Criteria:** CSS parser extracts direction classes and registers them with direction resolver.
 - **Verification Command:** `npm run test:unit -- scoped-dir-css`
@@ -103,11 +103,38 @@ Enforce author-directed formatting and direction precedence:
 
 ## 9. Implementation Notes and Validation Evidence
 
-*(To be filled by implementation agent during execution)*
-- **Execution Date:** Not yet executed
-- **Agent ID:** N/A
-- **Changed Files:** None
+- **Execution Date:** 2026-10-25
+- **Agent ID:** Antigravity Autonomous Agent
+- **Changed Files:**
+  - `frontend/src/features/direction/resolver.ts`
+  - `frontend/src/features/direction/autoDirectionPlugin.ts`
+  - `frontend/src/features/direction/explicit-html-dir.test.tsx`
 - **Terminal Output & Verification Evidence:**
+  - `npm run test:unit -- explicit-html-dir`:
 ```text
-(Awaiting execution in Phase 4)
+ ✓ src/features/direction/explicit-html-dir.test.tsx (15 tests) 271ms
+   ✓ US-018.1: Explicit HTML dir attribute and DirectionResolver (15)
+     ✓ resolveExplicitDir utility (7)
+       ✓ resolves explicit dir="rtl" attribute 4ms
+       ✓ resolves explicit dir="ltr" attribute 1ms
+       ✓ resolves explicit dir="auto" attribute 1ms
+       ✓ normalizes case for dir attribute (RTL / LTR / AUTO) 1ms
+       ✓ ignores invalid dir attribute values 0ms
+       ✓ extracts explicit direction from inline style attribute 0ms
+       ✓ returns undefined when neither dir nor direction style is present 0ms
+     ✓ MarkdownViewer rendering with explicit HTML dir attributes (8)
+       ✓ preserves explicit dir="rtl" on English paragraphs and does not override with auto 80ms
+       ✓ preserves explicit dir="ltr" on Persian paragraphs and does not override with auto 9ms
+       ✓ cascades explicit dir="rtl" from parent container to child paragraphs without dir="auto" override (AC 1 & AC 3) 14ms
+       ✓ allows a child paragraph to explicitly override parent container direction (AC 3) 7ms
+       ✓ allows a child paragraph to explicitly opt into auto-detection via dir="auto" inside parent container 8ms
+       ✓ applies dir="auto" to un-directed block elements outside any explicit direction container 95ms
+       ✓ preserves explicit dir on headings, blockquotes, and table cells 34ms
+       ✓ respects inline style direction: rtl 10ms
+
+ Test Files  1 passed (1)
+      Tests  15 passed (15)
+   Duration  2.11s
 ```
+  - `npx tsc --noEmit`: Clean exit code 0.
+  - `npm run test:unit -- src/features/direction/`: 5 passed test files, 94 passed tests.

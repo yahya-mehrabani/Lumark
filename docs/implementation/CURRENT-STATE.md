@@ -13,8 +13,8 @@
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
 - **Application Implementation Status:** **PHASE 2 (EPIC-002), PHASE 3 (EPIC-003), AND PHASE 4 EXTENDED RENDERING & SECURITY (EPIC-004: STORIES US-013, US-014, US-015, US-016; EPIC-005: STORY US-017) COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) through [`US-004`](../stories/US-004-packaging-association-spike.md) (Phase 1 Spike), Stories [`US-005`](../stories/US-005-native-document-service.md) through [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Phase 2 Core Lifecycle & Tabs), Stories [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) through [`US-012`](../stories/US-012-headings-anchors-fixtures.md) (Phase 3 Core Rendering Core), Stories [`US-013`](../stories/US-013-mermaid-offline-rendering.md) through [`US-016`](../stories/US-016-adversarial-security-corpus.md) (Phase 4 `EPIC-004`), and Story [`US-017`](../stories/US-017-auto-direction-engine.md) (Phase 4 `EPIC-005`: Unicode Automatic Direction Detection Engine) fully verified across all implementation tasks under Linux/WSLg.
 - **Feasibility Spike Status:** **SPIKE IMPLEMENTATION COMPLETE / AWAITING CROSS-PLATFORM GATES**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-017.4: Write unit tests for bidi resolution` under Story [`US-017: Unicode Automatic Direction Detection Engine`](../stories/US-017-auto-direction-engine.md) (Story `US-017` `DONE`; `EPIC-005` in progress). Authored comprehensive multilingual bidi test suite in `auto-direction.test.ts` (44/44 tests passing), verified full direction test suite (4/4 test files, 79/79 tests passing), clean build, and regression-free operation.
-- **Active / Next Eligible Work Item:** Task `US-018.1: Implement HTML dir attribute resolver in Rehype pipeline` under Story [`US-018: Explicit HTML dir & Scoped CSS Direction Precedence`](../stories/US-018-explicit-dir-css-precedence.md) (Phase 4 / `EPIC-005: Bi-directional & Multi-lingual Text Support`).
+- **Last Completed Work Item:** Task `US-018.1: Implement DirectionResolver pipeline stage` under Story [`US-018: Explicit HTML dir & Scoped CSS Direction Precedence`](../stories/US-018-explicit-dir-css-precedence.md) (Story `US-018` `IN_PROGRESS`; `EPIC-005` in progress). Implemented `resolver.ts` direction resolver and precedence engine, verified explicit HTML `dir` attribute preservation, ancestor cascading, child overriding, inline style direction, and un-directed block `dir="auto"` handling (15/15 tests passing in `explicit-html-dir.test.tsx`).
+- **Active / Next Eligible Work Item:** Task `US-018.2: Support scoped class-based direction CSS` under Story [`US-018: Explicit HTML dir & Scoped CSS Direction Precedence`](../stories/US-018-explicit-dir-css-precedence.md) (Phase 4 / `EPIC-005: Bi-directional & Multi-lingual Text Support`).
 
 ---
 
@@ -80,12 +80,8 @@ All planning remediation artifacts must be preserved:
 
 ## 5. Exact Next Action for the Next Agent
 
-1. **Confirm Story US-017 Complete:**
-   - Story [`US-017: Unicode Automatic Direction Detection Engine`](../stories/US-017-auto-direction-engine.md) is **`DONE`** across all four tasks:
-     - `US-017.1`: Implemented Unicode UBA first strong character detector in `autoDirection.ts` (17/17 PASS).
-     - `US-017.2`: Applied block-level direction `dir="auto"` via `rehypeAutoDirection` plugin in `autoDirectionPlugin.ts` (10/10 PASS).
-     - `US-017.3`: Configured CSS bidi isolation rules (`unicode-bidi: isolate;`), Vazirmatn/Tahoma font fallbacks, and RTL layout in `markdown.css` (8/8 PASS).
-     - `US-017.4`: Authored comprehensive multilingual bidi test suite in `auto-direction.test.ts` (44/44 PASS; 79/79 PASS across all direction tests).
-2. **Execute Story US-018 (Next Eligible Story):**
-   - Active work item: Task `US-018.1: Implement HTML dir attribute resolver in Rehype pipeline` under Story [`US-018: Explicit HTML dir & Scoped CSS Direction Precedence`](../stories/US-018-explicit-dir-css-precedence.md) (Phase 4 / `EPIC-005: Bi-directional & Multi-lingual Text Support`).
-3. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.
+1. **Continue Story US-018 (In Progress):**
+   - Story [`US-018: Explicit HTML dir & Scoped CSS Direction Precedence`](../stories/US-018-explicit-dir-css-precedence.md) is **`IN_PROGRESS`**:
+     - `US-018.1`: Implemented `DirectionResolver` pipeline stage in `resolver.ts` and `autoDirectionPlugin.ts`, verified explicit HTML `dir` attribute preservation, ancestor cascading, child overriding, inline style direction, and un-directed block `dir="auto"` handling (15/15 tests PASS in `explicit-html-dir.test.tsx`).
+   - Active work item: Task `US-018.2: Support scoped class-based direction CSS` under Story [`US-018: Explicit HTML dir & Scoped CSS Direction Precedence`](../stories/US-018-explicit-dir-css-precedence.md) (Phase 4 / `EPIC-005: Bi-directional & Multi-lingual Text Support`).
+2. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.
