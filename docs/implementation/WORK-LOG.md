@@ -2842,3 +2842,34 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-021.3: Implement active heading scroll spy` under Story [`US-021: Interactive Table of Contents & Heading Navigation`](../stories/US-021-table-of-contents.md).
+
+---
+
+## 2026-10-25 — Task US-021.3: Implement active heading scroll spy (Story US-021)
+
+- **Task ID:** `US-021.3`
+- **Story ID:** [`US-021: Interactive Table of Contents & Heading Navigation`](../stories/US-021-table-of-contents.md)
+- **Status:** `DONE`
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Implemented `useScrollSpy` React hook in `frontend/src/features/navigation/useScrollSpy.ts`:
+  - Uses `IntersectionObserver` with configurable rootMargin (`-20px 0px -60% 0px`) to prevent scroll jitter when multiple headings are visible.
+  - Automatically identifies and updates `activeId` to the topmost visible heading in viewport.
+  - Falls back smoothly to the heading directly above the threshold when scrolled between headings.
+  - Listens to container/window scroll events for responsive synchronization.
+- Implemented `useTocToggle` React hook in `frontend/src/features/navigation/useTocToggle.ts`:
+  - Provides `isOpen`, `toggle`, `open`, `close`, and `setIsOpen` methods.
+  - Listens for global keyboard shortcuts: `Ctrl+Shift+O` and `Cmd+Shift+O` (plus `Alt+T`).
+  - Guards against zero-heading documents by cleanly disabling and collapsing outline when `hasHeadings` is false.
+- Integrated `useScrollSpy` into `TableOfContents.tsx` when `activeId` is not explicitly passed.
+- Created navigation index exports in `frontend/src/features/navigation/index.ts`.
+- Created unit test suite in `frontend/src/features/navigation/toc-sidebar-toggle.test.tsx` verifying scroll spy heading observation, fallback selection, keyboard shortcuts (`Ctrl+Shift+O`, `Cmd+Shift+O`, `Alt+T`), zero-heading collapse guard, and clean DOM toggle/restoration (6/6 tests passing).
+
+### Verification Results:
+- `npm run test:unit -- toc-sidebar-toggle`: 6 passed in 1.35s with exit code 0 (PASS).
+- `npx tsc --noEmit`: Exited with code 0, 0 type errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-021.4: Write unit tests for TOC component` under Story [`US-021: Interactive Table of Contents & Heading Navigation`](../stories/US-021-table-of-contents.md).

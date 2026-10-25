@@ -76,7 +76,7 @@ Build an interactive document Table of Contents (TOC) sidebar:
 
 ### Task US-021.3: Implement active heading scroll spy
 - **Task ID:** `US-021.3`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-021.2`
 - **Completion Criteria:** Uses `IntersectionObserver` to track the uppermost visible heading and updates active state.
 - **Verification Command:** `npm run test:unit -- toc-sidebar-toggle`
@@ -188,4 +188,40 @@ Build an interactive document Table of Contents (TOC) sidebar:
  Test Files  1 passed (1)
       Tests  7 passed (7)
    Duration  1.86s
+```
+
+### Task US-021.3: Implement active heading scroll spy
+- **Execution Date:** 2026-10-25
+- **Agent ID:** Antigravity Autonomous Runner
+- **Status:** `DONE`
+- **Changed Files:**
+  - `frontend/src/features/navigation/useScrollSpy.ts`
+  - `frontend/src/features/navigation/useTocToggle.ts`
+  - `frontend/src/features/navigation/TableOfContents.tsx`
+  - `frontend/src/features/navigation/index.ts`
+  - `frontend/src/features/navigation/toc-sidebar-toggle.test.tsx`
+- **Verification Command:** `npm run test:unit -- toc-sidebar-toggle`
+- **Result:** `PASS` (6/6 tests passing)
+- **Terminal Output:**
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run toc-sidebar-toggle
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/navigation/toc-sidebar-toggle.test.tsx (6 tests) 111ms
+   ✓ Active Heading Scroll Spy & Sidebar Toggle (US-021.3) (6)
+     ✓ useScrollSpy hook (2)
+       ✓ observes heading elements and updates activeId on intersection
+       ✓ falls back to the heading directly above viewport when no heading is currently intersecting
+     ✓ useTocToggle hook (3)
+       ✓ manages open/close state programmatically
+       ✓ toggles open/close via Ctrl+Shift+O and Cmd+Shift+O keyboard shortcuts
+       ✓ cleanly disables and forces collapsed state when document has zero headings
+     ✓ Component Toggle & Layout Preservation (1)
+       ✓ collapses and restores TableOfContents cleanly when isOpen changes
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Duration  1.35s
 ```

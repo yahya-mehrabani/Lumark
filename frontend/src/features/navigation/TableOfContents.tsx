@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { TocItem, TocNode } from './types';
 import { buildTocTree } from './tocGenerator';
 import { useTableOfContents } from './useTableOfContents';
+import { useScrollSpy } from './useScrollSpy';
 import './toc.css';
 
 export interface TableOfContentsProps {
@@ -29,7 +30,7 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
   tree: propsTree,
   markdown,
   containerRef,
-  activeId,
+  activeId: propsActiveId,
   onSelectHeading,
   onClose,
   isOpen = true,
@@ -47,6 +48,12 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
     if (propsItems) return buildTocTree(propsItems);
     return hookData.tree;
   }, [propsTree, propsItems, hookData.tree]);
+
+  const spyData = useScrollSpy({
+    containerRef,
+    itemIds: propsActiveId ? undefined : effectiveItems.map((i) => i.id),
+  });
+  const activeId = propsActiveId ?? spyData.activeId;
 
   const hasHeadings = effectiveItems.length > 0;
 
