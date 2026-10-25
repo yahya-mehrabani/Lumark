@@ -11,6 +11,7 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  --default-contextmenu: show;
 }
 
 /* --- Document Header Bar --- */
@@ -225,6 +226,39 @@
   line-height: 1.75;
   overflow-wrap: break-word;
   word-break: break-word;
+  user-select: text;
+  -webkit-user-select: text;
+  --default-contextmenu: show;
+}
+
+/* Text selection styles across paragraphs, code, and tables (FR-NAV-005) */
+.markdown-content p,
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6,
+.markdown-content li,
+.markdown-content blockquote,
+.markdown-content td,
+.markdown-content th,
+.markdown-content pre,
+.markdown-content code,
+.markdown-content a {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.markdown-content ::selection {
+  background: rgba(59, 130, 246, 0.35);
+  color: inherit;
+}
+
+[data-theme="light"] .markdown-content ::selection,
+.theme-light .markdown-content ::selection {
+  background: rgba(37, 99, 235, 0.25);
+  color: inherit;
 }
 
 /* ==========================================================================

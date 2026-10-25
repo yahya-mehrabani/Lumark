@@ -3149,3 +3149,39 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-023.5: Implement native text selection, copy action, and context menu preservation (FR-NAV-005)` under Story [`US-023: Document Viewport Controls: Themes, Zoom & Selection`](../stories/US-023-theme-zoom-selection.md).
+
+---
+
+## 2026-10-25 — Task US-023.5: Implement native text selection, copy action, and context menu preservation (FR-NAV-005) & Story US-023 Completion
+
+- **Task ID:** `US-023.5`
+- **Story ID:** [`US-023: Document Viewport Controls: Themes, Zoom & Selection`](../stories/US-023-theme-zoom-selection.md)
+- **Status:** `DONE`
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Created `frontend/src/features/viewport/selectionCopy.ts`:
+  - Implemented `getSelectedText()` and `copySelectionToClipboard()` with multi-tiered clipboard dispatch (`navigator.clipboard.writeText`, native Wails runtime `Clipboard.SetText`, fallback `execCommand('copy')`).
+  - Implemented `useSelectionCopy()` React hook listening for `Ctrl+C` and `Cmd+C` shortcuts, scoping selection to container ref when provided, without preventing default event propagation to allow standard browser copy behavior.
+- Configured native text selection and context menu unblocking in `markdown.css` and `theme.css`:
+  - Added `user-select: text; -webkit-user-select: text;` to `.markdown-content` and its child elements (paragraphs, headings, code, blockquotes, tables, lists, links).
+  - Preserved `user-select: none` on chrome buttons and code line numbers.
+  - Defined high-contrast `::selection` highlights for dark (`rgba(59, 130, 246, 0.35)`) and light (`rgba(37, 99, 235, 0.25)`) themes.
+  - Set `--default-contextmenu: show;` on `:root`, `.markdown-viewport`, and `.markdown-content` to instruct the Wails v3 runtime context menu handler not to suppress standard native context menus.
+- Wired `useSelectionCopy({ containerRef: contentRef })` into `frontend/src/features/rendering/MarkdownViewer.tsx`.
+- Created `frontend/src/features/viewport/selection-copy.test.tsx`:
+  - 12 unit and integration tests covering empty selection handling, string preservation with Unicode, failure tolerance, `Ctrl/Cmd+C` copy shortcuts, `onCopied` callback, unblocked `contextmenu` event propagation, CSS rule inspection, and full viewer integration.
+
+### Verification Results:
+- `npm run test:unit -- selection-copy`: 12 passed in 0.66s with exit code 0 (PASS).
+- `npx tsc --noEmit`: 0 type errors with exit code 0 (PASS).
+- `npm run test:unit`: 61 test files, 663 tests passed in 131.66s with exit code 0 (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Story US-023 Completion Summary:
+- All 5 tasks (`US-023.1`, `US-023.2`, `US-023.3`, `US-023.4`, `US-023.5`) are `DONE`.
+- Requirements `FR-NAV-003`, `FR-NAV-004`, and `FR-NAV-005` are `IMPLEMENTED` and `VERIFIED`.
+
+### Next Eligible Work Item:
+- Story [`US-024: Native WebView Print Workflow & Print Styling`](../stories/US-024-print-workflow-styling.md) under Phase 5 / `EPIC-006: Navigation, Search & User Reading Tools`.
+- First task: `US-024.1: Implement @media print CSS rules and page styling`.

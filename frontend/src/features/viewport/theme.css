@@ -3,6 +3,10 @@
    Source: PRD Section 5.7, FR-NAV-004, US-023
    ========================================================================== */
 
+:root {
+  --default-contextmenu: show;
+}
+
 :root,
 [data-theme="dark"],
 .theme-dark {

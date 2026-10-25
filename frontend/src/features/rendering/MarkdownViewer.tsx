@@ -27,6 +27,7 @@ import { SearchBar } from '../navigation/SearchBar';
 import { useSearch } from '../navigation/useSearch';
 import { useTheme } from '../viewport/themeStore';
 import { useZoom } from '../viewport/zoomController';
+import { useSelectionCopy } from '../viewport/selectionCopy';
 import '../../styles/katex.css';
 import './markdown.css';
 
@@ -79,6 +80,9 @@ const MarkdownContentBody = React.memo(
           className="markdown-content"
           data-testid="markdown-content"
           dir={activePref !== 'auto' ? activePref : undefined}
+          style={{
+            ['--default-contextmenu' as string]: 'show',
+          }}
         >
           <SlugContext.Provider value={slugTracker}>
             <ReactMarkdown
@@ -185,6 +189,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
 
   const contentRef = React.useRef<HTMLElement | null>(null);
   const search = useSearch({ containerRef: contentRef });
+  useSelectionCopy({ containerRef: contentRef });
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

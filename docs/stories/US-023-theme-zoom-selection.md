@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-023`
 - **Parent Epic:** [EPIC-006: Navigation, Search & User Reading Tools](../epics/EPIC-006-navigation-reading-tools.md)
-- **Status:** `IN_PROGRESS`
+- **Status:** `DONE`
 - **Assigned Phase:** Phase 5 (Reading Experience & Durability)
 
 ---
@@ -99,7 +99,7 @@ Provide complete viewport appearance and accessibility controls:
 
 ### Task US-023.5: Implement native text selection, copy action, and context menu preservation (FR-NAV-005)
 - **Task ID:** `US-023.5`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-023.1`
 - **Completion Criteria:** Document text selectable across all elements; context menu event not suppressed on `.markdown-content`; `Ctrl/Cmd+C` copies selected text to system clipboard.
 - **Verification Command:** `npm run test:unit -- selection-copy`
@@ -250,5 +250,45 @@ Provide complete viewport appearance and accessibility controls:
 
  Test Files  1 passed (1)
       Tests  7 passed (7)
+```
+- **Platform Verification:** Linux WSL2/WSLg (Ubuntu 26.04 x64). Cross-platform host checks deferred to dedicated validation phase.
+
+### Task US-023.5 Validation Evidence
+- **Execution Date:** 2026-10-25
+- **Agent ID:** Autonomous Story Runner
+- **Changed Files:**
+  - `frontend/src/features/viewport/selectionCopy.ts`
+  - `frontend/src/features/viewport/selection-copy.test.tsx`
+  - `frontend/src/features/rendering/MarkdownViewer.tsx`
+  - `frontend/src/features/rendering/markdown.css`
+  - `frontend/src/features/viewport/theme.css`
+- **Verification Results:**
+  - `npm run test:unit -- selection-copy`: PASS (12/12 tests passing)
+  - `npx tsc --noEmit`: PASS (0 type errors)
+  - `npm run test:unit`: PASS (61/61 test files, 663/663 unit tests passing)
+- **Terminal Output:**
+```text
+ ✓ src/features/viewport/selection-copy.test.tsx (12 tests) 658ms
+   ✓ Document Viewport: Selection, Copy & Context Menu (US-023.5, FR-NAV-005) (12)
+     ✓ getSelectedText & copySelectionToClipboard Unit Tests (5)
+       ✓ returns empty string when there is no active text selection 7ms
+       ✓ returns selected text string when selection exists 1ms
+       ✓ copySelectionToClipboard returns false and skips clipboard when selection is empty 2ms
+       ✓ copySelectionToClipboard copies selected text and returns true 4ms
+       ✓ handles clipboard write failures gracefully without throwing 31ms
+     ✓ useSelectionCopy Hook (4)
+       ✓ copies selection on Ctrl+C and invokes onCopied callback 99ms
+       ✓ copies selection on Cmd+C (macOS metaKey) 57ms
+       ✓ ignores plain "c" key without modifier 5ms
+       ✓ ignores Ctrl+C if selection is outside containerRef 29ms
+     ✓ Native Context Menu Preservation (1)
+       ✓ does not prevent contextmenu event across the document viewport 215ms
+     ✓ CSS User-Select and Highlight Selection Rules (FR-NAV-005) (1)
+       ✓ verifies markdown.css defines user-select: text across all content nodes 1ms
+     ✓ MarkdownViewer Full Selection and Copy Integration (1)
+       ✓ copies selected markdown text via Ctrl+C shortcut 199ms
+
+ Test Files  1 passed (1)
+      Tests  12 passed (12)
 ```
 - **Platform Verification:** Linux WSL2/WSLg (Ubuntu 26.04 x64). Cross-platform host checks deferred to dedicated validation phase.

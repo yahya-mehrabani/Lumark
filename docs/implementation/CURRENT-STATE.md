@@ -13,8 +13,8 @@
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
 - **Application Implementation Status:** **PHASE 2 (EPIC-002), PHASE 3 (EPIC-003), PHASE 4 (EPIC-004 & EPIC-005), AND PHASE 5 NAVIGATION TOOLS (EPIC-006: STORIES US-021 & US-022) COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) through [`US-004`](../stories/US-004-packaging-association-spike.md) (Phase 1 Spike), Stories [`US-005`](../stories/US-005-native-document-service.md) through [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Phase 2 Core Lifecycle & Tabs), Stories [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) through [`US-012`](../stories/US-012-headings-anchors-fixtures.md) (Phase 3 Core Rendering Core), Stories [`US-013`](../stories/US-013-mermaid-offline-rendering.md) through [`US-016`](../stories/US-016-adversarial-security-corpus.md) (Phase 4 `EPIC-004`), Stories [`US-017`](../stories/US-017-auto-direction-engine.md) through [`US-020`](../stories/US-020-rtl-ltr-fixtures-suite.md) (Phase 4 `EPIC-005`), and Stories [`US-021`](../stories/US-021-table-of-contents.md) & [`US-022`](../stories/US-022-in-document-search.md) (Phase 5 `EPIC-006`) fully verified across all implementation tasks under Linux/WSLg.
 - **Feasibility Spike Status:** **SPIKE IMPLEMENTATION COMPLETE / AWAITING CROSS-PLATFORM GATES**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task `US-023.4: Write unit and visual tests for theme and zoom` / Story [`US-023: Document Viewport Controls: Themes, Zoom & Selection`](../stories/US-023-theme-zoom-selection.md) (`DONE`; 7 passing tests verifying theme toggling, Mermaid diagram adaptation, and zoom bounds).
-- **Active / Next Eligible Work Item:** Task `US-023.5: Implement native text selection, copy action, and context menu preservation (FR-NAV-005)` / Story [`US-023: Document Viewport Controls: Themes, Zoom & Selection`](../stories/US-023-theme-zoom-selection.md) (`READY`; Phase 5 / `EPIC-006: Navigation, Search & User Reading Tools`).
+- **Last Completed Work Item:** Story [`US-023: Document Viewport Controls: Themes, Zoom & Selection`](../stories/US-023-theme-zoom-selection.md) (`DONE`; all 5 tasks `US-023.1` through `US-023.5` complete and verified under Linux/WSLg).
+- **Active / Next Eligible Work Item:** Story [`US-024: Native WebView Print Workflow & Print Styling`](../stories/US-024-print-workflow-styling.md) (`READY`; Phase 5 / `EPIC-006: Navigation, Search & User Reading Tools`).
 
 ---
 
@@ -80,15 +80,16 @@ All planning remediation artifacts must be preserved:
 
 ## 5. Exact Next Action for the Next Agent
 
-1. **Confirm Story US-022 Complete:**
-   - Story [`US-022: In-Document Text Search with Match Highlighting`](../stories/US-022-in-document-search.md) is **`DONE`** across all four tasks:
-     - `US-022.1`: `SearchBar` floating UI and `searchIndexer` text collection with regex escaping, ignored subtree filtering, and case sensitivity toggle verified (20/20 tests passing in `search-indexer.test.tsx`).
-     - `US-022.2`: Non-destructive DOM `<mark class="search-match">` highlighter and `useSearch` cycling hook with forward/backward wrap-around and unmount cleanup verified (8/8 tests passing in `search-navigation.test.tsx`).
-     - `US-022.3`: Global keyboard shortcuts (`Ctrl+F`, `Cmd+F`, `F3`, `Shift+F3`, `Enter`, `Shift+Enter`, `Escape`), toolbar Find button, and React memoization isolating rendered DOM verified (7/7 tests passing in `search-highlighting.test.tsx`).
-     - `US-022.4`: Comprehensive unit, component, and interaction acceptance suite covering match count accuracy, cycling, non-prose indexing, RTL/Persian Unicode, and clean restoration verified (7/7 tests passing in `search.test.tsx`; 42/42 across all search suites).
-   - `FR-NAV-002` is marked `IMPLEMENTED` and `VERIFIED` in `REQUIREMENT-TRACEABILITY.md`.
-2. **Execute Next Story (US-023):**
-   - Story [`US-023: Document Viewport Controls: Themes, Zoom & Selection`](../stories/US-023-theme-zoom-selection.md) is `READY` in Phase 5 / `EPIC-006`.
-   - Prerequisites (`US-009`, `US-010`, `US-013`) are all `DONE`.
-   - First task: `US-023.1: Implement theme state and switching logic`.
+1. **Confirm Story US-023 Complete:**
+   - Story [`US-023: Document Viewport Controls: Themes, Zoom & Selection`](../stories/US-023-theme-zoom-selection.md) is **`DONE`** across all five tasks:
+     - `US-023.1`: `themeTokens.ts` and `theme.css` with WCAG AA >= 4.5:1 contrast ratios (`theme-tokens.test.ts`, 15/15 passing).
+     - `US-023.2`: `ThemeStore` with OS media listener (`prefers-color-scheme: dark`) and DOM synchronization (`theme-store.test.ts`, 8/8 passing).
+     - `US-023.3`: `zoomController.ts` and keyboard shortcuts (`Ctrl/Cmd` + `+`, `-`, `0`), scale clamping 50%–250% (`zoom-controller.test.ts`, 14/14 passing).
+     - `US-023.4`: Integrated theme and zoom controls in `MarkdownViewer` with toolbar buttons, dual-theme syntax rules, and dynamic Mermaid diagram theme adaptation (`theme-zoom.test.tsx`, 7/7 passing).
+     - `US-023.5`: Native text selection (`user-select: text`), copy shortcut (`Ctrl/Cmd+C`), and unblocked context menu preservation via `--default-contextmenu: show` (`selection-copy.test.tsx`, 12/12 passing).
+   - Requirements `FR-NAV-003`, `FR-NAV-004`, and `FR-NAV-005` are marked `IMPLEMENTED` and `VERIFIED` in `REQUIREMENT-TRACEABILITY.md`.
+2. **Execute Next Story (US-024):**
+   - Story [`US-024: Native WebView Print Workflow & Print Styling`](../stories/US-024-print-workflow-styling.md) is `READY` in Phase 5 / `EPIC-006`.
+   - Prerequisites (`US-009`, `US-023`) are all `DONE`.
+   - First task: `US-024.1: Implement @media print CSS rules and page styling`.
 3. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.
