@@ -2480,3 +2480,38 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-017.4: Write unit tests for bidi resolution` under Story [`US-017: Unicode Automatic Direction Detection Engine`](../stories/US-017-auto-direction-engine.md) (Phase 4 / `EPIC-005: Bi-directional & Multi-lingual Text Support`).
+
+---
+
+## 2026-10-25 — Task US-017.4: Write unit tests for bidi resolution (Story US-017 Completion)
+
+- **Task ID:** `US-017.4`
+- **Story ID:** [`US-017: Unicode Automatic Direction Detection Engine`](../stories/US-017-auto-direction-engine.md)
+- **Status:** `DONE`
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Authored extensive multilingual bidi direction resolution unit test suite in `frontend/src/features/direction/auto-direction.test.ts` (44 test cases):
+  - Persian prose: pure Persian, Persian with English terms, Persian with Persian/Arabic digits, ASCII digits, quotes, emojis, and parentheses.
+  - Arabic prose: standard Arabic, Arabic with English terms, Arabic with numbers/dates, Arabic with leading punctuation.
+  - Hebrew prose: standard Hebrew, Hebrew with English terms, Hebrew with numbers.
+  - Additional RTL scripts: Syriac script and Thaana (Dhivehi) script.
+  - English and Western European: standard English, English with Persian terms, English with Arabic terms, leading numbers, emojis, brackets, French with diacritics, German with umlauts, Spanish with inverted question marks.
+  - Eastern European and Asian LTR scripts: Russian Cyrillic, Greek, Chinese (Simplified), Japanese (Kana + Kanji), Korean (Hangul).
+  - Markdown syntax & formatting: links with RTL/LTR anchor text, inline code blocks with RTL/LTR text, bold/italic markers, pathological leading characters.
+  - Edge cases: empty string, digits only, punctuation only, emojis only, whitespace only, custom fallbacks, `getTextDirection`, `isRtlText`, and `stripHtmlTags`.
+- Executed targeted unit test command: `npm run test:unit -- auto-direction` (54/54 tests passing across 2 files).
+- Executed full direction test suite: `npm run test:unit -- src/features/direction/` (79/79 tests passing across all 4 files).
+- Executed dev bundle build: `npm run build:dev` (built in 2.29s).
+- Verified full compliance with PRD Section 6.3 requirement `FR-DIR-001` (marked `IMPLEMENTED` and `VERIFIED` in `REQUIREMENT-TRACEABILITY.md`).
+- Concluded Story [`US-017: Unicode Automatic Direction Detection Engine`](../stories/US-017-auto-direction-engine.md) (`DONE`).
+
+### Verification Results:
+- `npm run test:unit -- auto-direction`: 54 passed across 2 test files in 3.48s (PASS).
+- `npm run test:unit -- src/features/direction/`: 79 passed across 4 test files in 6.48s (PASS).
+- `npx tsc --noEmit`: Clean typecheck with exit code 0 (PASS).
+- `npm run build:dev`: Built in 2.29s with exit code 0 (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-018.1: Implement HTML dir attribute resolver in Rehype pipeline` under Story [`US-018: Explicit HTML dir & Scoped CSS Direction Precedence`](../stories/US-018-explicit-dir-css-precedence.md) (Phase 4 / `EPIC-005: Bi-directional & Multi-lingual Text Support`).

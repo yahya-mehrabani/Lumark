@@ -22,8 +22,8 @@ This document is the authoritative index of all Epics and User Stories for `mark
 | `EPIC-001` | Technical Feasibility Spike & Platform Foundation | Phase 1 | `IN_PROGRESS` (Authorized for Feasibility Spike) | [EPIC-001-feasibility-spike.md](../epics/EPIC-001-feasibility-spike.md) |
 | `EPIC-002` | Core Native Application Lifecycle & Tab Management | Phase 2 | `DONE` | [EPIC-002-native-lifecycle-tabs.md](../epics/EPIC-002-native-lifecycle-tabs.md) |
 | `EPIC-003` | CommonMark, GFM & Core Document Rendering | Phase 3 | `IN_PROGRESS` | [EPIC-003-commonmark-gfm-rendering.md](../epics/EPIC-003-commonmark-gfm-rendering.md) |
-| `EPIC-004` | Advanced Rendering & Security Sanitization | Phase 4 | `DRAFT` | [EPIC-004-advanced-rendering-security.md](../epics/EPIC-004-advanced-rendering-security.md) |
-| `EPIC-005` | Bidirectional Text & Layout Engine (RTL/LTR) | Phase 4 | `DRAFT` | [EPIC-005-bidirectional-layout.md](../epics/EPIC-005-bidirectional-layout.md) |
+| `EPIC-004` | Advanced Rendering & Security Sanitization | Phase 4 | `DONE` | [EPIC-004-advanced-rendering-security.md](../epics/EPIC-004-advanced-rendering-security.md) |
+| `EPIC-005` | Bidirectional Text & Layout Engine (RTL/LTR) | Phase 4 | `IN_PROGRESS` | [EPIC-005-bidirectional-layout.md](../epics/EPIC-005-bidirectional-layout.md) |
 | `EPIC-006` | Navigation, Search & User Reading Tools | Phase 5 | `DRAFT` | [EPIC-006-navigation-reading-tools.md](../epics/EPIC-006-navigation-reading-tools.md) |
 | `EPIC-007` | Settings, Persistence & Durability | Phase 5 | `DRAFT` | [EPIC-007-settings-durability.md](../epics/EPIC-007-settings-durability.md) |
 | `EPIC-008` | Packaging, Operating-System Integration & Release Hardening | Phase 6 | `DRAFT` | [EPIC-008-packaging-platform-integration.md](../epics/EPIC-008-packaging-platform-integration.md) |
@@ -73,8 +73,8 @@ This document is the authoritative index of all Epics and User Stories for `mark
 | `US-014` | LaTeX Math Offline Rendering with KaTeX | P0 | `DONE` | `US-009` | [US-014.md](../stories/US-014-katex-math-rendering.md) |
 | `US-015` | HTML & CSS Sanitization and Scope Isolation Engine | P0 | `DONE` | `US-009` | [US-015.md](../stories/US-015-html-css-sanitization.md) |
 | `US-016` | Adversarial Security Test Corpus & Fault Isolation | P0 | `DONE` | `US-013`, `US-015` | [US-016.md](../stories/US-016-adversarial-security-corpus.md) |
-| `US-017` | Unicode Automatic Direction Detection Engine | P0 | `DRAFT` | `US-009` | [US-017.md](../stories/US-017-auto-direction-engine.md) |
-| `US-018` | Explicit HTML `dir` & Scoped CSS Direction Precedence | P0 | `DRAFT` | `US-015`, `US-017` | [US-018.md](../stories/US-018-explicit-dir-css-precedence.md) |
+| `US-017` | Unicode Automatic Direction Detection Engine | P0 | `DONE` | `US-009` | [US-017.md](../stories/US-017-auto-direction-engine.md) |
+| `US-018` | Explicit HTML `dir` & Scoped CSS Direction Precedence | P0 | `READY` | `US-015`, `US-017` | [US-018.md](../stories/US-018-explicit-dir-css-precedence.md) |
 | `US-019` | User Direction Preference & Non-Prose Bidi Protection | P0 | `DRAFT` | `US-017`, `US-018` | [US-019.md](../stories/US-019-direction-preference-non-prose.md) |
 | `US-020` | RTL/LTR Golden Fixtures & Platform WebView Verification Suite | P0 | `DRAFT` | `US-017`–`US-019` | [US-020.md](../stories/US-020-rtl-ltr-fixtures-suite.md) |
 

@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-017`
 - **Parent Epic:** [EPIC-005: Bidirectional Text & Layout Engine (RTL/LTR)](../epics/EPIC-005-bidirectional-layout.md)
-- **Status:** `IN_PROGRESS`
+- **Status:** `DONE`
 - **Assigned Phase:** Phase 4 (Advanced Rendering & Direction)
 
 ---
@@ -88,7 +88,7 @@ Implement block-level automatic text direction detection based on standard Unico
 
 ### Task US-017.4: Write unit tests for bidi resolution
 - **Task ID:** `US-017.4`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-017.3`
 - **Completion Criteria:** Tests verify direction calculation across 20+ multilingual test cases.
 - **Verification Command:** `npm run test:unit -- auto-direction`
@@ -194,3 +194,15 @@ Implement block-level automatic text direction detection based on standard Unico
    Start at  08:12:58
    Duration  2.32s
 ```
+  - `npm run test:unit -- auto-direction`:
+```text
+ ✓ src/features/direction/auto-direction.test.ts (44 tests) 24ms
+ ✓ src/features/direction/auto-direction-dom.test.tsx (10 tests) 166ms
+
+ Test Files  2 passed (2)
+      Tests  54 passed (54)
+   Start at  08:15:44
+   Duration  3.48s
+```
+  - `npm run test:unit -- src/features/direction/`: 79/79 tests passing across all 4 test files.
+  - `npm run build:dev`: Built in 2.29s (clean).
