@@ -16,6 +16,7 @@ import (
 
 	"markdown-viewer/internal/assets"
 	"markdown-viewer/internal/dialogs"
+	"markdown-viewer/internal/settings"
 	"markdown-viewer/spike/ipc"
 )
 
@@ -104,6 +105,12 @@ func main() {
 		}
 	}
 
+	// Initialize the versioned settings service
+	settingsService, err := settings.NewService()
+	if err != nil {
+		log.Printf("[Settings] Failed to initialize default settings service: %v", err)
+	}
+
 	// Create a new Wails application by providing the necessary options.
 	app := application.New(application.Options{
 		Name:        "markdown-viewer",
@@ -112,6 +119,7 @@ func main() {
 			application.NewService(&GreetService{}),
 			application.NewService(docService),
 			application.NewService(dialogs.NewService()),
+			application.NewService(settingsService),
 		},
 		Assets: application.AssetOptions{
 			Handler:    application.AssetFileServerFS(frontendAssets),

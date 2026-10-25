@@ -11,6 +11,7 @@ export interface AppShellProps {
   store?: TabStore;
   onOpenFile?: () => void;
   onPrint?: () => void;
+  onOpenSettings?: () => void;
   onFileDrop?: (files: File[]) => void;
   onSelectRecentFile?: (filePath: string) => void;
   recentFiles?: RecentFileItem[];
@@ -22,6 +23,7 @@ export const AppShell: React.FC<AppShellProps> = ({
   store = defaultStore,
   onOpenFile,
   onPrint,
+  onOpenSettings,
   onFileDrop,
   onSelectRecentFile,
   recentFiles = [],
@@ -32,7 +34,7 @@ export const AppShell: React.FC<AppShellProps> = ({
   const activeTab = useActiveTab(store);
   const actions = useTabActions(store);
 
-  // Global Ctrl+O shortcut to open file, Ctrl+P to print
+  // Global Ctrl+O shortcut to open file, Ctrl+P to print, Ctrl+, for settings
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && (e.key === 'o' || e.key === 'O')) {
@@ -41,6 +43,9 @@ export const AppShell: React.FC<AppShellProps> = ({
       } else if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P')) {
         e.preventDefault();
         onPrint?.();
+      } else if ((e.ctrlKey || e.metaKey) && e.key === ',') {
+        e.preventDefault();
+        onOpenSettings?.();
       }
     };
 
@@ -48,7 +53,7 @@ export const AppShell: React.FC<AppShellProps> = ({
     return () => {
       window.removeEventListener('keydown', handleGlobalKeyDown);
     };
-  }, [onOpenFile, onPrint]);
+  }, [onOpenFile, onPrint, onOpenSettings]);
 
   const hasTabs = state.tabs.length > 0;
 
@@ -96,6 +101,16 @@ export const AppShell: React.FC<AppShellProps> = ({
             data-testid="header-print-btn"
           >
             Print
+          </button>
+          <button
+            type="button"
+            className="header-btn"
+            onClick={onOpenSettings}
+            aria-label="Preferences and settings (Ctrl+,)"
+            title="Preferences and settings (Ctrl+,)"
+            data-testid="header-settings-btn"
+          >
+            Preferences
           </button>
         </div>
       </header>

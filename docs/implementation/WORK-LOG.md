@@ -3289,3 +3289,42 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Task:
 - Task `US-025.3: Implement Preferences UI modal in frontend` under [`US-025`](../stories/US-025-settings-service-persistence.md).
+
+---
+
+## 2026-10-25 — Task US-025.3: Implement Preferences UI modal in frontend (FR-SET-001, FR-SET-004)
+
+- **Task ID:** `US-025.3`
+- **Story ID:** [`US-025: Versioned Settings Service & Atomic Persistence`](../stories/US-025-settings-service-persistence.md)
+- **Status:** `DONE`
+- **Agent ID:** Antigravity Autonomous Agent
+
+### Scope and Implementation Summary:
+- Backend:
+  - Added `TestSettingsReset` in `internal/settings/service_test.go` verifying that `ResetSettings()` restores defaults (`system`, `auto`, `1.0`, `true`, `20`), updates in-memory state, and atomically persists to disk across restarts.
+  - Registered `settings.Service` in `main.go` under `Services: []application.Service{...}` for typed Wails v3 runtime service exposure.
+- Frontend:
+  - Created `frontend/src/features/preferences/types.ts` defining `AppSettings` interface and `DEFAULT_APP_SETTINGS`.
+  - Created `frontend/src/features/preferences/settingsStore.ts` with synchronization across `themeStore`, `directionPreferences`, and `zoomController`, supporting pluggable backend adapters.
+  - Created `frontend/src/features/preferences/preferences.css` with responsive styling, light/dark theme integration, modal backdrop, accessible focus rings, and print media suppression.
+  - Created `frontend/src/features/preferences/SettingsModal.tsx`:
+    - Accessible dialog (`role="dialog"`, `aria-modal="true"`, `aria-labelledby`).
+    - Dropdowns for Theme (`system`, `light`, `dark`), Direction (`auto`, `rtl`, `ltr`), Zoom (50% to 250%), Tab restoration toggle, and Maximum recent files.
+    - "Reset to Defaults" button displaying inline confirmation prompt explaining that interface preferences only (never document files) are reset per FR-SET-004.
+    - Keyboard handling for `Escape` dismissal.
+  - Updated `AppShell.tsx` to add "Preferences" header action button and global `Ctrl+,` / `Cmd+,` keyboard shortcut.
+  - Updated `App.tsx` to initialize `settingsStore.load()` on startup and mount `SettingsModal`.
+  - Added `frontend/src/features/preferences/SettingsModal.test.tsx` (13 tests) verifying rendering, state changes, store synchronization, confirmation dialog behavior, and keyboard dismissal.
+
+### Verification Results:
+- `go test -v -run TestSettingsReset ./internal/settings/...`: PASS (exit code 0)
+- `npm run test:unit -- SettingsModal`: 13/13 tests passed in 0.27s (PASS)
+- `npx tsc --noEmit`: 0 type errors (PASS)
+- `npm run build`: Production bundle compiled in 4.32s (PASS)
+- `npm run test:unit`: 64 test files, 723 tests passed in 139.62s (PASS)
+- `go test -v ./...`: All Go packages passed (PASS)
+- `golangci-lint run ./...`: 0 issues found (PASS)
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS)
+
+### Next Eligible Task:
+- Task `US-025.4: Write comprehensive unit tests for settings service` under [`US-025`](../stories/US-025-settings-service-persistence.md).

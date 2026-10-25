@@ -8,9 +8,11 @@ import { loadDroppedFiles } from './features/shell/batchLoader';
 import { tabStore } from './features/tabs/tabStore';
 
 import { triggerPrint } from './features/viewport/printController';
+import { SettingsModal, settingsStore } from './features/preferences';
 
 export function App() {
   const [, setTime] = useState<string>('Listening for Time event...');
+  const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
 
   const toastRef = useRef<HTMLDivElement | null>(null);
   const resultRef = useRef<HTMLSpanElement | null>(null);
@@ -65,6 +67,11 @@ export function App() {
   };
 
   useEffect(() => {
+    // 0. Load persisted user preferences
+    settingsStore.load().catch((err) => {
+      console.warn('Failed to load persisted settings on startup:', err);
+    });
+
     // 1. Initial check for document loaded via CLI argument in Go backend
     SpikeDocumentService.GetCurrentDocument()
       .then((current) => {
@@ -144,6 +151,7 @@ export function App() {
         store={tabStore}
         onOpenFile={handleOpenFile}
         onPrint={handlePrint}
+        onOpenSettings={() => setIsSettingsOpen(true)}
         onFileDrop={handleFileDrop}
         renderDocument={(tab) => (
           <div className="markdown-viewport">
@@ -159,6 +167,11 @@ export function App() {
             />
           </div>
         )}
+      />
+
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
       />
 
       {/* Toast Notification */}

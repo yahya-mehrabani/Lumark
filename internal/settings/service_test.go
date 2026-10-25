@@ -251,3 +251,71 @@ func TestSettingsAtomicWrite(t *testing.T) {
 		}
 	}
 }
+
+func TestSettingsReset(t *testing.T) {
+	tempDir := t.TempDir()
+	targetPath := filepath.Join(tempDir, "settings.json")
+
+	svc, err := NewServiceWithPath(targetPath)
+	if err != nil {
+		t.Fatalf("NewServiceWithPath failed: %v", err)
+	}
+
+	// 1. Modify settings to non-default values
+	custom := SettingsDTO{
+		SchemaVersion:    1,
+		Theme:            ThemeDark,
+		DefaultDirection: DirectionRTL,
+		DefaultZoom:      1.5,
+		RestoreOpenTabs:  false,
+		OpenTabs:         []string{"/path/to/doc.md"},
+		MaxRecentFiles:   10,
+	}
+	if err := svc.SaveSettings(custom); err != nil {
+		t.Fatalf("SaveSettings failed: %v", err)
+	}
+
+	// Verify custom values are active
+	if svc.GetSettings().Theme != ThemeDark || svc.GetSettings().DefaultDirection != DirectionRTL {
+		t.Fatalf("Custom settings were not saved: %+v", svc.GetSettings())
+	}
+
+	// 2. Execute ResetSettings
+	defaults, err := svc.ResetSettings()
+	if err != nil {
+		t.Fatalf("ResetSettings failed: %v", err)
+	}
+
+	// Verify returned defaults adhere to FR-SET-001 and FR-SET-004
+	if defaults.Theme != ThemeSystem {
+		t.Errorf("Expected reset theme to be %s, got %s", ThemeSystem, defaults.Theme)
+	}
+	if defaults.DefaultDirection != DirectionAuto {
+		t.Errorf("Expected reset default direction to be %s, got %s", DirectionAuto, defaults.DefaultDirection)
+	}
+	if defaults.DefaultZoom != 1.0 {
+		t.Errorf("Expected reset default zoom to be 1.0, got %f", defaults.DefaultZoom)
+	}
+	if !defaults.RestoreOpenTabs {
+		t.Errorf("Expected reset restoreOpenTabs to be true, got %t", defaults.RestoreOpenTabs)
+	}
+	if defaults.MaxRecentFiles != 20 {
+		t.Errorf("Expected reset maxRecentFiles to be 20, got %d", defaults.MaxRecentFiles)
+	}
+
+	// 3. Verify in-memory state
+	current := svc.GetSettings()
+	if current.Theme != ThemeSystem || current.DefaultDirection != DirectionAuto || current.DefaultZoom != 1.0 {
+		t.Errorf("In-memory settings after reset mismatch: %+v", current)
+	}
+
+	// 4. Verify disk persistence across restart
+	reloaded, err := NewServiceWithPath(targetPath)
+	if err != nil {
+		t.Fatalf("Failed to reload from disk after reset: %v", err)
+	}
+	diskSettings := reloaded.GetSettings()
+	if diskSettings.Theme != ThemeSystem || diskSettings.DefaultDirection != DirectionAuto || diskSettings.DefaultZoom != 1.0 {
+		t.Errorf("Persisted disk settings after reset mismatch: %+v", diskSettings)
+	}
+}

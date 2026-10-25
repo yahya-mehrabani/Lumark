@@ -80,7 +80,7 @@ Implement a versioned, atomic local settings service in the Go backend (`interna
 
 ### Task US-025.3: Implement Preferences UI modal in frontend
 - **Task ID:** `US-025.3`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-025.2`
 - **Completion Criteria:** Modal offers dropdowns for Theme, Direction, Zoom, and a "Reset to Defaults" button.
 - **Verification Command:** `go test -v -run TestSettingsReset ./internal/settings/...`
@@ -90,7 +90,7 @@ Implement a versioned, atomic local settings service in the Go backend (`interna
 
 ### Task US-025.4: Write comprehensive unit tests for settings service
 - **Task ID:** `US-025.4`
-- **Status:** `DRAFT`
+- **Status:** `READY`
 - **Dependencies:** `US-025.3`
 - **Completion Criteria:** Tests cover round-trip serialization, atomic replacement, and corrupted JSON recovery.
 - **Verification Command:** `go test -v -race ./internal/settings/...`
@@ -161,3 +161,38 @@ Implement a versioned, atomic local settings service in the Go backend (`interna
   - Corrupted settings files with invalid JSON or 0-byte lengths are backed up cleanly to `.corrupt.<timestamp>` (with sub-second nanosecond collision avoidance) and reset to canonical defaults without crashing or failing startup.
   - Subsequent save and reload operations continue normally after recovery.
   - Temporary files created during atomic writes are cleanly synced and unlinked.
+
+### Task US-025.3 Verification Evidence
+- **Execution Date:** 2026-10-25
+- **Agent ID:** Antigravity Autonomous Agent
+- **Changed Files:**
+  - `internal/settings/service_test.go`
+  - `frontend/src/features/preferences/types.ts`
+  - `frontend/src/features/preferences/settingsStore.ts`
+  - `frontend/src/features/preferences/SettingsModal.tsx`
+  - `frontend/src/features/preferences/preferences.css`
+  - `frontend/src/features/preferences/index.ts`
+  - `frontend/src/features/preferences/SettingsModal.test.tsx`
+  - `frontend/src/features/shell/AppShell.tsx`
+  - `frontend/src/App.tsx`
+  - `main.go`
+- **Verification Commands & Results:**
+  - `go test -v -run TestSettingsReset ./internal/settings/...`: PASS
+    ```text
+    === RUN   TestSettingsReset
+    2026/10/25 14:26:32 [Settings] Preferences successfully reset to defaults
+    --- PASS: TestSettingsReset (0.00s)
+    PASS
+    ok      markdown-viewer/internal/settings       0.003s
+    ```
+  - `npm run test:unit -- SettingsModal`: 13/13 PASS (0.27s)
+  - `npx tsc --noEmit`: 0 type errors (PASS)
+  - `npm run build`: Production bundle built in 4.32s (PASS)
+  - `npm run test:unit`: 64 test files, 723 tests passed in 139.62s (PASS)
+  - `go test -v ./...`: All Go packages passed (PASS)
+  - `golangci-lint run ./...`: 0 issues found (PASS)
+- **Observations:**
+  - `SettingsModal` provides accessible dropdowns for Theme (System, Light, Dark), Direction (Auto, RTL, LTR), Zoom (50% to 250%), Tab restoration toggle, and Max recent files (10 to 50).
+  - "Reset to Defaults" button displays a clear confirmation dialog explicitly noting that interface preferences (and never document files) are reset per FR-SET-004.
+  - Confirming reset restores defaults across frontend state, `themeStore`, `directionPreferences`, `zoomController`, and Go backend persistence.
+  - Integrated header button ("Preferences") and global keyboard shortcut (`Ctrl+,` / `Cmd+,`) in `AppShell`.
