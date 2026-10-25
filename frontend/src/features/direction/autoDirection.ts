@@ -72,3 +72,6 @@ export function getTextDirection(
 export function isRtlText(text: string): boolean {
   return detectFirstStrongDirection(text) === 'rtl';
 }
+
+export { rehypeAutoDirection, DEFAULT_AUTO_DIR_TAGS } from './autoDirectionPlugin';
+export type { RehypeAutoDirectionOptions } from './autoDirectionPlugin';

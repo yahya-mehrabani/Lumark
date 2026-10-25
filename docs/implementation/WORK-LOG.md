@@ -2427,3 +2427,30 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-017.2: Apply block-level direction in Markdown AST` under Story [`US-017: Unicode Automatic Direction Detection Engine`](../stories/US-017-auto-direction-engine.md) (Phase 4 / `EPIC-005: Bi-directional & Multi-lingual Text Support`).
+
+---
+
+## 2026-10-25 — Task US-017.2: Apply block-level direction in Markdown AST
+
+- **Task ID:** `US-017.2`
+- **Story ID:** [`US-017: Unicode Automatic Direction Detection Engine`](../stories/US-017-auto-direction-engine.md)
+- **Status:** `DONE`
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Implemented `rehypeAutoDirection` HAST plugin in `frontend/src/features/direction/autoDirectionPlugin.ts`:
+  - Attaches `dir="auto"` to textual block elements (`p`, `h1`, `h2`, `h3`, `h4`, `h5`, `h6`, `li`, `blockquote`, `td`, `th`, `caption`).
+  - Preserves explicit author `dir` markup (`dir="rtl"`, `dir="ltr"`, `dir="auto"`) without overwriting.
+  - Excludes inline elements and non-prose code blocks from receiving automatic direction.
+- Exported plugin from `frontend/src/features/direction/autoDirection.ts`.
+- Integrated `rehypeAutoDirection` into `MarkdownViewer.tsx` rehype pipeline.
+- Authored comprehensive test suite in `frontend/src/features/direction/auto-direction-dom.test.tsx` (10 tests covering AST transformation, explicit markup preservation, non-target exclusion, and end-to-end DOM rendering of paragraphs, headings, list items, blockquotes, tables, and raw HTML).
+
+### Verification Results:
+- `npm run test:unit -- auto-direction-dom`: 10 passed across 1 test file in 2.32s (PASS).
+- `npm run test:unit -- markdown-viewer`: 6 passed across 1 test file (regression-free, PASS).
+- `npx tsc --noEmit`: Clean typecheck with exit code 0 (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-017.3: Configure CSS bidi rules` under Story [`US-017: Unicode Automatic Direction Detection Engine`](../stories/US-017-auto-direction-engine.md) (Phase 4 / `EPIC-005: Bi-directional & Multi-lingual Text Support`).

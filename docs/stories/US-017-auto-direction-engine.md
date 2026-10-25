@@ -68,7 +68,7 @@ Implement block-level automatic text direction detection based on standard Unico
 
 ### Task US-017.2: Apply block-level direction in Markdown AST
 - **Task ID:** `US-017.2`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-017.1`
 - **Completion Criteria:** Remark/rehype plugin attaches `dir` attribute to `p`, `h1`-`h6`, `li`, `blockquote`, `td`, `th`.
 - **Verification Command:** `npm run test:unit -- auto-direction-dom`
@@ -78,7 +78,7 @@ Implement block-level automatic text direction detection based on standard Unico
 
 ### Task US-017.3: Configure CSS bidi rules
 - **Task ID:** `US-017.3`
-- **Status:** `DRAFT`
+- **Status:** `READY`
 - **Dependencies:** `US-017.2`
 - **Completion Criteria:** Applies `unicode-bidi: isolate;` to avoid cross-element bidi interference.
 - **Verification Command:** `npm run test:unit -- mixed-paragraphs`
@@ -152,3 +152,26 @@ Implement block-level automatic text direction detection based on standard Unico
    Duration  1.19s
 ```
   - `npx tsc --noEmit`: Exit code 0 (clean).
+  - `npm run test:unit -- auto-direction-dom`:
+```text
+ ✓ src/features/direction/auto-direction-dom.test.tsx (10 tests) 170ms
+   ✓ Block-Level Direction in Markdown AST & DOM (US-017.2 / FR-DIR-001) (10)
+     ✓ Rehype Plugin Unit Tests (4)
+       ✓ applies dir="auto" to target block tags in HAST tree 6ms
+       ✓ preserves author explicit dir="rtl" and dir="ltr" attributes (FR-DIR-002) 1ms
+       ✓ does not attach dir="auto" to non-target tags (span, strong, code, a, div) 1ms
+       ✓ covers all standard block tags in DEFAULT_AUTO_DIR_TAGS 1ms
+     ✓ MarkdownViewer End-to-End DOM Rendering Integration (6)
+       ✓ renders paragraphs with dir="auto" attribute in DOM 73ms
+       ✓ renders all headings (h1 through h6) with dir="auto" attribute 31ms
+       ✓ renders list items with dir="auto" attribute 13ms
+       ✓ renders blockquotes with dir="auto" attribute 8ms
+       ✓ renders table headers and cells with dir="auto" attribute 20ms
+       ✓ preserves raw HTML explicit dir attribute in MarkdownViewer 12ms
+
+ Test Files  1 passed (1)
+      Tests  10 passed (10)
+   Start at  08:08:14
+   Duration  2.32s
+```
+  - `npm run test:unit -- markdown-viewer`: 6/6 tests passing (regression-free).

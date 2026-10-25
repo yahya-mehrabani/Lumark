@@ -7,6 +7,7 @@ import rehypeRaw from 'rehype-raw';
 import rehypeSanitize from 'rehype-sanitize';
 import { SANITY_HTML_SCHEMA } from './security/htmlSanitizer';
 import { rehypeScopedCss } from './security/cssSanitizer';
+import { rehypeAutoDirection } from '../direction/autoDirectionPlugin';
 import { remarkStrictMath, escapeCurrencyDollars } from './utils/remark-strict-math';
 import { STRICT_KATEX_OPTIONS } from './katex-adapter';
 import { CodeBlock } from './components/CodeBlock';
@@ -75,6 +76,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
               rehypeRaw,
               [rehypeSanitize, SANITY_HTML_SCHEMA],
               rehypeScopedCss,
+              rehypeAutoDirection,
               [rehypeKatex, STRICT_KATEX_OPTIONS],
             ]}
             urlTransform={(url) => url}
