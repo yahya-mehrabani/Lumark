@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-030`
 - **Parent Epic:** [EPIC-008: Packaging, Operating-System Integration & Release Hardening](../epics/EPIC-008-packaging-platform-integration.md)
-- **Status:** `IN_PROGRESS`
+- **Status:** `DONE`
 - **Assigned Phase:** Phase 6 (Distribution & Release Hardening)
 
 ---
@@ -90,7 +90,7 @@ Deliver a signed/notarized macOS application bundle and disk image:
 
 ### Task US-030.4: Document signing and notarization workflow
 - **Task ID:** `US-030.4`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-030.3`
 - **Completion Criteria:** `docs/packaging.md` contains reproducible steps for `codesign` and `xcrun notarytool`.
 - **Verification Method:** Verify `.dmg` structure on macOS runner.
@@ -131,6 +131,7 @@ Deliver a signed/notarized macOS application bundle and disk image:
   - `main.go`
   - `packaging/macos/create-dmg.sh`
   - `packaging/macos/Makefile`
+  - `docs/packaging.md`
 - **Terminal Output & Verification Evidence:**
 
 #### Task US-030.1 Verification Evidence:
@@ -202,6 +203,23 @@ Validating prerequisite assets...
 Prerequisite assets verified. DMG creation deferred to macOS runner.
 ```
 
+#### Task US-030.4 Verification Evidence:
+```text
+$ grep -i 'codesign' docs/packaging.md && grep -i 'xcrun notarytool' docs/packaging.md
+- macOS host machine or GitHub Actions `macos-latest` runner with Xcode Command Line Tools installed (`codesign`, `xcrun notarytool`, `xcrun stapler`, `spctl`).
+codesign --force --deep --options runtime \
+codesign --verify --deep --strict --verbose=4 "bin/Markdown Viewer.app"
+codesign --force --sign "Developer ID Application: Your Name (TEAM_ID)" \
+codesign --verify --strict --verbose=4 "bin/Markdown Viewer.dmg"
+   codesign --force --deep --sign - "bin/Markdown Viewer.app"
+- macOS host machine or GitHub Actions `macos-latest` runner with Xcode Command Line Tools installed (`codesign`, `xcrun notarytool`, `xcrun stapler`, `spctl`).
+### 5. Apple Notarization with `xcrun notarytool`
+xcrun notarytool store-credentials "AC_PASSWORD" \
+xcrun notarytool submit "bin/Markdown Viewer.dmg" \
+xcrun notarytool log <SUBMISSION_ID> --keychain-profile "AC_PASSWORD"
+```
+
+- **Story US-030 Outcome:** `DONE` across all 4 tasks under Linux test environment.
 - **Environment Distinction:**
-  - Linux inspection & script validation (Ubuntu 26.04 WSL2): PASS.
-  - Native macOS DMG generation & mounting: NOT RUN (requires macOS Apple Silicon runner, deferred to post-implementation cross-platform validation).
+  - Linux inspection, scripts, and documentation (Ubuntu 26.04 WSL2): PASS.
+  - Native macOS code signing, notarization, and runtime execution: NOT RUN (requires macOS Apple Silicon runner with Developer ID credentials, deferred to post-implementation cross-platform validation).

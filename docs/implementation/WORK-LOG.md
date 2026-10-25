@@ -4042,3 +4042,37 @@ This log is an append-only chronological record of all significant actions, veri
 - **Active Story:** `US-030: macOS Application Bundle, UTIs & Launch Services Integration` (`IN_PROGRESS`).
 - **Completed Tasks:** `US-030.1` (`DONE`), `US-030.2` (`DONE`), `US-030.3` (`DONE`).
 - **Next Eligible Task:** `US-030.4: Document signing and notarization workflow` under [`docs/stories/US-030-macos-packaging-associations.md`](../stories/US-030-macos-packaging-associations.md) (`READY`).
+
+---
+
+## [2026-10-25] — Phase 6: Document Signing and Notarization Workflow (Task US-030.4 & Story US-030 Complete)
+
+- **Task ID:** `US-030.4`
+- **Story ID:** `US-030`
+- **Status:** `DONE`
+- **Agent ID:** Antigravity Autonomous Story Runner
+
+### Scope and Implementation Summary:
+- Updated `docs/packaging.md`:
+  - Added comprehensive, reproducible macOS Code Signing and Notarization Guide covering Developer ID credentials, Hardened Runtime entitlements, `codesign`, `xcrun notarytool`, ticket stapling, Gatekeeper assessment, and quarantine bypass (`xattr -d com.apple.quarantine`).
+- Completed all 4 Tasks in Story `US-030: macOS Application Bundle, UTIs & Launch Services Integration`:
+  - `US-030.1: Configure macOS Info.plist and UTIs` (`DONE`)
+  - `US-030.2: Implement Wails macOS open-file event delegate` (`DONE`)
+  - `US-030.3: Create DMG packaging script` (`DONE`)
+  - `US-030.4: Document signing and notarization workflow` (`DONE`)
+- Updated Story `US-030` status to `DONE` and `REQUIREMENT-TRACEABILITY.md` row `FR-OPEN-003` to reflect completion of both Windows (`US-029`) and macOS (`US-030`) packaging and association configurations.
+- Transitioned `US-031: Linux Debian Package, AppImage & Desktop/MIME Integration` to `READY` in `docs/implementation/BACKLOG.md`.
+- Updated `docs/implementation/CURRENT-STATE.md` and `docs/implementation/WORK-LOG.md`.
+
+### Verification Results:
+- `grep -i 'codesign' docs/packaging.md && grep -i 'xcrun notarytool' docs/packaging.md`: Exit code 0 (PASS).
+- `go test ./...`: All repository packages pass (PASS).
+- `golangci-lint run`: 0 issues (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **Phase:** Phase 6 (Packaging, Platform Integration & Release Hardening).
+- **Active Story:** `US-030: macOS Application Bundle, UTIs & Launch Services Integration` (`DONE`).
+- **Completed Tasks:** `US-030.1` (`DONE`), `US-030.2` (`DONE`), `US-030.3` (`DONE`), `US-030.4` (`DONE`).
+- **Next Eligible Story:** `US-031: Linux Debian Package, AppImage & Desktop/MIME Integration` under [`docs/stories/US-031-linux-packaging-associations.md`](../stories/US-031-linux-packaging-associations.md) (`READY`; Phase 6 / `EPIC-008: Packaging, Operating-System Integration & Release Hardening`).
