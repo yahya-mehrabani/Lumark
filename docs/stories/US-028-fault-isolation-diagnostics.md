@@ -78,7 +78,7 @@ Deliver fault isolation, accessible error notifications, and a privacy-preservin
 
 ### Task US-028.3: Implement ToastNotification component
 - **Task ID:** `US-028.3`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-028.2`
 - **Completion Criteria:** Accessible toast banner (WCAG AA) with auto-dismiss and close button.
 - **Verification Command:** `npm run test:unit -- error-toasts`
@@ -88,7 +88,7 @@ Deliver fault isolation, accessible error notifications, and a privacy-preservin
 
 ### Task US-028.4: Write unit tests for logging and fault isolation
 - **Task ID:** `US-028.4`
-- **Status:** `DRAFT`
+- **Status:** `READY`
 - **Dependencies:** `US-028.3`
 - **Completion Criteria:** Tests assert document text absence from log files and rotation triggers.
 - **Verification Command:** `go test -v -race ./internal/diagnostics/...`
@@ -178,4 +178,33 @@ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
 Regression Checks:
 npm run test:unit -- shell -> 5 passed (5), 39 passed (39) in 9.57s
 npm run build:dev -> built in 7.62s with 0 errors
+```
+
+#### Task US-028.3: Implement ToastNotification component (`DONE`)
+```text
+RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/notifications/error-toasts.test.tsx (11 tests) 224ms
+   ✓ Error Toasts & Notifications (11)
+     ✓ normalizeErrorMessage (Plain Language & Stack Trace Stripping) (5)
+       ✓ normalizes permission denied errors and suggests Choose Another File action 10ms
+       ✓ normalizes file not found errors 2ms
+       ✓ normalizes oversized file errors exceeding 20 MiB limit 1ms
+       ✓ normalizes unsupported file formats 1ms
+       ✓ strips raw JavaScript stack traces from unexpected errors 1ms
+     ✓ ToastNotification Accessibility & Interaction (4)
+       ✓ renders with WCAG AA alert role and assertive live region for error toasts 105ms
+       ✓ renders action button and executes callback when clicked 39ms
+       ✓ auto-dismisses after durationMs elapses 6ms
+       ✓ dismisses when close button is clicked 13ms
+     ✓ ToastStore & ToastContainer Integration (2)
+       ✓ displays error toast with Choose Another File button when showError is called 28ms
+       ✓ dismisses newest toast on Escape key press 12ms
+
+ Test Files  1 passed (1)
+      Tests  11 passed (11)
+   Duration  1.45s
+
+Regression Checks:
+npm run test:unit -- error-boundary -> 1 passed (1), 7 passed (7) in 1.42s
 ```

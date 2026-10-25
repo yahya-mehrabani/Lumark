@@ -12,6 +12,7 @@ import { SettingsModal, settingsStore } from './features/preferences';
 import { recentsStore, useRecentFiles } from './features/recents';
 import { restoreTabsOnStartup, saveOpenTabsToSettings, handleFileChanged, syncTabWatches, WailsWatcherAdapter } from './features/tabs';
 import { ErrorBoundary } from './features/errors';
+import { ToastContainer, defaultToastStore } from './features/notifications';
 
 export function App() {
   const [, setTime] = useState<string>('Listening for Time event...');
@@ -48,6 +49,7 @@ export function App() {
           status: 'ready',
         });
         addRecentFile(d.filePath);
+        defaultToastStore.showSuccess(`Loaded ${d.filename}`);
         showToast(`Loaded ${d.filename}`);
       })
       .catch((err) => {
@@ -61,6 +63,7 @@ export function App() {
           status: 'error',
           errorMessage: String(err),
         });
+        defaultToastStore.showError(err, () => handleOpenFile());
         showToast(`Error: ${err}`);
       });
   };
@@ -293,7 +296,10 @@ export function App() {
         onClose={() => setIsSettingsOpen(false)}
       />
 
-      {/* Toast Notification */}
+      {/* Accessible Toast Notification System */}
+      <ToastContainer store={defaultToastStore} />
+
+      {/* Legacy Go Status Overlay */}
       <div className="toast" ref={toastRef} role="status" aria-live="polite">
         <span className="toast-label">From Go</span>
         <span aria-label="result" className="toast-msg" ref={resultRef}></span>

@@ -3752,3 +3752,36 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Task:
 - Task `US-028.3: Implement ToastNotification component` under [`docs/stories/US-028-fault-isolation-diagnostics.md`](../stories/US-028-fault-isolation-diagnostics.md) (`READY`).
+
+---
+
+## [2026-10-25] — Phase 5: Implement Accessible ToastNotification Component (Task US-028.3)
+
+- **Task ID:** `US-028.3`
+- **Story ID:** `US-028`
+- **Status:** `DONE`
+- **Agent ID:** Antigravity Autonomous Story Runner
+
+### Scope and Implementation Summary:
+- Created `frontend/src/features/notifications/`:
+  - `types.ts`: Defined `ToastType` (`error`, `warning`, `info`, `success`), `ToastAction`, `ToastItem`, and `ShowToastOptions`.
+  - `normalizeError.ts`: Implemented `normalizeErrorMessage` translating raw OS errors (e.g. permission denied, ENOENT, size limit > 20 MiB, unsupported format) into plain-language messages without raw stack traces (FR-ERR-001) and recommending "Choose Another File" action for file errors (Acceptance Criterion 1).
+  - `toastStore.ts`: Implemented reactive `ToastStore` with `showToast`, `showError`, `showWarning`, `showSuccess`, `showInfo`, `dismissToast`, and React hook `useToasts`.
+  - `notifications.css`: Implemented WCAG AA compliant toast banner styles with distinct type colors, contrast > 4.5:1, keyboard focus outlines, and responsive positioning.
+  - `ToastNotification.tsx`: Implemented accessible toast banner with `role="alert"` / `aria-live="assertive"` for errors, `role="status"` / `aria-live="polite"` for non-errors, `aria-atomic="true"`, auto-dismiss timer, action button, and close button (`aria-label="Dismiss notification"`).
+  - `ToastContainer.tsx`: Rendered active toasts fixed in viewport and handled Escape key dismissal of latest toast.
+  - `index.ts`: Barrel export.
+- Integrated into `App.tsx`:
+  - Wired `defaultToastStore` into `loadDocumentPath`, displaying plain-language error notifications with "Choose Another File" callback triggering the native open file dialog.
+  - Rendered `<ToastContainer store={defaultToastStore} />`.
+- Created `frontend/src/features/notifications/error-toasts.test.tsx`:
+  - 11 unit and integration tests verifying plain-language formatting, stack trace stripping, WCAG AA roles/attributes, action button clicks, auto-dismiss timers, close button clicks, and Escape key dismissal.
+
+### Verification Results:
+- `npm run test:unit -- error-toasts`: 11/11 tests passed in 1.45s (PASS).
+- `npm run test:unit -- error-boundary`: 7/7 tests passed with 0 regressions (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Task:
+- Task `US-028.4: Write unit tests for logging and fault isolation` under [`docs/stories/US-028-fault-isolation-diagnostics.md`](../stories/US-028-fault-isolation-diagnostics.md) (`READY`).
