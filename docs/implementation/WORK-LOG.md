@@ -2617,3 +2617,86 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-019.1: Enforce LTR isolation on non-prose blocks` under Story [`US-019: User Direction Preference & Non-Prose Bidi Protection`](../stories/US-019-direction-preference-non-prose.md) (Phase 4 / `EPIC-005: Bi-directional & Multi-lingual Text Support`).
+
+---
+
+## 2026-10-25 — Task US-019.1: Enforce LTR on non-prose AST nodes
+
+- **Task ID:** `US-019.1`
+- **Story ID:** [`US-019: User Direction Preference & Non-Prose Bidi Protection`](../stories/US-019-direction-preference-non-prose.md)
+- **Status:** `DONE`
+- **Commit:** `457d67c` (`feat(direction): enforce LTR isolation on non-prose AST nodes`)
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Identified non-prose elements and container classes (`pre`, `code`, `math`, `.katex`, `.katex-display`, `.mermaid`, `.mermaid-container`, `.code-block-container`, `.shiki-fallback`) in `resolver.ts`.
+- Enforced strict LTR assignment (`child.properties.dir = 'ltr'`) on non-prose HAST nodes during DirectionResolver walk, cascading LTR to all nested descendants regardless of ancestor direction.
+- Updated `CodeBlock.tsx` container and scroll container with explicit `dir="ltr"`.
+- Updated `MarkdownViewer.tsx` components to explicitly render `<code dir="ltr">` and `<pre dir="ltr">`.
+- Updated `markdown.css` with `direction: ltr !important;` and `unicode-bidi: isolate;` rules for `.code-block-container`, `.markdown-content code:not(pre code)`, `.mermaid-container`, and `.katex`.
+- Authored unit test suite `frontend/src/features/direction/non-prose-ltr.test.tsx` (13 tests): AST classification, AST transformation, and DOM rendering.
+
+### Verification Results:
+- `npm run test:unit -- non-prose-ltr`: 13 passed in 3.00s (PASS).
+- `npm run test:unit -- src/features/direction`: 142 passed across 8 test files in 15.85s (PASS).
+- `npm run build:dev`: Built dev bundle in 2.04s with exit code 0 (PASS).
+- `git diff -- PRD.md`: Empty output (PASS).
+
+---
+
+## 2026-10-25 — Task US-019.2: Connect user direction preference to DirectionResolver
+
+- **Task ID:** `US-019.2`
+- **Story ID:** [`US-019: User Direction Preference & Non-Prose Bidi Protection`](../stories/US-019-direction-preference-non-prose.md)
+- **Status:** `DONE`
+- **Commit:** `a9d0e71` (`feat(direction): connect user direction preference to DirectionResolver`)
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Implemented `directionPreferences.ts` providing `getActiveDirectionPreference()`, `setActiveDirectionPreference()`, `resetDirectionPreference()`, `subscribeDirectionPreference()`, and `useDirectionPreference()` hook.
+- Connected user preference to `DirectionResolverOptions` and `rehypeDirectionResolver` in `resolver.ts`.
+- Evaluated un-annotated textual blocks: neutral blocks without strong characters fallback to user preference (`rtl` or `ltr`), while blocks with strong characters retain `dir="auto"` per precedence.
+- Maintained precedence order: Author markup / CSS > Auto-detection > User preference. Non-prose nodes remain strictly LTR.
+- Updated `MarkdownViewer.tsx` to accept `directionPreference` prop and apply active preference to document container `<main className="markdown-content" dir={...}>`.
+- Authored unit test suite `frontend/src/features/direction/default-direction-setting.test.tsx` (15 tests).
+
+### Verification Results:
+- `npm run test:unit -- default-direction-setting`: 15 passed in 2.45s (PASS).
+- `npm run test:unit -- src/features/direction`: 157 passed across 9 test files in 19.04s (PASS).
+- `npm run build:dev`: Built dev bundle in 1.78s with exit code 0 (PASS).
+- `git diff -- PRD.md`: Empty output (PASS).
+
+---
+
+## 2026-10-25 — Task US-019.3: Write unit tests for non-prose bidi isolation (Story US-019 Completion)
+
+- **Task ID:** `US-019.3`
+- **Story ID:** [`US-019: User Direction Preference & Non-Prose Bidi Protection`](../stories/US-019-direction-preference-non-prose.md)
+- **Status:** `DONE`
+- **Commit:** `a02a8ad` (`test(direction): author non-prose bidi isolation test suite`)
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Authored comprehensive test suite `frontend/src/features/direction/non-prose-bidi.test.tsx` (15 test cases):
+  - Section 1: Code block bidi isolation in Persian RTL contexts, verifying LTR alignment, pristine whitespace/indentation, line numbers, and relational operators/symbols (AC 3).
+  - Section 2: Inline code bidi isolation in Persian and Arabic sentences, verifying `dir="ltr"` on single and multiple inline code tokens without punctuation jumps.
+  - Section 3: Mathematical formulas in RTL contexts (KaTeX), verifying inline formula `$f(x) = a x + b$` renders strictly LTR without character reversal (AC 4) and display equations maintain centered LTR layout.
+  - Section 4: Mermaid diagrams in RTL contexts, verifying diagrams render strictly LTR without arrow or node reversal (AC 5) under both auto and active RTL preferences.
+  - Section 5: Nested RTL containers (explicit `<div dir="rtl">`, RTL list items, RTL blockquotes, and tables).
+- Executed unit tests (`npm run test:unit -- non-prose-bidi`: 15/15 PASS).
+- Executed full direction test suite (`npm run test:unit -- src/features/direction`: 172/172 PASS across 10 test files).
+- Executed dev bundle build: `npm run build:dev` (built in 2.56s).
+- Executed Go backend tests: `go test ./...` (all packages PASS).
+- Updated `REQUIREMENT-TRACEABILITY.md`: marked `FR-DIR-004` and `FR-DIR-005` as `IMPLEMENTED` / `VERIFIED`.
+- Updated `BACKLOG.md`: marked `US-019` as `DONE` and `US-020` as `READY`.
+- Concluded Story [`US-019: User Direction Preference & Non-Prose Bidi Protection`](../stories/US-019-direction-preference-non-prose.md) (`DONE`).
+
+### Verification Results:
+- `npm run test:unit -- non-prose-bidi`: 15 passed in 6.90s (PASS).
+- `npm run test:unit -- src/features/direction`: 172 passed across 10 test files in 28.89s (PASS).
+- `npm run build:dev`: Built dev bundle in 2.56s with exit code 0 (PASS).
+- `go test ./...`: All packages passed with exit code 0 (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Story [`US-020: RTL/LTR Golden Fixtures & Platform WebView Verification Suite`](../stories/US-020-rtl-ltr-fixtures-suite.md) (Task `US-020.1: Create complete suite of multilingual golden markdown fixtures`).
