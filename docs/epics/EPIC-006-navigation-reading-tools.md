@@ -2,7 +2,7 @@
 
 - **Epic ID:** `EPIC-006`
 - **Title:** Navigation, Search & User Reading Tools
-- **Status:** `DRAFT`
+- **Status:** `IN_PROGRESS`
 - **Phase:** Phase 5 (Reading Experience & Durability)
 - **Target Release:** MVP UX
 

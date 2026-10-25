@@ -2786,3 +2786,31 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-021.1: Design and implement heading AST extractor and slug navigation service` under Story [`US-021: Interactive Table of Contents & Heading Navigation`](../stories/US-021-table-of-contents.md) (Phase 5 / `EPIC-006: Navigation, Search & User Reading Tools`).
+
+---
+
+## 2026-10-25 — Task US-021.1: Implement heading extraction hook (Story US-021)
+
+- **Task ID:** `US-021.1`
+- **Story ID:** [`US-021: Interactive Table of Contents & Heading Navigation`](../stories/US-021-table-of-contents.md)
+- **Status:** `DONE`
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Defined navigation types in `frontend/src/features/navigation/types.ts` (`HeadingLevel`, `TocItem`, `TocNode`, `TableOfContentsData`).
+- Implemented heading extraction and tree construction in `frontend/src/features/navigation/tocGenerator.ts`:
+  - `cleanMarkdownHeadingText`: strips inline markdown formatting (bold, italic, strikethrough, inline code, links, images, HTML tags) and trailing/leading hashes.
+  - `extractHeadingsFromMarkdown`: extracts `h1`-`h6` from Markdown source, ignores fenced code blocks (``` and ~~~), extracts setext headings and HTML headings, and utilizes `SlugTracker` for identical duplicate disambiguation (`-1`, `-2`, etc.) and non-Latin/RTL script preservation.
+  - `extractHeadingsFromElement`: extracts headings from rendered DOM containers, strips `.heading-anchor` `#` symbols, skips hidden headings (`aria-hidden="true"` or `display: none`).
+  - `buildTocTree`: builds hierarchical nested tree of `TocNode` items respecting heading levels (`h1`-`h6`) with stack-based nesting and graceful handling of skipped levels.
+- Implemented `useTableOfContents` React hook in `frontend/src/features/navigation/useTableOfContents.ts`, extracting from markdown AST/source and synchronizing with rendered DOM via `MutationObserver`.
+- Created comprehensive test suite `frontend/src/features/navigation/toc-generator.test.ts` with 16 tests covering all extraction methods, tree nesting, and hook operations.
+- Transitioned Story `US-021` and `EPIC-006` to `IN_PROGRESS`.
+
+### Verification Results:
+- `npm run test:unit -- toc-generator`: 16 passed in 1.34s with exit code 0 (PASS).
+- `npx tsc --noEmit`: Exited with code 0, 0 type errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-021.2: Implement TableOfContents sidebar component` under Story [`US-021: Interactive Table of Contents & Heading Navigation`](../stories/US-021-table-of-contents.md).

@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-021`
 - **Parent Epic:** [EPIC-006: Navigation, Search & User Reading Tools](../epics/EPIC-006-navigation-reading-tools.md)
-- **Status:** `DRAFT`
+- **Status:** `IN_PROGRESS`
 - **Assigned Phase:** Phase 5 (Reading Experience & Durability)
 
 ---
@@ -56,7 +56,7 @@ Build an interactive document Table of Contents (TOC) sidebar:
 
 ### Task US-021.1: Implement heading extraction hook
 - **Task ID:** `US-021.1`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** React hook scans rendered DOM or Markdown AST and returns structured heading array.
 - **Verification Command:** `npm run test:unit -- toc-generator`
@@ -111,11 +111,49 @@ Build an interactive document Table of Contents (TOC) sidebar:
 
 ## 9. Implementation Notes and Validation Evidence
 
-*(To be filled by implementation agent during execution)*
-- **Execution Date:** Not yet executed
-- **Agent ID:** N/A
-- **Changed Files:** None
-- **Terminal Output & Verification Evidence:**
+### Task US-021.1: Implement heading extraction hook
+- **Execution Date:** 2026-10-25
+- **Agent ID:** Antigravity Autonomous Runner
+- **Status:** `DONE`
+- **Changed Files:**
+  - `frontend/src/features/navigation/types.ts`
+  - `frontend/src/features/navigation/tocGenerator.ts`
+  - `frontend/src/features/navigation/useTableOfContents.ts`
+  - `frontend/src/features/navigation/toc-generator.test.ts`
+- **Verification Command:** `npm run test:unit -- toc-generator`
+- **Result:** `PASS` (16/16 tests passing)
+- **Terminal Output:**
 ```text
-(Awaiting execution in Phase 5)
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run toc-generator
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/navigation/toc-generator.test.ts (16 tests) 85ms
+   ✓ Heading AST & DOM Extractor (US-021.1) (16)
+     ✓ cleanMarkdownHeadingText (1)
+       ✓ strips inline markdown styles, links, code, and HTML tags
+     ✓ extractHeadingsFromMarkdown (7)
+       ✓ extracts h1 through h6 ATX headings with correct levels and IDs
+       ✓ ignores headings located inside fenced code blocks
+       ✓ disambiguates duplicate headings deterministically matching SlugTracker
+       ✓ supports setext-style headings (=== and ---)
+       ✓ supports HTML headings with explicit or generated IDs
+       ✓ preserves Persian and Arabic scripts in heading IDs and labels
+       ✓ returns empty array when markdown is empty or contains zero headings
+     ✓ extractHeadingsFromElement (2)
+       ✓ extracts headings from rendered DOM while stripping anchor symbols and skipping aria-hidden
+       ✓ returns empty array when container is null
+     ✓ buildTocTree (4)
+       ✓ builds a hierarchical tree from flat heading items
+       ✓ handles skipped levels cleanly (e.g., h1 followed by h3)
+       ✓ handles documents starting with h2 or multiple root-level headings
+       ✓ returns empty array for empty items list
+     ✓ useTableOfContents hook (2)
+       ✓ returns items, tree, and hasHeadings correctly for provided markdown
+       ✓ returns hasHeadings: false when markdown contains no headings
+
+ Test Files  1 passed (1)
+      Tests  16 passed (16)
+   Duration  1.34s
 ```
