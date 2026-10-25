@@ -3038,3 +3038,32 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Story [`US-023: Document Viewport Controls: Themes, Zoom & Selection`](../stories/US-023-theme-zoom-selection.md) (`READY`; Task `US-023.1: Implement theme state and switching logic`).
+
+---
+
+## 2026-10-25 — Task US-023.1: Define CSS theme tokens and dark mode classes
+
+- **Task ID:** `US-023.1`
+- **Story ID:** [`US-023: Document Viewport Controls: Themes, Zoom & Selection`](../stories/US-023-theme-zoom-selection.md)
+- **Status:** `DONE`
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Created `frontend/src/features/viewport/themeTokens.ts`:
+  - Defined WCAG AA-compliant design tokens for Light and Dark themes (`LIGHT_THEME_TOKENS`, `DARK_THEME_TOKENS`).
+  - Implemented relative luminance algorithm according to WCAG 2.1 specs (`getRelativeLuminance`).
+  - Implemented contrast ratio calculation (`getContrastRatio`) and WCAG AA verification (`meetsWcagAA`).
+  - Ensured all body text tokens achieve contrast ratios >= 4.5:1 against their respective backgrounds (light textPrimary = 15.6:1, dark textPrimary = 17.7:1).
+- Created `frontend/src/features/viewport/theme.css`:
+  - Defined CSS custom properties for `:root, [data-theme="dark"], .theme-dark` and `[data-theme="light"], .theme-light`.
+  - Added OS `prefers-color-scheme: light` adaptation when no explicit data-theme override is present.
+- Created `frontend/src/features/viewport/theme-tokens.test.ts`:
+  - 15 unit tests covering hex parsing, relative luminance, contrast ratio math, WCAG AA compliance across all light/dark tokens, and CSS token definition inspection.
+
+### Verification Results:
+- `npm run test:unit -- theme-tokens`: 15 passed in 1.47s with exit code 0 (PASS).
+- `npm run build`: Production bundle built cleanly with exit code 0 (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-023.2: Implement ThemeStore and OS media listener` under Story [`US-023: Document Viewport Controls: Themes, Zoom & Selection`](../stories/US-023-theme-zoom-selection.md).

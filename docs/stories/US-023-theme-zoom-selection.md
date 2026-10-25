@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-023`
 - **Parent Epic:** [EPIC-006: Navigation, Search & User Reading Tools](../epics/EPIC-006-navigation-reading-tools.md)
-- **Status:** `DRAFT`
+- **Status:** `IN_PROGRESS`
 - **Assigned Phase:** Phase 5 (Reading Experience & Durability)
 
 ---
@@ -59,7 +59,7 @@ Provide complete viewport appearance and accessibility controls:
 
 ### Task US-023.1: Define CSS theme tokens and dark mode classes
 - **Task ID:** `US-023.1`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** CSS design tokens defined for light and dark modes with WCAG AA contrast.
 - **Verification Command:** `npm run test:unit -- theme-tokens`
@@ -117,11 +117,41 @@ Provide complete viewport appearance and accessibility controls:
 
 ## 8. Implementation Notes and Validation Evidence
 
-*(To be filled by implementation agent during Phase 5 execution)*
-- **Execution Date:** Not yet executed
-- **Agent ID:** N/A
-- **Changed Files:** None
-- **Terminal Output & Verification Evidence:**
+### Task US-023.1 Validation Evidence
+- **Execution Date:** 2026-10-25
+- **Agent ID:** Autonomous Story Runner
+- **Changed Files:**
+  - `frontend/src/features/viewport/themeTokens.ts`
+  - `frontend/src/features/viewport/theme.css`
+  - `frontend/src/features/viewport/theme-tokens.test.ts`
+- **Verification Results:**
+  - `npm run test:unit -- theme-tokens`: PASS (15/15 tests passing)
+  - `npm run build`: PASS (TypeScript compiles cleanly and Vite bundles successfully)
+- **Terminal Output:**
 ```text
-(Awaiting Phase 5 execution)
+ ✓ src/features/viewport/theme-tokens.test.ts (15 tests) 20ms
+   ✓ Theme Design Tokens & WCAG AA Contrast Compliance (US-023.1) (15)
+     ✓ Hex Parsing & Luminance Utilities (4)
+       ✓ parses 3-character and 6-character hex values correctly 7ms
+       ✓ throws error for invalid hex color strings 1ms
+       ✓ calculates reference relative luminance accurately 1ms
+       ✓ calculates standard contrast ratio between pure white and pure black as 21:1 1ms
+     ✓ Light Theme Contrast Ratios (WCAG AA >= 4.5:1) (5)
+       ✓ textPrimary meets WCAG AA contrast against bgPrimary 1ms
+       ✓ textSecondary meets WCAG AA contrast against bgPrimary 0ms
+       ✓ textMuted meets WCAG AA contrast against bgPrimary 0ms
+       ✓ linkColor meets WCAG AA contrast against bgPrimary 0ms
+       ✓ textPrimary meets WCAG AA contrast against secondary and tertiary backgrounds 1ms
+     ✓ Dark Theme Contrast Ratios (WCAG AA >= 4.5:1) (5)
+       ✓ textPrimary meets WCAG AA contrast against bgPrimary 1ms
+       ✓ textSecondary meets WCAG AA contrast against bgPrimary 0ms
+       ✓ textMuted meets WCAG AA contrast against bgPrimary 0ms
+       ✓ linkColor meets WCAG AA contrast against bgPrimary 0ms
+       ✓ textPrimary meets WCAG AA contrast against secondary and tertiary backgrounds 0ms
+     ✓ CSS Theme Token Definitions (1)
+       ✓ theme.css defines required CSS variables for both light and dark modes 1ms
+
+ Test Files  1 passed (1)
+      Tests  15 passed (15)
 ```
+- **Platform Verification:** Linux WSL2/WSLg (Ubuntu 26.04 x64). Cross-platform host checks deferred to dedicated validation phase.

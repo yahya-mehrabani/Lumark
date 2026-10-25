@@ -1,0 +1,73 @@
+/* ==========================================================================
+   Design Tokens & Viewport Theme Styling
+   Source: PRD Section 5.7, FR-NAV-004, US-023
+   ========================================================================== */
+
+:root,
+[data-theme="dark"],
+.theme-dark {
+  --bg-primary: #0b0f19;
+  --bg-secondary: #111827;
+  --bg-tertiary: #1e293b;
+  --bg-surface: #161f30;
+  --bg-code: #151b28;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --border-subtle: #1e293b;
+  --border-strong: #334155;
+  --link-color: #58a6ff;
+  --link-hover: #79b8ff;
+  --accent: #3b82f6;
+  --accent-hover: #60a5fa;
+  --focus-ring: rgba(59, 130, 246, 0.5);
+  --chrome-bg: #090d16;
+  --chrome-border: rgba(255, 255, 255, 0.08);
+  color-scheme: dark;
+}
+
+[data-theme="light"],
+.theme-light {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #f1f5f9;
+  --bg-surface: #ffffff;
+  --bg-code: #f6f8fa;
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #475569;
+  --border-subtle: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --link-color: #0969da;
+  --link-hover: #0550ae;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --focus-ring: rgba(37, 99, 235, 0.5);
+  --chrome-bg: #f8fafc;
+  --chrome-border: #e2e8f0;
+  color-scheme: light;
+}
+
+/* System default prefers-color-scheme light when no explicit data-theme is set */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc;
+    --bg-tertiary: #f1f5f9;
+    --bg-surface: #ffffff;
+    --bg-code: #f6f8fa;
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
+    --text-muted: #475569;
+    --border-subtle: #e2e8f0;
+    --border-strong: #cbd5e1;
+    --link-color: #0969da;
+    --link-hover: #0550ae;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --focus-ring: rgba(37, 99, 235, 0.5);
+    --chrome-bg: #f8fafc;
+    --chrome-border: #e2e8f0;
+    color-scheme: light;
+  }
+}
