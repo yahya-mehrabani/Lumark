@@ -3396,3 +3396,46 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Task:
 - Task `US-026.2: Integrate Recent Files in UI` under [`US-026`](../stories/US-026-recent-files-tab-restore.md) (`READY`).
+
+---
+
+## [2026-10-25] — Phase 5: Integrate Recent Files in UI (US-026.2)
+
+- **Task ID:** `US-026.2`
+- **Story ID:** `US-026`
+- **Status:** `DONE`
+- **Agent ID:** Antigravity Autonomous Agent
+
+### Scope and Implementation Summary:
+- Frontend:
+  - Created `frontend/src/features/recents/types.ts` defining `RecentFileItem` with `filePath`, `filename`, `lastOpenedAt`, and `exists`.
+  - Created `frontend/src/features/recents/recentsStore.ts` with `RecentsBackendAdapter` interface, `InMemoryRecentsAdapter` (with bound enforcement and deduplication), and `useRecentFiles` React hook.
+  - Created `frontend/src/features/recents/RecentFilesMenu.tsx`:
+    - Dropdown menu in header bar (`data-testid="header-recents-btn"`).
+    - Displays recent files with filenames and truncated path tooltips.
+    - Displays disabled/red badge ("Missing on disk") when `exists === false` per FR-OPEN-006.
+    - Remove button per entry and "Clear All" action (`data-testid="clear-recents-btn"`).
+    - Accessible keyboard dismissals (`Escape`, click-outside).
+  - Created `frontend/src/features/recents/recents.css` with dropdown animation, typography, badges, and focus styles.
+  - Updated `EmptyState.tsx` & `empty-state.css`:
+    - Added "Clear All" button in recent-files section header.
+    - Added remove button per recent file.
+    - Added "Missing on disk" badge when `exists === false`.
+  - Updated `AppShell.tsx`:
+    - Integrated `RecentFilesMenu` into header actions.
+    - Forwarded recent files and clear/remove callbacks to `EmptyState`.
+  - Updated `App.tsx`:
+    - Loaded `recentsStore` on startup.
+    - Added loaded document paths to recents when loaded.
+    - Wired recent file open, remove, and clear handlers.
+  - Created `frontend/src/features/recents/recent-files-menu.test.tsx`:
+    - 10 unit tests verifying rendering, dropdown interaction, tooltips, missing badge, item remove, clear all, empty state, keyboard escape, and store bounding/deduplication.
+
+### Verification Results:
+- `npm run test:unit -- recent-files-menu`: 10/10 tests passed in 129ms (PASS)
+- `npm run test:unit -- empty-state`: 6/6 tests passed in 288ms (PASS)
+- `npx tsc --noEmit`: 0 type errors (PASS)
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS)
+
+### Next Eligible Task:
+- Task `US-026.3: Implement startup tab restoration logic` under [`US-026`](../stories/US-026-recent-files-tab-restore.md) (`READY`).

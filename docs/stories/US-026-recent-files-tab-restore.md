@@ -69,22 +69,22 @@ Manage recent documents and optional session tab restoration:
 
 ### Task US-026.2: Integrate Recent Files in UI
 - **Task ID:** `US-026.2`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-026.1`
 - **Completion Criteria:** Displays clickable list in EmptyState and File menu; includes "Clear Recents" button.
-- **Verification Command:** `npm run test:unit -- tab-restore`
-- **Expected Observable Result:** Startup restores tabs from previous session if configured in settings.
-- **Evidence to Record:** Tab restoration test output.
+- **Verification Command:** `npm run test:unit -- recent-files-menu`
+- **Expected Observable Result:** Recent files menu displays filenames with truncated path tooltips.
+- **Evidence to Record:** Component test output.
 - **Environment Handling:** Node.js / Vitest environment.
 
 ### Task US-026.3: Implement startup tab restoration logic
 - **Task ID:** `US-026.3`
-- **Status:** `DRAFT`
+- **Status:** `READY`
 - **Dependencies:** `US-026.2`
 - **Completion Criteria:** On startup, if enabled, dispatches open requests for persisted open tab paths.
-- **Verification Command:** `npm run test:unit -- recent-files-menu`
-- **Expected Observable Result:** Recent files menu displays filenames with truncated path tooltips.
-- **Evidence to Record:** Component test output.
+- **Verification Command:** `npm run test:unit -- tab-restore`
+- **Expected Observable Result:** Startup restores tabs from previous session if configured in settings.
+- **Evidence to Record:** Tab restoration test output.
 - **Environment Handling:** Node.js / Vitest environment.
 
 ### Task US-026.4: Write unit tests for recents management
@@ -122,6 +122,14 @@ Manage recent documents and optional session tab restoration:
   - `internal/recents/dto.go` (Defined `RecentFileDTO` and `NormalizePath`)
   - `internal/recents/service.go` (Implemented `RecentFilesService` with 20-item bounding, deduplication, `os.Stat` dynamic existence checks, atomic JSON persistence, and corruption recovery)
   - `internal/recents/service_test.go` (Unit test `TestRecentFilesList` testing bounded recents, deduplication, and missing-file detection)
+  - `frontend/src/features/recents/types.ts` (Defined `RecentFileItem` interface)
+  - `frontend/src/features/recents/recentsStore.ts` (Implemented `RecentsStore` with `InMemoryRecentsAdapter` and `useRecentFiles` React hook)
+  - `frontend/src/features/recents/RecentFilesMenu.tsx` (Dropdown menu in header bar with missing badges, tooltips, removal, and clear action)
+  - `frontend/src/features/recents/recents.css` (Styles for recents dropdown, menu items, badges, and animations)
+  - `frontend/src/features/shell/EmptyState.tsx` & `empty-state.css` (Added missing on disk badges, remove button, and clear recents header action)
+  - `frontend/src/features/shell/AppShell.tsx` (Integrated `RecentFilesMenu` in header actions and wired recent files handlers)
+  - `frontend/src/App.tsx` (Initialized `recentsStore`, added loaded documents to recents, wired handlers)
+  - `frontend/src/features/recents/recent-files-menu.test.tsx` (10 unit tests verifying rendering, interaction, tooltips, missing badge, remove, clear, and store behavior)
 - **Terminal Output & Verification Evidence:**
 
 ```text
@@ -135,4 +143,28 @@ ok      markdown-viewer/internal/recents        0.046s
 Static Analysis & Linters:
 Command: /root/go/bin/golangci-lint run ./internal/recents/... && /root/go/bin/goimports -l ./internal/recents/
 Output: 0 issues. Exit Code: 0
+
+=== Task US-026.2 Verification ===
+Command: npm run test:unit -- recent-files-menu
+ ✓ src/features/recents/recent-files-menu.test.tsx (10 tests) 129ms
+   ✓ RecentFilesMenu Component (8)
+     ✓ renders Recent Files header button with closed state initially 42ms
+     ✓ opens dropdown on click and displays recent files with tooltips 29ms
+     ✓ displays "Missing on disk" badge when a file does not exist 9ms
+     ✓ calls onSelectFile when an item is clicked and closes menu 12ms
+     ✓ calls onRemoveFile when the remove button is clicked without triggering onSelectFile 9ms
+     ✓ calls onClearFiles when "Clear All" button is clicked 7ms
+     ✓ renders empty message when no recent files are present 5ms
+     ✓ closes dropdown when Escape key is pressed 7ms
+   ✓ RecentsStore & InMemoryRecentsAdapter (2)
+     ✓ deduplicates paths and moves reopened files to index 0 3ms
+     ✓ enforces maximum bound and removes items 2ms
+
+Test Files  1 passed (1)
+     Tests  10 passed (10)
+Exit Code: 0
+
+TypeScript Typecheck:
+Command: npx tsc --noEmit
+Output: 0 errors. Exit Code: 0
 ```

@@ -126,13 +126,36 @@
   text-align: left;
 }
 
+.recent-files-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
 .recent-files-title {
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: #9aa6c0;
-  margin: 0 0 10px 4px;
+  margin: 0;
+}
+
+.empty-clear-recents-btn {
+  background: none;
+  border: none;
+  font-size: 11px;
+  color: #9aa6c0;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.empty-clear-recents-btn:hover {
+  color: #f85149;
+  background: rgba(248, 81, 73, 0.1);
 }
 
 .recent-files-list {
@@ -142,7 +165,7 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  max-height: 140px;
+  max-height: 180px;
   overflow-y: auto;
 }
 
@@ -158,9 +181,22 @@
   transition: background 0.12s;
 }
 
+.recent-file-item.is-missing {
+  border-color: rgba(248, 81, 73, 0.2);
+  background: rgba(248, 81, 73, 0.03);
+}
+
 .recent-file-item:hover {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.14);
+}
+
+.recent-file-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
 }
 
 .recent-file-name {
@@ -176,6 +212,36 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.recent-file-missing-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background-color: rgba(248, 81, 73, 0.15);
+  color: #f85149;
+  border: 1px solid rgba(248, 81, 73, 0.3);
+  margin-top: 2px;
+  width: fit-content;
+}
+
+.recent-file-remove-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  border-radius: 4px;
+  color: #9aa6c0;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: all 0.15s ease;
+  margin-left: 8px;
+}
+
+.recent-file-remove-btn:hover {
+  opacity: 1;
+  color: #f85149;
 }
 
 .no-recents {

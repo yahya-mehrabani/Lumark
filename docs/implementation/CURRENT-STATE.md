@@ -13,8 +13,8 @@
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
 - **Application Implementation Status:** **PHASE 2 (EPIC-002), PHASE 3 (EPIC-003), PHASE 4 (EPIC-004 & EPIC-005), PHASE 5 NAVIGATION TOOLS (EPIC-006: STORIES US-021, US-022, US-023 & US-024), AND SETTINGS PERSISTENCE (EPIC-007: STORY US-025) COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) through [`US-004`](../stories/US-004-packaging-association-spike.md) (Phase 1 Spike), Stories [`US-005`](../stories/US-005-native-document-service.md) through [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Phase 2 Core Lifecycle & Tabs), Stories [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) through [`US-012`](../stories/US-012-headings-anchors-fixtures.md) (Phase 3 Core Rendering Core), Stories [`US-013`](../stories/US-013-mermaid-offline-rendering.md) through [`US-016`](../stories/US-016-adversarial-security-corpus.md) (Phase 4 `EPIC-004`), Stories [`US-017`](../stories/US-017-auto-direction-engine.md) through [`US-020`](../stories/US-020-rtl-ltr-fixtures-suite.md) (Phase 4 `EPIC-005`), Stories [`US-021`](../stories/US-021-table-of-contents.md) through [`US-024`](../stories/US-024-print-workflow-styling.md) (Phase 5 `EPIC-006`), and Story [`US-025`](../stories/US-025-settings-service-persistence.md) (Phase 5 `EPIC-007`) fully verified across all implementation tasks under Linux/WSLg.
 - **Feasibility Spike Status:** **SPIKE IMPLEMENTATION COMPLETE / AWAITING CROSS-PLATFORM GATES**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task [`US-026.1: Implement Go RecentFilesService`](../stories/US-026-recent-files-tab-restore.md) (`DONE`; bounded to 20, deduplication, dynamic existence check, atomic persistence).
-- **Active / Next Eligible Work Item:** Task [`US-026.2: Integrate Recent Files in UI`](../stories/US-026-recent-files-tab-restore.md) (`READY`; Story [`US-026`](../stories/US-026-recent-files-tab-restore.md), Phase 5 / `EPIC-007: Settings, Persistence & Durability`).
+- **Last Completed Work Item:** Task [`US-026.2: Integrate Recent Files in UI`](../stories/US-026-recent-files-tab-restore.md) (`DONE`; RecentFilesMenu in header, EmptyState badges, clear/remove actions, 10/10 tests pass).
+- **Active / Next Eligible Work Item:** Task [`US-026.3: Implement startup tab restoration logic`](../stories/US-026-recent-files-tab-restore.md) (`READY`; Story [`US-026`](../stories/US-026-recent-files-tab-restore.md), Phase 5 / `EPIC-007: Settings, Persistence & Durability`).
 
 ---
 
@@ -80,12 +80,10 @@ All planning remediation artifacts must be preserved:
 
 ## 5. Exact Next Action for the Next Agent
 
-1. **Confirm Task US-026.1 Complete & RecentFilesService Implemented:**
-   - Task `US-026.1` is **`DONE`** in `internal/recents/`:
-     - Defined `RecentFileDTO` and `NormalizePath` in `internal/recents/dto.go`.
-     - Implemented `RecentFilesService` with 20-item bound, path deduplication, dynamic existence check via `os.Stat`, atomic JSON write, and corruption recovery in `internal/recents/service.go`.
-     - Verified with `go test -v -run TestRecentFilesList ./internal/recents/...` (PASS) and linters (0 issues).
-2. **Execute Next Task (US-026.2):**
-   - Task [`US-026.2: Integrate Recent Files in UI`](../stories/US-026-recent-files-tab-restore.md) is `READY`.
-   - Implement recent files display in `EmptyState` and application header / file menu with missing file status indicator and clear recents action.
+1. **Confirm Tasks US-026.1 and US-026.2 Complete:**
+   - Task `US-026.1` is **`DONE`** (`internal/recents/` service with 20-item bound, path deduplication, `os.Stat` checks, atomic JSON persistence).
+   - Task `US-026.2` is **`DONE`** (`RecentFilesMenu` in header, `EmptyState` badges, clear/remove actions, `recentsStore`, 10/10 unit tests passing).
+2. **Execute Next Task (US-026.3):**
+   - Task [`US-026.3: Implement startup tab restoration logic`](../stories/US-026-recent-files-tab-restore.md) is `READY`.
+   - Implement startup tab restoration in `App.tsx` / `tabRestore.ts` when `restoreOpenTabs` is enabled in preferences, saving active tab paths on change and reopening them safely on restart.
 3. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.

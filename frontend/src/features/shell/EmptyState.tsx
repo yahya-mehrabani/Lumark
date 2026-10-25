@@ -5,12 +5,16 @@ export interface RecentFileItem {
   filePath: string;
   filename: string;
   lastOpened?: string | number;
+  lastOpenedAt?: string;
+  exists?: boolean;
 }
 
 export interface EmptyStateProps {
   onOpenFile?: () => void;
   onFileDrop?: (files: File[]) => void;
   onSelectRecentFile?: (filePath: string) => void;
+  onRemoveRecentFile?: (filePath: string) => void;
+  onClearRecentFiles?: () => void;
   recentFiles?: RecentFileItem[];
   className?: string;
 }
@@ -19,6 +23,8 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   onOpenFile,
   onFileDrop,
   onSelectRecentFile,
+  onRemoveRecentFile,
+  onClearRecentFiles,
   recentFiles = [],
   className = '',
 }) => {
@@ -120,13 +126,26 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 
         {/* Recent Files List */}
         <div className="recent-files-section">
-          <h3 className="recent-files-title">Recent Files</h3>
+          <div className="recent-files-header">
+            <h3 className="recent-files-title">Recent Files</h3>
+            {recentFiles.length > 0 && onClearRecentFiles && (
+              <button
+                type="button"
+                className="empty-clear-recents-btn"
+                onClick={onClearRecentFiles}
+                data-testid="empty-clear-recents-btn"
+                title="Clear all recent files"
+              >
+                Clear All
+              </button>
+            )}
+          </div>
           {recentFiles.length > 0 ? (
             <ul className="recent-files-list" role="list">
               {recentFiles.map((file) => (
                 <li
                   key={file.filePath}
-                  className="recent-file-item"
+                  className={`recent-file-item ${file.exists === false ? 'is-missing' : ''}`}
                   role="button"
                   tabIndex={0}
                   onClick={() => onSelectRecentFile?.(file.filePath)}
@@ -137,11 +156,47 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
                     }
                   }}
                   aria-label={`Open recent file: ${file.filename}`}
+                  data-testid={`empty-recent-item-${file.filename}`}
                 >
-                  <span className="recent-file-name">{file.filename}</span>
-                  <span className="recent-file-path" title={file.filePath}>
-                    {file.filePath}
-                  </span>
+                  <div className="recent-file-info">
+                    <span className="recent-file-name">{file.filename}</span>
+                    <span className="recent-file-path" title={file.filePath}>
+                      {file.filePath}
+                    </span>
+                    {file.exists === false && (
+                      <span className="recent-file-missing-badge" data-testid="empty-missing-badge">
+                        Missing on disk
+                      </span>
+                    )}
+                  </div>
+                  {onRemoveRecentFile && (
+                    <button
+                      type="button"
+                      className="recent-file-remove-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onRemoveRecentFile(file.filePath);
+                      }}
+                      title={`Remove ${file.filename} from recents`}
+                      aria-label={`Remove ${file.filename} from recents`}
+                      data-testid={`empty-remove-recent-${file.filename}`}
+                    >
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                      >
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                      </svg>
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>

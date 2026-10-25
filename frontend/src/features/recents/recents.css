@@ -1,0 +1,151 @@
+/* Recent Files Menu & Status Badges */
+
+.recents-menu-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.recents-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 320px;
+  max-width: 90vw;
+  background-color: var(--theme-bg-surface, #131722);
+  border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.12));
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: recents-fade-in 0.15s ease-out;
+}
+
+@keyframes recents-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.recents-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--theme-border, rgba(255, 255, 255, 0.08));
+}
+
+.recents-menu-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--theme-text-muted, #8b949e);
+}
+
+.recents-clear-btn {
+  background: none;
+  border: none;
+  font-size: 0.75rem;
+  color: var(--theme-text-muted, #8b949e);
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.recents-clear-btn:hover {
+  color: #f85149;
+  background-color: rgba(248, 81, 73, 0.1);
+}
+
+.recents-menu-list {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.recents-menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--theme-border-subtle, rgba(255, 255, 255, 0.04));
+  transition: background-color 0.15s ease;
+}
+
+.recents-menu-item:hover,
+.recents-menu-item:focus-visible {
+  background-color: var(--theme-bg-hover, rgba(255, 255, 255, 0.06));
+  outline: none;
+}
+
+.recents-item-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+  margin-right: 8px;
+}
+
+.recents-item-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--theme-text-primary, #e6edf3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recents-item-path {
+  font-size: 0.75rem;
+  color: var(--theme-text-muted, #8b949e);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recents-item-remove-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  border-radius: 4px;
+  color: var(--theme-text-muted, #8b949e);
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.15s ease, color 0.15s ease;
+}
+
+.recents-item-remove-btn:hover {
+  opacity: 1;
+  color: #f85149;
+}
+
+.recent-file-missing-badge {
+  display: inline-block;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background-color: rgba(248, 81, 73, 0.15);
+  color: #f85149;
+  border: 1px solid rgba(248, 81, 73, 0.3);
+  margin-top: 3px;
+  width: fit-content;
+}
+
+.recents-menu-empty {
+  padding: 24px 16px;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--theme-text-muted, #8b949e);
+}

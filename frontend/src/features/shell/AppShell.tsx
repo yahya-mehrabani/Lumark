@@ -5,6 +5,7 @@ import { TabBar } from '../tabs/TabBar';
 import { EmptyState, RecentFileItem } from './EmptyState';
 import { DropZone } from './DropZone';
 import { TabItem } from '../tabs/types';
+import { RecentFilesMenu } from '../recents/RecentFilesMenu';
 import './shell.css';
 
 export interface AppShellProps {
@@ -14,6 +15,8 @@ export interface AppShellProps {
   onOpenSettings?: () => void;
   onFileDrop?: (files: File[]) => void;
   onSelectRecentFile?: (filePath: string) => void;
+  onRemoveRecentFile?: (filePath: string) => void;
+  onClearRecentFiles?: () => void;
   recentFiles?: RecentFileItem[];
   renderDocument?: (activeTab: TabItem) => React.ReactNode;
   className?: string;
@@ -26,6 +29,8 @@ export const AppShell: React.FC<AppShellProps> = ({
   onOpenSettings,
   onFileDrop,
   onSelectRecentFile,
+  onRemoveRecentFile,
+  onClearRecentFiles,
   recentFiles = [],
   renderDocument,
   className = '',
@@ -92,6 +97,12 @@ export const AppShell: React.FC<AppShellProps> = ({
           >
             Open File
           </button>
+          <RecentFilesMenu
+            recentFiles={recentFiles}
+            onSelectFile={onSelectRecentFile}
+            onRemoveFile={onRemoveRecentFile}
+            onClearFiles={onClearRecentFiles}
+          />
           <button
             type="button"
             className="header-btn"
@@ -130,6 +141,8 @@ export const AppShell: React.FC<AppShellProps> = ({
             onOpenFile={onOpenFile}
             onFileDrop={onFileDrop}
             onSelectRecentFile={onSelectRecentFile}
+            onRemoveRecentFile={onRemoveRecentFile}
+            onClearRecentFiles={onClearRecentFiles}
             recentFiles={recentFiles}
           />
         ) : renderDocument ? (

@@ -9,10 +9,12 @@ import { tabStore } from './features/tabs/tabStore';
 
 import { triggerPrint } from './features/viewport/printController';
 import { SettingsModal, settingsStore } from './features/preferences';
+import { recentsStore, useRecentFiles } from './features/recents';
 
 export function App() {
   const [, setTime] = useState<string>('Listening for Time event...');
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+  const { recentFiles, addRecentFile, removeRecentFile, clearRecentFiles } = useRecentFiles(recentsStore);
 
   const toastRef = useRef<HTMLDivElement | null>(null);
   const resultRef = useRef<HTMLSpanElement | null>(null);
@@ -43,6 +45,7 @@ export function App() {
           content: d.content,
           status: 'ready',
         });
+        addRecentFile(d.filePath);
         showToast(`Loaded ${d.filename}`);
       })
       .catch((err) => {
@@ -67,9 +70,12 @@ export function App() {
   };
 
   useEffect(() => {
-    // 0. Load persisted user preferences
+    // 0. Load persisted user preferences and recent files
     settingsStore.load().catch((err) => {
       console.warn('Failed to load persisted settings on startup:', err);
+    });
+    recentsStore.load().catch((err) => {
+      console.warn('Failed to load recent files on startup:', err);
     });
 
     // 1. Initial check for document loaded via CLI argument in Go backend
@@ -153,6 +159,10 @@ export function App() {
         onPrint={handlePrint}
         onOpenSettings={() => setIsSettingsOpen(true)}
         onFileDrop={handleFileDrop}
+        onSelectRecentFile={(filePath) => loadDocumentPath(filePath)}
+        onRemoveRecentFile={removeRecentFile}
+        onClearRecentFiles={clearRecentFiles}
+        recentFiles={recentFiles}
         renderDocument={(tab) => (
           <div className="markdown-viewport">
             <MarkdownViewer
