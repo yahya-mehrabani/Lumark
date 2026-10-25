@@ -1,0 +1,73 @@
+name: macOS Build & Packaging
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-macos:
+    name: Build macOS Application Bundle & DMG
+    runs-on: macos-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.x'
+          cache: true
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Frontend Dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build Frontend
+        working-directory: frontend
+        run: npm run build
+
+      - name: Install Wails CLI
+        run: go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-beta.34
+
+      - name: Verify Wails CLI
+        run: wails3 version
+
+      - name: Install go-task
+        run: brew install go-task create-dmg
+
+      - name: Package Application Bundle
+        run: |
+          task -t build/darwin/Taskfile.yml package
+
+      - name: Verify Bundle Info.plist
+        run: |
+          plutil -lint "bin/Markdown Viewer.app/Contents/Info.plist"
+          defaults read "$PWD/bin/Markdown Viewer.app/Contents/Info.plist" CFBundleDocumentTypes
+
+      - name: Build DMG Package
+        run: |
+          ./packaging/macos/create-dmg.sh bin "Markdown Viewer"
+
+      - name: Upload Bundle Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: markdown-viewer-macos-app
+          path: bin/Markdown Viewer.app
+          if-no-files-found: warn
+
+      - name: Upload DMG Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: markdown-viewer-macos-dmg
+          path: bin/Markdown Viewer.dmg
+          if-no-files-found: warn

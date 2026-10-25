@@ -3941,3 +3941,34 @@ This log is an append-only chronological record of all significant actions, veri
 - **Active Story:** `US-029: Windows Packaging, NSIS Installer & File Associations` (`DONE`).
 - **Completed Tasks:** `US-029.1` (`DONE`), `US-029.2` (`DONE`), `US-029.3` (`DONE`), `US-029.4` (`DONE`).
 - **Next Eligible Story:** `US-030: macOS Application Bundle, UTIs & Launch Services Integration` under [`docs/stories/US-030-macos-packaging-associations.md`](../stories/US-030-macos-packaging-associations.md) (`READY`; Phase 6 / `EPIC-008: Packaging, Distribution & Integration`).
+
+---
+
+## [2026-10-25] — Phase 6: Configure macOS Info.plist and UTIs (Task US-030.1 Complete)
+
+- **Task ID:** `US-030.1`
+- **Story ID:** `US-030`
+- **Status:** `DONE`
+- **Agent ID:** Antigravity Autonomous Story Runner
+
+### Scope and Implementation Summary:
+- Configured `packaging/macos/Info.plist` and `build/darwin/Info.plist`:
+  - Declared `CFBundleDocumentTypes` for Markdown documents with `CFBundleTypeRole` set to `Viewer`, `LSHandlerRank` set to `Alternate` (respecting default app choice per AUD-012), and extensions `.md`, `.markdown`, `.mdown`, `.mkd`.
+  - Declared `UTExportedTypeDeclarations` and `UTImportedTypeDeclarations` for `net.daringfireball.markdown` conforming to `public.plain-text` with appropriate tag specification.
+- Added Hardened Runtime entitlements for macOS code signing:
+  - Created `packaging/macos/entitlements.plist` and `build/darwin/entitlements.plist` configuring `com.apple.security.cs.allow-jit`, `com.apple.security.cs.allow-unsigned-executable-memory`, and `com.apple.security.cs.disable-library-validation` required by WebKit/Go execution under Hardened Runtime.
+- Added GitHub Actions workflow `.github/workflows/macos-build.yml` for `macos-latest` runner execution, bundle packaging, and DMG creation.
+- Updated `docs/stories/US-030-macos-packaging-associations.md`, `docs/implementation/CURRENT-STATE.md`, `docs/implementation/BACKLOG.md`, and `docs/implementation/WORK-LOG.md`.
+
+### Verification Results:
+- `grep -i 'CFBundleDocumentTypes' packaging/macos/Info.plist && grep -i 'net.daringfireball.markdown' packaging/macos/Info.plist && grep -i 'UTExportedTypeDeclarations' packaging/macos/Info.plist`: Exit code 0 (PASS).
+- Plist XML Syntax Parsing: Valid XML across all 4 plist files (PASS).
+- `golangci-lint run`: 0 issues (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **Phase:** Phase 6 (Packaging, Platform Integration & Release Hardening).
+- **Active Story:** `US-030: macOS Application Bundle, UTIs & Launch Services Integration` (`IN_PROGRESS`).
+- **Completed Tasks:** `US-030.1` (`DONE`).
+- **Next Eligible Task:** `US-030.2: Implement Wails macOS open-file event delegate` under [`docs/stories/US-030-macos-packaging-associations.md`](../stories/US-030-macos-packaging-associations.md) (`READY`).

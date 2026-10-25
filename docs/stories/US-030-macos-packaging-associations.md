@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-030`
 - **Parent Epic:** [EPIC-008: Packaging, Operating-System Integration & Release Hardening](../epics/EPIC-008-packaging-platform-integration.md)
-- **Status:** `DRAFT`
+- **Status:** `IN_PROGRESS`
 - **Assigned Phase:** Phase 6 (Distribution & Release Hardening)
 
 ---
@@ -60,10 +60,10 @@ Deliver a signed/notarized macOS application bundle and disk image:
 
 ### Task US-030.1: Configure macOS Info.plist and UTIs
 - **Task ID:** `US-030.1`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** `Info.plist` includes `CFBundleDocumentTypes` and `UTExportedTypeDeclarations`.
-- **Verification Command:** `grep -i 'CFBundleDocumentTypes' packaging/macos/Info.plist && grep -i 'net.daringfireball.markdown' packaging/macos/Info.plist`
+- **Verification Command:** `grep -i 'CFBundleDocumentTypes' packaging/macos/Info.plist && grep -i 'net.daringfireball.markdown' packaging/macos/Info.plist && grep -i 'UTExportedTypeDeclarations' packaging/macos/Info.plist`
 - **Expected Observable Result:** Info.plist declares document types and Markdown UTIs.
 - **Evidence to Record:** Plist inspection output.
 - **Environment Handling:** Inspection on Linux; macOS execution requires Apple Silicon runner (BLOCKED locally).
@@ -117,11 +117,29 @@ Deliver a signed/notarized macOS application bundle and disk image:
 
 ## 9. Implementation Notes and Validation Evidence
 
-*(To be filled by implementation agent during execution)*
-- **Execution Date:** Not yet executed
-- **Agent ID:** N/A
-- **Changed Files:** None
+- **Execution Date:** 2026-10-25
+- **Agent ID:** Antigravity Autonomous Runner
+- **Changed Files:**
+  - `packaging/macos/Info.plist`
+  - `build/darwin/Info.plist`
+  - `packaging/macos/entitlements.plist`
+  - `build/darwin/entitlements.plist`
+  - `.github/workflows/macos-build.yml`
 - **Terminal Output & Verification Evidence:**
+
+#### Task US-030.1 Verification Evidence:
 ```text
-(Awaiting execution in Phase 6)
+$ grep -i 'CFBundleDocumentTypes' packaging/macos/Info.plist && grep -i 'net.daringfireball.markdown' packaging/macos/Info.plist && grep -i 'UTExportedTypeDeclarations' packaging/macos/Info.plist
+    <key>CFBundleDocumentTypes</key>
+                <string>net.daringfireball.markdown</string>
+            <string>net.daringfireball.markdown</string>
+            <string>net.daringfireball.markdown</string>
+    <key>UTExportedTypeDeclarations</key>
+
+$ python3 -c "import xml.etree.ElementTree as ET; ET.parse('packaging/macos/Info.plist'); ET.parse('build/darwin/Info.plist'); ET.parse('packaging/macos/entitlements.plist'); ET.parse('build/darwin/entitlements.plist'); print('Valid XML')"
+Valid XML
 ```
+
+- **Environment Distinction:**
+  - Linux inspection (Ubuntu 26.04 WSL2): PASS.
+  - Native macOS bundle validation (`spctl`, `codesign`): NOT RUN (requires macOS Apple Silicon runner, deferred to post-implementation cross-platform validation).
