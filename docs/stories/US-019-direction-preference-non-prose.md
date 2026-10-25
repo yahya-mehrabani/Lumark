@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-019`
 - **Parent Epic:** [EPIC-005: Bidirectional Text & Layout Engine (RTL/LTR)](../epics/EPIC-005-bidirectional-layout.md)
-- **Status:** `IN_PROGRESS`
+- **Status:** `DONE`
 - **Assigned Phase:** Phase 4 (Advanced Rendering & Direction)
 
 ---
@@ -77,7 +77,7 @@ Implement user default direction preferences and protect non-prose elements from
 
 ### Task US-019.3: Write unit tests for non-prose bidi isolation
 - **Task ID:** `US-019.3`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-019.2`
 - **Completion Criteria:** Tests assert code blocks in RTL paragraphs retain `dir="ltr"` and pristine whitespace.
 - **Verification Command:** `npm run test:unit -- non-prose-bidi`
@@ -216,4 +216,61 @@ Frontend dev build check:
 ```text
 $ npm run build:dev
 ✓ built in 1.78s (zero TypeScript / Vite bundling errors)
+```
+
+### Task US-019.3 Verification Evidence (Executed 2026-10-25)
+- **Task:** `US-019.3: Write unit tests for non-prose bidi isolation`
+- **Status:** `DONE`
+- **Changed Files:**
+  - `frontend/src/features/direction/non-prose-bidi.test.tsx`
+- **Verification Command & Result:**
+```text
+$ npm run test:unit -- non-prose-bidi
+
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run non-prose-bidi
+
+ ✓ src/features/direction/non-prose-bidi.test.tsx (15 tests) 1901ms
+   ✓ US-019.3: Non-Prose Bidi Protection & Layout Isolation Suite (15)
+     ✓ 1. Code Block Bidi Isolation in Persian RTL Context (3)
+       ✓ code blocks in RTL paragraphs retain dir="ltr" and left alignment (AC 3) 253ms
+       ✓ preserves pristine indentation, whitespace, and brackets without bidi inversion 23ms
+       ✓ preserves symbols, arrows, and relational operators (<, >, <=, >=, !=, ==) in code fences 25ms
+     ✓ 2. Inline Code Bidi Isolation in Mixed RTL/LTR Sentences (3)
+       ✓ inline code inside Persian paragraph retains dir="ltr" without punctuation jump 15ms
+       ✓ multiple inline code snippets in Persian sentence all receive dir="ltr" 12ms
+       ✓ inline code in Arabic paragraph retains dir="ltr" 7ms
+     ✓ 3. Mathematical Formulas in RTL Contexts (KaTeX) (3)
+       ✓ inline formula in Persian paragraph renders strictly LTR without character reversal (AC 4) 57ms
+       ✓ complex quadratic formula in Persian text maintains LTR operators and fraction 47ms
+       ✓ display math block inside RTL document maintains centered LTR rendering 48ms
+     ✓ 4. Mermaid Diagrams in RTL Contexts (2)
+       ✓ Mermaid diagrams inside RTL document remain strictly LTR without arrow reversal (AC 5) 647ms
+       ✓ Mermaid sequence diagram renders LTR under active RTL preference 562ms
+     ✓ 5. Nested RTL Containers & Document Structures (4)
+       ✓ code block inside explicit dir="rtl" div retains dir="ltr" 123ms
+       ✓ code block inside RTL list item retains dir="ltr" 30ms
+       ✓ code block inside RTL blockquote retains dir="ltr" 22ms
+       ✓ table with Persian text isolates inline code in cells to LTR 19ms
+
+ Test Files  1 passed (1)
+      Tests  15 passed (15)
+   Start at  09:00:47
+   Duration  6.90s
+```
+
+Full direction regression test suite verification:
+```text
+$ npm run test:unit -- src/features/direction
+
+ Test Files  10 passed (10)
+      Tests  172 passed (172)
+   Start at  09:01:10
+   Duration  28.89s
+```
+
+Frontend dev build check:
+```text
+$ npm run build:dev
+✓ built in 2.56s (zero TypeScript / Vite bundling errors)
 ```
