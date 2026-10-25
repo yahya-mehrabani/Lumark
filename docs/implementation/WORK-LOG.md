@@ -3439,3 +3439,40 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Task:
 - Task `US-026.3: Implement startup tab restoration logic` under [`US-026`](../stories/US-026-recent-files-tab-restore.md) (`READY`).
+
+---
+
+## [2026-10-25] — Phase 5: Implement Startup Tab Restoration Logic (US-026.3)
+
+- **Task ID:** `US-026.3`
+- **Story ID:** `US-026`
+- **Status:** `DONE`
+- **Agent ID:** Antigravity Autonomous Agent
+
+### Scope and Implementation Summary:
+- Frontend:
+  - Created `frontend/src/features/tabs/tabRestore.ts`:
+    - Implemented `saveOpenTabsToSettings(settingsStore, tabStore)`: extracts document paths from open tabs (ignoring empty or missing placeholders) and invokes `settingsStore.updateSettings({ openTabs })`.
+    - Implemented `restoreTabsOnStartup(settingsStore, tabStore, loadDocument)`: checks `settings.restoreOpenTabs`; if true and `openTabs` is non-empty, attempts to reload tabs in their persisted order.
+    - Graceful error isolation per FR-SET-001 & PRD Section 7.2: if a file has been deleted, moved, or is inaccessible, opens a tab with `status: 'missing'` and filename indicating `[Missing] <path>`, avoiding application startup failure or blocking other valid tabs.
+    - Exported `useTabPersistence(settingsStore, tabStore)` hook with 200ms debounce to automatically synchronize open tab list to settings whenever tabs open or close.
+  - Updated `frontend/src/features/tabs/index.ts`:
+    - Exported tab restoration utilities (`restoreTabsOnStartup`, `saveOpenTabsToSettings`, `useTabPersistence`).
+    - Disambiguated `TabItem` type and component exports to ensure strict type compliance.
+  - Created `frontend/src/features/tabs/tab-restore.test.tsx`:
+    - 4 unit tests verifying:
+      1. Restores all persisted tabs in order when `restoreOpenTabs` is true.
+      2. Does not restore tabs when `restoreOpenTabs` is false.
+      3. Handles missing or corrupted documents by setting missing status without crashing.
+      4. Saves active open tab paths to settings store.
+  - Updated `App.tsx`:
+    - Wired `restoreTabsOnStartup` during initial application mount after `settingsStore` initialization.
+    - Added reactive subscription to `tabStore` to persist active tab paths when tabs change.
+
+### Verification Results:
+- `npm run test:unit -- tab-restore`: 4/4 tests passed in 27ms (PASS)
+- `npx tsc --noEmit`: 0 type errors (PASS)
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS)
+
+### Next Eligible Task:
+- Task `US-026.4: Write unit tests for recents management` under [`US-026`](../stories/US-026-recent-files-tab-restore.md) (`READY`).

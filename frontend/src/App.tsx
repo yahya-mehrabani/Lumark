@@ -10,6 +10,7 @@ import { tabStore } from './features/tabs/tabStore';
 import { triggerPrint } from './features/viewport/printController';
 import { SettingsModal, settingsStore } from './features/preferences';
 import { recentsStore, useRecentFiles } from './features/recents';
+import { restoreTabsOnStartup, saveOpenTabsToSettings } from './features/tabs/tabRestore';
 
 export function App() {
   const [, setTime] = useState<string>('Listening for Time event...');
@@ -71,11 +72,38 @@ export function App() {
 
   useEffect(() => {
     // 0. Load persisted user preferences and recent files
-    settingsStore.load().catch((err) => {
-      console.warn('Failed to load persisted settings on startup:', err);
-    });
     recentsStore.load().catch((err) => {
       console.warn('Failed to load recent files on startup:', err);
+    });
+
+    settingsStore.load().then(async () => {
+      // Restore previously open tabs if configured
+      await restoreTabsOnStartup({
+        tabStore,
+        settingsStore,
+        docLoader: async (p) => {
+          const doc = await SpikeDocumentService.LoadFile(p);
+          return {
+            filePath: doc.filePath,
+            filename: doc.filename,
+            dir: doc.dir,
+            content: doc.content,
+          };
+        },
+      });
+    }).catch((err) => {
+      console.warn('Failed to load persisted settings on startup:', err);
+    });
+
+    // Automatically persist open tab paths whenever tabs change
+    let saveTabsTimer: ReturnType<typeof setTimeout> | undefined;
+    const unsubscribeTabs = tabStore.subscribe(() => {
+      clearTimeout(saveTabsTimer);
+      saveTabsTimer = setTimeout(() => {
+        saveOpenTabsToSettings(tabStore, settingsStore).catch((err) => {
+          console.warn('Failed to save open tabs to settings:', err);
+        });
+      }, 200);
     });
 
     // 1. Initial check for document loaded via CLI argument in Go backend
@@ -125,6 +153,11 @@ export function App() {
     });
 
     WML.Reload();
+
+    return () => {
+      clearTimeout(saveTabsTimer);
+      unsubscribeTabs();
+    };
   }, []);
 
   const handleOpenFile = async () => {

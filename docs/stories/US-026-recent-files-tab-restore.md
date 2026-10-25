@@ -79,7 +79,7 @@ Manage recent documents and optional session tab restoration:
 
 ### Task US-026.3: Implement startup tab restoration logic
 - **Task ID:** `US-026.3`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-026.2`
 - **Completion Criteria:** On startup, if enabled, dispatches open requests for persisted open tab paths.
 - **Verification Command:** `npm run test:unit -- tab-restore`
@@ -89,7 +89,7 @@ Manage recent documents and optional session tab restoration:
 
 ### Task US-026.4: Write unit tests for recents management
 - **Task ID:** `US-026.4`
-- **Status:** `DRAFT`
+- **Status:** `READY`
 - **Dependencies:** `US-026.3`
 - **Completion Criteria:** Go tests verify 20-item bounding, deduplication, and missing-file status.
 - **Verification Command:** `go test -v -race ./internal/recents/...`
@@ -128,8 +128,11 @@ Manage recent documents and optional session tab restoration:
   - `frontend/src/features/recents/recents.css` (Styles for recents dropdown, menu items, badges, and animations)
   - `frontend/src/features/shell/EmptyState.tsx` & `empty-state.css` (Added missing on disk badges, remove button, and clear recents header action)
   - `frontend/src/features/shell/AppShell.tsx` (Integrated `RecentFilesMenu` in header actions and wired recent files handlers)
-  - `frontend/src/App.tsx` (Initialized `recentsStore`, added loaded documents to recents, wired handlers)
+  - `frontend/src/App.tsx` (Initialized `recentsStore`, added loaded documents to recents, wired handlers, connected startup tab restoration and tab persistence)
   - `frontend/src/features/recents/recent-files-menu.test.tsx` (10 unit tests verifying rendering, interaction, tooltips, missing badge, remove, clear, and store behavior)
+  - `frontend/src/features/tabs/tabRestore.ts` (Implemented `saveOpenTabsToSettings` and `restoreTabsOnStartup` with graceful missing file handling)
+  - `frontend/src/features/tabs/index.ts` (Re-exported tabRestore utilities)
+  - `frontend/src/features/tabs/tab-restore.test.tsx` (4 unit tests verifying ordered tab restoration, disabled flag avoidance, missing file isolation, and tab persistence)
 - **Terminal Output & Verification Evidence:**
 
 ```text
@@ -162,6 +165,19 @@ Command: npm run test:unit -- recent-files-menu
 
 Test Files  1 passed (1)
      Tests  10 passed (10)
+Exit Code: 0
+
+=== Task US-026.3 Verification ===
+Command: npm run test:unit -- tab-restore
+ ✓ src/features/tabs/tab-restore.test.tsx (4 tests) 27ms
+   ✓ Tab Restoration Logic (US-026.3) (4)
+     ✓ restores all persisted tabs in order when restoreOpenTabs is true 10ms
+     ✓ does not restore tabs when restoreOpenTabs is false 2ms
+     ✓ handles missing or corrupted documents by setting missing status without crashing 10ms
+     ✓ saves active open tab paths to settingsStore 2ms
+
+Test Files  1 passed (1)
+     Tests  4 passed (4)
 Exit Code: 0
 
 TypeScript Typecheck:
