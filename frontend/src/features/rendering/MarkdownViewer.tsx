@@ -28,6 +28,7 @@ import { useSearch } from '../navigation/useSearch';
 import { useTheme } from '../viewport/themeStore';
 import { useZoom } from '../viewport/zoomController';
 import { useSelectionCopy } from '../viewport/selectionCopy';
+import { usePrint, triggerPrint } from '../viewport/printController';
 import '../../styles/katex.css';
 import './markdown.css';
 
@@ -48,6 +49,7 @@ export interface MarkdownViewerProps {
   onNavigateAnchor?: (anchor: string) => void;
   showToc?: boolean;
   onToggleToc?: () => void;
+  onPrint?: () => void;
 }
 
 interface MarkdownContentBodyProps {
@@ -169,6 +171,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
   onNavigateAnchor,
   showToc,
   onToggleToc,
+  onPrint,
 }) => {
   const [hookPref] = useDirectionPreference();
   const activePref = directionPreference ?? hookPref;
@@ -213,6 +216,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
 
   const { theme, toggleTheme } = useTheme();
   const { zoom, zoomFactor, zoomIn, zoomOut, resetZoom, canZoomIn, canZoomOut } = useZoom({ enableShortcuts: true });
+  usePrint({ enableShortcuts: true });
 
   const slugTracker = React.useMemo(() => new SlugTracker(), [content]);
 
@@ -273,6 +277,16 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
               data-testid="doc-theme-toggle"
             >
               {theme === 'system' ? 'System' : theme === 'dark' ? 'Dark' : 'Light'}
+            </button>
+            <button
+              type="button"
+              className="doc-print-btn"
+              onClick={() => (onPrint ? onPrint() : triggerPrint())}
+              aria-label="Print document (Ctrl+P)"
+              title="Print document (Ctrl+P)"
+              data-testid="doc-print-btn"
+            >
+              Print
             </button>
             <button
               type="button"

@@ -10,6 +10,7 @@ import './shell.css';
 export interface AppShellProps {
   store?: TabStore;
   onOpenFile?: () => void;
+  onPrint?: () => void;
   onFileDrop?: (files: File[]) => void;
   onSelectRecentFile?: (filePath: string) => void;
   recentFiles?: RecentFileItem[];
@@ -20,6 +21,7 @@ export interface AppShellProps {
 export const AppShell: React.FC<AppShellProps> = ({
   store = defaultStore,
   onOpenFile,
+  onPrint,
   onFileDrop,
   onSelectRecentFile,
   recentFiles = [],
@@ -30,12 +32,15 @@ export const AppShell: React.FC<AppShellProps> = ({
   const activeTab = useActiveTab(store);
   const actions = useTabActions(store);
 
-  // Global Ctrl+O shortcut to open file
+  // Global Ctrl+O shortcut to open file, Ctrl+P to print
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && (e.key === 'o' || e.key === 'O')) {
         e.preventDefault();
         onOpenFile?.();
+      } else if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P')) {
+        e.preventDefault();
+        onPrint?.();
       }
     };
 
@@ -43,7 +48,7 @@ export const AppShell: React.FC<AppShellProps> = ({
     return () => {
       window.removeEventListener('keydown', handleGlobalKeyDown);
     };
-  }, [onOpenFile]);
+  }, [onOpenFile, onPrint]);
 
   const hasTabs = state.tabs.length > 0;
 
@@ -81,6 +86,16 @@ export const AppShell: React.FC<AppShellProps> = ({
             title="Open document file (Ctrl+O)"
           >
             Open File
+          </button>
+          <button
+            type="button"
+            className="header-btn"
+            onClick={onPrint}
+            aria-label="Print document (Ctrl+P)"
+            title="Print document (Ctrl+P)"
+            data-testid="header-print-btn"
+          >
+            Print
           </button>
         </div>
       </header>

@@ -124,6 +124,24 @@
   color: #93c5fd;
 }
 
+.doc-print-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.doc-print-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+}
+
 /* --- Document Zoom & Theme Controls --- */
 .doc-zoom-controls {
   display: inline-flex;
@@ -1008,6 +1026,8 @@
 
 [data-theme="light"] .doc-theme-toggle-btn,
 .theme-light .doc-theme-toggle-btn,
+[data-theme="light"] .doc-print-btn,
+.theme-light .doc-print-btn,
 [data-theme="light"] .doc-search-toggle-btn,
 .theme-light .doc-search-toggle-btn,
 [data-theme="light"] .doc-toc-toggle-btn,
@@ -1019,6 +1039,8 @@
 
 [data-theme="light"] .doc-theme-toggle-btn:hover,
 .theme-light .doc-theme-toggle-btn:hover,
+[data-theme="light"] .doc-print-btn:hover,
+.theme-light .doc-print-btn:hover,
 [data-theme="light"] .doc-search-toggle-btn:hover,
 .theme-light .doc-search-toggle-btn:hover,
 [data-theme="light"] .doc-toc-toggle-btn:hover,

@@ -7,6 +7,8 @@ import { AppShell } from './features/shell/AppShell';
 import { loadDroppedFiles } from './features/shell/batchLoader';
 import { tabStore } from './features/tabs/tabStore';
 
+import { triggerPrint } from './features/viewport/printController';
+
 export function App() {
   const [, setTime] = useState<string>('Listening for Time event...');
 
@@ -54,6 +56,12 @@ export function App() {
         });
         showToast(`Error: ${err}`);
       });
+  };
+
+  const handlePrint = () => {
+    triggerPrint({
+      onError: (err) => showToast(`Print error: ${err.message}`),
+    });
   };
 
   useEffect(() => {
@@ -135,6 +143,7 @@ export function App() {
       <AppShell
         store={tabStore}
         onOpenFile={handleOpenFile}
+        onPrint={handlePrint}
         onFileDrop={handleFileDrop}
         renderDocument={(tab) => (
           <div className="markdown-viewport">
@@ -146,6 +155,7 @@ export function App() {
                 content: tab.content,
               }}
               onOpenDocument={(targetPath) => loadDocumentPath(targetPath)}
+              onPrint={handlePrint}
             />
           </div>
         )}
