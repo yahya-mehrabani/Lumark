@@ -69,7 +69,7 @@ Deliver a production-ready Windows installer and native file association registr
 
 ### Task US-029.2: Implement ProgID and file association registry keys
 - **Task ID:** `US-029.2`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-029.1`
 - **Completion Criteria:** Registers `HKCU\Software\Classes\MarkdownViewer.Document` and `OpenWithProgids`.
 - **Verification Command:** `grep -i 'OpenWithProgids' packaging/windows/installer.nsi && ! grep -i 'UserChoice' packaging/windows/installer.nsi`
@@ -141,3 +141,31 @@ Exit code: 0
 - **Cross-Platform Verification Boundary:**
   - Linux NSIS Script & CI Workflow Configuration: `PASS`
   - Windows Host Installer Binary Build & Execution: `NOT RUN` (deferred to Windows cross-platform validation).
+
+### Task US-029.2: Implement ProgID and file association registry keys
+- **Status:** `DONE`
+- **Changed Files:**
+  - `packaging/windows/installer.nsi`: Configured dedicated ProgID `MarkdownViewer.Document` with DefaultIcon, FriendlyTypeName, CurVer, and shell open command. Configured `OpenWithProgids` for `.md`, `.markdown`, `.mdown`, and `.mkd`. Configured Windows Default Programs `Capabilities\FileAssociations` and `RegisteredApplications` for Windows Settings integration without modifying `UserChoice`. Added `SHChangeNotify` shell notification.
+- **Verification Commands & Output:**
+```bash
+$ grep -i 'OpenWithProgids' packaging/windows/installer.nsi && ! grep -i 'UserChoice' packaging/windows/installer.nsi
+    ; Register as Open With handler under OpenWithProgids for supported Markdown extensions
+    ; Registering under OpenWithProgids presents Markdown Viewer in Windows "Open with"
+    WriteRegNone HKCU "Software\Classes\.md\OpenWithProgids" "${PROGID}"
+    WriteRegNone HKCU "Software\Classes\.markdown\OpenWithProgids" "${PROGID}"
+    WriteRegNone HKCU "Software\Classes\.mdown\OpenWithProgids" "${PROGID}"
+    WriteRegNone HKCU "Software\Classes\.mkd\OpenWithProgids" "${PROGID}"
+    ; Remove OpenWithProgids entries without touching user preferences or unrelated handlers
+    DeleteRegValue HKCU "Software\Classes\.md\OpenWithProgids" "${PROGID}"
+    DeleteRegValue HKCU "Software\Classes\.markdown\OpenWithProgids" "${PROGID}"
+    DeleteRegValue HKCU "Software\Classes\.mdown\OpenWithProgids" "${PROGID}"
+    DeleteRegValue HKCU "Software\Classes\.mkd\OpenWithProgids" "${PROGID}"
+Exit code: 0
+
+$ golangci-lint run
+0 issues.
+Exit code: 0
+```
+- **Cross-Platform Verification Boundary:**
+  - Linux Script & Registry Syntax Assertion: `PASS`
+  - Windows Host Live Registry Key Audit: `NOT RUN` (deferred to Windows cross-platform validation).

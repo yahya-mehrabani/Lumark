@@ -72,7 +72,10 @@ Section "MainSection" SEC01
     ; Register Product-Owned ProgID
     ; HKCU\Software\Classes\MarkdownViewer.Document
     WriteRegStr HKCU "Software\Classes\${PROGID}" "" "Markdown Document"
+    WriteRegStr HKCU "Software\Classes\${PROGID}" "FriendlyTypeName" "Markdown Document"
+    WriteRegStr HKCU "Software\Classes\${PROGID}" "CurVer" "${PROGID}"
     WriteRegStr HKCU "Software\Classes\${PROGID}\DefaultIcon" "" "$INSTDIR\${PRODUCT_EXE},0"
+    WriteRegStr HKCU "Software\Classes\${PROGID}\shell\open" "FriendlyAppName" "${PRODUCT_NAME}"
     WriteRegStr HKCU "Software\Classes\${PROGID}\shell\open\command" "" '"$INSTDIR\${PRODUCT_EXE}" "%1"'
 
     ; Register as Open With handler under OpenWithProgids for supported Markdown extensions
@@ -84,12 +87,27 @@ Section "MainSection" SEC01
     WriteRegNone HKCU "Software\Classes\.mdown\OpenWithProgids" "${PROGID}"
     WriteRegNone HKCU "Software\Classes\.mkd\OpenWithProgids" "${PROGID}"
 
-    ; Also register in Windows OpenWithList for discovery
+    ; Register in Windows OpenWithList and Applications key for discovery
+    WriteRegStr HKCU "Software\Classes\Applications\${PRODUCT_EXE}" "FriendlyAppName" "${PRODUCT_NAME}"
     WriteRegStr HKCU "Software\Classes\Applications\${PRODUCT_EXE}\SupportedTypes" ".md" ""
     WriteRegStr HKCU "Software\Classes\Applications\${PRODUCT_EXE}\SupportedTypes" ".markdown" ""
     WriteRegStr HKCU "Software\Classes\Applications\${PRODUCT_EXE}\SupportedTypes" ".mdown" ""
     WriteRegStr HKCU "Software\Classes\Applications\${PRODUCT_EXE}\SupportedTypes" ".mkd" ""
+    WriteRegStr HKCU "Software\Classes\Applications\${PRODUCT_EXE}\shell\open" "FriendlyAppName" "${PRODUCT_NAME}"
     WriteRegStr HKCU "Software\Classes\Applications\${PRODUCT_EXE}\shell\open\command" "" '"$INSTDIR\${PRODUCT_EXE}" "%1"'
+
+    ; Register application capabilities for Windows Default Programs registration
+    ; (PRD Section 11.2 & FR-OPEN-003 - Enables app in "Default Apps" settings while preserving user default preferences)
+    WriteRegStr HKCU "Software\${PRODUCT_NAME}\Capabilities" "ApplicationName" "${PRODUCT_NAME}"
+    WriteRegStr HKCU "Software\${PRODUCT_NAME}\Capabilities" "ApplicationDescription" "Fast, secure, local-first Markdown document viewer"
+    WriteRegStr HKCU "Software\${PRODUCT_NAME}\Capabilities\FileAssociations" ".md" "${PROGID}"
+    WriteRegStr HKCU "Software\${PRODUCT_NAME}\Capabilities\FileAssociations" ".markdown" "${PROGID}"
+    WriteRegStr HKCU "Software\${PRODUCT_NAME}\Capabilities\FileAssociations" ".mdown" "${PROGID}"
+    WriteRegStr HKCU "Software\${PRODUCT_NAME}\Capabilities\FileAssociations" ".mkd" "${PROGID}"
+    WriteRegStr HKCU "Software\RegisteredApplications" "${PRODUCT_NAME}" "Software\${PRODUCT_NAME}\Capabilities"
+
+    ; Notify Windows Shell of file association changes
+    System::Call 'shell32.dll::SHChangeNotify(i 0x08000000, i 0, i 0, i 0)'
 
     ; Write Uninstallation Keys
     WriteRegStr HKCU "${UNINST_KEY}" "DisplayName" "${PRODUCT_NAME}"

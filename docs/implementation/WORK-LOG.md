@@ -3848,3 +3848,32 @@ This log is an append-only chronological record of all significant actions, veri
 - **Active Story:** `US-029: Windows Packaging, NSIS Installer & File Associations` (`IN_PROGRESS`).
 - **Completed Tasks:** `US-029.1` (`DONE`).
 - **Next Eligible Task:** `US-029.2: Implement ProgID and file association registry keys` under [`docs/stories/US-029-windows-packaging-associations.md`](../stories/US-029-windows-packaging-associations.md) (`READY`).
+
+---
+
+## [2026-10-25] — Phase 6: Implement ProgID and File Association Registry Keys (Task US-029.2)
+
+- **Task ID:** `US-029.2`
+- **Story ID:** `US-029`
+- **Status:** `DONE`
+- **Agent ID:** Antigravity Autonomous Story Runner
+
+### Scope and Implementation Summary:
+- Updated `packaging/windows/installer.nsi`:
+  - Configured dedicated ProgID `MarkdownViewer.Document` under `HKCU\Software\Classes\MarkdownViewer.Document` with DefaultIcon, FriendlyTypeName, CurVer, and shell open command.
+  - Registered `OpenWithProgids` keys for `.md`, `.markdown`, `.mdown`, and `.mkd` under `HKCU\Software\Classes`.
+  - Configured Windows Default Programs `Capabilities\FileAssociations` and `RegisteredApplications` under `HKCU\Software\Markdown Viewer` enabling app selection in Windows Settings "Default Apps" without modifying `UserChoice`.
+  - Added Windows Shell notification `SHChangeNotify` (`SHCNE_ASSOCCHANGED`) to notify Windows Explorer to refresh association caches immediately.
+- Updated Story `US-029` Task `US-029.2` status to `DONE` and recorded verification evidence.
+
+### Verification Results:
+- `grep -i 'OpenWithProgids' packaging/windows/installer.nsi && ! grep -i 'UserChoice' packaging/windows/installer.nsi`: Exit code 0 (PASS).
+- `golangci-lint run`: 0 issues (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **Phase:** Phase 6 (Packaging, Platform Integration & Release Hardening).
+- **Active Story:** `US-029: Windows Packaging, NSIS Installer & File Associations` (`IN_PROGRESS`).
+- **Completed Tasks:** `US-029.1` (`DONE`), `US-029.2` (`DONE`).
+- **Next Eligible Task:** `US-029.3: Add WebView2 bootstrapper verification check` under [`docs/stories/US-029-windows-packaging-associations.md`](../stories/US-029-windows-packaging-associations.md) (`READY`).
