@@ -145,6 +145,9 @@ func (s *Service) loadOrInitialize() error {
 func (s *Service) recoverCorruptedLocked(reason string) error {
 	timestamp := time.Now().UTC().Format("20060102T150405Z")
 	backupPath := fmt.Sprintf("%s.corrupt.%s", s.filePath, timestamp)
+	if _, err := os.Stat(backupPath); err == nil {
+		backupPath = fmt.Sprintf("%s.corrupt.%s.%d", s.filePath, timestamp, time.Now().UTC().Nanosecond())
+	}
 
 	if err := copyFile(s.filePath, backupPath); err != nil {
 		log.Printf("[Settings] Warning: failed to backup corrupted settings to %s: %v", backupPath, err)

@@ -124,3 +124,130 @@ func TestSettingsPersistence(t *testing.T) {
 		}
 	}
 }
+
+func TestSettingsCorruptionRecovery(t *testing.T) {
+	tempDir := t.TempDir()
+	targetPath := filepath.Join(tempDir, "settings.json")
+
+	// Case 1: Corrupted malformed JSON string
+	malformedContent := `{"schemaVersion": 1, "theme": "dark", BROKEN_JSON: ???`
+	if err := os.WriteFile(targetPath, []byte(malformedContent), 0600); err != nil {
+		t.Fatalf("Failed to seed corrupted settings file: %v", err)
+	}
+
+	// Service should recover automatically without crashing or returning an error
+	svc, err := NewServiceWithPath(targetPath)
+	if err != nil {
+		t.Fatalf("Expected NewServiceWithPath to recover from corrupted JSON, got error: %v", err)
+	}
+
+	// Active settings must be reset to defaults
+	recovered := svc.GetSettings()
+	if recovered.Theme != ThemeSystem {
+		t.Errorf("Expected theme reset to %s, got %s", ThemeSystem, recovered.Theme)
+	}
+	if recovered.SchemaVersion != 1 {
+		t.Errorf("Expected schemaVersion 1, got %d", recovered.SchemaVersion)
+	}
+
+	// Verify backup file was created
+	entries, err := os.ReadDir(tempDir)
+	if err != nil {
+		t.Fatalf("Failed to read tempDir: %v", err)
+	}
+
+	var backupFound bool
+	var backupName string
+	for _, entry := range entries {
+		if strings.HasPrefix(entry.Name(), "settings.json.corrupt.") {
+			backupFound = true
+			backupName = entry.Name()
+			break
+		}
+	}
+
+	if !backupFound {
+		t.Fatalf("Expected backup file matching settings.json.corrupt.*, found none among: %+v", entries)
+	}
+
+	// Verify backup file content matches original malformed content exactly
+	backupBytes, err := os.ReadFile(filepath.Join(tempDir, backupName))
+	if err != nil {
+		t.Fatalf("Failed to read backup file: %v", err)
+	}
+	if string(backupBytes) != malformedContent {
+		t.Errorf("Backup content mismatch: expected %q, got %q", malformedContent, string(backupBytes))
+	}
+
+	// Verify active settings file was rewritten with valid JSON
+	currentBytes, err := os.ReadFile(targetPath)
+	if err != nil {
+		t.Fatalf("Failed to read active settings file: %v", err)
+	}
+	var currentDTO SettingsDTO
+	if err := json.Unmarshal(currentBytes, &currentDTO); err != nil {
+		t.Fatalf("Active settings file after recovery is not valid JSON: %v", err)
+	}
+
+	// Case 2: 0-byte empty file recovery
+	if err := os.WriteFile(targetPath, []byte(""), 0600); err != nil {
+		t.Fatalf("Failed to seed empty settings file: %v", err)
+	}
+
+	svcEmpty, err := NewServiceWithPath(targetPath)
+	if err != nil {
+		t.Fatalf("Expected NewServiceWithPath to recover from empty file, got error: %v", err)
+	}
+
+	emptyRecovered := svcEmpty.GetSettings()
+	if emptyRecovered.Theme != ThemeSystem || emptyRecovered.DefaultDirection != DirectionAuto {
+		t.Errorf("Expected clean defaults after empty file recovery, got: %+v", emptyRecovered)
+	}
+
+	// Case 3: Verify subsequent saving continues normally after recovery
+	mod := emptyRecovered
+	mod.Theme = ThemeLight
+	mod.DefaultZoom = 1.25
+	if err := svcEmpty.SaveSettings(mod); err != nil {
+		t.Fatalf("SaveSettings failed after recovery: %v", err)
+	}
+
+	// Reload to confirm persistence of post-recovery modifications
+	reloaded, err := NewServiceWithPath(targetPath)
+	if err != nil {
+		t.Fatalf("Reload failed: %v", err)
+	}
+	if reloaded.GetSettings().Theme != ThemeLight || reloaded.GetSettings().DefaultZoom != 1.25 {
+		t.Errorf("Settings saved post-recovery failed to reload correctly: %+v", reloaded.GetSettings())
+	}
+}
+
+func TestSettingsAtomicWrite(t *testing.T) {
+	tempDir := t.TempDir()
+	targetPath := filepath.Join(tempDir, "nested", "config", "settings.json")
+
+	svc, err := NewServiceWithPath(targetPath)
+	if err != nil {
+		t.Fatalf("NewServiceWithPath failed: %v", err)
+	}
+
+	// Perform multiple rapid updates
+	for i := 0; i < 20; i++ {
+		s := svc.GetSettings()
+		s.MaxRecentFiles = 10 + i
+		if err := svc.SaveSettings(s); err != nil {
+			t.Fatalf("SaveSettings iteration %d failed: %v", i, err)
+		}
+	}
+
+	// Verify no tmp files remain
+	files, err := os.ReadDir(filepath.Dir(targetPath))
+	if err != nil {
+		t.Fatalf("Failed to read directory: %v", err)
+	}
+	for _, f := range files {
+		if strings.HasSuffix(f.Name(), ".tmp") {
+			t.Errorf("Stale temporary file detected: %s", f.Name())
+		}
+	}
+}

@@ -3258,3 +3258,34 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Task:
 - Task `US-025.2: Implement atomic file writer and corruption recovery` under [`US-025`](../stories/US-025-settings-service-persistence.md).
+
+---
+
+## 2026-10-25 — Task US-025.2: Implement atomic file writer and corruption recovery (FR-SET-002)
+
+- **Task ID:** `US-025.2`
+- **Story ID:** [`US-025: Versioned Settings Service & Atomic Persistence`](../stories/US-025-settings-service-persistence.md)
+- **Status:** `DONE`
+- **Agent ID:** Antigravity Autonomous Agent
+
+### Scope and Implementation Summary:
+- Enhanced `internal/settings/service.go`:
+  - Added collision protection with nanosecond timestamp fallback for `.corrupt.<timestamp>` backup files.
+  - Hardened `atomicWriteLocked` ensuring temporary files are always cleaned up on any error path and flushed with `Sync()` prior to atomic `os.Rename`.
+- Enhanced `internal/settings/service_test.go`:
+  - Added `TestSettingsCorruptionRecovery`:
+    - Verified recovery from invalid malformed JSON syntax: backs up bad file to `settings.json.corrupt.<timestamp>` containing original bytes and initializes fresh default settings without error or crash.
+    - Verified recovery from 0-byte empty file: backs up empty file and resets to clean defaults.
+    - Verified that subsequent `SaveSettings` and reload across service restarts work seamlessly after recovery.
+  - Added `TestSettingsAtomicWrite`:
+    - Verified rapid successive writes under race detector with clean directory state and zero remaining `.tmp` artifacts.
+
+### Verification Results:
+- `go test -v -run TestSettingsCorruptionRecovery ./internal/settings/...`: PASS (exit code 0)
+- `go test -count=1 -v ./internal/settings/...`: PASS (all 3 tests pass)
+- `golangci-lint run ./internal/settings/...`: 0 issues found (PASS)
+- `goimports -l ./internal/settings`: 0 formatting issues (PASS)
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS)
+
+### Next Eligible Task:
+- Task `US-025.3: Implement Preferences UI modal in frontend` under [`US-025`](../stories/US-025-settings-service-persistence.md).

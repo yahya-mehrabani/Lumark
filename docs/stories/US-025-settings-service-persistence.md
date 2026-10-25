@@ -70,7 +70,7 @@ Implement a versioned, atomic local settings service in the Go backend (`interna
 
 ### Task US-025.2: Implement atomic file writer and corruption recovery
 - **Task ID:** `US-025.2`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-025.1`
 - **Completion Criteria:** Go service writes to temp file, syncs, renames; catches JSON unmarshal errors and triggers backup/fallback.
 - **Verification Command:** `go test -v -run TestSettingsCorruptionRecovery ./internal/settings/...`
@@ -80,7 +80,7 @@ Implement a versioned, atomic local settings service in the Go backend (`interna
 
 ### Task US-025.3: Implement Preferences UI modal in frontend
 - **Task ID:** `US-025.3`
-- **Status:** `DRAFT`
+- **Status:** `READY`
 - **Dependencies:** `US-025.2`
 - **Completion Criteria:** Modal offers dropdowns for Theme, Direction, Zoom, and a "Reset to Defaults" button.
 - **Verification Command:** `go test -v -run TestSettingsReset ./internal/settings/...`
@@ -136,3 +136,28 @@ Implement a versioned, atomic local settings service in the Go backend (`interna
 - **Observations:**
   - `SettingsDTO` correctly enforces schema v1, enumerated themes (`system`, `light`, `dark`), direction (`auto`, `rtl`, `ltr`), zoom bounds, and tab restoration flags.
   - Round-trip file persistence to disk verified with atomic temporary write semantics and zero document text / secrets (FR-SET-003 data minimization verified).
+
+### Task US-025.2 Verification Evidence
+- **Execution Date:** 2026-10-25
+- **Agent ID:** Antigravity Autonomous Agent
+- **Changed Files:**
+  - `internal/settings/service.go`
+  - `internal/settings/service_test.go`
+- **Verification Commands & Results:**
+  - `go test -v -run TestSettingsCorruptionRecovery ./internal/settings/...`: PASS
+    ```text
+    === RUN   TestSettingsCorruptionRecovery
+    2026/10/25 14:14:32 [Settings] Settings file /tmp/TestSettingsCorruptionRecovery1610190783/001/settings.json contains invalid JSON (invalid character 'B' looking for beginning of object key string); triggering corruption recovery
+    2026/10/25 14:14:32 [Settings] Corrupted settings backed up to /tmp/TestSettingsCorruptionRecovery1610190783/001/settings.json.corrupt.20261025T104432Z (reason: json unmarshal error: invalid character 'B' looking for beginning of object key string)
+    2026/10/25 14:14:32 [Settings] Settings file /tmp/TestSettingsCorruptionRecovery1610190783/001/settings.json is empty; triggering corruption recovery
+    2026/10/25 14:14:32 [Settings] Corrupted settings backed up to /tmp/TestSettingsCorruptionRecovery1610190783/001/settings.json.corrupt.20261025T104432Z.461069902 (reason: empty file)
+    --- PASS: TestSettingsCorruptionRecovery (0.00s)
+    PASS
+    ok      markdown-viewer/internal/settings       0.005s
+    ```
+  - `golangci-lint run ./internal/settings/...`: PASS (0 issues)
+  - `goimports -l ./internal/settings`: PASS (0 issues)
+- **Observations:**
+  - Corrupted settings files with invalid JSON or 0-byte lengths are backed up cleanly to `.corrupt.<timestamp>` (with sub-second nanosecond collision avoidance) and reset to canonical defaults without crashing or failing startup.
+  - Subsequent save and reload operations continue normally after recovery.
+  - Temporary files created during atomic writes are cleanly synced and unlinked.
