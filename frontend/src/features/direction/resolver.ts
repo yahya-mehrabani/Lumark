@@ -1,5 +1,10 @@
 import postcss, { type Rule } from 'postcss';
 import type { Root as HastRoot, Element as HastElement, Node as HastNode } from 'hast';
+import {
+  getActiveDirectionPreference,
+  type DirectionPreference,
+} from './directionPreferences';
+import { detectFirstStrongDirection } from './autoDirection';
 
 /**
  * Default textual block elements that receive automatic direction (PRD FR-DIR-001).
@@ -73,6 +78,20 @@ export interface ScopedCssDirectionRule {
 export interface DirectionResolverOptions {
   tags?: Iterable<string>;
   defaultDir?: 'auto' | 'rtl' | 'ltr';
+  userPreference?: DirectionPreference | (() => DirectionPreference);
+}
+
+/**
+ * Recursively extracts concatenated text content from a HAST node.
+ */
+export function getNodeText(node: HastNode): string {
+  if (node.type === 'text') {
+    return (node as any).value || '';
+  }
+  if ('children' in node && Array.isArray((node as any).children)) {
+    return (node as any).children.map(getNodeText).join('');
+  }
+  return '';
 }
 
 /**
@@ -214,6 +233,15 @@ export function extractScopedCssDirections(tree: HastRoot): Map<string, ScopedCs
 export function rehypeDirectionResolver(options: DirectionResolverOptions = {}) {
   const targetTags = options.tags ? new Set(options.tags) : DEFAULT_AUTO_DIR_TAGS;
   const defaultDir = options.defaultDir || 'auto';
+  const getPref = (): DirectionPreference => {
+    if (typeof options.userPreference === 'function') {
+      return options.userPreference();
+    }
+    if (options.userPreference) {
+      return options.userPreference;
+    }
+    return getActiveDirectionPreference();
+  };
 
   return (tree: HastRoot): void => {
     // 1. Extract scoped CSS direction rules from all <style> elements
@@ -274,9 +302,22 @@ export function rehypeDirectionResolver(options: DirectionResolverOptions = {}) 
             // It naturally inherits that direction in CSS/HTML without dir="auto" interference
             nextInheritedDir = inheritedExplicitDir;
           } else {
-            // Un-directed textual block element: assign default direction (auto)
+            // Un-directed textual block element: evaluate direction preference & auto-detection (US-019.2)
             if (targetTags.has(child.tagName)) {
-              child.properties.dir = defaultDir;
+              const pref = getPref();
+              if (pref === 'auto') {
+                child.properties.dir = defaultDir;
+              } else {
+                const text = getNodeText(child);
+                const strongDir = detectFirstStrongDirection(text);
+                if (strongDir) {
+                  // Precedence: strong character auto-direction takes precedence over user preference
+                  child.properties.dir = 'auto';
+                } else {
+                  // Neutral / unclassified block: applies active user preference fallback
+                  child.properties.dir = pref;
+                }
+              }
             }
             nextInheritedDir = undefined;
           }

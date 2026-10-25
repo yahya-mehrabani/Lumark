@@ -67,7 +67,7 @@ Implement user default direction preferences and protect non-prose elements from
 
 ### Task US-019.2: Connect user direction preference to DirectionResolver
 - **Task ID:** `US-019.2`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-019.1`
 - **Completion Criteria:** Resolver queries active user preference when evaluating un-annotated blocks.
 - **Verification Command:** `npm run test:unit -- default-direction-setting`
@@ -157,4 +157,63 @@ Frontend dev build check:
 ```text
 $ npm run build:dev
 ✓ built in 2.04s (zero TypeScript / Vite bundling errors)
+```
+
+### Task US-019.2 Verification Evidence (Executed 2026-10-25)
+- **Task:** `US-019.2: Connect user direction preference to DirectionResolver`
+- **Status:** `DONE`
+- **Changed Files:**
+  - `frontend/src/features/direction/directionPreferences.ts`
+  - `frontend/src/features/direction/resolver.ts`
+  - `frontend/src/features/direction/autoDirection.ts`
+  - `frontend/src/features/rendering/MarkdownViewer.tsx`
+  - `frontend/src/features/direction/default-direction-setting.test.tsx`
+- **Verification Command & Result:**
+```text
+$ npm run test:unit -- default-direction-setting
+
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run default-direction-setting
+
+ ✓ src/features/direction/default-direction-setting.test.tsx (15 tests) 251ms
+   ✓ US-019.2: User Direction Preference & Document Fallback (FR-DIR-004) (15)
+     ✓ 1. Preference Store & Reactive Subscriptions (3)
+       ✓ defaults active direction preference to "auto" 4ms
+       ✓ updates active preference to "rtl" and "ltr" 1ms
+       ✓ notifies subscribers upon preference change 2ms
+     ✓ 2. RehypeDirectionResolver Preference Evaluation on AST Nodes (7)
+       ✓ applies dir="rtl" to neutral block when user preference is "rtl" 2ms
+       ✓ applies dir="ltr" to neutral block when user preference is "ltr" 1ms
+       ✓ applies dir="auto" to neutral block when user preference is "auto" 0ms
+       ✓ auto-detection with strong characters takes precedence over user preference 1ms
+       ✓ explicit HTML author markup overrides user preference 1ms
+       ✓ scoped CSS class direction overrides user preference 5ms
+       ✓ non-prose elements remain strictly dir="ltr" under RTL user preference 1ms
+     ✓ 3. MarkdownViewer End-to-End DOM Integration (5)
+       ✓ aligns neutral blocks to the right when user preference is RTL (AC 1) 65ms
+       ✓ aligns neutral blocks to the left when user preference is LTR (AC 2) 9ms
+       ✓ supports directionPreference prop directly on MarkdownViewer 8ms
+       ✓ code blocks remain strictly LTR even when user preference is RTL (AC 3) 123ms
+       ✓ dynamically responds to setActiveDirectionPreference updates 23ms
+
+ Test Files  1 passed (1)
+      Tests  15 passed (15)
+   Start at  08:57:23
+   Duration  2.45s
+```
+
+Full direction regression test suite verification:
+```text
+$ npm run test:unit -- src/features/direction
+
+ Test Files  9 passed (9)
+      Tests  157 passed (157)
+   Start at  08:57:32
+   Duration  19.04s
+```
+
+Frontend dev build check:
+```text
+$ npm run build:dev
+✓ built in 1.78s (zero TypeScript / Vite bundling errors)
 ```

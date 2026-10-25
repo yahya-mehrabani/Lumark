@@ -8,6 +8,10 @@ import rehypeSanitize from 'rehype-sanitize';
 import { SANITY_HTML_SCHEMA } from './security/htmlSanitizer';
 import { rehypeScopedCss } from './security/cssSanitizer';
 import { rehypeAutoDirection } from '../direction/autoDirectionPlugin';
+import {
+  useDirectionPreference,
+  type DirectionPreference,
+} from '../direction/autoDirection';
 import { remarkStrictMath, escapeCurrencyDollars } from './utils/remark-strict-math';
 import { STRICT_KATEX_OPTIONS } from './katex-adapter';
 import { CodeBlock } from './components/CodeBlock';
@@ -30,6 +34,7 @@ export interface MarkdownViewerProps {
   document?: DocumentInfo;
   content?: string;
   className?: string;
+  directionPreference?: DirectionPreference;
   onOpenDocument?: (filePath: string, anchor?: string) => void;
   onOpenExternalUrl?: (url: string) => Promise<void> | void;
   onNavigateAnchor?: (anchor: string) => void;
@@ -39,10 +44,14 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
   document,
   content: rawContent,
   className = '',
+  directionPreference,
   onOpenDocument,
   onOpenExternalUrl,
   onNavigateAnchor,
 }) => {
+  const [hookPref] = useDirectionPreference();
+  const activePref = directionPreference ?? hookPref;
+
   const rawMarkdown = document ? document.content : (rawContent ?? '');
   const content = React.useMemo(() => escapeCurrencyDollars(rawMarkdown), [rawMarkdown]);
   const filename = document?.filename;
@@ -68,7 +77,11 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
         </header>
       )}
 
-      <main className="markdown-content" data-testid="markdown-content">
+      <main
+        className="markdown-content"
+        data-testid="markdown-content"
+        dir={activePref !== 'auto' ? activePref : undefined}
+      >
         <SlugContext.Provider value={slugTracker}>
           <ReactMarkdown
             remarkPlugins={[remarkGfm, remarkMath, remarkStrictMath]}
@@ -77,7 +90,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
               [rehypeSanitize, SANITY_HTML_SCHEMA],
               rehypeScopedCss,
               [rehypeKatex, STRICT_KATEX_OPTIONS],
-              rehypeAutoDirection,
+              [rehypeAutoDirection, { userPreference: activePref }],
             ]}
             urlTransform={(url) => url}
             components={{

@@ -75,3 +75,12 @@ export function isRtlText(text: string): boolean {
 
 export { rehypeAutoDirection, DEFAULT_AUTO_DIR_TAGS } from './autoDirectionPlugin';
 export type { RehypeAutoDirectionOptions } from './autoDirectionPlugin';
+
+export {
+  getActiveDirectionPreference,
+  setActiveDirectionPreference,
+  resetDirectionPreference,
+  subscribeDirectionPreference,
+  useDirectionPreference,
+} from './directionPreferences';
+export type { DirectionPreference } from './directionPreferences';
