@@ -80,7 +80,7 @@ Deliver a signed/notarized macOS application bundle and disk image:
 
 ### Task US-030.3: Create DMG packaging script
 - **Task ID:** `US-030.3`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-030.2`
 - **Completion Criteria:** Script packages `.app` into a branded `.dmg` with custom background and symlink.
 - **Verification Command:** `test -f packaging/macos/create-dmg.sh || test -f packaging/macos/Makefile`
@@ -129,6 +129,8 @@ Deliver a signed/notarized macOS application bundle and disk image:
   - `internal/platform/darwin.go`
   - `internal/platform/darwin_test.go`
   - `main.go`
+  - `packaging/macos/create-dmg.sh`
+  - `packaging/macos/Makefile`
 - **Terminal Output & Verification Evidence:**
 
 #### Task US-030.1 Verification Evidence:
@@ -168,6 +170,38 @@ PASS
 ok      markdown-viewer/internal/platform       0.193s
 ```
 
+#### Task US-030.3 Verification Evidence:
+```text
+$ test -f packaging/macos/create-dmg.sh && test -f packaging/macos/Makefile
+(Exit code 0)
+
+$ ./packaging/macos/create-dmg.sh --check
+=== macOS DMG Packaging ===
+Application Name:    Markdown Viewer
+Application Bundle:  /home/repos/personal/markdown-go/bin/Markdown Viewer.app
+Output Disk Image:   /home/repos/personal/markdown-go/bin/Markdown Viewer.dmg
+Background Artwork:  /home/repos/personal/markdown-go/build/darwin/dmg-background.png
+Volume Icon:         /home/repos/personal/markdown-go/build/darwin/icons.icns
+Window Geometry:     540x380
+Drop Target:         /Applications symlink
+Running configuration check mode...
+Check passed: Assets and DMG parameters verified.
+
+$ ./packaging/macos/create-dmg.sh
+=== macOS DMG Packaging ===
+Application Name:    Markdown Viewer
+Application Bundle:  /home/repos/personal/markdown-go/bin/Markdown Viewer.app
+Output Disk Image:   /home/repos/personal/markdown-go/bin/Markdown Viewer.dmg
+Background Artwork:  /home/repos/personal/markdown-go/build/darwin/dmg-background.png
+Volume Icon:         /home/repos/personal/markdown-go/build/darwin/icons.icns
+Window Geometry:     540x380
+Drop Target:         /Applications symlink
+Notice: Non-macOS host detected (Linux).
+Native DMG creation requires macOS with 'create-dmg' or 'hdiutil'.
+Validating prerequisite assets...
+Prerequisite assets verified. DMG creation deferred to macOS runner.
+```
+
 - **Environment Distinction:**
-  - Linux inspection & unit tests (Ubuntu 26.04 WSL2): PASS.
-  - Native macOS Launch Services event delivery: NOT RUN (requires macOS Apple Silicon runner, deferred to post-implementation cross-platform validation).
+  - Linux inspection & script validation (Ubuntu 26.04 WSL2): PASS.
+  - Native macOS DMG generation & mounting: NOT RUN (requires macOS Apple Silicon runner, deferred to post-implementation cross-platform validation).

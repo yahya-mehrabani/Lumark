@@ -4009,3 +4009,36 @@ This log is an append-only chronological record of all significant actions, veri
 - **Active Story:** `US-030: macOS Application Bundle, UTIs & Launch Services Integration` (`IN_PROGRESS`).
 - **Completed Tasks:** `US-030.1` (`DONE`), `US-030.2` (`DONE`).
 - **Next Eligible Task:** `US-030.3: Create DMG packaging script` under [`docs/stories/US-030-macos-packaging-associations.md`](../stories/US-030-macos-packaging-associations.md) (`READY`).
+
+---
+
+## [2026-10-25] — Phase 6: Create DMG Packaging Script (Task US-030.3 Complete)
+
+- **Task ID:** `US-030.3`
+- **Story ID:** `US-030`
+- **Status:** `DONE`
+- **Agent ID:** Antigravity Autonomous Story Runner
+
+### Scope and Implementation Summary:
+- Created standalone, robust DMG packaging script in `packaging/macos/create-dmg.sh`:
+  - Configured branded artwork (`build/darwin/dmg-background.png`), volume icon (`build/darwin/icons.icns`), window geometry (540x380), icon size (100px), and `/Applications` symlink drop target.
+  - Implemented dual packaging strategy: uses `create-dmg` when available, with clean fallback to native macOS `hdiutil` staging workflow.
+  - Added `--check` verification mode for CI and cross-platform validation.
+  - Formatted script with `shfmt -w` and validated with `shellcheck` (0 issues).
+- Created `packaging/macos/Makefile` defining standard `all`, `app`, `dmg`, `check`, and `clean` targets.
+- Updated `docs/stories/US-030-macos-packaging-associations.md`, `docs/implementation/CURRENT-STATE.md`, and `docs/implementation/WORK-LOG.md`.
+
+### Verification Results:
+- `test -f packaging/macos/create-dmg.sh && test -f packaging/macos/Makefile`: Exit code 0 (PASS).
+- `./packaging/macos/create-dmg.sh --check`: Parameter and asset validation passes cleanly (PASS).
+- `./packaging/macos/create-dmg.sh`: Graceful Linux platform detection and prerequisite check (PASS).
+- `shellcheck packaging/macos/create-dmg.sh`: 0 issues (PASS).
+- `golangci-lint run`: 0 issues (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **Phase:** Phase 6 (Packaging, Platform Integration & Release Hardening).
+- **Active Story:** `US-030: macOS Application Bundle, UTIs & Launch Services Integration` (`IN_PROGRESS`).
+- **Completed Tasks:** `US-030.1` (`DONE`), `US-030.2` (`DONE`), `US-030.3` (`DONE`).
+- **Next Eligible Task:** `US-030.4: Document signing and notarization workflow` under [`docs/stories/US-030-macos-packaging-associations.md`](../stories/US-030-macos-packaging-associations.md) (`READY`).
