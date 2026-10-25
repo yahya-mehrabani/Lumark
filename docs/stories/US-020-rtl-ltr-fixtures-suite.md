@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-020`
 - **Parent Epic:** [EPIC-005: Bidirectional Text & Layout Engine (RTL/LTR)](../epics/EPIC-005-bidirectional-layout.md)
-- **Status:** `DRAFT`
+- **Status:** `IN_PROGRESS`
 - **Assigned Phase:** Phase 4 (Advanced Rendering & Direction)
 
 ---
@@ -62,7 +62,7 @@ Create and maintain an extensive bidirectional regression fixture suite in `fixt
 
 ### Task US-020.1: Assemble comprehensive bidi fixture files
 - **Task ID:** `US-020.1`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** Commit verified Persian, Arabic, and mixed Markdown documents to `fixtures/golden/`.
 - **Verification Command:** `npm run test:unit -- bidi-golden-fixtures`
@@ -107,11 +107,45 @@ Create and maintain an extensive bidirectional regression fixture suite in `fixt
 
 ## 9. Implementation Notes and Validation Evidence
 
-*(To be filled by implementation agent during execution)*
-- **Execution Date:** Not yet executed
-- **Agent ID:** N/A
-- **Changed Files:** None
+### Task US-020.1 Verification Evidence
+- **Execution Date:** 2026-10-25
+- **Agent ID:** Autonomous Implementation Agent
+- **Changed Files:**
+  - `fixtures/golden/persian-prose.md`
+  - `fixtures/golden/arabic-prose.md`
+  - `fixtures/golden/mixed-bidi-tech.md`
+  - `fixtures/golden/nested-bidi-lists.md`
+  - `fixtures/golden/bidi-tables.md`
+  - `frontend/src/features/direction/bidi-golden-fixtures.test.tsx`
+  - `docs/stories/US-020-rtl-ltr-fixtures-suite.md`
 - **Terminal Output & Verification Evidence:**
 ```text
-(Awaiting execution in Phase 4)
+$ npm run test:unit -- bidi-golden-fixtures
+
+ ✓ src/features/direction/bidi-golden-fixtures.test.tsx (6 tests) 1640ms
+   ✓ Bidi Golden Fixtures Suite (US-020.1) (6)
+     ✓ 1. persian-prose.md Golden Fixture (1)
+       ✓ renders pure Persian prose with correct headings, paragraphs, lists, and quotes 223ms
+     ✓ 2. arabic-prose.md Golden Fixture (1)
+       ✓ renders pure Arabic prose with diacritics, proper headings, and lists 50ms
+     ✓ 3. mixed-bidi-tech.md Golden Fixture (1)
+       ✓ renders mixed technical content with LTR code, KaTeX, and Mermaid isolation 1187ms
+     ✓ 4. nested-bidi-lists.md Golden Fixture (1)
+       ✓ renders complex nested lists and blockquotes with appropriate direction 70ms
+     ✓ 5. bidi-tables.md Golden Fixture (1)
+       ✓ renders bilingual tables with proper cell alignments and elements 68ms
+     ✓ 6. explicit-dir-styling.md Golden Fixture (1)
+       ✓ renders explicit HTML dir attributes, scoped CSS, and cascading rules 36ms
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Duration  4.13s
+
+$ npm run test:unit -- src/features/direction
+ Test Files  11 passed (11)
+      Tests  178 passed (178)
+   Duration  29.03s
+
+$ npm run build:dev
+✓ built in 1.73s (exit code 0)
 ```
