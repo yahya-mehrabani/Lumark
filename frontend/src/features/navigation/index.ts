@@ -6,3 +6,5 @@ export * from './useTocToggle';
 export * from './TableOfContents';
 export * from './SearchBar';
 export * from './searchIndexer';
+export * from './searchHighlighter';
+export * from './useSearch';

@@ -66,7 +66,7 @@ Implement fast, non-destructive in-document text search:
 
 ### Task US-022.2: Implement text node search and highlight engine
 - **Task ID:** `US-022.2`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-022.1`
 - **Completion Criteria:** Scans DOM text nodes, computes bounding ranges, applies non-destructive `<mark>` or CSS Highlight API.
 - **Verification Command:** `npm run test:unit -- search-navigation`
@@ -76,7 +76,7 @@ Implement fast, non-destructive in-document text search:
 
 ### Task US-022.3: Wire keyboard shortcuts
 - **Task ID:** `US-022.3`
-- **Status:** `DRAFT`
+- **Status:** `READY`
 - **Dependencies:** `US-022.2`
 - **Completion Criteria:** Handles `Ctrl/Cmd+F`, `Enter`, `Shift+Enter`, `F3`, `Escape`.
 - **Verification Command:** `npm run test:unit -- search-highlighting`
@@ -159,5 +159,39 @@ Implement fast, non-destructive in-document text search:
  Test Files  1 passed (1)
       Tests  20 passed (20)
    Duration  2.21s
+- **Platform Limitations & Deferred Checks:** Native Windows/macOS execution deferred to post-implementation validation.
+
+### Task US-022.2 Validation Evidence
+- **Execution Date:** 2026-10-25
+- **Changed Files:**
+  - `frontend/src/features/navigation/searchHighlighter.ts`
+  - `frontend/src/features/navigation/useSearch.ts`
+  - `frontend/src/features/navigation/index.ts`
+  - `frontend/src/features/navigation/search-navigation.test.tsx`
+- **Verification Command:** `npm run test:unit -- search-navigation`
+- **Terminal Output & Verification Evidence:**
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run search-navigation
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/navigation/search-navigation.test.tsx (8 tests) 1938ms
+   ✓ Search Navigation & Highlighting Engine (US-022.2) (8)
+     ✓ applyHighlights & clearHighlights (3)
+       ✓ wraps matching occurrences in <mark class="search-match"> and sets active match
+       ✓ clearHighlights removes all mark tags and normalizes text nodes cleanly
+       ✓ handles multiple matches within the same text node without offset drift
+     ✓ updateActiveHighlight (1)
+       ✓ transfers active state and invokes scrollIntoView
+     ✓ useSearch Hook Lifecycle & Navigation (4)
+       ✓ initializes with closed search and 0 matches
+       ✓ performs search, updates match count, and cycles forwards and backwards with wrap-around
+       ✓ toggles case sensitivity and re-indexes matches accurately
+       ✓ closeSearch clears all mark highlights and resets state
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Duration  8.80s
 ```
 - **Platform Limitations & Deferred Checks:** Native Windows/macOS execution deferred to post-implementation validation.

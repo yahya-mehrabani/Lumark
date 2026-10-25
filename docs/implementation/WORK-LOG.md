@@ -2949,3 +2949,33 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-022.2: Implement text node search and highlight engine` under Story [`US-022: In-Document Text Search with Match Highlighting`](../stories/US-022-in-document-search.md).
+
+---
+
+## 2026-10-25 — Task US-022.2: Implement text node search and highlight engine
+
+- **Task ID:** `US-022.2`
+- **Story ID:** [`US-022: In-Document Text Search with Match Highlighting`](../stories/US-022-in-document-search.md)
+- **Status:** `DONE`
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Implemented non-destructive DOM highlighting engine in `frontend/src/features/navigation/searchHighlighter.ts`:
+  - `applyHighlights`: groups matches by text node and splits/wraps text nodes in reverse offset order into `<mark class="search-match" data-search-match="true">` with `data-match-index`, distinguishing the active match with `active` class and `data-search-active="true"`.
+  - `clearHighlights`: removes all `<mark>` highlight tags and invokes `normalize()` on parent elements to restore original continuous text nodes without DOM corruption.
+  - `updateActiveHighlight`: updates active class and attribute between match indices and triggers `scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' })`.
+- Implemented `useSearch` hook in `frontend/src/features/navigation/useSearch.ts`:
+  - Manages query state, active index, total matches count, and case sensitivity.
+  - Exposes `openSearch`, `closeSearch`, `setQuery`, `nextMatch`, `prevMatch`, and `toggleCaseSensitive`.
+  - Handles wrap-around navigation in both forwards (`(index + 1) % length`) and backwards (`(index - 1 + length) % length`) directions.
+  - Automatically cleans up DOM highlights on hook unmount or when search closes.
+- Exported `searchHighlighter` and `useSearch` in `frontend/src/features/navigation/index.ts`.
+- Created comprehensive unit tests in `frontend/src/features/navigation/search-navigation.test.tsx` (8 tests).
+
+### Verification Results:
+- `npm run test:unit -- search-navigation`: 8 passed across 1 test file in 8.80s with exit code 0 (PASS).
+- `npx tsc --noEmit`: 0 type errors with exit code 0 (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-022.3: Wire keyboard shortcuts` under Story [`US-022: In-Document Text Search with Match Highlighting`](../stories/US-022-in-document-search.md).
