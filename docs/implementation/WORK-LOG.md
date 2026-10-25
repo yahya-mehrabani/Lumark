@@ -3596,3 +3596,58 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Task:
 - Task `US-027.3: Implement frontend scroll preservation during tab reload` under [`docs/stories/US-027-file-change-watcher.md`](../stories/US-027-file-change-watcher.md) (`READY`).
+
+---
+
+## [2026-10-25] — Phase 5: Implement Frontend Scroll Preservation During Tab Reload (Task US-027.3)
+
+- **Task ID:** `US-027.3`
+- **Story ID:** `US-027`
+- **Status:** `DONE`
+- **Agent ID:** Antigravity Autonomous Story Runner
+
+### Scope and Implementation Summary:
+- Backend:
+  - Updated `main.go`:
+    - Registered `watcher.FileChangeEvent` and string file-change events in `init()`.
+    - Initialized `watcherService` and registered under Wails application services.
+    - Forwarded watcher events to Wails event bus via `app.Event.Emit("file:changed", event)`.
+    - Added clean termination on application shutdown and SIGINT.
+- Frontend:
+  - Created `frontend/src/features/tabs/tabReload.ts`:
+    - Implemented `captureScrollState(container)`: captures numeric `scrollTop` offset and top-most visible heading ID.
+    - Implemented `restoreScrollState(state, container)`: restores `scrollTop` offset (and aligns to heading anchor if content length shifted).
+    - Implemented `handleFileChanged(event, options)`: coalesces reload to matching tab, preserves active scroll offset, updates tab content, updates tab status to `'missing'` on external deletion without wiping the document buffer, and ensures reloading one tab does not affect or reset unrelated tabs.
+  - Created `frontend/src/features/tabs/tabWatcher.ts`:
+    - Defined `WatcherAdapter` interface with `InMemoryWatcherAdapter` and `WailsWatcherAdapter`.
+    - Implemented `syncTabWatches`: watches newly opened tabs and un-watches closed tabs.
+  - Enhanced `frontend/src/features/tabs/tabStore.ts`:
+    - Updated `updateTabContent` to support status resetting (`ready` by default) and clearing error messages.
+  - Re-exported tabReload and tabWatcher in `frontend/src/features/tabs/index.ts`.
+  - Updated `frontend/src/App.tsx`:
+    - Integrated `file:changed` Wails event listener calling `handleFileChanged`.
+    - Integrated reactive `syncTabWatches` on tab store subscriptions.
+    - Added missing-file warning banner in viewport (`data-testid="missing-file-banner"`).
+  - Created `frontend/src/features/tabs/reload-scroll-preservation.test.ts`:
+    - 9 comprehensive unit tests verifying:
+      1. Scroll capture and restoration on containers.
+      2. Top visible heading ID detection.
+      3. Null container resilience.
+      4. Active tab reload with scroll preservation.
+      5. Background tab reload isolation without resetting active tab.
+      6. Ignoring events for unopened files.
+      7. Deletion updating status to missing while preserving buffer text.
+      8. Recreation/re-editing clearing missing status.
+      9. Watch/unwatch synchronization on tab open/close.
+- Documentation & Backlog:
+  - Updated `docs/stories/US-027-file-change-watcher.md` marking `US-027.3` as `DONE` and `US-027.4` as `READY`.
+  - Updated `docs/implementation/CURRENT-STATE.md` advancing state to Task `US-027.4`.
+
+### Verification Results:
+- `npm run test:unit -- reload-scroll-preservation`: 9/9 passed in 63ms (PASS)
+- `npm run build`: Production bundle and TypeScript compilation passed cleanly (PASS)
+- `go test -v ./internal/watcher/...`: 12/12 tests passed in 1.756s (PASS)
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS)
+
+### Next Eligible Task:
+- Task `US-027.4: Write unit and integration tests for watcher` under [`docs/stories/US-027-file-change-watcher.md`](../stories/US-027-file-change-watcher.md) (`READY`).

@@ -10,7 +10,7 @@ import { tabStore } from './features/tabs/tabStore';
 import { triggerPrint } from './features/viewport/printController';
 import { SettingsModal, settingsStore } from './features/preferences';
 import { recentsStore, useRecentFiles } from './features/recents';
-import { restoreTabsOnStartup, saveOpenTabsToSettings } from './features/tabs/tabRestore';
+import { restoreTabsOnStartup, saveOpenTabsToSettings, handleFileChanged, syncTabWatches, WailsWatcherAdapter } from './features/tabs';
 
 export function App() {
   const [, setTime] = useState<string>('Listening for Time event...');
@@ -106,6 +106,13 @@ export function App() {
       }, 200);
     });
 
+    // Automatically synchronize OS file watches with currently open tabs
+    const watcherAdapter = new WailsWatcherAdapter();
+    let watchedPaths = new Set<string>();
+    const unsubscribeWatcher = tabStore.subscribe(() => {
+      watchedPaths = syncTabWatches(tabStore, watcherAdapter, watchedPaths);
+    });
+
     // 1. Initial check for document loaded via CLI argument in Go backend
     SpikeDocumentService.GetCurrentDocument()
       .then((current) => {
@@ -145,7 +152,37 @@ export function App() {
       }
     });
 
-    // 3. Listen for time event
+    // 3. Listen for debounced external file modifications / deletions
+    Events.On('file:changed', (eventData: any) => {
+      const data = eventData?.data;
+      if (data && typeof data.path === 'string') {
+        handleFileChanged(
+          {
+            path: data.path,
+            type: data.type || 'modified',
+          },
+          {
+            tabStore,
+            loadDocument: async (filePath) => {
+              const doc = await SpikeDocumentService.LoadFile(filePath);
+              return {
+                content: doc.content,
+                filename: doc.filename,
+                dir: doc.dir,
+              };
+            },
+            onReloadSuccess: (_id, filename) => {
+              showToast(`Reloaded ${filename} (disk change)`);
+            },
+            onFileMissing: (_id, filename) => {
+              showToast(`File missing: ${filename}`);
+            },
+          }
+        );
+      }
+    });
+
+    // 4. Listen for time event
     Events.On('time', (timeValue: any) => {
       const full = timeValue?.data || '';
       const compact = (full.match(/\d{1,2}:\d{2}:\d{2}/) || [full])[0];
@@ -157,6 +194,7 @@ export function App() {
     return () => {
       clearTimeout(saveTabsTimer);
       unsubscribeTabs();
+      unsubscribeWatcher();
     };
   }, []);
 
@@ -198,6 +236,43 @@ export function App() {
         recentFiles={recentFiles}
         renderDocument={(tab) => (
           <div className="markdown-viewport">
+            {tab.status === 'missing' && (
+              <div
+                className="document-error-notice"
+                role="alert"
+                data-testid="missing-file-banner"
+                style={{
+                  margin: '16px 24px 0 24px',
+                  padding: '12px 16px',
+                  borderRadius: '6px',
+                  background: 'rgba(239, 68, 68, 0.15)',
+                  border: '1px solid rgba(239, 68, 68, 0.4)',
+                  color: '#fca5a5',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                  <line x1="12" y1="9" x2="12" y2="13" />
+                  <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+                <span>
+                  <strong>File missing on disk:</strong> {tab.errorMessage || 'This file has been deleted or moved.'}
+                </span>
+              </div>
+            )}
             <MarkdownViewer
               document={{
                 filePath: tab.filePath,

@@ -13,8 +13,8 @@
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
 - **Application Implementation Status:** **PHASE 2 (EPIC-002), PHASE 3 (EPIC-003), PHASE 4 (EPIC-004 & EPIC-005), PHASE 5 NAVIGATION TOOLS (EPIC-006: STORIES US-021, US-022, US-023 & US-024), SETTINGS PERSISTENCE (EPIC-007: STORY US-025), AND RECENT FILES & TAB RESTORATION (EPIC-007: STORY US-026) COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) through [`US-004`](../stories/US-004-packaging-association-spike.md) (Phase 1 Spike), Stories [`US-005`](../stories/US-005-native-document-service.md) through [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Phase 2 Core Lifecycle & Tabs), Stories [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) through [`US-012`](../stories/US-012-headings-anchors-fixtures.md) (Phase 3 Core Rendering Core), Stories [`US-013`](../stories/US-013-mermaid-offline-rendering.md) through [`US-016`](../stories/US-016-adversarial-security-corpus.md) (Phase 4 `EPIC-004`), Stories [`US-017`](../stories/US-017-auto-direction-engine.md) through [`US-020`](../stories/US-020-rtl-ltr-fixtures-suite.md) (Phase 4 `EPIC-005`), Stories [`US-021`](../stories/US-021-table-of-contents.md) through [`US-024`](../stories/US-024-print-workflow-styling.md) (Phase 5 `EPIC-006`), Story [`US-025`](../stories/US-025-settings-service-persistence.md) (Phase 5 `EPIC-007`), and Story [`US-026`](../stories/US-026-recent-files-tab-restore.md) (Phase 5 `EPIC-007`) fully verified across all implementation tasks under Linux/WSLg.
 - **Feasibility Spike Status:** **SPIKE IMPLEMENTATION COMPLETE / AWAITING CROSS-PLATFORM GATES**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task [`US-027.2: Implement event debouncer in Go`](../stories/US-027-file-change-watcher.md) (`DONE`; 300ms coalescing window, `SetDebounceDuration`, 5 unit tests in `TestWatcherDebounce` passing).
-- **Active / Next Eligible Work Item:** Task [`US-027.3: Implement frontend scroll preservation during tab reload`](../stories/US-027-file-change-watcher.md) (`READY`; Story [`US-027`](../stories/US-027-file-change-watcher.md), Phase 5 / `EPIC-007: Settings, Persistence & Durability`).
+- **Last Completed Work Item:** Task [`US-027.3: Implement frontend scroll preservation during tab reload`](../stories/US-027-file-change-watcher.md) (`DONE`; frontend `tabReload.ts` scroll preservation, `tabWatcher.ts` tab synchronization, missing file banner, 9/9 vitest tests passing).
+- **Active / Next Eligible Work Item:** Task [`US-027.4: Write unit and integration tests for watcher`](../stories/US-027-file-change-watcher.md) (`READY`; Story [`US-027`](../stories/US-027-file-change-watcher.md), Phase 5 / `EPIC-007: Settings, Persistence & Durability`).
 
 ---
 
@@ -80,10 +80,11 @@ All planning remediation artifacts must be preserved:
 
 ## 5. Exact Next Action for the Next Agent
 
-1. **Confirm Tasks US-027.1 and US-027.2 Complete:**
+1. **Confirm Tasks US-027.1, US-027.2, and US-027.3 Complete:**
    - Task `US-027.1` is **`DONE`** (`internal/watcher/` service with `fsnotify`, path deduplication, atomic save recovery, and 7 unit tests verified).
    - Task `US-027.2` is **`DONE`** (300ms coalescing window, `SetDebounceDuration`, 5 unit tests in `TestWatcherDebounce` passing).
-2. **Execute Next Task (US-027.3):**
-   - Task [`US-027.3: Implement frontend scroll preservation during tab reload`](../stories/US-027-file-change-watcher.md) is `READY`.
-   - Implement frontend scroll preservation during tab reload, debounced watcher integration, and missing file status updating, verifying with `npm run test:unit -- reload-scroll-preservation`.
+   - Task `US-027.3` is **`DONE`** (frontend scroll preservation during tab reload, tab watch synchronization, missing file banner, 9/9 vitest unit tests passing).
+2. **Execute Next Task (US-027.4):**
+   - Task [`US-027.4: Write unit and integration tests for watcher`](../stories/US-027-file-change-watcher.md) is `READY`.
+   - Write comprehensive unit and integration tests under race detector (`go test -v -race ./internal/watcher/...`), verifying concurrent watch/unwatch, atomic save recovery, debounce coalescing, and complete Story US-027.
 3. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.

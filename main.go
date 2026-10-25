@@ -18,6 +18,7 @@ import (
 	"markdown-viewer/internal/dialogs"
 	"markdown-viewer/internal/recents"
 	"markdown-viewer/internal/settings"
+	"markdown-viewer/internal/watcher"
 	"markdown-viewer/spike/ipc"
 )
 
@@ -33,6 +34,8 @@ func init() {
 	// Register custom events for frontend bindings
 	application.RegisterEvent[string]("time")
 	application.RegisterEvent[DocumentData]("document:open")
+	application.RegisterEvent[watcher.FileChangeEvent]("file:changed")
+	application.RegisterEvent[string]("wails:file-changed")
 }
 
 // main function serves as the application's entry point. It initializes the single-instance
@@ -118,6 +121,12 @@ func main() {
 		log.Printf("[Recents] Failed to initialize default recents service: %v", err)
 	}
 
+	// Initialize the file watcher service for debounced live document updates
+	watcherService, err := watcher.NewService()
+	if err != nil {
+		log.Printf("[Watcher] Failed to initialize file watcher service: %v", err)
+	}
+
 	// Create a new Wails application by providing the necessary options.
 	app := application.New(application.Options{
 		Name:        "markdown-viewer",
@@ -128,6 +137,7 @@ func main() {
 			application.NewService(dialogs.NewService()),
 			application.NewService(settingsService),
 			application.NewService(recentsService),
+			application.NewService(watcherService),
 		},
 		Assets: application.AssetOptions{
 			Handler:    application.AssetFileServerFS(frontendAssets),
@@ -137,6 +147,15 @@ func main() {
 			ApplicationShouldTerminateAfterLastWindowClosed: true,
 		},
 	})
+
+	// Forward watcher events to Wails frontend event bus
+	if watcherService != nil {
+		watcherService.OnEvent(func(event watcher.FileChangeEvent) {
+			log.Printf("[Watcher] File change event: %s (%s)", event.Path, event.Type)
+			app.Event.Emit("file:changed", event)
+			app.Event.Emit("wails:file-changed", event.Path)
+		})
+	}
 
 	// Create a new window with the necessary options.
 	// 'Title' is the title of the window.
@@ -157,9 +176,12 @@ func main() {
 		URL:              "/",
 	})
 
-	// Ensure coordinator is cleaned up on Wails shutdown
+	// Ensure coordinator and watcher are cleaned up on Wails shutdown
 	app.OnShutdown(func() {
-		log.Println("[IPC/Primary] Application shutting down; releasing IPC coordinator resources")
+		log.Println("[IPC/Primary] Application shutting down; releasing resources")
+		if watcherService != nil {
+			_ = watcherService.Close()
+		}
 		_ = coord.Close()
 	})
 
@@ -169,6 +191,9 @@ func main() {
 	go func() {
 		<-sigChan
 		log.Println("[IPC/Primary] Received termination signal; stopping application")
+		if watcherService != nil {
+			_ = watcherService.Close()
+		}
 		_ = coord.Close()
 		app.Quit()
 	}()

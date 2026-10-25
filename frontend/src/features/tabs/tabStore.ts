@@ -193,9 +193,9 @@ export class TabStore {
   };
 
   /**
-   * Updates tab content in memory.
+   * Updates tab content in memory, resetting status to 'ready' and clearing error messages.
    */
-  public updateTabContent = (tabId: string, content: string): void => {
+  public updateTabContent = (tabId: string, content: string, status: TabStatus = 'ready'): void => {
     const tabIndex = this.state.tabs.findIndex((t) => t.id === tabId);
     if (tabIndex === -1) return;
 
@@ -203,6 +203,8 @@ export class TabStore {
     newTabs[tabIndex] = {
       ...newTabs[tabIndex],
       content,
+      status,
+      errorMessage: status === 'ready' ? undefined : newTabs[tabIndex].errorMessage,
     };
 
     this.state = {

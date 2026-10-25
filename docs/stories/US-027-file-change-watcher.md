@@ -78,7 +78,7 @@ Automatically monitor open documents for external disk modifications:
 
 ### Task US-027.3: Implement frontend scroll preservation during tab reload
 - **Task ID:** `US-027.3`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-027.2`
 - **Completion Criteria:** Records `scrollTop` or top visible heading, re-renders content, restores scroll offset.
 - **Verification Command:** `npm run test:unit -- reload-scroll-preservation`
@@ -88,7 +88,7 @@ Automatically monitor open documents for external disk modifications:
 
 ### Task US-027.4: Write unit and integration tests for watcher
 - **Task ID:** `US-027.4`
-- **Status:** `DRAFT`
+- **Status:** `READY`
 - **Dependencies:** `US-027.3`
 - **Completion Criteria:** Tests assert debouncing, deletion detection, and cleanup on unwatch.
 - **Verification Command:** `go test -v -race ./internal/watcher/...`
@@ -122,6 +122,13 @@ Automatically monitor open documents for external disk modifications:
   - `internal/watcher/filewatcher.go` (Implemented `Service` with `WatchFile`, `UnwatchFile`, `IsWatching`, `WatchedFiles`, atomic save re-attachment, configurable debounce window, and graceful `Close`)
   - `internal/watcher/filewatcher_test.go` (Added comprehensive tests in `TestFileWatcher`)
   - `internal/watcher/debouncer_test.go` (Added 5 debounce tests in `TestWatcherDebounce` verifying coalescing of rapid writes, multiple files independence, distinct saves, unwatch timer cancellation, and 300ms default window)
+  - `main.go` (Registered `watcherService` in services, registered `file:changed` / `wails:file-changed` events, hooked event forwarding and shutdown cleanup)
+  - `frontend/src/features/tabs/tabReload.ts` (Implemented `captureScrollState`, `restoreScrollState`, and `handleFileChanged` with scroll preservation and missing-file handling)
+  - `frontend/src/features/tabs/tabWatcher.ts` (Implemented `WatcherAdapter`, `InMemoryWatcherAdapter`, `WailsWatcherAdapter`, and `syncTabWatches`)
+  - `frontend/src/features/tabs/tabStore.ts` (Enhanced `updateTabContent` to support status resetting)
+  - `frontend/src/features/tabs/index.ts` (Exported tabReload and tabWatcher modules)
+  - `frontend/src/App.tsx` (Wired `file:changed` listener, automatic tab watch syncing, and missing-file warning banner in viewport)
+  - `frontend/src/features/tabs/reload-scroll-preservation.test.ts` (Added 9 unit tests verifying scroll capture/restoration, active/background tab reload isolation, disk deletion handling, and watcher syncing)
 - **Terminal Output & Verification Evidence:**
 ```text
 === RUN   TestFileWatcher_WatchAndUnwatch
@@ -154,6 +161,23 @@ ok      markdown-viewer/internal/watcher        0.423s
 PASS
 ok      markdown-viewer/internal/watcher        1.288s
 
-golangci-lint run ./internal/watcher/...:
-0 issues.
+npm run test:unit -- reload-scroll-preservation:
+ ✓ src/features/tabs/reload-scroll-preservation.test.ts (9 tests) 63ms
+   ✓ tabReload & Scroll Preservation (9)
+     ✓ captureScrollState and restoreScrollState (3)
+       ✓ captures scrollTop and restores it to the container 18ms
+       ✓ captures top-most visible heading ID when present 5ms
+       ✓ handles null container gracefully without crashing 5ms
+     ✓ handleFileChanged - Modification & Scroll Preservation (3)
+       ✓ reloads active tab content and restores scroll position 19ms
+       ✓ reloads background tabs without affecting active tab or scrolling 2ms
+       ✓ ignores modification events for files that are not open 1ms
+     ✓ handleFileChanged - External File Deletion (2)
+       ✓ updates tab status to missing and preserves document text buffer on disk deletion 1ms
+       ✓ clears missing status when a previously missing file is reloaded upon creation/modification 2ms
+     ✓ syncTabWatches (1)
+       ✓ watches newly opened tabs and un-watches closed tabs 6ms
+
+ Test Files  1 passed (1)
+      Tests  9 passed (9)
 ```
