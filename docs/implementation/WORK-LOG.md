@@ -3785,3 +3785,36 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Task:
 - Task `US-028.4: Write unit tests for logging and fault isolation` under [`docs/stories/US-028-fault-isolation-diagnostics.md`](../stories/US-028-fault-isolation-diagnostics.md) (`READY`).
+
+---
+
+## [2026-10-25] — Phase 5: Write Unit Tests for Logging and Fault Isolation (Task US-028.4 & Story US-028 Complete)
+
+- **Task ID:** `US-028.4`
+- **Story ID:** `US-028`
+- **Status:** `DONE`
+- **Agent ID:** Antigravity Autonomous Story Runner
+
+### Scope and Implementation Summary:
+- Created `internal/diagnostics/audit_test.go`:
+  - Implemented automated disk inspection tests validating privacy, security, and bounded logging invariants (AUD-011, FR-ERR-003):
+    - `TestPrivacyAudit_NoDocumentContentOrTokens`: Scanned raw log file contents (`os.ReadFile`) across all log levels (`DEBUG`, `INFO`, `WARN`, `ERROR`, `ErrorWithDetails`) ensuring complete absence of document body content, Bearer tokens, passwords, and sensitive keys.
+    - `TestPrivacyAudit_PathRedaction`: Verified user home directory paths (`/home/user/` and `C:\Users\user\`) are redacted to `~/` on disk.
+    - `TestLogFileSecurity_OwnerPermissionsOnly`: Verified log file is created with strict `0600` permissions (read/write only by owner, 0 permissions for group/others).
+    - `TestLogRotation_BoundedDiskUsage`: Verified size-based log rotation prevents unbounded growth on disk, maintaining bounded size with a single `.1` backup file.
+- Completed Story `US-028: Fault Isolation, User-Facing Error Notifications & Local Diagnostics` and Phase 5 (`EPIC-006` and `EPIC-007`).
+
+### Verification Results:
+- `go test -v -race -count=1 ./internal/diagnostics/...`: 10/10 tests passed in 1.15s with 0 data races (PASS).
+- `golangci-lint run ./internal/diagnostics/...`: 0 issues (PASS).
+- `go test -v -race ./internal/...`: All internal packages passed with 0 data races (PASS).
+- `govulncheck ./...`: 0 vulnerabilities found (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **Phase:** Phase 5 (Navigation Tools & Settings, Persistence & Durability) Complete in Linux environment.
+- **Active Story:** `US-028: Fault Isolation, User-Facing Error Notifications & Local Diagnostics` (`DONE`).
+- **Completed Tasks:** `US-028.1` (`DONE`), `US-028.2` (`DONE`), `US-028.3` (`DONE`), `US-028.4` (`DONE`).
+- **Active Epic:** `EPIC-007: Settings, Persistence & Durability` (`DONE`).
+- **Next Eligible Story:** `US-029: Windows Packaging, NSIS Installer & File Associations` under [`docs/stories/US-029-windows-packaging-nsis.md`](../stories/US-029-windows-packaging-nsis.md) (`READY`; Phase 6 / `EPIC-008: Packaging, Distribution & Integration`).

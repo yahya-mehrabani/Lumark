@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-028`
 - **Parent Epic:** [EPIC-007: Settings, Persistence & Durability](../epics/EPIC-007-settings-durability.md)
-- **Status:** `IN_PROGRESS`
+- **Status:** `DONE`
 - **Assigned Phase:** Phase 5 (Reading Experience & Durability)
 
 ---
@@ -88,7 +88,7 @@ Deliver fault isolation, accessible error notifications, and a privacy-preservin
 
 ### Task US-028.4: Write unit tests for logging and fault isolation
 - **Task ID:** `US-028.4`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-028.3`
 - **Completion Criteria:** Tests assert document text absence from log files and rotation triggers.
 - **Verification Command:** `go test -v -race ./internal/diagnostics/...`
@@ -207,4 +207,39 @@ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
 
 Regression Checks:
 npm run test:unit -- error-boundary -> 1 passed (1), 7 passed (7) in 1.42s
+```
+
+#### Task US-028.4: Write unit tests for logging and fault isolation (`DONE`)
+```text
+=== RUN   TestDiagnosticsPrivacyAudit_DocumentContentNeverLogged
+    audit_test.go:77: Document content exclusion verified: 364 bytes logged without leaking document body
+--- PASS: TestDiagnosticsPrivacyAudit_DocumentContentNeverLogged (0.00s)
+=== RUN   TestDiagnosticsPrivacyAudit_CredentialsAndHistoryScrubbed
+    audit_test.go:140: Credential and history exclusion verified cleanly on disk
+--- PASS: TestDiagnosticsPrivacyAudit_CredentialsAndHistoryScrubbed (0.00s)
+=== RUN   TestDiagnosticsPrivacyAudit_FilePermissions
+--- PASS: TestDiagnosticsPrivacyAudit_FilePermissions (0.00s)
+=== RUN   TestDiagnosticsPrivacyAudit_BoundedSizeRotation
+    audit_test.go:232: Bounded rotation verified: active=146 bytes, backup=1022 bytes, total=1168 bytes (bound=2048)
+--- PASS: TestDiagnosticsPrivacyAudit_BoundedSizeRotation (0.04s)
+=== RUN   TestDiagnosticsLog_DefaultOptions
+--- PASS: TestDiagnosticsLog_DefaultOptions (0.00s)
+=== RUN   TestDiagnosticsLog_Rotation
+    logger_test.go:95: Rotation verified: active app.log = 218 bytes, backup app.log.1 = 218 bytes, total = 436 bytes
+--- PASS: TestDiagnosticsLog_Rotation (0.01s)
+=== RUN   TestDiagnosticsLog_PathRedaction
+--- PASS: TestDiagnosticsLog_PathRedaction (0.00s)
+=== RUN   TestDiagnosticsLog_CredentialRedaction
+--- PASS: TestDiagnosticsLog_CredentialRedaction (0.00s)
+=== RUN   TestDiagnosticsLog_DocumentContentAndHistoryMasking
+--- PASS: TestDiagnosticsLog_DocumentContentAndHistoryMasking (0.00s)
+=== RUN   TestDiagnosticsLog_ConcurrentWrites
+    logger_test.go:299: Concurrent test successfully wrote 54 lines in active log
+--- PASS: TestDiagnosticsLog_ConcurrentWrites (0.08s)
+PASS
+ok      markdown-viewer/internal/diagnostics    1.152s
+
+Linter Verification:
+/root/go/bin/golangci-lint run ./internal/diagnostics/... -> 0 issues
+/root/go/bin/govulncheck ./... -> No vulnerabilities found
 ```

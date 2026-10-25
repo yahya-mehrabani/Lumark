@@ -2,7 +2,7 @@
 
 - **Epic ID:** `EPIC-007`
 - **Title:** Settings, Persistence & Durability
-- **Status:** `IN_PROGRESS`
+- **Status:** `DONE`
 - **Phase:** Phase 5 (Reading Experience & Durability)
 - **Target Release:** MVP Durability
 
@@ -59,6 +59,6 @@ Implement reliable local persistence, external file monitoring, and fault isolat
 ## 6. Included User Stories
 
 - [US-025: Versioned Settings Service & Atomic Persistence](../stories/US-025-settings-service-persistence.md) — `DONE`
-- [US-026: Recent Files Tracking & Startup Tab Restoration](../stories/US-026-recent-files-tab-restore.md) — `READY`
-- [US-027: File Change Watcher & Debounced Auto-Reload](../stories/US-027-file-change-watcher.md) — `READY`
-- [US-028: Fault Isolation, User-Facing Error Notifications & Local Diagnostics](../stories/US-028-fault-isolation-diagnostics.md) — `READY`
+- [US-026: Recent Files Tracking & Startup Tab Restoration](../stories/US-026-recent-files-tab-restore.md) — `DONE`
+- [US-027: File Change Watcher & Debounced Auto-Reload](../stories/US-027-file-change-watcher.md) — `DONE`
+- [US-028: Fault Isolation, User-Facing Error Notifications & Local Diagnostics](../stories/US-028-fault-isolation-diagnostics.md) — `DONE`
