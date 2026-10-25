@@ -122,7 +122,7 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
 
   return (
     <nav
-      className={`toc-sidebar ${className}`.trim()}
+      className={`toc-sidebar app-chrome ${className}`.trim()}
       aria-label="Table of Contents"
       data-testid="toc-sidebar"
     >

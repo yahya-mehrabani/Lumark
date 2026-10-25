@@ -1,0 +1,202 @@
+/**
+ * Print Stylesheet for Markdown Viewer
+ * Complies with US-024 (FR-NAV-006): Native WebView Print Workflow & Print Styling.
+ *
+ * Requirements:
+ * 1. Hides all application chrome (header, tab strip, status bar, search bar, TOC, controls).
+ * 2. Forces pure white background with dark text regardless of active theme.
+ * 3. Prevents orphaned headings with break-after: avoid.
+ * 4. Prevents splitting of code blocks, tables, images, diagrams with break-inside: avoid.
+ * 5. Resets margins and removes scrollbars and shadows.
+ */
+
+@media print {
+  @page {
+    margin: 15mm 20mm 15mm 20mm;
+    size: auto;
+  }
+
+  /* Reset CSS variables to print-safe high contrast light tokens */
+  :root,
+  [data-theme="dark"],
+  [data-theme="light"],
+  body {
+    --bg-primary: #ffffff !important;
+    --bg-secondary: #f9fafb !important;
+    --bg-tertiary: #f3f4f6 !important;
+    --text-primary: #111827 !important;
+    --text-secondary: #374151 !important;
+    --text-muted: #4b5563 !important;
+    --border-subtle: #e5e7eb !important;
+    --border-strong: #d1d5db !important;
+    --link-color: #1f2937 !important;
+    --accent: #2563eb !important;
+    --focus-ring: transparent !important;
+    background-color: #ffffff !important;
+    color: #111827 !important;
+  }
+
+  /* Hide Application Chrome and Interactive Controls */
+  .app-chrome,
+  .app-header,
+  .header-actions,
+  .brand-icon,
+  .tab-bar,
+  .tab-bar-container,
+  .tab-strip,
+  .tab-item,
+  .app-status-bar,
+  .document-header-bar,
+  .doc-header-right,
+  .doc-zoom-controls,
+  .doc-theme-toggle-btn,
+  .doc-search-toggle-btn,
+  .doc-toc-toggle-btn,
+  .search-bar-root,
+  .search-bar,
+  .search-bar-floating,
+  .search-overlay,
+  .toc-sidebar,
+  .toc-container,
+  .toc-backdrop,
+  .copy-code-btn,
+  .dropzone-overlay,
+  .toast,
+  [data-app-chrome],
+  [data-testid="document-header"],
+  [data-testid="search-bar-root"],
+  [data-testid="toc-sidebar"],
+  [data-testid="doc-zoom-controls"] {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    width: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  /* Viewport and root container reset to white background and zero extra chrome margins */
+  html,
+  body,
+  #root,
+  .app-shell-root,
+  .app-viewport,
+  .document-container,
+  .markdown-viewport,
+  .markdown-viewport-body,
+  .markdown-content {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #111827 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    min-height: auto !important;
+    height: auto !important;
+    box-shadow: none !important;
+    border: none !important;
+    overflow: visible !important;
+  }
+
+  /* Typography reset for readability */
+  .markdown-content {
+    font-size: 11pt !important;
+    line-height: 1.5 !important;
+    color: #111827 !important;
+  }
+
+  /* Heading attachments: prevent orphaned headings at page bottom */
+  h1, h2, h3, h4, h5, h6,
+  .markdown-content h1,
+  .markdown-content h2,
+  .markdown-content h3,
+  .markdown-content h4,
+  .markdown-content h5,
+  .markdown-content h6 {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+    color: #000000 !important;
+  }
+
+  /* Prevent page breaks inside atomic blocks */
+  pre,
+  blockquote,
+  table,
+  tr,
+  img,
+  figure,
+  .table-wrapper,
+  .mermaid-container,
+  .katex-display,
+  .markdown-content pre,
+  .markdown-content blockquote,
+  .markdown-content table,
+  .markdown-content tr,
+  .markdown-content img,
+  .markdown-content figure,
+  .markdown-content .table-wrapper,
+  .markdown-content .mermaid-container,
+  .markdown-content .katex-display {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Tables formatting */
+  .markdown-content table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+  }
+
+  .markdown-content th,
+  .markdown-content td {
+    border: 1px solid #d1d5db !important;
+    background-color: transparent !important;
+    color: #111827 !important;
+    padding: 6px 10px !important;
+  }
+
+  .markdown-content th {
+    background-color: #f3f4f6 !important;
+    font-weight: 600 !important;
+  }
+
+  /* Code blocks formatting */
+  .markdown-content pre {
+    background-color: #f9fafb !important;
+    border: 1px solid #e5e7eb !important;
+    color: #1f2937 !important;
+    border-radius: 4px !important;
+    box-shadow: none !important;
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+  }
+
+  .markdown-content code {
+    background-color: #f3f4f6 !important;
+    color: #111827 !important;
+    border: none !important;
+  }
+
+  .markdown-content pre code {
+    background-color: transparent !important;
+  }
+
+  /* Blockquotes */
+  .markdown-content blockquote {
+    border-left: 3px solid #9ca3af !important;
+    color: #374151 !important;
+    background-color: transparent !important;
+    padding-left: 12px !important;
+  }
+
+  /* Links rendering cleanly */
+  .markdown-content a {
+    color: #1f2937 !important;
+    text-decoration: underline !important;
+  }
+
+  /* Suppress scrollbars during print */
+  ::-webkit-scrollbar {
+    display: none !important;
+  }
+}

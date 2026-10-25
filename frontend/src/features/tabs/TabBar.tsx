@@ -72,7 +72,7 @@ export const TabBar: React.FC<TabBarProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`tab-bar-container ${className}`}
+      className={`tab-bar-container app-chrome ${className}`.trim()}
       role="region"
       aria-label="Document tabs"
     >

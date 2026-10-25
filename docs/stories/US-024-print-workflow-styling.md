@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-024`
 - **Parent Epic:** [EPIC-006: Navigation, Search & User Reading Tools](../epics/EPIC-006-navigation-reading-tools.md)
-- **Status:** `DRAFT`
+- **Status:** `IN_PROGRESS`
 - **Assigned Phase:** Phase 5 (Reading Experience & Durability)
 
 ---
@@ -57,7 +57,7 @@ Provide document printing through the native WebView print pipeline:
 
 ### Task US-024.1: Author print media CSS rules
 - **Task ID:** `US-024.1`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** CSS rules hide `.app-chrome`, `.tab-bar`, `.search-bar`, and reset document margins.
 - **Verification Command:** `npm run test:unit -- print-css`
@@ -102,11 +102,65 @@ Provide document printing through the native WebView print pipeline:
 
 ## 9. Implementation Notes and Validation Evidence
 
-*(To be filled by implementation agent during execution)*
-- **Execution Date:** Not yet executed
-- **Agent ID:** N/A
-- **Changed Files:** None
+- **Execution Date:** 2026-10-25
+- **Agent ID:** Antigravity Autonomous Agent
+- **Changed Files:**
+  - `frontend/src/styles/print.css`
+  - `frontend/src/features/viewport/print-css.test.ts`
+  - `frontend/src/main.tsx`
+  - `frontend/src/features/shell/AppShell.tsx`
+  - `frontend/src/features/tabs/TabBar.tsx`
+  - `frontend/src/features/rendering/MarkdownViewer.tsx`
+  - `frontend/src/features/navigation/TableOfContents.tsx`
+  - `frontend/src/features/navigation/SearchBar.tsx`
 - **Terminal Output & Verification Evidence:**
 ```text
-(Awaiting execution in Phase 5)
+$ npm run test:unit -- print-css
+
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run print-css
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/viewport/print-css.test.ts (30 tests) 16ms
+   ✓ Print Media CSS Rules & Page Styling (US-024.1, FR-NAV-006) (30)
+     ✓ contains @media print block and @page configuration 6ms
+     ✓ Application Chrome Hiding (20)
+       ✓ hides .app-chrome in @media print with display: none !important 0ms
+       ✓ hides .app-header in @media print with display: none !important 0ms
+       ✓ hides .header-actions in @media print with display: none !important 0ms
+       ✓ hides .tab-bar in @media print with display: none !important 0ms
+       ✓ hides .tab-bar-container in @media print with display: none !important 0ms
+       ✓ hides .app-status-bar in @media print with display: none !important 0ms
+       ✓ hides .document-header-bar in @media print with display: none !important 0ms
+       ✓ hides .doc-zoom-controls in @media print with display: none !important 1ms
+       ✓ hides .doc-theme-toggle-btn in @media print with display: none !important 0ms
+       ✓ hides .doc-search-toggle-btn in @media print with display: none !important 0ms
+       ✓ hides .doc-toc-toggle-btn in @media print with display: none !important 0ms
+       ✓ hides .search-bar in @media print with display: none !important 0ms
+       ✓ hides .search-bar-floating in @media print with display: none !important 0ms
+       ✓ hides .toc-sidebar in @media print with display: none !important 0ms
+       ✓ hides .toc-backdrop in @media print with display: none !important 0ms
+       ✓ hides .copy-code-btn in @media print with display: none !important 0ms
+       ✓ hides .dropzone-overlay in @media print with display: none !important 0ms
+       ✓ hides .toast in @media print with display: none !important 0ms
+       ✓ hides [data-app-chrome] in @media print with display: none !important 0ms
+       ✓ enforces display: none !important and visibility: hidden on chrome selectors 0ms
+     ✓ Theme and Background Reset to Pure White (3)
+       ✓ forces pure white background and dark text on document containers 0ms
+       ✓ resets CSS variables on [data-theme="dark"] to print-safe light tokens 0ms
+       ✓ eliminates box-shadow and resets borders and overflow 0ms
+     ✓ Page Break Rules (2)
+       ✓ prevents page breaks after headings to avoid orphaned headers 0ms
+       ✓ prevents page breaks inside pre code blocks, tables, images, and diagrams 0ms
+     ✓ Document Typography, Table, and Code Formatting (4)
+       ✓ formats tables cleanly with borders and full width 0ms
+       ✓ formats code blocks with clear background and wrapping 0ms
+       ✓ underlines links and renders readable link text 0ms
+       ✓ hides scrollbars in print output 0ms
+
+ Test Files  1 passed (1)
+      Tests  30 passed (30)
+   Start at  13:27:52
+   Duration  1.35s
 ```

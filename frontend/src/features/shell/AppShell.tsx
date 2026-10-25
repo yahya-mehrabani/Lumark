@@ -54,7 +54,7 @@ export const AppShell: React.FC<AppShellProps> = ({
       testId="app-shell-root"
     >
       {/* Top Header / Menu Bar Chrome */}
-      <header className="app-header" role="banner">
+      <header className="app-header app-chrome" role="banner">
         <div className="app-brand">
           <svg
             className="brand-icon"
@@ -140,7 +140,7 @@ export const AppShell: React.FC<AppShellProps> = ({
       </main>
 
       {/* Status Bar */}
-      <footer className="app-status-bar" role="status">
+      <footer className="app-status-bar app-chrome" role="status">
         <div className="status-left">
           <span>{activeTab ? activeTab.filePath : 'Ready'}</span>
         </div>

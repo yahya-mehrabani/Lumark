@@ -219,7 +219,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
   return (
     <div className={`markdown-viewport ${className}`.trim()} data-testid="markdown-viewport">
       {(filename || filePath) && (
-        <header className="document-header-bar" data-testid="document-header">
+        <header className="document-header-bar app-chrome" data-testid="document-header">
           <div className="doc-title-group">
             <span className="doc-type-badge">MARKDOWN</span>
             <h1 className="doc-filename">{filename || 'Untitled Document'}</h1>

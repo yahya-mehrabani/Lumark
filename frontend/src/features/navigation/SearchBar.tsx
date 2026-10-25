@@ -69,7 +69,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
   return (
     <div
-      className="search-bar-floating"
+      className="search-bar-floating app-chrome"
       role="search"
       aria-label="Find in document"
       data-testid="search-bar"
