@@ -2399,3 +2399,31 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-017.1: Implement unicode direction classifier` under Story [`US-017: Unicode Automatic Direction Detection Engine`](../stories/US-017-auto-direction-engine.md) (Phase 4 / `EPIC-005: Bi-directional & Multi-lingual Text Support`).
+
+---
+
+## 2026-10-25 — Task US-017.1: Implement Unicode first strong character detector
+
+- **Task ID:** `US-017.1`
+- **Story ID:** [`US-017: Unicode Automatic Direction Detection Engine`](../stories/US-017-auto-direction-engine.md)
+- **Status:** `DONE`
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Implemented standards-compliant Unicode Bidirectional Algorithm (UBA / UAX #9 Rule P2) first strong directional character detector in `frontend/src/features/direction/autoDirection.ts`:
+  - `detectFirstStrongDirection(text, options)`: Skips leading neutral and weak characters (spaces, tabs, newlines, ASCII and Arabic-Indic digits, punctuation, emojis, and symbols) to find the first strong character.
+  - Correctly classifies Arabic, Persian, Hebrew, Syriac, Thaana, N'Ko, Samaritan, and Mandaic letters as `'rtl'`.
+  - Correctly classifies Latin, Greek, Cyrillic, CJK, and other script letters as `'ltr'`.
+  - Handles leading HTML tags by stripping `<[^>]*>` before checking character directionality.
+  - Handles neutral-only and empty strings by returning configurable fallback (or `null`).
+  - Added helper functions `getTextDirection`, `isRtlText`, and `stripHtmlTags`.
+- Implemented comprehensive unit test suite in `frontend/src/features/direction/first-strong-char.test.ts` (17 tests covering basic script detection, leading punctuation, numbers, emojis, mixed Persian/English, HTML tags, and neutral fallbacks).
+- Advanced Story `US-017` to `IN_PROGRESS` and `EPIC-005` to `IN_PROGRESS`.
+
+### Verification Results:
+- `npm run test:unit -- first-strong-char`: 17 passed across 1 test file in 1.19s (PASS).
+- `npx tsc --noEmit`: Clean typecheck with exit code 0 (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-017.2: Apply block-level direction in Markdown AST` under Story [`US-017: Unicode Automatic Direction Detection Engine`](../stories/US-017-auto-direction-engine.md) (Phase 4 / `EPIC-005: Bi-directional & Multi-lingual Text Support`).

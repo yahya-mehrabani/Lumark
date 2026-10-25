@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-017`
 - **Parent Epic:** [EPIC-005: Bidirectional Text & Layout Engine (RTL/LTR)](../epics/EPIC-005-bidirectional-layout.md)
-- **Status:** `DRAFT`
+- **Status:** `IN_PROGRESS`
 - **Assigned Phase:** Phase 4 (Advanced Rendering & Direction)
 
 ---
@@ -58,7 +58,7 @@ Implement block-level automatic text direction detection based on standard Unico
 
 ### Task US-017.1: Implement Unicode first strong character detector
 - **Task ID:** `US-017.1`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** Tests accurately classify strings with leading punctuation, emojis, and numbers.
 - **Verification Command:** `npm run test:unit -- first-strong-char`
@@ -68,7 +68,7 @@ Implement block-level automatic text direction detection based on standard Unico
 
 ### Task US-017.2: Apply block-level direction in Markdown AST
 - **Task ID:** `US-017.2`
-- **Status:** `DRAFT`
+- **Status:** `READY`
 - **Dependencies:** `US-017.1`
 - **Completion Criteria:** Remark/rehype plugin attaches `dir` attribute to `p`, `h1`-`h6`, `li`, `blockquote`, `td`, `th`.
 - **Verification Command:** `npm run test:unit -- auto-direction-dom`
@@ -113,11 +113,42 @@ Implement block-level automatic text direction detection based on standard Unico
 
 ## 9. Implementation Notes and Validation Evidence
 
-*(To be filled by implementation agent during execution)*
-- **Execution Date:** Not yet executed
-- **Agent ID:** N/A
-- **Changed Files:** None
+- **Execution Date:** 2026-10-25
+- **Agent ID:** Autonomous Implementation Agent
+- **Changed Files:**
+  - `frontend/src/features/direction/autoDirection.ts`
+  - `frontend/src/features/direction/first-strong-char.test.ts`
 - **Terminal Output & Verification Evidence:**
+  - `npm run test:unit -- first-strong-char`:
 ```text
-(Awaiting execution in Phase 4)
+ ✓ src/features/direction/first-strong-char.test.ts (17 tests) 20ms
+   ✓ Unicode First Strong Character Detector (US-017.1 / FR-DIR-001) (17)
+     ✓ Basic Script Detection (4)
+       ✓ accurately identifies Persian / Arabic text as RTL 8ms
+       ✓ accurately identifies Latin text as LTR 1ms
+       ✓ accurately identifies Hebrew text as RTL 0ms
+       ✓ accurately identifies other LTR scripts (Cyrillic, Greek, CJK) 1ms
+     ✓ Leading Neutral and Weak Character Handling (5)
+       ✓ skips leading ASCII digits and dots to find first strong character (AC 3) 1ms
+       ✓ skips leading Persian / Arabic-Indic digits to find first strong character 0ms
+       ✓ skips leading punctuation (periods, brackets, quotes, dashes, markdown hashes) 1ms
+       ✓ skips leading emojis and symbols 1ms
+       ✓ skips leading whitespace, tabs, and newlines 1ms
+     ✓ Mixed Language Paragraphs (AC 4) (2)
+       ✓ resolves Persian-first sentence with English technical terms to RTL 0ms
+       ✓ resolves English-first sentence with Persian terms to LTR 0ms
+     ✓ HTML Tag Handling (2)
+       ✓ skips leading HTML tags when detecting direction 0ms
+       ✓ can strip HTML tags cleanly using stripHtmlTags 0ms
+     ✓ Neutral-Only and Empty Strings Fallback (4)
+       ✓ returns null by default when no strong characters are present 0ms
+       ✓ respects custom fallback when provided 0ms
+       ✓ getTextDirection returns fallback direction (default ltr) when no strong character 0ms
+       ✓ isRtlText helper returns true only for RTL strong text 0ms
+
+ Test Files  1 passed (1)
+      Tests  17 passed (17)
+   Start at  08:02:38
+   Duration  1.19s
 ```
+  - `npx tsc --noEmit`: Exit code 0 (clean).
