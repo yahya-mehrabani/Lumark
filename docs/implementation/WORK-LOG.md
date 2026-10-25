@@ -3007,3 +3007,34 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-022.4: Write unit and interaction tests` under Story [`US-022: In-Document Text Search with Match Highlighting`](../stories/US-022-in-document-search.md).
+
+---
+
+## 2026-10-25 — Task US-022.4: Write unit and interaction tests & Story US-022 Completion
+
+- **Task ID:** `US-022.4`
+- **Story ID:** [`US-022: In-Document Text Search with Match Highlighting`](../stories/US-022-in-document-search.md)
+- **Status:** `DONE`
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Implemented comprehensive acceptance test suite in `frontend/src/features/navigation/search.test.tsx`:
+  - Criterion 1: Pressing `Ctrl/Cmd+F` opens search bar and focuses query input; typing query highlights all matching words in document DOM without corruption.
+  - Criterion 2: Live match counter displays "Match X of Y" and "No matches" for zero results, updating dynamically with document changes.
+  - Criterion 3: `Enter` / `F3` and `Shift+Enter` / `Shift+F3` cycle active highlight forward and backward with wrap-around, triggering `scrollIntoView` for active marks.
+  - Criterion 4: Case sensitivity toggle distinguishes exact case matches and triggers live re-indexing.
+  - Criterion 5: `Escape` key closes search bar and immediately removes all highlight marks from document DOM, preserving clean plain text copying.
+  - Non-prose elements: Verified search indexing inside code blocks, tables, and blockquotes.
+  - Multilingual & RTL: Verified search match indexing on Persian and bidirectional Unicode text.
+- Story `US-022` complete: all 4 tasks (`US-022.1` to `US-022.4`) delivered and verified under Linux (Ubuntu WSLg).
+
+### Verification Results:
+- `npm run test:unit -- search`: 42 passed across 4 test files (`search.test.tsx`, `search-highlighting.test.tsx`, `search-navigation.test.tsx`, `search-indexer.test.tsx`) in 10.32s with exit code 0 (PASS).
+- `npx tsc --noEmit`: 0 type errors with exit code 0 (PASS).
+- `npm run test:unit`: 607 passed across 56 test files with exit code 0 (zero regressions repo-wide) (PASS).
+- `npm run build`: Production bundle built cleanly with exit code 0 (PASS).
+- `go test ./...`: All Go tests passed with exit code 0 (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Story [`US-023: Document Viewport Controls: Themes, Zoom & Selection`](../stories/US-023-theme-zoom-selection.md) (`READY`; Task `US-023.1: Implement theme state and switching logic`).

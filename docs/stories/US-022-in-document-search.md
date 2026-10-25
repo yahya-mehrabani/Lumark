@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-022`
 - **Parent Epic:** [EPIC-006: Navigation, Search & User Reading Tools](../epics/EPIC-006-navigation-reading-tools.md)
-- **Status:** `IN_PROGRESS`
+- **Status:** `DONE`
 - **Assigned Phase:** Phase 5 (Reading Experience & Durability)
 
 ---
@@ -86,7 +86,7 @@ Implement fast, non-destructive in-document text search:
 
 ### Task US-022.4: Write unit and interaction tests
 - **Task ID:** `US-022.4`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-022.3`
 - **Completion Criteria:** Tests assert match count accuracy, cycling, and cleanup on close.
 - **Verification Command:** `npm run test:unit -- search`
@@ -224,3 +224,43 @@ Implement fast, non-destructive in-document text search:
    Duration  3.49s
 ```
 - **Platform Limitations & Deferred Checks:** Native Windows/macOS execution deferred to post-implementation validation.
+
+### Task US-022.4 Validation Evidence
+- **Execution Date:** 2026-10-25
+- **Changed Files:**
+  - `frontend/src/features/navigation/search.test.tsx`
+- **Verification Command:** `npm run test:unit -- search`
+- **Terminal Output & Verification Evidence:**
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run search
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/navigation/search.test.tsx (7 tests) 638ms
+   ✓ In-Document Search Acceptance Suite (US-022.4 / FR-NAV-002) (7)
+     ✓ Criterion 1: Pressing Ctrl/Cmd+F focuses search bar; typing query highlights all matching words 313ms
+     ✓ Criterion 2: Match counter displays "Match X of Y" and "No matches" for zero results
+     ✓ Criterion 3: Enter/F3 and Shift+Enter/Shift+F3 cycle active highlight with wrap-around and scrollIntoView
+     ✓ Criterion 4: Case sensitivity toggle distinguishes exact case matches
+     ✓ Criterion 5: Escape key closes search bar and removes all highlights without corrupting document DOM
+     ✓ Non-prose: Search indexes text inside code blocks, tables, and blockquotes
+     ✓ RTL & Unicode: Search highlights Persian and bidirectional text correctly
+ ✓ src/features/navigation/search-highlighting.test.tsx (7 tests) 1144ms
+ ✓ src/features/navigation/search-navigation.test.tsx (8 tests) 292ms
+ ✓ src/features/navigation/search-indexer.test.tsx (20 tests) 294ms
+
+ Test Files  4 passed (4)
+      Tests  42 passed (42)
+   Duration  10.32s
+```
+- **Platform Limitations & Deferred Checks:** Native Windows/macOS execution deferred to post-implementation validation.
+
+### Story US-022 Completion Summary
+- All 4 tasks (`US-022.1`, `US-022.2`, `US-022.3`, `US-022.4`) successfully implemented and verified under Linux (Ubuntu WSLg).
+- 42 dedicated unit, component, and interaction tests pass across 4 test suites.
+- Full frontend test suite (`npm run test:unit`) passes: 56 test files, 607 tests passing, 0 failures.
+- TypeScript compiler (`npx tsc --noEmit`) passes with 0 errors.
+- Frontend production bundle build (`npm run build`) passes cleanly.
+- Go backend suite (`go test ./...`) passes cleanly.
+- Requirement `FR-NAV-002` (§6.5) fully satisfied.

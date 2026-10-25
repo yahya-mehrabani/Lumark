@@ -85,8 +85,8 @@ This document is the authoritative index of all Epics and User Stories for `mark
 | Story ID | Title | Priority | Status | Dependencies | Story Link |
 |---|---|---|---|---|---|
 | `US-021` | Interactive Table of Contents & Heading Navigation | P0 | `DONE` | `US-012` | [US-021.md](../stories/US-021-table-of-contents.md) |
-| `US-022` | In-Document Text Search with Match Highlighting | P0 | `READY` | `US-009` | [US-022.md](../stories/US-022-in-document-search.md) |
-| `US-023` | Document Viewport Controls: Themes, Zoom & Selection (includes FR-NAV-005) | P0 | `DRAFT` | `US-009`, `US-010`, `US-013` | [US-023.md](../stories/US-023-theme-zoom-selection.md) |
+| `US-022` | In-Document Text Search with Match Highlighting | P0 | `DONE` | `US-009` | [US-022.md](../stories/US-022-in-document-search.md) |
+| `US-023` | Document Viewport Controls: Themes, Zoom & Selection (includes FR-NAV-005) | P0 | `READY` | `US-009`, `US-010`, `US-013` | [US-023.md](../stories/US-023-theme-zoom-selection.md) |
 | `US-024` | Native WebView Print Workflow & Print Styling | P1 | `DRAFT` | `US-009`, `US-023` | [US-024.md](../stories/US-024-print-workflow-styling.md) |
 | `US-025` | Versioned Settings Service & Atomic Persistence | P0 | `DRAFT` | `US-005` | [US-025.md](../stories/US-025-settings-service-persistence.md) |
 | `US-026` | Recent Files Tracking & Startup Tab Restoration | P1 | `DRAFT` | `US-025`, `US-007` | [US-026.md](../stories/US-026-recent-files-tab-restore.md) |
