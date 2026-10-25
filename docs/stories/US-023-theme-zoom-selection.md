@@ -69,7 +69,7 @@ Provide complete viewport appearance and accessibility controls:
 
 ### Task US-023.2: Implement ThemeStore and OS media listener
 - **Task ID:** `US-023.2`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-023.1`
 - **Completion Criteria:** React store manages theme selection and syncs data-theme attribute on `<html>`.
 - **Verification Command:** `npm run test:unit -- theme-store`
@@ -153,5 +153,33 @@ Provide complete viewport appearance and accessibility controls:
 
  Test Files  1 passed (1)
       Tests  15 passed (15)
+```
+- **Platform Verification:** Linux WSL2/WSLg (Ubuntu 26.04 x64). Cross-platform host checks deferred to dedicated validation phase.
+
+### Task US-023.2 Validation Evidence
+- **Execution Date:** 2026-10-25
+- **Agent ID:** Autonomous Story Runner
+- **Changed Files:**
+  - `frontend/src/features/viewport/themeStore.ts`
+  - `frontend/src/features/viewport/theme-store.test.ts`
+- **Verification Results:**
+  - `npm run test:unit -- theme-store`: PASS (8/8 tests passing)
+  - `npm run test:unit -- theme-tokens`: PASS (15/15 tests passing)
+  - `npx tsc --noEmit`: PASS (0 type errors)
+- **Terminal Output:**
+```text
+ ✓ src/features/viewport/theme-store.test.ts (8 tests) 46ms
+   ✓ ThemeStore and OS Media Listener (US-023.2) (8)
+     ✓ initializes with default system preference and syncs data-theme to documentElement 9ms
+     ✓ updates data-theme attribute on documentElement when setting explicit light theme 2ms
+     ✓ updates data-theme attribute on documentElement when setting explicit dark theme 1ms
+     ✓ cycles through system -> light -> dark -> system via toggleTheme() 2ms
+     ✓ dynamically adapts resolved theme when OS prefers-color-scheme changes under system preference 2ms
+     ✓ ignores OS prefers-color-scheme changes when explicit theme is selected 1ms
+     ✓ notifies subscribers on theme changes 3ms
+     ✓ useTheme hook tracks store state and triggers re-renders 21ms
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
 ```
 - **Platform Verification:** Linux WSL2/WSLg (Ubuntu 26.04 x64). Cross-platform host checks deferred to dedicated validation phase.

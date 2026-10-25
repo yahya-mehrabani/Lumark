@@ -3067,3 +3067,31 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-023.2: Implement ThemeStore and OS media listener` under Story [`US-023: Document Viewport Controls: Themes, Zoom & Selection`](../stories/US-023-theme-zoom-selection.md).
+
+---
+
+## 2026-10-25 — Task US-023.2: Implement ThemeStore and OS media listener
+
+- **Task ID:** `US-023.2`
+- **Story ID:** [`US-023: Document Viewport Controls: Themes, Zoom & Selection`](../stories/US-023-theme-zoom-selection.md)
+- **Status:** `DONE`
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Created `frontend/src/features/viewport/themeStore.ts`:
+  - Implemented `ThemeStore` managing `ThemePreference` (`'light' | 'dark' | 'system'`) and resolving effective theme (`'light' | 'dark'`).
+  - Added OS `window.matchMedia('(prefers-color-scheme: dark)')` listener supporting both modern `.addEventListener` and legacy `.addListener`.
+  - Implemented automatic synchronization of `data-theme` attribute and `colorScheme` style on `document.documentElement`, as well as `theme-light`/`theme-dark` classes on `document.body`.
+  - Implemented `useTheme()` React hook using `useSyncExternalStore` with cached state snapshots to prevent React re-render loops.
+  - Implemented `setTheme(preference)` and `toggleTheme()` cycling through `system` -> `light` -> `dark` -> `system`.
+- Created `frontend/src/features/viewport/theme-store.test.ts`:
+  - 8 unit tests covering default initialization, setting explicit light/dark themes, theme toggling, dynamic adaptation to OS `prefers-color-scheme` events, subscription notifications, and `useTheme` hook behavior.
+
+### Verification Results:
+- `npm run test:unit -- theme-store`: 8 passed in 1.23s with exit code 0 (PASS).
+- `npm run test:unit -- theme-tokens`: 15 passed in 1.00s with exit code 0 (PASS).
+- `npx tsc --noEmit`: 0 type errors with exit code 0 (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-023.3: Implement zoom controller and keyboard shortcuts` under Story [`US-023: Document Viewport Controls: Themes, Zoom & Selection`](../stories/US-023-theme-zoom-selection.md).
