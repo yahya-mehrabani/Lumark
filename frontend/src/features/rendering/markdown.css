@@ -78,11 +78,78 @@
   margin: 0 auto;
   padding: 32px 24px 64px 24px;
   color: #e2e8f0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Vazirmatn", "Tahoma", sans-serif;
   font-size: 16px;
   line-height: 1.75;
   overflow-wrap: break-word;
   word-break: break-word;
+}
+
+/* ==========================================================================
+   Bidirectional Layout & Bidi Isolation Rules (US-017.3 / FR-DIR-001)
+   ========================================================================== */
+
+/*
+ * Block-level Bidirectional Text Isolation
+ * Enforces independent bidi formatting contexts on block elements so
+ * adjacent paragraphs, list items, headings, blockquotes, and table cells
+ * never bleed directionality or punctuation into each other.
+ */
+.markdown-content p,
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6,
+.markdown-content li,
+.markdown-content blockquote,
+.markdown-content td,
+.markdown-content th,
+.markdown-content caption,
+.markdown-content [dir="auto"],
+.markdown-content [dir="rtl"],
+.markdown-content [dir="ltr"] {
+  unicode-bidi: isolate;
+}
+
+/* Explicit or resolved RTL layout styling */
+.markdown-content [dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+.markdown-content [dir="ltr"] {
+  direction: ltr;
+  text-align: left;
+}
+
+/* RTL blockquote styling: right border instead of left border */
+.markdown-content blockquote[dir="rtl"],
+.markdown-content[dir="rtl"] blockquote {
+  border-left: none;
+  border-right: 4px solid #38bdf8;
+  border-radius: 6px 0 0 6px;
+}
+
+/* RTL list styling: padding-right instead of padding-left */
+.markdown-content ul[dir="rtl"],
+.markdown-content ol[dir="rtl"],
+.markdown-content[dir="rtl"] ul,
+.markdown-content[dir="rtl"] ol {
+  padding-left: 0;
+  padding-right: 2em;
+}
+
+/* RTL table header & cell alignment */
+.markdown-content th[dir="rtl"],
+.markdown-content td[dir="rtl"] {
+  text-align: right;
+}
+
+.markdown-content th[dir="ltr"],
+.markdown-content td[dir="ltr"] {
+  text-align: left;
 }
 
 /* Headings */

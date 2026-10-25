@@ -2454,3 +2454,29 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-017.3: Configure CSS bidi rules` under Story [`US-017: Unicode Automatic Direction Detection Engine`](../stories/US-017-auto-direction-engine.md) (Phase 4 / `EPIC-005: Bi-directional & Multi-lingual Text Support`).
+
+---
+
+## 2026-10-25 — Task US-017.3: Configure CSS bidi rules
+
+- **Task ID:** `US-017.3`
+- **Story ID:** [`US-017: Unicode Automatic Direction Detection Engine`](../stories/US-017-auto-direction-engine.md)
+- **Status:** `DONE`
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Configured CSS bidi isolation and directional layout rules in `frontend/src/features/rendering/markdown.css`:
+  - Applied `unicode-bidi: isolate;` to block elements (`p`, `h1`-`h6`, `li`, `blockquote`, `td`, `th`, `caption`, `[dir="auto"]`, `[dir="rtl"]`, `[dir="ltr"]`) preventing cross-element bidirectional interference and punctuation leakage.
+  - Added Persian typography font fallbacks (`"Vazirmatn"`, `"Tahoma"`) to `.markdown-content` font-family stack.
+  - Configured RTL and LTR text alignment and layout rules (`direction: rtl; text-align: right;` vs `direction: ltr; text-align: left;`).
+  - Configured RTL blockquote border (`border-right: 4px solid #38bdf8; border-left: none;`) and list padding (`padding-right: 2em; padding-left: 0;`).
+  - Configured RTL table headers and cells alignment.
+- Authored test suite in `frontend/src/features/direction/mixed-paragraphs.test.tsx` (8 tests verifying CSS rules, Persian font fallbacks, multi-paragraph mixed Persian/English direction independence, trailing punctuation integrity, and explicit author markup preservation).
+
+### Verification Results:
+- `npm run test:unit -- mixed-paragraphs`: 8 passed across 1 test file in 2.32s (PASS).
+- `npx tsc --noEmit`: Clean typecheck with exit code 0 (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-017.4: Write unit tests for bidi resolution` under Story [`US-017: Unicode Automatic Direction Detection Engine`](../stories/US-017-auto-direction-engine.md) (Phase 4 / `EPIC-005: Bi-directional & Multi-lingual Text Support`).

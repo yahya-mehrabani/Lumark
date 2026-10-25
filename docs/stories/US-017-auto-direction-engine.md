@@ -78,7 +78,7 @@ Implement block-level automatic text direction detection based on standard Unico
 
 ### Task US-017.3: Configure CSS bidi rules
 - **Task ID:** `US-017.3`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-017.2`
 - **Completion Criteria:** Applies `unicode-bidi: isolate;` to avoid cross-element bidi interference.
 - **Verification Command:** `npm run test:unit -- mixed-paragraphs`
@@ -88,7 +88,7 @@ Implement block-level automatic text direction detection based on standard Unico
 
 ### Task US-017.4: Write unit tests for bidi resolution
 - **Task ID:** `US-017.4`
-- **Status:** `DRAFT`
+- **Status:** `READY`
 - **Dependencies:** `US-017.3`
 - **Completion Criteria:** Tests verify direction calculation across 20+ multilingual test cases.
 - **Verification Command:** `npm run test:unit -- auto-direction`
@@ -173,5 +173,24 @@ Implement block-level automatic text direction detection based on standard Unico
       Tests  10 passed (10)
    Start at  08:08:14
    Duration  2.32s
-```
   - `npm run test:unit -- markdown-viewer`: 6/6 tests passing (regression-free).
+  - `npm run test:unit -- mixed-paragraphs`:
+```text
+ ✓ src/features/direction/mixed-paragraphs.test.tsx (8 tests) 157ms
+   ✓ CSS Bidi Rules & Mixed-Paragraph Direction Independence (US-017.3 / FR-DIR-001) (8)
+     ✓ CSS Bidi Rules & Font Stack Verification (4)
+       ✓ applies unicode-bidi: isolate to block elements to prevent cross-element bidi bleeding (AC 5) 4ms
+       ✓ includes Persian font fallbacks (Vazirmatn, Tahoma) in typography font-family stack 1ms
+       ✓ configures text alignment and layout rules for RTL and LTR elements 1ms
+       ✓ configures RTL-specific blockquote borders and list padding 1ms
+     ✓ Multi-Paragraph Mixed Persian/English Independence (4)
+       ✓ sets direction independently per paragraph in mixed-language document (AC 1, AC 2, AC 5) 82ms
+       ✓ preserves punctuation positioning at the correct end of lines in mixed sentences (AC 1, AC 4) 11ms
+       ✓ renders mixed headings, lists, and blockquotes with independent auto direction 40ms
+       ✓ respects explicit author dir attributes alongside auto-detected blocks 12ms
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Start at  08:12:58
+   Duration  2.32s
+```
