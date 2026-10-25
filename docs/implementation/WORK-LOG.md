@@ -2814,3 +2814,31 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-021.2: Implement TableOfContents sidebar component` under Story [`US-021: Interactive Table of Contents & Heading Navigation`](../stories/US-021-table-of-contents.md).
+
+---
+
+## 2026-10-25 — Task US-021.2: Implement TableOfContents sidebar component (Story US-021)
+
+- **Task ID:** `US-021.2`
+- **Story ID:** [`US-021: Interactive Table of Contents & Heading Navigation`](../stories/US-021-table-of-contents.md)
+- **Status:** `DONE`
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Implemented `TableOfContents` React component in `frontend/src/features/navigation/TableOfContents.tsx`:
+  - Renders hierarchical outline list reflecting `h1` through `h6` heading levels with nested `<ul>` sublists.
+  - Implemented smooth click-to-scroll navigation (`scrollIntoView({ behavior: 'smooth' })`) resolving headings by `id`, `data-heading-id`, or `name`.
+  - Added active heading highlight matching `activeId` with `active` CSS class and `aria-current="location"`.
+  - Handled zero headings with dedicated empty-state feedback (`.toc-empty`).
+  - Added header with title and optional close button (`onClose`).
+  - Added RTL/Persian script support via `dir="auto"`.
+- Implemented custom CSS styling in `frontend/src/features/navigation/toc.css` with responsive width, sleek dark/light theme tokens, subtle hover states, nested sublist indentation, and custom scrollbar.
+- Created unit test suite in `frontend/src/features/navigation/toc-scroll-spy.test.tsx` verifying hierarchy, indentation, scrollIntoView mock execution, active heading highlight, empty state, close button, and Persian script support (7/7 tests passing).
+
+### Verification Results:
+- `npm run test:unit -- toc-scroll-spy`: 7 passed in 1.86s with exit code 0 (PASS).
+- `npx tsc --noEmit`: Exited with code 0, 0 type errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-021.3: Implement active heading scroll spy` under Story [`US-021: Interactive Table of Contents & Heading Navigation`](../stories/US-021-table-of-contents.md).

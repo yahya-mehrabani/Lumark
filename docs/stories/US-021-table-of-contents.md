@@ -66,7 +66,7 @@ Build an interactive document Table of Contents (TOC) sidebar:
 
 ### Task US-021.2: Implement TableOfContents sidebar component
 - **Task ID:** `US-021.2`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-021.1`
 - **Completion Criteria:** Renders nested list with indentation reflecting `h1`-`h6` levels.
 - **Verification Command:** `npm run test:unit -- toc-scroll-spy`
@@ -156,4 +156,36 @@ Build an interactive document Table of Contents (TOC) sidebar:
  Test Files  1 passed (1)
       Tests  16 passed (16)
    Duration  1.34s
+```
+
+### Task US-021.2: Implement TableOfContents sidebar component
+- **Execution Date:** 2026-10-25
+- **Agent ID:** Antigravity Autonomous Runner
+- **Status:** `DONE`
+- **Changed Files:**
+  - `frontend/src/features/navigation/TableOfContents.tsx`
+  - `frontend/src/features/navigation/toc.css`
+  - `frontend/src/features/navigation/toc-scroll-spy.test.tsx`
+- **Verification Command:** `npm run test:unit -- toc-scroll-spy`
+- **Result:** `PASS` (7/7 tests passing)
+- **Terminal Output:**
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run toc-scroll-spy
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/navigation/toc-scroll-spy.test.tsx (7 tests) 232ms
+   ✓ TableOfContents Sidebar Component (US-021.2) (7)
+     ✓ renders a nested outline reflecting h1 through h6 levels
+     ✓ smoothly scrolls to target heading element upon clicking a TOC link
+     ✓ highlights active heading matching activeId with active class and aria-current="location"
+     ✓ displays empty state notice when document has zero headings
+     ✓ renders nothing when isOpen is false
+     ✓ invokes onClose when the close button is clicked
+     ✓ handles Persian and Arabic headings with dir="auto"
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Duration  1.86s
 ```
