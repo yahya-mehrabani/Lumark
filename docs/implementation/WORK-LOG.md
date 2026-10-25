@@ -3877,3 +3877,32 @@ This log is an append-only chronological record of all significant actions, veri
 - **Active Story:** `US-029: Windows Packaging, NSIS Installer & File Associations` (`IN_PROGRESS`).
 - **Completed Tasks:** `US-029.1` (`DONE`), `US-029.2` (`DONE`).
 - **Next Eligible Task:** `US-029.3: Add WebView2 bootstrapper verification check` under [`docs/stories/US-029-windows-packaging-associations.md`](../stories/US-029-windows-packaging-associations.md) (`READY`).
+
+---
+
+## [2026-10-25] — Phase 6: Add WebView2 Bootstrapper Verification Check (Task US-029.3)
+
+- **Task ID:** `US-029.3`
+- **Story ID:** `US-029`
+- **Status:** `DONE`
+- **Agent ID:** Antigravity Autonomous Story Runner
+
+### Scope and Implementation Summary:
+- Updated `packaging/windows/installer.nsi`:
+  - Included `LogicLib.nsh` and `x64.nsh`.
+  - Implemented `CheckWebView2` function inspecting the Microsoft Edge WebView2 Evergreen Runtime registry key `HKLM\SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-6E4F-4275-A2A8-CD2D769E2C34}` (as well as alternative GUID `{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}` and per-user `HKCU` keys) under 64-bit registry view.
+  - Wired check into `Function .onInit`.
+  - Implemented interactive prompt warning the user and offering to open the official Microsoft WebView2 download page if WebView2 is missing, preventing unexplained blank windows (PRD Section 11.2).
+- Updated Story `US-029` Task `US-029.3` status to `DONE` and recorded verification evidence.
+
+### Verification Results:
+- `grep -i 'EdgeUpdate' packaging/windows/installer.nsi && grep -i 'F3017226-6E4F-4275-A2A8-CD2D769E2C34' packaging/windows/installer.nsi`: Exit code 0 (PASS).
+- `golangci-lint run`: 0 issues (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **Phase:** Phase 6 (Packaging, Platform Integration & Release Hardening).
+- **Active Story:** `US-029: Windows Packaging, NSIS Installer & File Associations` (`IN_PROGRESS`).
+- **Completed Tasks:** `US-029.1` (`DONE`), `US-029.2` (`DONE`), `US-029.3` (`DONE`).
+- **Next Eligible Task:** `US-029.4: Implement uninstaller cleanup routine` under [`docs/stories/US-029-windows-packaging-associations.md`](../stories/US-029-windows-packaging-associations.md) (`READY`).

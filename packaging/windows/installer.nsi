@@ -6,6 +6,8 @@ Unicode true
 
 !include "MUI2.nsh"
 !include "FileFunc.nsh"
+!include "LogicLib.nsh"
+!include "x64.nsh"
 
 ; Product Definitions
 !define PRODUCT_NAME "Markdown Viewer"
@@ -55,6 +57,50 @@ BrandingText "${PRODUCT_NAME} v${PRODUCT_VERSION}"
 !insertmacro MUI_UNPAGE_INSTFILES
 
 !insertmacro MUI_LANGUAGE "English"
+
+; WebView2 Runtime Prerequisite Verification (PRD Section 11.2, US-029.3)
+Function CheckWebView2
+    SetRegView 64
+    ; Check HKLM WOW6432Node for Microsoft Edge WebView2 Evergreen Runtime
+    ReadRegStr $0 HKLM "SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-6E4F-4275-A2A8-CD2D769E2C34}" "pv"
+    ${If} $0 != ""
+        Return
+    ${EndIf}
+
+    ; Check HKLM WOW6432Node for alternative WebView2 Runtime GUID
+    ReadRegStr $0 HKLM "SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}" "pv"
+    ${If} $0 != ""
+        Return
+    ${EndIf}
+
+    ; Check HKCU for per-user WebView2 Runtime installation
+    ReadRegStr $0 HKCU "Software\Microsoft\EdgeUpdate\Clients\{F3017226-6E4F-4275-A2A8-CD2D769E2C34}" "pv"
+    ${If} $0 != ""
+        Return
+    ${EndIf}
+
+    ReadRegStr $0 HKCU "Software\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}" "pv"
+    ${If} $0 != ""
+        Return
+    ${EndIf}
+
+    ; WebView2 runtime was not detected; prompt user with approved installation flow
+    IfSilent silentExit promptUser
+    silentExit:
+        DetailPrint "Warning: Microsoft Edge WebView2 Runtime is required but not detected."
+        Return
+    promptUser:
+        MessageBox MB_YESNO|MB_ICONEXCLAMATION \
+            "Markdown Viewer requires the Microsoft Edge WebView2 Runtime to display documents.$\r$\n$\r$\nWebView2 Runtime was not detected on this system.$\r$\n$\r$\nWould you like to open the official Microsoft WebView2 download page now?" \
+            IDYES openBrowser IDNO continueInstall
+    openBrowser:
+        ExecShell "open" "https://go.microsoft.com/fwlink/p/?LinkId=2124703"
+    continueInstall:
+FunctionEnd
+
+Function .onInit
+    Call CheckWebView2
+FunctionEnd
 
 Section "MainSection" SEC01
     SetOutPath "$INSTDIR"

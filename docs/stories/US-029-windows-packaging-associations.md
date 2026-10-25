@@ -79,13 +79,13 @@ Deliver a production-ready Windows installer and native file association registr
 
 ### Task US-029.3: Add WebView2 bootstrapper verification check
 - **Task ID:** `US-029.3`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-029.2`
 - **Completion Criteria:** NSIS installer checks `HKLM\SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-6E4F-4275-A2A8-CD2D769E2C34}`.
-- **Verification Command:** `grep -i 'DeleteRegKey' packaging/windows/installer.nsi`
-- **Expected Observable Result:** Uninstaller script removes all owned registry keys and shortcuts cleanly.
-- **Evidence to Record:** Uninstaller script inspection output.
-- **Environment Handling:** Script inspection on Linux; Windows uninstaller test requires Windows runner (BLOCKED locally).
+- **Verification Command:** `grep -i 'EdgeUpdate' packaging/windows/installer.nsi && grep -i 'F3017226-6E4F-4275-A2A8-CD2D769E2C34' packaging/windows/installer.nsi`
+- **Expected Observable Result:** NSIS installer checks Microsoft Edge WebView2 Evergreen registry key and prompts for download if absent.
+- **Evidence to Record:** CheckWebView2 routine inspection output.
+- **Environment Handling:** Script inspection on Linux; Windows installer runtime test requires Windows runner (BLOCKED locally).
 
 ### Task US-029.4: Implement uninstaller cleanup routine
 - **Task ID:** `US-029.4`
@@ -169,3 +169,26 @@ Exit code: 0
 - **Cross-Platform Verification Boundary:**
   - Linux Script & Registry Syntax Assertion: `PASS`
   - Windows Host Live Registry Key Audit: `NOT RUN` (deferred to Windows cross-platform validation).
+
+### Task US-029.3: Add WebView2 bootstrapper verification check
+- **Status:** `DONE`
+- **Changed Files:**
+  - `packaging/windows/installer.nsi`: Included `LogicLib.nsh` and `x64.nsh`. Implemented `CheckWebView2` function checking Microsoft Edge WebView2 Evergreen Runtime registry key `HKLM\SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-6E4F-4275-A2A8-CD2D769E2C34}` (as well as alternative GUID `{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}` and per-user `HKCU` keys). Wired into `Function .onInit`. Configured interactive user prompt offering to open official Microsoft WebView2 download page if missing per PRD Section 11.2.
+- **Verification Commands & Output:**
+```bash
+$ grep -i 'EdgeUpdate' packaging/windows/installer.nsi && grep -i 'F3017226-6E4F-4275-A2A8-CD2D769E2C34' packaging/windows/installer.nsi
+    ReadRegStr $0 HKLM "SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-6E4F-4275-A2A8-CD2D769E2C34}" "pv"
+    ReadRegStr $0 HKLM "SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}" "pv"
+    ReadRegStr $0 HKCU "Software\Microsoft\EdgeUpdate\Clients\{F3017226-6E4F-4275-A2A8-CD2D769E2C34}" "pv"
+    ReadRegStr $0 HKCU "Software\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}" "pv"
+    ReadRegStr $0 HKLM "SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-6E4F-4275-A2A8-CD2D769E2C34}" "pv"
+    ReadRegStr $0 HKCU "Software\Microsoft\EdgeUpdate\Clients\{F3017226-6E4F-4275-A2A8-CD2D769E2C34}" "pv"
+Exit code: 0
+
+$ golangci-lint run
+0 issues.
+Exit code: 0
+```
+- **Cross-Platform Verification Boundary:**
+  - Linux Script & Registry Key Check Assertion: `PASS`
+  - Windows Host Live WebView2 Detection Prompt: `NOT RUN` (deferred to Windows cross-platform validation).
