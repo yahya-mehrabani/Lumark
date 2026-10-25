@@ -6,6 +6,7 @@ import { EmptyState, RecentFileItem } from './EmptyState';
 import { DropZone } from './DropZone';
 import { TabItem } from '../tabs/types';
 import { RecentFilesMenu } from '../recents/RecentFilesMenu';
+import { TabErrorBoundary } from '../errors';
 import './shell.css';
 
 export interface AppShellProps {
@@ -21,6 +22,51 @@ export interface AppShellProps {
   renderDocument?: (activeTab: TabItem) => React.ReactNode;
   className?: string;
 }
+
+interface ActiveTabContentProps {
+  tab: TabItem;
+  renderDocument?: (activeTab: TabItem) => React.ReactNode;
+}
+
+const ActiveTabContent: React.FC<ActiveTabContentProps> = ({ tab, renderDocument }) => {
+  if (renderDocument) {
+    return <>{renderDocument(tab)}</>;
+  }
+
+  return (
+    <div
+      className="document-container"
+      role="region"
+      aria-label={`Document: ${tab.displayTitle}`}
+      id={`tabpanel-${tab.id}`}
+    >
+      {tab.status === 'missing' && (
+        <div className="document-error-notice" role="alert">
+          <strong>Missing File:</strong> {tab.errorMessage || 'This file could not be found on disk.'}
+        </div>
+      )}
+      {tab.status === 'error' && (
+        <div className="document-error-notice" role="alert">
+          <strong>Error:</strong> {tab.errorMessage || 'Failed to read document.'}
+        </div>
+      )}
+
+      <div className="document-header">
+        <h1 className="document-title">{tab.displayTitle}</h1>
+        <div className="document-meta">
+          <span>{tab.filePath}</span>
+          {tab.fileSizeBytes !== undefined && (
+            <span> • {(tab.fileSizeBytes / 1024).toFixed(1)} KB</span>
+          )}
+        </div>
+      </div>
+
+      <div className="document-body">
+        <pre>{tab.content || 'Empty document'}</pre>
+      </div>
+    </div>
+  );
+};
 
 export const AppShell: React.FC<AppShellProps> = ({
   store = defaultStore,
@@ -145,40 +191,14 @@ export const AppShell: React.FC<AppShellProps> = ({
             onClearRecentFiles={onClearRecentFiles}
             recentFiles={recentFiles}
           />
-        ) : renderDocument ? (
-          renderDocument(activeTab)
         ) : (
-          <div
-            className="document-container"
-            role="region"
-            aria-label={`Document: ${activeTab.displayTitle}`}
-            id={`tabpanel-${activeTab.id}`}
+          <TabErrorBoundary
+            tabId={activeTab.id}
+            tabTitle={activeTab.displayTitle}
+            onCloseTab={() => actions.closeTab(activeTab.id)}
           >
-            {activeTab.status === 'missing' && (
-              <div className="document-error-notice" role="alert">
-                <strong>Missing File:</strong> {activeTab.errorMessage || 'This file could not be found on disk.'}
-              </div>
-            )}
-            {activeTab.status === 'error' && (
-              <div className="document-error-notice" role="alert">
-                <strong>Error:</strong> {activeTab.errorMessage || 'Failed to read document.'}
-              </div>
-            )}
-
-            <div className="document-header">
-              <h1 className="document-title">{activeTab.displayTitle}</h1>
-              <div className="document-meta">
-                <span>{activeTab.filePath}</span>
-                {activeTab.fileSizeBytes !== undefined && (
-                  <span> • {(activeTab.fileSizeBytes / 1024).toFixed(1)} KB</span>
-                )}
-              </div>
-            </div>
-
-            <div className="document-body">
-              <pre>{activeTab.content || 'Empty document'}</pre>
-            </div>
-          </div>
+            <ActiveTabContent tab={activeTab} renderDocument={renderDocument} />
+          </TabErrorBoundary>
         )}
       </main>
 

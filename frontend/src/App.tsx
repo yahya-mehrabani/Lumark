@@ -11,6 +11,7 @@ import { triggerPrint } from './features/viewport/printController';
 import { SettingsModal, settingsStore } from './features/preferences';
 import { recentsStore, useRecentFiles } from './features/recents';
 import { restoreTabsOnStartup, saveOpenTabsToSettings, handleFileChanged, syncTabWatches, WailsWatcherAdapter } from './features/tabs';
+import { ErrorBoundary } from './features/errors';
 
 export function App() {
   const [, setTime] = useState<string>('Listening for Time event...');
@@ -223,7 +224,7 @@ export function App() {
   };
 
   return (
-    <>
+    <ErrorBoundary>
       <AppShell
         store={tabStore}
         onOpenFile={handleOpenFile}
@@ -297,7 +298,7 @@ export function App() {
         <span className="toast-label">From Go</span>
         <span aria-label="result" className="toast-msg" ref={resultRef}></span>
       </div>
-    </>
+    </ErrorBoundary>
   );
 }
 

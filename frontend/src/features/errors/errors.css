@@ -1,0 +1,87 @@
+/* Accessible Error Boundary & Fallback Card Styles */
+
+.error-fallback-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 40px auto;
+  padding: 32px 24px;
+  max-width: 560px;
+  background: var(--bg-surface, #1e1e2e);
+  border: 1px solid var(--border-error, #f38ba8);
+  border-radius: 8px;
+  color: var(--text-primary, #cdd6f4);
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.error-fallback-icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 16px;
+  color: var(--color-error, #f38ba8);
+}
+
+.error-fallback-title {
+  margin: 0 0 8px 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary, #cdd6f4);
+}
+
+.error-fallback-message {
+  margin: 0 0 16px 0;
+  font-size: 0.95rem;
+  color: var(--text-secondary, #a6adc8);
+  line-height: 1.5;
+}
+
+.error-fallback-details {
+  display: inline-block;
+  margin: 0 0 20px 0;
+  padding: 8px 12px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.85rem;
+  background: var(--bg-code, #181825);
+  border: 1px solid var(--border-subtle, #313244);
+  border-radius: 4px;
+  color: var(--color-error, #f38ba8);
+  max-width: 100%;
+  word-break: break-word;
+}
+
+.error-fallback-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.error-btn {
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.error-btn-primary {
+  background: var(--accent-primary, #89b4fa);
+  color: #11111b;
+  border: 1px solid var(--accent-primary, #89b4fa);
+}
+
+.error-btn-primary:hover {
+  background: #b4befe;
+}
+
+.error-btn-secondary {
+  background: transparent;
+  color: var(--text-primary, #cdd6f4);
+  border: 1px solid var(--border-subtle, #45475a);
+}
+
+.error-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+}

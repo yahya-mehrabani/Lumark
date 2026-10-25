@@ -3720,3 +3720,35 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Task:
 - Task `US-028.2: Implement frontend React Error Boundaries` under [`docs/stories/US-028-fault-isolation-diagnostics.md`](../stories/US-028-fault-isolation-diagnostics.md) (`READY`).
+
+---
+
+## [2026-10-25] — Phase 5: Implement Frontend React Error Boundaries (Task US-028.2)
+
+- **Task ID:** `US-028.2`
+- **Story ID:** `US-028`
+- **Status:** `DONE`
+- **Agent ID:** Antigravity Autonomous Story Runner
+
+### Scope and Implementation Summary:
+- Created `frontend/src/features/errors/`:
+  - `types.ts`: Defined `ErrorBoundaryProps`, `ErrorBoundaryState`, and `ErrorFallbackProps`.
+  - `errors.css`: Implemented WCAG AA compliant styling for `.error-fallback-card`, including high contrast alert borders, action buttons, and dark mode palette tokens.
+  - `ErrorBoundary.tsx`: Implemented React ErrorBoundary class component catching component crashes, logging to console, and rendering accessible fallback card (`role="alert"`, `aria-live="assertive"`) with plain language explanation and "Try Again" / "Close Tab" actions without exposing raw stack traces.
+  - `TabErrorBoundary.tsx`: Wrapper for tab content isolation preserving tab identification and close handlers.
+  - `index.ts`: Barrel export.
+- Integrated into `AppShell.tsx`:
+  - Encapsulated document rendering within `<TabErrorBoundary>`, ensuring any rendering crash in one tab displays an isolated error card while keeping the AppShell, tab bar, and all other open tabs completely interactive and unaffected.
+  - Wrapped root application tree in `App.tsx` with top-level `<ErrorBoundary>` as defense-in-depth against unexpected runtime exceptions.
+- Created `frontend/src/features/errors/error-boundary.test.tsx`:
+  - 7 comprehensive unit and integration tests covering child rendering, fault catching, accessible alert role, error callback invocation, error recovery with "Try Again", close tab callback, custom fallbacks, and multi-tab crash isolation in `AppShell`.
+
+### Verification Results:
+- `npm run test:unit -- error-boundary`: 7/7 tests passed in 2.28s (PASS).
+- `npm run test:unit -- shell`: 5 test files, 39/39 tests passed with 0 regressions (PASS).
+- `npm run build:dev`: TypeScript compilation and build succeeded in 7.62s with 0 errors (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Task:
+- Task `US-028.3: Implement ToastNotification component` under [`docs/stories/US-028-fault-isolation-diagnostics.md`](../stories/US-028-fault-isolation-diagnostics.md) (`READY`).

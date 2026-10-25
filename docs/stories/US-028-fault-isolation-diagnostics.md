@@ -68,7 +68,7 @@ Deliver fault isolation, accessible error notifications, and a privacy-preservin
 
 ### Task US-028.2: Implement frontend React Error Boundaries
 - **Task ID:** `US-028.2`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-028.1`
 - **Completion Criteria:** ErrorBoundary wraps tab content; renders fallback UI on crash.
 - **Verification Command:** `npm run test:unit -- error-boundary`
@@ -78,7 +78,7 @@ Deliver fault isolation, accessible error notifications, and a privacy-preservin
 
 ### Task US-028.3: Implement ToastNotification component
 - **Task ID:** `US-028.3`
-- **Status:** `DRAFT`
+- **Status:** `READY`
 - **Dependencies:** `US-028.2`
 - **Completion Criteria:** Accessible toast banner (WCAG AA) with auto-dismiss and close button.
 - **Verification Command:** `npm run test:unit -- error-toasts`
@@ -155,4 +155,27 @@ ok      markdown-viewer/internal/diagnostics    0.033s
 
 Linter Verification:
 /root/go/bin/golangci-lint run ./internal/diagnostics/... -> 0 issues
+```
+
+#### Task US-028.2: Implement frontend React Error Boundaries (`DONE`)
+```text
+RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/errors/error-boundary.test.tsx (7 tests) 373ms
+   ✓ ErrorBoundary (7)
+     ✓ renders children when no error occurs 62ms
+     ✓ catches rendering errors and displays accessible fallback UI 52ms
+     ✓ calls onError callback with error details when crash occurs 17ms
+     ✓ resets error state when Try Again is clicked and condition is resolved 141ms
+     ✓ invokes onCloseTab when Close Tab button is clicked 29ms
+     ✓ supports custom fallback render function 9ms
+     ✓ isolates tab crashes in AppShell so adjacent tabs remain fully functional 58ms
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Duration  2.28s
+
+Regression Checks:
+npm run test:unit -- shell -> 5 passed (5), 39 passed (39) in 9.57s
+npm run build:dev -> built in 7.62s with 0 errors
 ```
