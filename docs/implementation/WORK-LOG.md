@@ -2579,3 +2579,41 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-018.3: Write unit tests for precedence order` under Story [`US-018: Explicit HTML dir & Scoped CSS Direction Precedence`](../stories/US-018-explicit-dir-css-precedence.md) (Phase 4 / `EPIC-005: Bi-directional & Multi-lingual Text Support`).
+
+---
+
+## 2026-10-25 — Task US-018.3: Write unit tests for precedence order (Story US-018 Completion)
+
+- **Task ID:** `US-018.3`
+- **Story ID:** [`US-018: Explicit HTML dir & Scoped CSS Direction Precedence`](../stories/US-018-explicit-dir-css-precedence.md)
+- **Status:** `DONE`
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Authored comprehensive direction precedence unit test suite in `frontend/src/features/direction/dir-precedence.test.tsx` (22 test cases):
+  - Rule 1: Explicit HTML `dir` attribute (`dir="rtl"`, `dir="ltr"`) vs auto-detection across English, Persian, and Arabic (4 tests).
+  - Rule 2: Explicit HTML `dir` attribute (`dir="rtl"`, `dir="ltr"`) vs scoped CSS class direction (`.force-ltr`, `.force-rtl`) (2 tests).
+  - Rule 3: Inline style direction (`style="direction: rtl|ltr"`) vs auto-detection across English and Persian (2 tests).
+  - Rule 4: Scoped CSS class direction (`.force-ltr`, `.force-rtl`) vs auto-detection across English and Persian (2 tests).
+  - Rule 5: Container direction cascading (`dir="rtl"`, `dir="ltr"`, `.rtl-box`) to child paragraphs without `dir="auto"` override (3 tests).
+  - Rule 6: Child explicit direction (`dir="ltr"`, `dir="rtl"`, `.force-ltr`, `dir="auto"`) overriding container direction (4 tests).
+  - Rule 7: Auto-direction on un-directed elements (Persian, English, Hebrew heading) and 3-level deeply nested cascade/override (5 tests).
+- Created golden fixture `fixtures/golden/explicit-dir-styling.md` documenting explicit HTML `dir`, scoped CSS classes, container cascading, and un-directed blocks.
+- Executed unit tests (`npm run test:unit -- dir-precedence`: 22/22 PASS).
+- Executed full direction test suite (`npm run test:unit -- src/features/direction/`: 129/129 PASS across 7 test files).
+- Executed dev bundle build: `npm run build:dev` (built in 2.00s).
+- Executed Go backend tests: `go test -v ./...` (all packages PASS).
+- Updated `REQUIREMENT-TRACEABILITY.md`: marked `FR-DIR-002` and `FR-DIR-003` as `IMPLEMENTED` / `VERIFIED`.
+- Updated `BACKLOG.md`: marked `US-018` as `DONE` and `US-019` as `READY`.
+- Concluded Story [`US-018: Explicit HTML dir & Scoped CSS Direction Precedence`](../stories/US-018-explicit-dir-css-precedence.md) (`DONE`).
+
+### Verification Results:
+- `npm run test:unit -- dir-precedence`: 22 passed in 2.59s (PASS).
+- `npx tsc --noEmit`: Clean typecheck with exit code 0 (PASS).
+- `npm run test:unit -- src/features/direction/`: 129 passed across 7 test files in 13.44s (PASS).
+- `npm run build:dev`: Built dev bundle in 2.00s with exit code 0 (PASS).
+- `go test -v ./...`: All packages passed with exit code 0 (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-019.1: Enforce LTR isolation on non-prose blocks` under Story [`US-019: User Direction Preference & Non-Prose Bidi Protection`](../stories/US-019-direction-preference-non-prose.md) (Phase 4 / `EPIC-005: Bi-directional & Multi-lingual Text Support`).

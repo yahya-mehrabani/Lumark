@@ -74,8 +74,8 @@ This document is the authoritative index of all Epics and User Stories for `mark
 | `US-015` | HTML & CSS Sanitization and Scope Isolation Engine | P0 | `DONE` | `US-009` | [US-015.md](../stories/US-015-html-css-sanitization.md) |
 | `US-016` | Adversarial Security Test Corpus & Fault Isolation | P0 | `DONE` | `US-013`, `US-015` | [US-016.md](../stories/US-016-adversarial-security-corpus.md) |
 | `US-017` | Unicode Automatic Direction Detection Engine | P0 | `DONE` | `US-009` | [US-017.md](../stories/US-017-auto-direction-engine.md) |
-| `US-018` | Explicit HTML `dir` & Scoped CSS Direction Precedence | P0 | `READY` | `US-015`, `US-017` | [US-018.md](../stories/US-018-explicit-dir-css-precedence.md) |
-| `US-019` | User Direction Preference & Non-Prose Bidi Protection | P0 | `DRAFT` | `US-017`, `US-018` | [US-019.md](../stories/US-019-direction-preference-non-prose.md) |
+| `US-018` | Explicit HTML `dir` & Scoped CSS Direction Precedence | P0 | `DONE` | `US-015`, `US-017` | [US-018.md](../stories/US-018-explicit-dir-css-precedence.md) |
+| `US-019` | User Direction Preference & Non-Prose Bidi Protection | P0 | `READY` | `US-017`, `US-018` | [US-019.md](../stories/US-019-direction-preference-non-prose.md) |
 | `US-020` | RTL/LTR Golden Fixtures & Platform WebView Verification Suite | P0 | `DRAFT` | `US-017`–`US-019` | [US-020.md](../stories/US-020-rtl-ltr-fixtures-suite.md) |
 
 ---

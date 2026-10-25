@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-018`
 - **Parent Epic:** [EPIC-005: Bidirectional Text & Layout Engine (RTL/LTR)](../epics/EPIC-005-bidirectional-layout.md)
-- **Status:** `IN_PROGRESS`
+- **Status:** `DONE`
 - **Assigned Phase:** Phase 4 (Advanced Rendering & Direction)
 
 ---
@@ -78,7 +78,7 @@ Enforce author-directed formatting and direction precedence:
 
 ### Task US-018.3: Write unit tests for precedence order
 - **Task ID:** `US-018.3`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-018.2`
 - **Completion Criteria:** Tests assert explicit `dir` wins over auto-direction across 15+ test cases.
 - **Verification Command:** `npm run test:unit -- dir-precedence`
@@ -110,6 +110,8 @@ Enforce author-directed formatting and direction precedence:
   - `frontend/src/features/direction/autoDirectionPlugin.ts`
   - `frontend/src/features/direction/explicit-html-dir.test.tsx`
   - `frontend/src/features/direction/scoped-dir-css.test.tsx`
+  - `frontend/src/features/direction/dir-precedence.test.tsx`
+  - `fixtures/golden/explicit-dir-styling.md`
 - **Terminal Output & Verification Evidence:**
   - `npm run test:unit -- explicit-html-dir`:
 ```text
@@ -161,5 +163,44 @@ Enforce author-directed formatting and direction precedence:
       Tests  13 passed (13)
    Duration  2.30s
 ```
+  - `npm run test:unit -- dir-precedence`:
+```text
+ ✓ src/features/direction/dir-precedence.test.tsx (22 tests) 359ms
+   ✓ US-018.3: Direction Precedence Order Suite (22)
+     ✓ Rule 1: Explicit HTML dir attribute vs Auto-Detection (4)
+       ✓ 1. explicit dir="rtl" on English paragraph overrides auto LTR 83ms
+       ✓ 2. explicit dir="ltr" on Persian paragraph overrides auto RTL 17ms
+       ✓ 3. explicit dir="rtl" on Arabic paragraph maintains RTL 9ms
+       ✓ 4. explicit dir="ltr" on English paragraph maintains LTR 7ms
+     ✓ Rule 2: Explicit HTML dir vs CSS class direction (2)
+       ✓ 5. explicit dir="rtl" beats CSS .force-ltr class 30ms
+       ✓ 6. explicit dir="ltr" beats CSS .force-rtl class 10ms
+     ✓ Rule 3: Inline CSS style direction vs Auto-Detection (2)
+       ✓ 7. inline style="direction: rtl" on English text overrides auto LTR 11ms
+       ✓ 8. inline style="direction: ltr" on Persian text overrides auto RTL 7ms
+     ✓ Rule 4: Scoped CSS class direction vs Auto-Detection (2)
+       ✓ 9. scoped .force-ltr class on Persian text overrides auto RTL 10ms
+       ✓ 10. scoped .force-rtl class on English text overrides auto LTR 7ms
+     ✓ Rule 5: Container direction cascading to un-directed children (3)
+       ✓ 11. container dir="rtl" cascades to child English paragraph 7ms
+       ✓ 12. container dir="ltr" cascades to child Persian paragraph 5ms
+       ✓ 13. container CSS class .rtl-box cascades to child English paragraph 7ms
+     ✓ Rule 6: Child explicit direction overriding container direction (4)
+       ✓ 14. child dir="ltr" overrides container dir="rtl" 4ms
+       ✓ 15. child dir="rtl" overrides container dir="ltr" 5ms
+       ✓ 16. child .force-ltr class overrides container dir="rtl" 7ms
+       ✓ 17. child dir="auto" explicitly opts into auto-direction inside container dir="rtl" 4ms
+     ✓ Rule 7: Auto-direction on un-directed elements (5)
+       ✓ 18. un-directed Persian paragraph receives dir="auto" 9ms
+       ✓ 19. un-directed English paragraph receives dir="auto" 7ms
+       ✓ 20. un-directed Hebrew heading receives dir="auto" 93ms
+       ✓ 21. deeply nested paragraph inside 3 container levels inherits explicit RTL 9ms
+       ✓ 22. deeply nested paragraph inside 3 container levels overrides to LTR 4ms
+
+ Test Files  1 passed (1)
+      Tests  22 passed (22)
+   Duration  2.59s
+```
   - `npx tsc --noEmit`: Clean exit code 0.
-  - `npm run test:unit -- src/features/direction/`: 6 passed test files, 107 passed tests.
+  - `npm run test:unit -- src/features/direction/`: 7 passed test files, 129 passed tests.
+  - `npm run build:dev`: Built dev bundle in 2.00s with exit code 0.
