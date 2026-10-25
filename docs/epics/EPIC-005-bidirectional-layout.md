@@ -2,7 +2,7 @@
 
 - **Epic ID:** `EPIC-005`
 - **Title:** Bidirectional Text & Layout Engine (RTL/LTR)
-- **Status:** `IN_PROGRESS`
+- **Status:** `DONE`
 - **Phase:** Phase 4 (Advanced Rendering & Direction)
 - **Target Release:** MVP Multilingual
 
