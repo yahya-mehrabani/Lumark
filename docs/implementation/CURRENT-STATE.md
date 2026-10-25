@@ -11,10 +11,10 @@
 
 - **Current Overall Phase:** **Phase 1 (Technical Feasibility Spike)**.
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
-- **Application Implementation Status:** **PHASE 2 (EPIC-002), PHASE 3 (EPIC-003), PHASE 4 (EPIC-004 & EPIC-005), AND PHASE 5 NAVIGATION TOOLS (EPIC-006: STORIES US-021, US-022, US-023 & US-024) COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) through [`US-004`](../stories/US-004-packaging-association-spike.md) (Phase 1 Spike), Stories [`US-005`](../stories/US-005-native-document-service.md) through [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Phase 2 Core Lifecycle & Tabs), Stories [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) through [`US-012`](../stories/US-012-headings-anchors-fixtures.md) (Phase 3 Core Rendering Core), Stories [`US-013`](../stories/US-013-mermaid-offline-rendering.md) through [`US-016`](../stories/US-016-adversarial-security-corpus.md) (Phase 4 `EPIC-004`), Stories [`US-017`](../stories/US-017-auto-direction-engine.md) through [`US-020`](../stories/US-020-rtl-ltr-fixtures-suite.md) (Phase 4 `EPIC-005`), and Stories [`US-021`](../stories/US-021-table-of-contents.md) through [`US-024`](../stories/US-024-print-workflow-styling.md) (Phase 5 `EPIC-006`, completing the entire Epic) fully verified across all implementation tasks under Linux/WSLg.
+- **Application Implementation Status:** **PHASE 2 (EPIC-002), PHASE 3 (EPIC-003), PHASE 4 (EPIC-004 & EPIC-005), PHASE 5 NAVIGATION TOOLS (EPIC-006: STORIES US-021, US-022, US-023 & US-024), AND SETTINGS PERSISTENCE (EPIC-007: STORY US-025) COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) through [`US-004`](../stories/US-004-packaging-association-spike.md) (Phase 1 Spike), Stories [`US-005`](../stories/US-005-native-document-service.md) through [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Phase 2 Core Lifecycle & Tabs), Stories [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) through [`US-012`](../stories/US-012-headings-anchors-fixtures.md) (Phase 3 Core Rendering Core), Stories [`US-013`](../stories/US-013-mermaid-offline-rendering.md) through [`US-016`](../stories/US-016-adversarial-security-corpus.md) (Phase 4 `EPIC-004`), Stories [`US-017`](../stories/US-017-auto-direction-engine.md) through [`US-020`](../stories/US-020-rtl-ltr-fixtures-suite.md) (Phase 4 `EPIC-005`), Stories [`US-021`](../stories/US-021-table-of-contents.md) through [`US-024`](../stories/US-024-print-workflow-styling.md) (Phase 5 `EPIC-006`), and Story [`US-025`](../stories/US-025-settings-service-persistence.md) (Phase 5 `EPIC-007`) fully verified across all implementation tasks under Linux/WSLg.
 - **Feasibility Spike Status:** **SPIKE IMPLEMENTATION COMPLETE / AWAITING CROSS-PLATFORM GATES**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Story [`US-024: Native WebView Print Workflow & Print Styling`](../stories/US-024-print-workflow-styling.md) (`DONE`; all 3 tasks `US-024.1` through `US-024.3` complete and verified under Linux/WSLg; completing `EPIC-006`).
-- **Active / Next Eligible Work Item:** Story [`US-025: Versioned Settings Service & Atomic Persistence`](../stories/US-025-settings-service-persistence.md) (`READY`; Phase 5 / `EPIC-007: Settings, Persistence & Error Handling`).
+- **Last Completed Work Item:** Story [`US-025: Versioned Settings Service & Atomic Persistence`](../stories/US-025-settings-service-persistence.md) (`DONE`; all 4 tasks `US-025.1` through `US-025.4` complete and verified under Linux/WSLg).
+- **Active / Next Eligible Work Item:** Story [`US-026: Recent Files Tracking & Startup Tab Restoration`](../stories/US-026-recent-files-tab-restore.md) (`READY`; Phase 5 / `EPIC-007: Settings, Persistence & Durability`).
 
 ---
 
@@ -80,15 +80,15 @@ All planning remediation artifacts must be preserved:
 
 ## 5. Exact Next Action for the Next Agent
 
-1. **Confirm Story US-024 Complete & EPIC-006 Complete:**
-   - Story [`US-024: Native WebView Print Workflow & Print Styling`](../stories/US-024-print-workflow-styling.md) is **`DONE`** across all three tasks:
-     - `US-024.1`: Print stylesheet `frontend/src/styles/print.css` with `@media print` rules hiding app chrome, enforcing pure white background/dark text, and configuring page break avoidance (`print-css.test.ts`, 30/30 passing).
-     - `US-024.2`: Print controller and dispatcher `printController.ts` with `triggerPrint()` and `usePrint()` hook, keyboard shortcuts (`Ctrl/Cmd+P`), accessible Print buttons in `AppShell` and `MarkdownViewer`, and page break verification (`print-page-breaks.test.tsx`, 17/17 passing).
-     - `US-024.3`: Verified print behavior, exception handling/graceful degradation on Linux, documented platform caveats (Linux WebKitGTK printer backends vs container fallback; deferred Windows WebView2 and macOS WKWebView runtime validation).
-   - `EPIC-006: Navigation, Search & User Reading Tools` is **`DONE`** across all four stories (`US-021`, `US-022`, `US-023`, `US-024`).
-   - Requirement `FR-NAV-006` is marked `IMPLEMENTED` and `VERIFIED` in `REQUIREMENT-TRACEABILITY.md`.
-2. **Execute Next Story (US-025):**
-   - Story [`US-025: Versioned Settings Service & Atomic Persistence`](../stories/US-025-settings-service-persistence.md) is `READY` in Phase 5 / `EPIC-007: Settings, Persistence & Error Handling`.
-   - Prerequisites (`US-005`) are `DONE`.
-   - First task: `US-025.1: Define versioned settings schema and Go persistence service`.
+1. **Confirm Story US-025 Complete & Settings Persistence Delivered:**
+   - Story [`US-025: Versioned Settings Service & Atomic Persistence`](../stories/US-025-settings-service-persistence.md) is **`DONE`** across all four tasks:
+     - `US-025.1`: Defined `SettingsDTO` and versioned schema v1 with `DefaultSettings()`, `NormalizeAndValidate()`, and OS user config directory resolution (`internal/settings/dto.go`, `internal/settings/service.go`).
+     - `US-025.2`: Implemented atomic file writer (`.tmp` + `Sync` + atomic rename) and corruption recovery with automatic backup to `.corrupt.<timestamp>` without startup crash.
+     - `US-025.3`: Implemented Preferences UI modal in React frontend with theme, direction, zoom, tab restore, and max recent files controls; added "Reset to Defaults" action with clear confirmation prompt; registered Go service in `main.go`.
+     - `US-025.4`: Comprehensive unit tests and race detection (`internal/settings/service_test.go`) covering normalization, concurrency (10 readers, 5 writers with `-race`), and forward schema migration compatibility.
+   - Requirements `FR-SET-001`, `FR-SET-002`, `FR-SET-003`, and `FR-SET-004` are marked `IMPLEMENTED` and `VERIFIED` in `REQUIREMENT-TRACEABILITY.md`.
+2. **Execute Next Story (US-026):**
+   - Story [`US-026: Recent Files Tracking & Startup Tab Restoration`](../stories/US-026-recent-files-tab-restore.md) is `READY` in Phase 5 / `EPIC-007: Settings, Persistence & Durability`.
+   - Prerequisites (`US-025`, `US-007`) are `DONE`.
+   - First task: `US-026.1: Implement recent files tracker with deduplication and existence check`.
 3. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.

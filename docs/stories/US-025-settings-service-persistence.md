@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-025`
 - **Parent Epic:** [EPIC-007: Settings, Persistence & Durability](../epics/EPIC-007-settings-durability.md)
-- **Status:** `IN_PROGRESS`
+- **Status:** `DONE`
 - **Assigned Phase:** Phase 5 (Reading Experience & Durability)
 
 ---
@@ -90,7 +90,7 @@ Implement a versioned, atomic local settings service in the Go backend (`interna
 
 ### Task US-025.4: Write comprehensive unit tests for settings service
 - **Task ID:** `US-025.4`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-025.3`
 - **Completion Criteria:** Tests cover round-trip serialization, atomic replacement, and corrupted JSON recovery.
 - **Verification Command:** `go test -v -race ./internal/settings/...`
@@ -196,3 +196,48 @@ Implement a versioned, atomic local settings service in the Go backend (`interna
   - "Reset to Defaults" button displays a clear confirmation dialog explicitly noting that interface preferences (and never document files) are reset per FR-SET-004.
   - Confirming reset restores defaults across frontend state, `themeStore`, `directionPreferences`, `zoomController`, and Go backend persistence.
   - Integrated header button ("Preferences") and global keyboard shortcut (`Ctrl+,` / `Cmd+,`) in `AppShell`.
+
+### Task US-025.4 Verification Evidence
+- **Execution Date:** 2026-10-25
+- **Agent ID:** Antigravity Autonomous Agent
+- **Changed Files:**
+  - `internal/settings/service_test.go`
+- **Verification Commands & Results:**
+  - `go test -count=1 -v -race ./internal/settings/...`: PASS (exit code 0)
+    ```text
+    === RUN   TestSettingsPersistence
+    --- PASS: TestSettingsPersistence (0.00s)
+    === RUN   TestSettingsCorruptionRecovery
+    2026/10/25 15:23:32 [Settings] Settings file /tmp/TestSettingsCorruptionRecovery4256260916/001/settings.json contains invalid JSON (invalid character 'B' looking for beginning of object key string); triggering corruption recovery
+    2026/10/25 15:23:32 [Settings] Corrupted settings backed up to /tmp/TestSettingsCorruptionRecovery4256260916/001/settings.json.corrupt.20261025T115332Z (reason: json unmarshal error: invalid character 'B' looking for beginning of object key string)
+    2026/10/25 15:23:32 [Settings] Settings file /tmp/TestSettingsCorruptionRecovery4256260916/001/settings.json is empty; triggering corruption recovery
+    2026/10/25 15:23:32 [Settings] Corrupted settings backed up to /tmp/TestSettingsCorruptionRecovery4256260916/001/settings.json.corrupt.20261025T115332Z.545109366 (reason: empty file)
+    --- PASS: TestSettingsCorruptionRecovery (0.00s)
+    === RUN   TestSettingsAtomicWrite
+    --- PASS: TestSettingsAtomicWrite (0.00s)
+    === RUN   TestSettingsReset
+    2026/10/25 15:23:32 [Settings] Preferences successfully reset to defaults
+    --- PASS: TestSettingsReset (0.00s)
+    === RUN   TestSettingsNormalization
+    === RUN   TestSettingsNormalization/Unknown_theme_and_direction
+    === RUN   TestSettingsNormalization/Zoom_specified_as_percentage_(150%)
+    === RUN   TestSettingsNormalization/Out_of_bounds_zoom_(500%_or_-20)
+    === RUN   TestSettingsNormalization/Out_of_bounds_maxRecentFiles_(-5_or_500)
+    --- PASS: TestSettingsNormalization (0.00s)
+    === RUN   TestSettingsConcurrency
+    --- PASS: TestSettingsConcurrency (0.03s)
+    === RUN   TestSettingsMigrationCompatibility
+    --- PASS: TestSettingsMigrationCompatibility (0.00s)
+    PASS
+    ok      markdown-viewer/internal/settings       1.062s
+    ```
+  - `go test -v -race ./...`: All repository packages passed under race detector (PASS)
+  - `golangci-lint run ./...`: 0 issues found (PASS)
+  - `govulncheck ./...`: 0 vulnerabilities found (PASS)
+  - `npm run test:unit`: 64 test files, 723 tests passed (PASS)
+  - `npm run build`: Exit code 0 (PASS)
+
+### Story US-025 Completion Summary
+- All 4 tasks (`US-025.1`, `US-025.2`, `US-025.3`, `US-025.4`) are complete and verified (`DONE`).
+- Requirements `FR-SET-001`, `FR-SET-002`, `FR-SET-003`, and `FR-SET-004` are verified.
+- Cross-platform validation for Windows and macOS is deferred to the post-implementation qualification process (`NOT RUN`).

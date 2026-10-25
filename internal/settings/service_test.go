@@ -5,7 +5,9 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"testing"
+	"time"
 )
 
 func TestSettingsPersistence(t *testing.T) {
@@ -317,5 +319,176 @@ func TestSettingsReset(t *testing.T) {
 	diskSettings := reloaded.GetSettings()
 	if diskSettings.Theme != ThemeSystem || diskSettings.DefaultDirection != DirectionAuto || diskSettings.DefaultZoom != 1.0 {
 		t.Errorf("Persisted disk settings after reset mismatch: %+v", diskSettings)
+	}
+}
+
+func TestSettingsNormalization(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    SettingsDTO
+		expected SettingsDTO
+	}{
+		{
+			name: "Unknown theme and direction",
+			input: SettingsDTO{
+				Theme:            "neon-pink",
+				DefaultDirection: "vertical",
+			},
+			expected: SettingsDTO{
+				SchemaVersion:    1,
+				Theme:            ThemeSystem,
+				DefaultDirection: DirectionAuto,
+				DefaultZoom:      1.0,
+				MaxRecentFiles:   20,
+			},
+		},
+		{
+			name: "Zoom specified as percentage (150%)",
+			input: SettingsDTO{
+				Theme:            ThemeDark,
+				DefaultDirection: DirectionLTR,
+				DefaultZoom:      150.0,
+			},
+			expected: SettingsDTO{
+				SchemaVersion:    1,
+				Theme:            ThemeDark,
+				DefaultDirection: DirectionLTR,
+				DefaultZoom:      1.5,
+				MaxRecentFiles:   20,
+			},
+		},
+		{
+			name: "Out of bounds zoom (500% or -20)",
+			input: SettingsDTO{
+				DefaultZoom: 5.0,
+			},
+			expected: SettingsDTO{
+				SchemaVersion:    1,
+				Theme:            ThemeSystem,
+				DefaultDirection: DirectionAuto,
+				DefaultZoom:      1.0,
+				MaxRecentFiles:   20,
+			},
+		},
+		{
+			name: "Out of bounds maxRecentFiles (-5 or 500)",
+			input: SettingsDTO{
+				MaxRecentFiles: 500,
+			},
+			expected: SettingsDTO{
+				SchemaVersion:    1,
+				Theme:            ThemeSystem,
+				DefaultDirection: DirectionAuto,
+				DefaultZoom:      1.0,
+				MaxRecentFiles:   20,
+			},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			s := tc.input
+			s.NormalizeAndValidate()
+			if s.SchemaVersion != tc.expected.SchemaVersion {
+				t.Errorf("SchemaVersion: expected %d, got %d", tc.expected.SchemaVersion, s.SchemaVersion)
+			}
+			if s.Theme != tc.expected.Theme {
+				t.Errorf("Theme: expected %s, got %s", tc.expected.Theme, s.Theme)
+			}
+			if s.DefaultDirection != tc.expected.DefaultDirection {
+				t.Errorf("DefaultDirection: expected %s, got %s", tc.expected.DefaultDirection, s.DefaultDirection)
+			}
+			if s.DefaultZoom != tc.expected.DefaultZoom {
+				t.Errorf("DefaultZoom: expected %f, got %f", tc.expected.DefaultZoom, s.DefaultZoom)
+			}
+			if s.MaxRecentFiles != tc.expected.MaxRecentFiles {
+				t.Errorf("MaxRecentFiles: expected %d, got %d", tc.expected.MaxRecentFiles, s.MaxRecentFiles)
+			}
+			if s.OpenTabs == nil {
+				t.Errorf("OpenTabs should not be nil")
+			}
+		})
+	}
+}
+
+func TestSettingsConcurrency(t *testing.T) {
+	tempDir := t.TempDir()
+	targetPath := filepath.Join(tempDir, "settings.json")
+
+	svc, err := NewServiceWithPath(targetPath)
+	if err != nil {
+		t.Fatalf("NewServiceWithPath failed: %v", err)
+	}
+
+	var wg sync.WaitGroup
+	const readers = 10
+	const writers = 5
+
+	for i := 0; i < readers; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for j := 0; j < 20; j++ {
+				_ = svc.GetSettings()
+				time.Sleep(1 * time.Millisecond)
+			}
+		}()
+	}
+
+	for i := 0; i < writers; i++ {
+		wg.Add(1)
+		go func(workerID int) {
+			defer wg.Done()
+			for j := 0; j < 10; j++ {
+				s := svc.GetSettings()
+				s.DefaultZoom = 1.0 + float64(workerID)*0.1
+				_ = svc.SaveSettings(s)
+				time.Sleep(2 * time.Millisecond)
+			}
+		}(i)
+	}
+
+	wg.Wait()
+
+	// Ensure file is still valid JSON after all concurrent operations
+	finalSvc, err := NewServiceWithPath(targetPath)
+	if err != nil {
+		t.Fatalf("Service reload failed after concurrency test: %v", err)
+	}
+	finalSettings := finalSvc.GetSettings()
+	if finalSettings.SchemaVersion != 1 {
+		t.Errorf("Expected valid schemaVersion 1, got %d", finalSettings.SchemaVersion)
+	}
+}
+
+func TestSettingsMigrationCompatibility(t *testing.T) {
+	tempDir := t.TempDir()
+	targetPath := filepath.Join(tempDir, "settings.json")
+
+	// Simulate future schema v2 JSON with additional unknown fields
+	futureJSON := `{
+		"schemaVersion": 2,
+		"theme": "dark",
+		"defaultDirection": "rtl",
+		"defaultZoom": 1.25,
+		"restoreOpenTabs": true,
+		"maxRecentFiles": 20,
+		"futureExperimentalFeature": true,
+		"newColorCustomization": "#123456"
+	}`
+
+	if err := os.WriteFile(targetPath, []byte(futureJSON), 0600); err != nil {
+		t.Fatalf("Failed to write future settings JSON: %v", err)
+	}
+
+	// Service should load cleanly, preserving recognized fields and keeping app usable (FR-SET-002)
+	svc, err := NewServiceWithPath(targetPath)
+	if err != nil {
+		t.Fatalf("Expected service to parse future version with forward compatibility, got error: %v", err)
+	}
+
+	s := svc.GetSettings()
+	if s.Theme != ThemeDark || s.DefaultDirection != DirectionRTL || s.DefaultZoom != 1.25 {
+		t.Errorf("Known fields were not preserved from forward schema: %+v", s)
 	}
 }

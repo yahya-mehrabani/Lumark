@@ -3328,3 +3328,36 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Task:
 - Task `US-025.4: Write comprehensive unit tests for settings service` under [`US-025`](../stories/US-025-settings-service-persistence.md).
+
+---
+
+## [2026-10-25] — Phase 5: Write Comprehensive Unit Tests for Settings Service (US-025.4 & Story US-025 Completion)
+
+- **Task ID:** `US-025.4`
+- **Story ID:** `US-025`
+- **Status:** `DONE`
+- **Agent ID:** Antigravity Autonomous Agent
+
+### Scope and Implementation Summary:
+- Backend (`internal/settings/service_test.go`):
+  - Added `TestSettingsNormalization` table-driven test suite verifying fallback defaults on unknown themes/directions, percentage zoom conversion (e.g. 150% -> 1.5), out-of-bounds zoom clamping, out-of-bounds `maxRecentFiles` clamping, and non-nil `OpenTabs` slice initialization.
+  - Added `TestSettingsConcurrency` running 10 concurrent readers and 5 concurrent writers with high-frequency reads and updates under race detector (`-race`), asserting zero race conditions and valid JSON persistence.
+  - Added `TestSettingsMigrationCompatibility` asserting forward schema compatibility with future schema versions (e.g. `schemaVersion: 2` with unknown custom fields), ensuring recognizable fields are preserved without crashing or failing startup per FR-SET-002.
+  - Asserted zero storage of document contents, credentials, or telemetry in persisted settings per FR-SET-003.
+
+### Verification Results:
+- `go test -count=1 -v -race ./internal/settings/...`: 7/7 tests passed in 1.062s under race detector (PASS)
+- `go test -v -race ./...`: All repository packages passed under race detector (PASS)
+- `golangci-lint run ./...`: 0 issues found (PASS)
+- `govulncheck ./...`: 0 vulnerabilities found (PASS)
+- `npm run test:unit`: 64 test files, 723 tests passed (PASS)
+- `npm run build`: Exit code 0 (PASS)
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS)
+
+### Story US-025 Completion Summary:
+- All 4 tasks (`US-025.1`, `US-025.2`, `US-025.3`, `US-025.4`) are complete and verified (`DONE`).
+- Requirements `FR-SET-001`, `FR-SET-002`, `FR-SET-003`, and `FR-SET-004` verified.
+- Multi-platform checks for Windows and macOS are explicitly documented and deferred to the post-implementation qualification process (`NOT RUN`).
+
+### Next Eligible Story:
+- Story `US-026: Recent Files Tracking & Startup Tab Restoration` under Phase 5 / [EPIC-007](../epics/EPIC-007-settings-durability.md) (`READY`).
