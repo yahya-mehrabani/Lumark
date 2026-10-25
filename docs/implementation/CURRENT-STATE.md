@@ -13,8 +13,8 @@
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
 - **Application Implementation Status:** **PHASE 2 (EPIC-002), PHASE 3 (EPIC-003), PHASE 4 (EPIC-004 & EPIC-005), AND PHASE 5 (EPIC-006 & EPIC-007) COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) through [`US-004`](../stories/US-004-packaging-association-spike.md) (Phase 1 Spike), Stories [`US-005`](../stories/US-005-native-document-service.md) through [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Phase 2 Core Lifecycle & Tabs), Stories [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) through [`US-012`](../stories/US-012-headings-anchors-fixtures.md) (Phase 3 Core Rendering Core), Stories [`US-013`](../stories/US-013-mermaid-offline-rendering.md) through [`US-016`](../stories/US-016-adversarial-security-corpus.md) (Phase 4 `EPIC-004`), Stories [`US-017`](../stories/US-017-auto-direction-engine.md) through [`US-020`](../stories/US-020-rtl-ltr-fixtures-suite.md) (Phase 4 `EPIC-005`), Stories [`US-021`](../stories/US-021-table-of-contents.md) through [`US-024`](../stories/US-024-print-workflow-styling.md) (Phase 5 `EPIC-006`), and Stories [`US-025`](../stories/US-025-settings-service-persistence.md) through [`US-028`](../stories/US-028-fault-isolation-diagnostics.md) (Phase 5 `EPIC-007`) fully verified across all implementation tasks under Linux/WSLg.
 - **Feasibility Spike Status:** **SPIKE IMPLEMENTATION COMPLETE / AWAITING CROSS-PLATFORM GATES**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Task [`US-028.4: Write unit tests for logging and fault isolation`](../stories/US-028-fault-isolation-diagnostics.md) (`DONE`; Story [`US-028`](../stories/US-028-fault-isolation-diagnostics.md) `DONE`; `EPIC-007` `DONE`; verified privacy redactions, absence of document contents and credentials, bounded rotation, and concurrent thread safety).
-- **Active / Next Eligible Work Item:** Story [`US-029: Windows Packaging, NSIS Installer & File Associations`](../stories/US-029-windows-packaging-nsis.md) (`READY`; Phase 6 / `EPIC-008: Packaging, Distribution & Integration`).
+- **Last Completed Work Item:** Task [`US-029.1: Configure NSIS script and application metadata`](../stories/US-029-windows-packaging-associations.md) (`DONE`; Story [`US-029`](../stories/US-029-windows-packaging-associations.md) `IN_PROGRESS`; Phase 6 / `EPIC-008: Packaging, Distribution & Integration`).
+- **Active / Next Eligible Work Item:** Task [`US-029.2: Implement ProgID and file association registry keys`](../stories/US-029-windows-packaging-associations.md) (`READY`; Story [`US-029`](../stories/US-029-windows-packaging-associations.md) `IN_PROGRESS`).
 
 ---
 
@@ -80,14 +80,9 @@ All planning remediation artifacts must be preserved:
 
 ## 5. Exact Next Action for the Next Agent
 
-1. **Phase 5 & Story US-028 Complete:**
-   - Task `US-028.1: Implement Go bounded rotating logger` is **`DONE`** (`internal/diagnostics/` passing unit and race tests with zero linter errors).
-   - Task `US-028.2: Implement frontend React Error Boundaries` is **`DONE`** (React ErrorBoundary and TabErrorBoundary with tab fault isolation passing 7/7 tests).
-   - Task `US-028.3: Implement ToastNotification component` is **`DONE`** (accessible toast notification with plain-language errors, auto-dismiss, and choose-another-file action passing 11/11 tests).
-   - Task `US-028.4: Write unit tests for logging and fault isolation` is **`DONE`** (privacy redaction audit, zero document body content in disk logs, and 0 data races verified).
-   - Story [`US-028: Fault Isolation, User-Facing Error Notifications & Local Diagnostics`](../stories/US-028-fault-isolation-diagnostics.md) is **`DONE`**.
-   - Epic [`EPIC-007: Settings, Persistence & Durability`](../epics/EPIC-007-settings-durability.md) is **`DONE`**.
-   - Phase 5 is **`COMPLETE`** in the Linux implementation environment.
-2. **Next Eligible Story:**
-   - Execute Phase 6 / `EPIC-008: Packaging, Distribution & Integration`, starting with Story [`US-029: Windows Packaging, NSIS Installer & File Associations`](../stories/US-029-windows-packaging-nsis.md) (`READY`).
-3. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.
+1. **Phase 6 / Story US-029 Execution in Progress:**
+   - Task `US-029.1: Configure NSIS script and application metadata` is **`DONE`** (`packaging/windows/installer.nsi` configured with version metadata, publisher, icon, DPI awareness, and GitHub Actions `windows-latest` build workflow).
+   - Task `US-029.2: Implement ProgID and file association registry keys` is **`READY`** (registering ProgID, OpenWithProgids, and Windows Capabilities without overwriting UserChoice).
+   - Story [`US-029: Windows Packaging, NSIS Installer & File Associations`](../stories/US-029-windows-packaging-associations.md) is **`IN_PROGRESS`**.
+   - Epic [`EPIC-008: Packaging, Operating-System Integration & Release Hardening`](../epics/EPIC-008-packaging-platform-integration.md) is **`IN_PROGRESS`**.
+2. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.

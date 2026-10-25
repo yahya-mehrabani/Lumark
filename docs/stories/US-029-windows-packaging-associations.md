@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-029`
 - **Parent Epic:** [EPIC-008: Packaging, Operating-System Integration & Release Hardening](../epics/EPIC-008-packaging-platform-integration.md)
-- **Status:** `DRAFT`
+- **Status:** `IN_PROGRESS`
 - **Assigned Phase:** Phase 6 (Distribution & Release Hardening)
 
 ---
@@ -59,10 +59,10 @@ Deliver a production-ready Windows installer and native file association registr
 
 ### Task US-029.1: Configure NSIS script and application metadata
 - **Task ID:** `US-029.1`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** NSIS script includes version info, publisher, icon, and installation directory.
-- **Verification Command:** `test -f packaging/windows/installer.nsi && grep -i 'MarkdownViewer.Document' packaging/windows/installer.nsi`
+- **Verification Command:** `test -f packaging/windows/installer.nsi && grep -i 'MarkdownViewer.Document' packaging/windows/installer.nsi && grep -i 'VIProductVersion' packaging/windows/installer.nsi`
 - **Expected Observable Result:** NSIS script declares ProgID and file association keys.
 - **Evidence to Record:** NSIS script inspection output.
 - **Environment Handling:** Script inspection on Linux; installer execution requires Windows host (BLOCKED locally).
@@ -116,11 +116,28 @@ Deliver a production-ready Windows installer and native file association registr
 
 ## 9. Implementation Notes and Validation Evidence
 
-*(To be filled by implementation agent during execution)*
-- **Execution Date:** Not yet executed
-- **Agent ID:** N/A
-- **Changed Files:** None
-- **Terminal Output & Verification Evidence:**
-```text
-(Awaiting execution in Phase 6)
+- **Execution Date:** 2026-10-25
+- **Agent ID:** Autonomous Story Runner
+- **Active Environment:** Linux COM-807 (Ubuntu 26.04.1 LTS x86_64 under WSL2/WSLg)
+- **Deferred Platform Checks:** Windows host interactive runtime and NSIS installer binary execution on Windows 10/11 x64 are marked `NOT RUN` (deferred to dedicated post-implementation cross-platform validation).
+
+### Task US-029.1: Configure NSIS script and application metadata
+- **Status:** `DONE`
+- **Changed Files:**
+  - `packaging/windows/installer.nsi`: Configured `VIProductVersion`, `VIFileVersion`, `VIAddVersionKey` (CompanyName, FileDescription, ProductVersion, FileVersion, LegalCopyright, ProductName, Comments), HiDPI awareness (`ManifestDPIAware true`), and `BrandingText`.
+  - `.github/workflows/windows-build.yml`: Configured automated CI build on `windows-latest` running Go 1.26, Node 22, frontend build, Wails CLI packaging, and NSIS installer generation.
+- **Verification Commands & Output:**
+```bash
+$ test -f packaging/windows/installer.nsi && grep -i 'MarkdownViewer.Document' packaging/windows/installer.nsi && grep -i 'VIProductVersion' packaging/windows/installer.nsi
+!define PROGID "MarkdownViewer.Document"
+    ; HKCU\Software\Classes\MarkdownViewer.Document
+VIProductVersion "${PRODUCT_VERSION}.0"
+Exit code: 0
+
+$ golangci-lint run
+0 issues.
+Exit code: 0
 ```
+- **Cross-Platform Verification Boundary:**
+  - Linux NSIS Script & CI Workflow Configuration: `PASS`
+  - Windows Host Installer Binary Build & Execution: `NOT RUN` (deferred to Windows cross-platform validation).

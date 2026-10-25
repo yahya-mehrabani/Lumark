@@ -3817,4 +3817,34 @@ This log is an append-only chronological record of all significant actions, veri
 - **Active Story:** `US-028: Fault Isolation, User-Facing Error Notifications & Local Diagnostics` (`DONE`).
 - **Completed Tasks:** `US-028.1` (`DONE`), `US-028.2` (`DONE`), `US-028.3` (`DONE`), `US-028.4` (`DONE`).
 - **Active Epic:** `EPIC-007: Settings, Persistence & Durability` (`DONE`).
-- **Next Eligible Story:** `US-029: Windows Packaging, NSIS Installer & File Associations` under [`docs/stories/US-029-windows-packaging-nsis.md`](../stories/US-029-windows-packaging-nsis.md) (`READY`; Phase 6 / `EPIC-008: Packaging, Distribution & Integration`).
+- **Next Eligible Story:** `US-029: Windows Packaging, NSIS Installer & File Associations` under [`docs/stories/US-029-windows-packaging-associations.md`](../stories/US-029-windows-packaging-associations.md) (`READY`; Phase 6 / `EPIC-008: Packaging, Distribution & Integration`).
+
+---
+
+## [2026-10-25] — Phase 6: Configure NSIS Script and Application Metadata (Task US-029.1)
+
+- **Task ID:** `US-029.1`
+- **Story ID:** `US-029`
+- **Status:** `DONE`
+- **Agent ID:** Antigravity Autonomous Story Runner
+
+### Scope and Implementation Summary:
+- Updated `packaging/windows/installer.nsi`:
+  - Added Windows executable version information macros (`VIProductVersion`, `VIFileVersion`, `VIAddVersionKey` for CompanyName, FileDescription, ProductVersion, FileVersion, LegalCopyright, ProductName, Comments) fulfilling PRD Section 11.1 & 11.2.
+  - Configured HiDPI awareness (`ManifestDPIAware true`) and installer branding (`BrandingText`).
+  - Verified per-user installation target `$LOCALAPPDATA\Programs\MarkdownViewer` with `RequestExecutionLevel user`.
+- Created `.github/workflows/windows-build.yml`:
+  - Configured GitHub Actions CI workflow on `windows-latest` for compiling the Windows executable and packaging the NSIS installer.
+- Updated Story `US-029` status to `IN_PROGRESS` and Task `US-029.1` to `DONE`.
+
+### Verification Results:
+- `test -f packaging/windows/installer.nsi && grep -i 'MarkdownViewer.Document' packaging/windows/installer.nsi && grep -i 'VIProductVersion' packaging/windows/installer.nsi`: Exit code 0 (PASS).
+- `golangci-lint run`: 0 issues (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **Phase:** Phase 6 (Packaging, Platform Integration & Release Hardening).
+- **Active Story:** `US-029: Windows Packaging, NSIS Installer & File Associations` (`IN_PROGRESS`).
+- **Completed Tasks:** `US-029.1` (`DONE`).
+- **Next Eligible Task:** `US-029.2: Implement ProgID and file association registry keys` under [`docs/stories/US-029-windows-packaging-associations.md`](../stories/US-029-windows-packaging-associations.md) (`READY`).

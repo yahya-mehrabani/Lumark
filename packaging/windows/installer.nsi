@@ -27,6 +27,24 @@ RequestExecutionLevel user
 !define MUI_ICON "..\..\build\windows\icon.ico"
 !define MUI_UNICON "..\..\build\windows\icon.ico"
 
+; Version Information & Application Metadata (PRD Section 11.1, 11.2)
+VIProductVersion "${PRODUCT_VERSION}.0"
+VIFileVersion    "${PRODUCT_VERSION}.0"
+
+VIAddVersionKey "CompanyName"     "${PRODUCT_PUBLISHER}"
+VIAddVersionKey "FileDescription" "${PRODUCT_NAME} Installer"
+VIAddVersionKey "ProductVersion"  "${PRODUCT_VERSION}"
+VIAddVersionKey "FileVersion"     "${PRODUCT_VERSION}"
+VIAddVersionKey "LegalCopyright"  "© 2026, ${PRODUCT_PUBLISHER}"
+VIAddVersionKey "ProductName"     "${PRODUCT_NAME}"
+VIAddVersionKey "Comments"        "Fast, secure, local-first Markdown document viewer"
+
+; Enable HiDPI support
+ManifestDPIAware true
+
+; Branding text
+BrandingText "${PRODUCT_NAME} v${PRODUCT_VERSION}"
+
 ; Pages
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_DIRECTORY

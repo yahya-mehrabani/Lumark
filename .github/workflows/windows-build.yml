@@ -1,0 +1,59 @@
+name: Windows Build & Packaging
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-windows:
+    name: Build Windows x64 NSIS Package
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.x'
+          cache: true
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Frontend Dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build Frontend
+        working-directory: frontend
+        run: npm run build
+
+      - name: Install Wails CLI
+        run: go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-beta.34
+
+      - name: Verify Wails CLI
+        run: wails3 version
+
+      - name: Build Application Binary
+        run: |
+          go build -trimpath -ldflags="-w -s -H windowsgui" -o bin/markdown-viewer.exe .
+
+      - name: Build NSIS Installer
+        shell: bash
+        run: |
+          makensis packaging/windows/installer.nsi
+
+      - name: Upload Installer Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: markdown-viewer-windows-installer
+          path: bin/markdown-viewer-installer.exe
+          if-no-files-found: warn
