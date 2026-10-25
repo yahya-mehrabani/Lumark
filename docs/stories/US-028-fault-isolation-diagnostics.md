@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-028`
 - **Parent Epic:** [EPIC-007: Settings, Persistence & Durability](../epics/EPIC-007-settings-durability.md)
-- **Status:** `READY`
+- **Status:** `IN_PROGRESS`
 - **Assigned Phase:** Phase 5 (Reading Experience & Durability)
 
 ---
@@ -58,7 +58,7 @@ Deliver fault isolation, accessible error notifications, and a privacy-preservin
 
 ### Task US-028.1: Implement Go bounded rotating logger
 - **Task ID:** `US-028.1`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** Structured logger writes to file, rotates at 5 MiB, redacts file paths, masks document contents, and excludes credentials and file history (AUD-011).
 - **Verification Command:** `go test -v -run TestDiagnosticsLog ./internal/diagnostics/...`
@@ -68,7 +68,7 @@ Deliver fault isolation, accessible error notifications, and a privacy-preservin
 
 ### Task US-028.2: Implement frontend React Error Boundaries
 - **Task ID:** `US-028.2`
-- **Status:** `DRAFT`
+- **Status:** `READY`
 - **Dependencies:** `US-028.1`
 - **Completion Criteria:** ErrorBoundary wraps tab content; renders fallback UI on crash.
 - **Verification Command:** `npm run test:unit -- error-boundary`
@@ -114,11 +114,45 @@ Deliver fault isolation, accessible error notifications, and a privacy-preservin
 
 ## 9. Implementation Notes and Validation Evidence
 
-*(To be filled by implementation agent during execution)*
-- **Execution Date:** Not yet executed
-- **Agent ID:** N/A
-- **Changed Files:** None
+- **Execution Date:** 2026-10-25
+- **Agent ID:** Antigravity Autonomous Story Runner
+- **Changed Files:**
+  - `internal/diagnostics/types.go`
+  - `internal/diagnostics/sanitize.go`
+  - `internal/diagnostics/logger.go`
+  - `internal/diagnostics/logger_test.go`
 - **Terminal Output & Verification Evidence:**
+
+#### Task US-028.1: Implement Go bounded rotating logger (`DONE`)
 ```text
-(Awaiting execution in Phase 5)
+=== RUN   TestDiagnosticsLog_DefaultOptions
+--- PASS: TestDiagnosticsLog_DefaultOptions (0.00s)
+=== RUN   TestDiagnosticsLog_Rotation
+    logger_test.go:95: Rotation verified: active app.log = 218 bytes, backup app.log.1 = 218 bytes, total = 436 bytes
+--- PASS: TestDiagnosticsLog_Rotation (0.00s)
+=== RUN   TestDiagnosticsLog_PathRedaction
+=== RUN   TestDiagnosticsLog_PathRedaction/User_home_document_path
+=== RUN   TestDiagnosticsLog_PathRedaction/Direct_user_home
+=== RUN   TestDiagnosticsLog_PathRedaction/Generic_Linux_user_home
+=== RUN   TestDiagnosticsLog_PathRedaction/Generic_macOS_user_home
+=== RUN   TestDiagnosticsLog_PathRedaction/System_path_outside_home
+--- PASS: TestDiagnosticsLog_PathRedaction (0.00s)
+=== RUN   TestDiagnosticsLog_CredentialRedaction
+=== RUN   TestDiagnosticsLog_CredentialRedaction/Bearer_token
+=== RUN   TestDiagnosticsLog_CredentialRedaction/Basic_auth
+=== RUN   TestDiagnosticsLog_CredentialRedaction/Password_key-value
+=== RUN   TestDiagnosticsLog_CredentialRedaction/API_key_key-value
+=== RUN   TestDiagnosticsLog_CredentialRedaction/JWT_token
+=== RUN   TestDiagnosticsLog_CredentialRedaction/PEM_Private_Key_block
+--- PASS: TestDiagnosticsLog_CredentialRedaction (0.00s)
+=== RUN   TestDiagnosticsLog_DocumentContentAndHistoryMasking
+--- PASS: TestDiagnosticsLog_DocumentContentAndHistoryMasking (0.00s)
+=== RUN   TestDiagnosticsLog_ConcurrentWrites
+    logger_test.go:299: Concurrent test successfully wrote 55 lines in active log
+--- PASS: TestDiagnosticsLog_ConcurrentWrites (0.02s)
+PASS
+ok      markdown-viewer/internal/diagnostics    0.033s
+
+Linter Verification:
+/root/go/bin/golangci-lint run ./internal/diagnostics/... -> 0 issues
 ```

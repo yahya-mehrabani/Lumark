@@ -3686,3 +3686,37 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Story [`US-028: Fault Isolation, User-Facing Error Notifications & Local Diagnostics`](../stories/US-028-fault-isolation-diagnostics.md) (Task `US-028.1: Implement Go bounded rotating logger`, `READY`).
+
+---
+
+## [2026-10-25] — Phase 5: Implement Go Bounded Rotating Logger (Task US-028.1)
+
+- **Task ID:** `US-028.1`
+- **Story ID:** `US-028`
+- **Status:** `DONE`
+- **Agent ID:** Antigravity Autonomous Story Runner
+
+### Scope and Implementation Summary:
+- Created `internal/diagnostics/types.go`:
+  - Defined `Level` (`DEBUG`, `INFO`, `WARN`, `ERROR`), `Options`, `LogEntry`, and `BackupFilePath`.
+  - Configured default options with 5 MiB max size (`5 * 1024 * 1024` bytes), 1 backup file (`app.log.1`), and strict privacy redactions enabled by default.
+- Created `internal/diagnostics/sanitize.go`:
+  - Implemented `Sanitizer` with user home path redaction (`/home/user/` and `C:\Users\user\` -> `~/`), credential and token masking (Bearer, Basic, passwords, API keys, JWT tokens, PEM private keys), and strict document content masking (keys like `content`, `markdown`, `document`, `doc_content`, `body`, and large string payloads).
+  - Explicitly masked file history and recent files keys to ensure compliance with AUD-011 and PRD 8.4.
+- Created `internal/diagnostics/logger.go`:
+  - Implemented bounded rotating file logger with size tracking, automatic rotation from `app.log` to `app.log.1`, discarding older backups, and thread-safe operations protected by `sync.Mutex`.
+  - Implemented `DefaultLogPath()` targeting `~/.config/markdown-viewer/app.log` (`os.UserConfigDir()`).
+  - Implemented `Log`, `Info`, `Warn`, `Error`, `ErrorWithDetails`, `Rotate`, `ReadLogs`, and `Close`.
+- Created `internal/diagnostics/logger_test.go`:
+  - Implemented `TestDiagnosticsLog_DefaultOptions`, `TestDiagnosticsLog_Rotation`, `TestDiagnosticsLog_PathRedaction`, `TestDiagnosticsLog_CredentialRedaction`, `TestDiagnosticsLog_DocumentContentAndHistoryMasking`, and `TestDiagnosticsLog_ConcurrentWrites`.
+  - Verified 0 data races under `go test -v -race ./internal/diagnostics/...`.
+
+### Verification Results:
+- `go test -v -run TestDiagnosticsLog ./internal/diagnostics/...`: all 6 test suites passed (PASS).
+- `go test -v -race ./internal/diagnostics/...`: all passed with 0 data races (PASS).
+- `golangci-lint run ./internal/diagnostics/...`: 0 issues found (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Task:
+- Task `US-028.2: Implement frontend React Error Boundaries` under [`docs/stories/US-028-fault-isolation-diagnostics.md`](../stories/US-028-fault-isolation-diagnostics.md) (`READY`).

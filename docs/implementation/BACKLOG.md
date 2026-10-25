@@ -91,7 +91,7 @@ This document is the authoritative index of all Epics and User Stories for `mark
 | `US-025` | Versioned Settings Service & Atomic Persistence | P0 | `DONE` | `US-005` | [US-025.md](../stories/US-025-settings-service-persistence.md) |
 | `US-026` | Recent Files Tracking & Startup Tab Restoration | P1 | `DONE` | `US-025`, `US-007` | [US-026.md](../stories/US-026-recent-files-tab-restore.md) |
 | `US-027` | File Change Watcher & Debounced Auto-Reload | P1 | `DONE` | `US-005`, `US-007` | [US-027.md](../stories/US-027-file-change-watcher.md) |
-| `US-028` | Fault Isolation, User-Facing Error Notifications & Local Diagnostics | P0/P1 | `READY` | `US-005`, `US-025` | [US-028.md](../stories/US-028-fault-isolation-diagnostics.md) |
+| `US-028` | Fault Isolation, User-Facing Error Notifications & Local Diagnostics | P0/P1 | `IN_PROGRESS` | `US-005`, `US-025` | [US-028.md](../stories/US-028-fault-isolation-diagnostics.md) |
 
 ---
 
