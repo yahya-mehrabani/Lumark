@@ -3095,3 +3095,30 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-023.3: Implement zoom controller and keyboard shortcuts` under Story [`US-023: Document Viewport Controls: Themes, Zoom & Selection`](../stories/US-023-theme-zoom-selection.md).
+
+---
+
+## 2026-10-25 — Task US-023.3: Implement zoom controller and keyboard shortcuts
+
+- **Task ID:** `US-023.3`
+- **Story ID:** [`US-023: Document Viewport Controls: Themes, Zoom & Selection`](../stories/US-023-theme-zoom-selection.md)
+- **Status:** `DONE`
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Created `frontend/src/features/viewport/zoomController.ts`:
+  - Implemented `ZoomController` managing zoom percentage with step-wise adjustments (`ZOOM_STEP = 10%`).
+  - Enforced strict bounds clamping between 50% (`MIN_ZOOM`) and 250% (`MAX_ZOOM`), preventing unusable viewport distortion.
+  - Implemented `resetZoom()` returning immediately to 100% (`DEFAULT_ZOOM`).
+  - Implemented keyboard shortcut handler `handleKeyDown` supporting `Ctrl/Cmd` + `+` / `=`, `Ctrl/Cmd` + `-` / `_`, and `Ctrl/Cmd` + `0`.
+  - Implemented `useZoom` React hook supporting subscription and window keydown listener option.
+- Created `frontend/src/features/viewport/zoom-controller.test.ts`:
+  - 14 unit tests covering default zoom, upper/lower clamping, step increments/decrements, shortcut handling, subscriptions, and hook state.
+
+### Verification Results:
+- `npm run test:unit -- zoom-controller`: 14 passed in 1.31s with exit code 0 (PASS).
+- `npx tsc --noEmit`: 0 type errors with exit code 0 (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-023.4: Write unit and visual tests for theme and zoom` under Story [`US-023: Document Viewport Controls: Themes, Zoom & Selection`](../stories/US-023-theme-zoom-selection.md).

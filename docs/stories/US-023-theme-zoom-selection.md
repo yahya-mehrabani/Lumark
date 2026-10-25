@@ -79,7 +79,7 @@ Provide complete viewport appearance and accessibility controls:
 
 ### Task US-023.3: Implement zoom controller and keyboard shortcuts
 - **Task ID:** `US-023.3`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-023.2`
 - **Completion Criteria:** Handlers for `Ctrl/Cmd` + `+`, `-`, `0` with scale clamping between 50% and 250%.
 - **Verification Command:** `npm run test:unit -- zoom-controller`
@@ -181,5 +181,41 @@ Provide complete viewport appearance and accessibility controls:
 
  Test Files  1 passed (1)
       Tests  8 passed (8)
+```
+- **Platform Verification:** Linux WSL2/WSLg (Ubuntu 26.04 x64). Cross-platform host checks deferred to dedicated validation phase.
+
+### Task US-023.3 Validation Evidence
+- **Execution Date:** 2026-10-25
+- **Agent ID:** Autonomous Story Runner
+- **Changed Files:**
+  - `frontend/src/features/viewport/zoomController.ts`
+  - `frontend/src/features/viewport/zoom-controller.test.ts`
+- **Verification Results:**
+  - `npm run test:unit -- zoom-controller`: PASS (14/14 tests passing)
+  - `npx tsc --noEmit`: PASS (0 type errors)
+- **Terminal Output:**
+```text
+ ✓ src/features/viewport/zoom-controller.test.ts (14 tests) 49ms
+   ✓ ZoomController & Keyboard Shortcuts (US-023.3) (14)
+     ✓ Clamping & Step Calculations (8)
+       ✓ initializes to 100% by default 4ms
+       ✓ clamps values below MIN_ZOOM to 50% 1ms
+       ✓ clamps values above MAX_ZOOM to 250% 1ms
+       ✓ increments zoom by 10% per step on zoomIn() 1ms
+       ✓ decrements zoom by 10% per step on zoomOut() 0ms
+       ✓ enforces upper bound when stepping past 250% 0ms
+       ✓ enforces lower bound when stepping below 50% 0ms
+       ✓ resets to 100% on resetZoom() 0ms
+     ✓ Keyboard Shortcut Handlers (4)
+       ✓ handles Ctrl/Cmd + Plus (=) for zoom in 3ms
+       ✓ handles Ctrl/Cmd + Minus (-) for zoom out 1ms
+       ✓ handles Ctrl/Cmd + 0 for zoom reset 1ms
+       ✓ ignores non-modifier keys or unrelated shortcuts 1ms
+     ✓ Subscriptions and useZoom Hook (2)
+       ✓ notifies subscribers on zoom changes 2ms
+       ✓ useZoom hook tracks zoom state and binds shortcuts 27ms
+
+ Test Files  1 passed (1)
+      Tests  14 passed (14)
 ```
 - **Platform Verification:** Linux WSL2/WSLg (Ubuntu 26.04 x64). Cross-platform host checks deferred to dedicated validation phase.
