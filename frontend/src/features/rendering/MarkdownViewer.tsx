@@ -25,6 +25,8 @@ import { useTableOfContents } from '../navigation/useTableOfContents';
 import { useTocToggle } from '../navigation/useTocToggle';
 import { SearchBar } from '../navigation/SearchBar';
 import { useSearch } from '../navigation/useSearch';
+import { useTheme } from '../viewport/themeStore';
+import { useZoom } from '../viewport/zoomController';
 import '../../styles/katex.css';
 import './markdown.css';
 
@@ -204,6 +206,9 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [search]);
 
+  const { theme, toggleTheme } = useTheme();
+  const { zoom, zoomFactor, zoomIn, zoomOut, resetZoom, canZoomIn, canZoomOut } = useZoom({ enableShortcuts: true });
+
   const slugTracker = React.useMemo(() => new SlugTracker(), [content]);
 
   return (
@@ -220,6 +225,50 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
                 <span className="path-label">PATH:</span> {filePath}
               </div>
             )}
+            <div className="doc-zoom-controls" data-testid="doc-zoom-controls" role="group" aria-label="Zoom controls">
+              <button
+                type="button"
+                className="doc-zoom-btn"
+                onClick={zoomOut}
+                disabled={!canZoomOut}
+                aria-label="Zoom out (Ctrl+-)"
+                title="Zoom out (Ctrl+-)"
+                data-testid="doc-zoom-out"
+              >
+                -
+              </button>
+              <button
+                type="button"
+                className="doc-zoom-display-btn"
+                onClick={resetZoom}
+                aria-label={`Current zoom ${zoom}%. Click to reset (Ctrl+0)`}
+                title="Reset zoom to 100% (Ctrl+0)"
+                data-testid="doc-zoom-reset"
+              >
+                {zoom}%
+              </button>
+              <button
+                type="button"
+                className="doc-zoom-btn"
+                onClick={zoomIn}
+                disabled={!canZoomIn}
+                aria-label="Zoom in (Ctrl+=)"
+                title="Zoom in (Ctrl+=)"
+                data-testid="doc-zoom-in"
+              >
+                +
+              </button>
+            </div>
+            <button
+              type="button"
+              className="doc-theme-toggle-btn"
+              onClick={toggleTheme}
+              aria-label={`Current theme: ${theme}. Click to toggle.`}
+              title={`Theme: ${theme.charAt(0).toUpperCase() + theme.slice(1)} (Click to toggle)`}
+              data-testid="doc-theme-toggle"
+            >
+              {theme === 'system' ? 'System' : theme === 'dark' ? 'Dark' : 'Light'}
+            </button>
             <button
               type="button"
               className={`doc-search-toggle-btn ${search.isOpen ? 'active' : ''}`}
@@ -264,7 +313,11 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
         onToggleCaseSensitive={search.toggleCaseSensitive}
       />
 
-      <div className="markdown-viewport-body">
+      <div
+        className="markdown-viewport-body"
+        data-testid="markdown-viewport-body"
+        style={{ zoom: zoomFactor }}
+      >
         <MarkdownContentBody
           ref={contentRef}
           content={content}

@@ -89,7 +89,7 @@ Provide complete viewport appearance and accessibility controls:
 
 ### Task US-023.4: Write unit and visual tests for theme and zoom
 - **Task ID:** `US-023.4`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-023.3`
 - **Completion Criteria:** Tests assert theme class toggling, diagram theme updates, and zoom value bounds.
 - **Verification Command:** `npm run test:unit -- theme-zoom`
@@ -217,5 +217,38 @@ Provide complete viewport appearance and accessibility controls:
 
  Test Files  1 passed (1)
       Tests  14 passed (14)
+```
+- **Platform Verification:** Linux WSL2/WSLg (Ubuntu 26.04 x64). Cross-platform host checks deferred to dedicated validation phase.
+
+### Task US-023.4 Validation Evidence
+- **Execution Date:** 2026-10-25
+- **Agent ID:** Autonomous Story Runner
+- **Changed Files:**
+  - `frontend/src/features/viewport/theme-zoom.test.tsx`
+  - `frontend/src/features/rendering/MarkdownViewer.tsx`
+  - `frontend/src/features/rendering/markdown.css`
+  - `frontend/src/features/shell/shell.css`
+  - `frontend/src/features/viewport/themeStore.ts`
+- **Verification Results:**
+  - `npm run test:unit -- theme-zoom`: PASS (7/7 tests passing)
+  - `npm run test:unit -- theme`: PASS (30/30 tests across 3 files)
+  - `npm run test:unit -- zoom`: PASS (21/21 tests across 2 files)
+  - `npx tsc --noEmit`: PASS (0 type errors)
+- **Terminal Output:**
+```text
+ ✓ src/features/viewport/theme-zoom.test.tsx (7 tests) 1008ms
+   ✓ Document Viewport Controls: Themes & Zoom Integration Suite (US-023.4) (7)
+     ✓ Theme Controls and DOM Synchronization (3)
+       ✓ cycles theme between system, light, and dark via toolbar button 166ms
+       ✓ adapts Mermaid diagram theme dynamically when themeStore changes 713ms
+       ✓ ensures Shiki code syntax rules include dual-theme selectors in markdown.css 17ms
+     ✓ Zoom Controls and Value Bounds (4)
+       ✓ initializes at 100% zoom and increments/decrements in 10% steps 25ms
+       ✓ enforces upper bound clamping at 250% and disables zoom in button 18ms
+       ✓ enforces lower bound clamping at 50% and disables zoom out button 18ms
+       ✓ handles keyboard shortcuts for zoom in, zoom out, and reset 19ms
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
 ```
 - **Platform Verification:** Linux WSL2/WSLg (Ubuntu 26.04 x64). Cross-platform host checks deferred to dedicated validation phase.

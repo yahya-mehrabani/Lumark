@@ -105,7 +105,6 @@ export class ThemeStore {
   }
 
   public setTheme(preference: ThemePreference): void {
-    if (this.preference === preference) return;
     this.preference = preference;
     this.updateState();
     this.applyToDom();

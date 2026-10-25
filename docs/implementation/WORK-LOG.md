@@ -3122,3 +3122,30 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-023.4: Write unit and visual tests for theme and zoom` under Story [`US-023: Document Viewport Controls: Themes, Zoom & Selection`](../stories/US-023-theme-zoom-selection.md).
+
+---
+
+## 2026-10-25 — Task US-023.4: Write unit and visual tests for theme and zoom
+
+- **Task ID:** `US-023.4`
+- **Story ID:** [`US-023: Document Viewport Controls: Themes, Zoom & Selection`](../stories/US-023-theme-zoom-selection.md)
+- **Status:** `DONE`
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Wired `useTheme()` and `useZoom({ enableShortcuts: true })` hooks into `frontend/src/features/rendering/MarkdownViewer.tsx`:
+  - Added toolbar controls for theme toggling (`doc-theme-toggle`), zoom out (`doc-zoom-out`), zoom level display/reset (`doc-zoom-reset`), and zoom in (`doc-zoom-in`).
+  - Applied dynamic `style={{ zoom: zoomFactor }}` scaling directly on `.markdown-viewport-body`.
+- Enhanced `frontend/src/features/rendering/markdown.css` and `frontend/src/features/shell/shell.css` with comprehensive light theme design token overrides for document chrome, code blocks, typography, and controls.
+- Created `frontend/src/features/viewport/theme-zoom.test.tsx`:
+  - 7 integration tests asserting toolbar theme toggling, DOM `data-theme` attribute synchronization, body class toggling, dynamic Mermaid diagram theme adaptation, Shiki dual-theme CSS rules, zoom step-wise increments/decrements, 50% and 250% clamping with button disable state, and `Ctrl/Cmd` + `+`, `-`, `0` keyboard shortcuts.
+
+### Verification Results:
+- `npm run test:unit -- theme-zoom`: 7 passed in 1.01s with exit code 0 (PASS).
+- `npm run test:unit -- theme`: 30 passed across 3 files with exit code 0 (PASS).
+- `npm run test:unit -- zoom`: 21 passed across 2 files with exit code 0 (PASS).
+- `npx tsc --noEmit`: 0 type errors with exit code 0 (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-023.5: Implement native text selection, copy action, and context menu preservation (FR-NAV-005)` under Story [`US-023: Document Viewport Controls: Themes, Zoom & Selection`](../stories/US-023-theme-zoom-selection.md).
