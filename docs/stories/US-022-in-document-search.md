@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-022`
 - **Parent Epic:** [EPIC-006: Navigation, Search & User Reading Tools](../epics/EPIC-006-navigation-reading-tools.md)
-- **Status:** `DRAFT`
+- **Status:** `IN_PROGRESS`
 - **Assigned Phase:** Phase 5 (Reading Experience & Durability)
 
 ---
@@ -56,7 +56,7 @@ Implement fast, non-destructive in-document text search:
 
 ### Task US-022.1: Implement SearchBar React component
 - **Task ID:** `US-022.1`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** Renders input, prev/next buttons, close button, and match counter.
 - **Verification Command:** `npm run test:unit -- search-indexer`
@@ -66,7 +66,7 @@ Implement fast, non-destructive in-document text search:
 
 ### Task US-022.2: Implement text node search and highlight engine
 - **Task ID:** `US-022.2`
-- **Status:** `DRAFT`
+- **Status:** `READY`
 - **Dependencies:** `US-022.1`
 - **Completion Criteria:** Scans DOM text nodes, computes bounding ranges, applies non-destructive `<mark>` or CSS Highlight API.
 - **Verification Command:** `npm run test:unit -- search-navigation`
@@ -111,11 +111,53 @@ Implement fast, non-destructive in-document text search:
 
 ## 9. Implementation Notes and Validation Evidence
 
-*(To be filled by implementation agent during execution)*
-- **Execution Date:** Not yet executed
-- **Agent ID:** N/A
-- **Changed Files:** None
+### Task US-022.1 Validation Evidence
+- **Execution Date:** 2026-10-25
+- **Changed Files:**
+  - `frontend/src/features/navigation/types.ts`
+  - `frontend/src/features/navigation/searchIndexer.ts`
+  - `frontend/src/features/navigation/SearchBar.tsx`
+  - `frontend/src/features/navigation/search.css`
+  - `frontend/src/features/navigation/index.ts`
+  - `frontend/src/features/navigation/search-indexer.test.tsx`
+- **Verification Command:** `npm run test:unit -- search-indexer`
 - **Terminal Output & Verification Evidence:**
 ```text
-(Awaiting execution in Phase 5)
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run search-indexer
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/navigation/search-indexer.test.tsx (20 tests) 398ms
+   ✓ Search Indexer Unit Tests (US-022.1) (20)
+     ✓ escapeRegExp (2)
+       ✓ escapes all regular expression metacharacters
+       ✓ returns empty string unmodified
+     ✓ isIgnoredElement (4)
+       ✓ returns true for script, style, noscript, and svg tags
+       ✓ returns true for elements contained inside an svg subtree
+       ✓ returns true for elements with hidden attribute or aria-hidden="true"
+       ✓ returns false for normal visible elements
+     ✓ collectSearchableTextNodes (1)
+       ✓ collects text nodes from paragraphs, headings, and code blocks while omitting script/style/svg
+     ✓ findMatches (8)
+       ✓ returns empty array when query or root is empty
+       ✓ finds single match with accurate character offsets
+       ✓ finds multiple matches in a single text node
+       ✓ performs case-insensitive search by default
+       ✓ respects caseSensitive option when enabled
+       ✓ handles regex special characters safely
+       ✓ indexes matches inside code blocks
+       ✓ indexes Persian and RTL unicode text matches
+     ✓ SearchBar Component Rendering & Interactions (5)
+       ✓ returns null when isOpen is false
+       ✓ renders input, buttons, and match count when open
+       ✓ shows "No matches" and disables navigation when query has 0 matches
+       ✓ dispatches Enter, Shift+Enter, F3, and Escape keyboard events
+       ✓ toggles case sensitivity button
+
+ Test Files  1 passed (1)
+      Tests  20 passed (20)
+   Duration  2.21s
 ```
+- **Platform Limitations & Deferred Checks:** Native Windows/macOS execution deferred to post-implementation validation.

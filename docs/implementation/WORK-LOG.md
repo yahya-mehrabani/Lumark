@@ -2912,3 +2912,40 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Story [`US-022: In-Document Text Search with Match Highlighting`](../stories/US-022-in-document-search.md) (Phase 5 / `EPIC-006: Navigation, Search & User Reading Tools`).
+
+---
+
+## 2026-10-25 — Task US-022.1: Implement SearchBar React component and search indexer
+
+- **Task ID:** `US-022.1`
+- **Story ID:** [`US-022: In-Document Text Search with Match Highlighting`](../stories/US-022-in-document-search.md)
+- **Status:** `DONE`
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Defined search state contracts and data types in `frontend/src/features/navigation/types.ts`:
+  - `SearchMatch`, `SearchOptions`, and `SearchState`.
+- Implemented DOM search indexer in `frontend/src/features/navigation/searchIndexer.ts`:
+  - `escapeRegExp`: safe escaping for regular expression special characters.
+  - `isIgnoredElement`: exclusions for `script`, `style`, `noscript`, `svg`, and hidden elements per PRD §5.6.
+  - `collectSearchableTextNodes`: DOM tree walker for searchable text nodes across prose, headings, code, and lists.
+  - `findMatches`: finds text occurrences across document nodes with exact character offsets, case-insensitivity by default, and optional case-sensitivity.
+- Implemented floating `SearchBar` component in `frontend/src/features/navigation/SearchBar.tsx`:
+  - Search query input with autofocus, `aria-label`, and accessible placeholder.
+  - Live match counter ("1 of 5", "No matches", "0 of 0") with `aria-live="polite"`.
+  - Previous and Next buttons with accessible titles/tooltips and disabled states.
+  - Case-sensitivity toggle button ("Aa") with `aria-pressed`.
+  - Close button ("Escape") dismissing the search panel.
+  - Keyboard event handling: `Enter`/`Shift+Enter`, `F3`/`Shift+F3`, `Escape`.
+- Added CSS styling in `frontend/src/features/navigation/search.css` for floating panel, card shadow, input, button states, and `.search-match` / `.search-match.active` highlights with print media hiding.
+- Exported new modules in `frontend/src/features/navigation/index.ts`.
+- Created comprehensive unit tests in `frontend/src/features/navigation/search-indexer.test.tsx` (20 tests).
+
+### Verification Results:
+- `npm run test:unit -- search-indexer`: 20 passed in 2.21s with exit code 0 (PASS).
+- `npx tsc --noEmit`: 0 type errors with exit code 0 (PASS).
+- `npm run build`: Production build succeeded in 3.89s with exit code 0 (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-022.2: Implement text node search and highlight engine` under Story [`US-022: In-Document Text Search with Match Highlighting`](../stories/US-022-in-document-search.md).

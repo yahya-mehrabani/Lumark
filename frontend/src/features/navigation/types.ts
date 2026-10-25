@@ -15,3 +15,23 @@ export interface TableOfContentsData {
   tree: TocNode[];
   hasHeadings: boolean;
 }
+
+export interface SearchMatch {
+  index: number;
+  node: Text;
+  startOffset: number;
+  endOffset: number;
+  text: string;
+}
+
+export interface SearchOptions {
+  caseSensitive?: boolean;
+}
+
+export interface SearchState {
+  query: string;
+  isOpen: boolean;
+  currentIndex: number;
+  totalMatches: number;
+  caseSensitive: boolean;
+}
