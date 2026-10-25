@@ -3561,3 +3561,38 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Task:
 - Task `US-027.2: Implement event debouncer in Go` under [`docs/stories/US-027-file-change-watcher.md`](../stories/US-027-file-change-watcher.md) (`READY`).
+
+---
+
+## [2026-10-25] — Phase 5: Implement Event Debouncer in Go (Task US-027.2)
+
+- **Task ID:** `US-027.2`
+- **Story ID:** `US-027`
+- **Status:** `DONE`
+- **Agent ID:** Antigravity Autonomous Story Runner
+
+### Scope and Implementation Summary:
+- Backend:
+  - Enhanced `internal/watcher/filewatcher.go`:
+    - Implemented `GetDebounceDuration() time.Duration` and `SetDebounceDuration(d time.Duration)` for dynamic window inspection and customization.
+    - Verified 300ms default window (`DefaultDebounceDuration = 300 * time.Millisecond`).
+    - Verified timer coalescing: rapid bursts of writes reset the timer, firing only one event after the quiet window.
+    - Verified unwatch timer cancellation: unwatching a file cancels any active in-flight debounce timer and avoids spurious notifications.
+  - Created `internal/watcher/debouncer_test.go`:
+    - 5 unit tests in `TestWatcherDebounce`:
+      1. `TestWatcherDebounce_DefaultWindowIs300ms`: Verifies 300ms default window and `SetDebounceDuration`.
+      2. `TestWatcherDebounce_RapidWritesCoalesce`: Verifies 10 rapid writes coalesce into exactly 1 reload event.
+      3. `TestWatcherDebounce_DistinctSavesSeparatedByWindow`: Verifies distinct saves separated by the debounce window deliver distinct events.
+      4. `TestWatcherDebounce_MultipleFilesIndependent`: Verifies multiple files watched concurrently debounce independently without cross-talk.
+      5. `TestWatcherDebounce_UnwatchCancelsPendingTimer`: Verifies unwatching cancels pending debounce timers.
+- Documentation & Backlog:
+  - Updated `docs/stories/US-027-file-change-watcher.md` marking `US-027.2` as `DONE` and `US-027.3` as `READY`.
+  - Updated `docs/implementation/CURRENT-STATE.md` advancing state to Task `US-027.3`.
+
+### Verification Results:
+- `go test -v -run TestWatcherDebounce ./internal/watcher/...`: 5/5 tests passed in 1.288s (PASS)
+- `golangci-lint run ./internal/watcher/...`: 0 issues found (PASS)
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS)
+
+### Next Eligible Task:
+- Task `US-027.3: Implement frontend scroll preservation during tab reload` under [`docs/stories/US-027-file-change-watcher.md`](../stories/US-027-file-change-watcher.md) (`READY`).

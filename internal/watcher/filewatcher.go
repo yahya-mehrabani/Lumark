@@ -156,6 +156,20 @@ func (s *Service) WatchedFiles() []string {
 	return result
 }
 
+// GetDebounceDuration returns the current debounce window.
+func (s *Service) GetDebounceDuration() time.Duration {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	return s.debounceTime
+}
+
+// SetDebounceDuration sets the active debounce duration window.
+func (s *Service) SetDebounceDuration(d time.Duration) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.debounceTime = d
+}
+
 // Close terminates the watcher loop, stops all pending debounce timers, and cleans up OS handles.
 func (s *Service) Close() error {
 	s.mu.Lock()

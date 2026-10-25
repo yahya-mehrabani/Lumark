@@ -68,7 +68,7 @@ Automatically monitor open documents for external disk modifications:
 
 ### Task US-027.2: Implement event debouncer in Go
 - **Task ID:** `US-027.2`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-027.1`
 - **Completion Criteria:** Coalesces write events with a 300ms timer before emitting reload event.
 - **Verification Command:** `go test -v -run TestWatcherDebounce ./internal/watcher/...`
@@ -78,7 +78,7 @@ Automatically monitor open documents for external disk modifications:
 
 ### Task US-027.3: Implement frontend scroll preservation during tab reload
 - **Task ID:** `US-027.3`
-- **Status:** `DRAFT`
+- **Status:** `READY`
 - **Dependencies:** `US-027.2`
 - **Completion Criteria:** Records `scrollTop` or top visible heading, re-renders content, restores scroll offset.
 - **Verification Command:** `npm run test:unit -- reload-scroll-preservation`
@@ -119,8 +119,9 @@ Automatically monitor open documents for external disk modifications:
 - **Changed Files:**
   - `go.mod`, `go.sum` (Added pinned `github.com/fsnotify/fsnotify v1.8.0`)
   - `internal/watcher/types.go` (Defined `EventType`, `FileChangeEvent`, `EventHandler`)
-  - `internal/watcher/filewatcher.go` (Implemented `Service` with `WatchFile`, `UnwatchFile`, `IsWatching`, `WatchedFiles`, atomic save re-attachment, and graceful `Close`)
+  - `internal/watcher/filewatcher.go` (Implemented `Service` with `WatchFile`, `UnwatchFile`, `IsWatching`, `WatchedFiles`, atomic save re-attachment, configurable debounce window, and graceful `Close`)
   - `internal/watcher/filewatcher_test.go` (Added comprehensive tests in `TestFileWatcher`)
+  - `internal/watcher/debouncer_test.go` (Added 5 debounce tests in `TestWatcherDebounce` verifying coalescing of rapid writes, multiple files independence, distinct saves, unwatch timer cancellation, and 300ms default window)
 - **Terminal Output & Verification Evidence:**
 ```text
 === RUN   TestFileWatcher_WatchAndUnwatch
@@ -139,6 +140,19 @@ Automatically monitor open documents for external disk modifications:
 --- PASS: TestFileWatcher_Deletion (0.08s)
 PASS
 ok      markdown-viewer/internal/watcher        0.423s
+
+=== RUN   TestWatcherDebounce_DefaultWindowIs300ms
+--- PASS: TestWatcherDebounce_DefaultWindowIs300ms (0.00s)
+=== RUN   TestWatcherDebounce_RapidWritesCoalesce
+--- PASS: TestWatcherDebounce_RapidWritesCoalesce (0.43s)
+=== RUN   TestWatcherDebounce_DistinctSavesSeparatedByWindow
+--- PASS: TestWatcherDebounce_DistinctSavesSeparatedByWindow (0.34s)
+=== RUN   TestWatcherDebounce_MultipleFilesIndependent
+--- PASS: TestWatcherDebounce_MultipleFilesIndependent (0.28s)
+=== RUN   TestWatcherDebounce_UnwatchCancelsPendingTimer
+--- PASS: TestWatcherDebounce_UnwatchCancelsPendingTimer (0.23s)
+PASS
+ok      markdown-viewer/internal/watcher        1.288s
 
 golangci-lint run ./internal/watcher/...:
 0 issues.
