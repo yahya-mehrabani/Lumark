@@ -11,10 +11,10 @@
 
 - **Current Overall Phase:** **Phase 1 (Technical Feasibility Spike)**.
 - **Planning Status:** **REMEDIATED & VALIDATED** (Phase 0 planning baseline complete and archived).
-- **Application Implementation Status:** **PHASE 2 (EPIC-002), PHASE 3 (EPIC-003), PHASE 4 (EPIC-004 & EPIC-005), AND PHASE 5 NAVIGATION TOOLS (EPIC-006: STORIES US-021 & US-022) COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) through [`US-004`](../stories/US-004-packaging-association-spike.md) (Phase 1 Spike), Stories [`US-005`](../stories/US-005-native-document-service.md) through [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Phase 2 Core Lifecycle & Tabs), Stories [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) through [`US-012`](../stories/US-012-headings-anchors-fixtures.md) (Phase 3 Core Rendering Core), Stories [`US-013`](../stories/US-013-mermaid-offline-rendering.md) through [`US-016`](../stories/US-016-adversarial-security-corpus.md) (Phase 4 `EPIC-004`), Stories [`US-017`](../stories/US-017-auto-direction-engine.md) through [`US-020`](../stories/US-020-rtl-ltr-fixtures-suite.md) (Phase 4 `EPIC-005`), and Stories [`US-021`](../stories/US-021-table-of-contents.md) & [`US-022`](../stories/US-022-in-document-search.md) (Phase 5 `EPIC-006`) fully verified across all implementation tasks under Linux/WSLg.
+- **Application Implementation Status:** **PHASE 2 (EPIC-002), PHASE 3 (EPIC-003), PHASE 4 (EPIC-004 & EPIC-005), AND PHASE 5 NAVIGATION TOOLS (EPIC-006: STORIES US-021, US-022, US-023 & US-024) COMPLETE IN LINUX ENVIRONMENT**. Stories [`US-001`](../stories/US-001-wails-react-skeleton-spike.md) through [`US-004`](../stories/US-004-packaging-association-spike.md) (Phase 1 Spike), Stories [`US-005`](../stories/US-005-native-document-service.md) through [`US-008`](../stories/US-008-file-picker-drag-drop.md) (Phase 2 Core Lifecycle & Tabs), Stories [`US-009`](../stories/US-009-commonmark-gfm-pipeline.md) through [`US-012`](../stories/US-012-headings-anchors-fixtures.md) (Phase 3 Core Rendering Core), Stories [`US-013`](../stories/US-013-mermaid-offline-rendering.md) through [`US-016`](../stories/US-016-adversarial-security-corpus.md) (Phase 4 `EPIC-004`), Stories [`US-017`](../stories/US-017-auto-direction-engine.md) through [`US-020`](../stories/US-020-rtl-ltr-fixtures-suite.md) (Phase 4 `EPIC-005`), and Stories [`US-021`](../stories/US-021-table-of-contents.md) through [`US-024`](../stories/US-024-print-workflow-styling.md) (Phase 5 `EPIC-006`, completing the entire Epic) fully verified across all implementation tasks under Linux/WSLg.
 - **Feasibility Spike Status:** **SPIKE IMPLEMENTATION COMPLETE / AWAITING CROSS-PLATFORM GATES**. Authorized by Product Owner on 2026-10-23 (`EPIC-001`, `US-001` through `US-004`). Preferred spike candidate: Wails v3 `v3.0.0-beta.34`; fallback candidate: Wails v2 `v2.17.0`. Final production baseline decision remains pending Phase 1 multi-platform evidence.
-- **Last Completed Work Item:** Story [`US-023: Document Viewport Controls: Themes, Zoom & Selection`](../stories/US-023-theme-zoom-selection.md) (`DONE`; all 5 tasks `US-023.1` through `US-023.5` complete and verified under Linux/WSLg).
-- **Active / Next Eligible Work Item:** Story [`US-024: Native WebView Print Workflow & Print Styling`](../stories/US-024-print-workflow-styling.md) (`READY`; Phase 5 / `EPIC-006: Navigation, Search & User Reading Tools`).
+- **Last Completed Work Item:** Story [`US-024: Native WebView Print Workflow & Print Styling`](../stories/US-024-print-workflow-styling.md) (`DONE`; all 3 tasks `US-024.1` through `US-024.3` complete and verified under Linux/WSLg; completing `EPIC-006`).
+- **Active / Next Eligible Work Item:** Story [`US-025: Versioned Settings Service & Atomic Persistence`](../stories/US-025-settings-service-persistence.md) (`READY`; Phase 5 / `EPIC-007: Settings, Persistence & Error Handling`).
 
 ---
 
@@ -80,16 +80,15 @@ All planning remediation artifacts must be preserved:
 
 ## 5. Exact Next Action for the Next Agent
 
-1. **Confirm Story US-023 Complete:**
-   - Story [`US-023: Document Viewport Controls: Themes, Zoom & Selection`](../stories/US-023-theme-zoom-selection.md) is **`DONE`** across all five tasks:
-     - `US-023.1`: `themeTokens.ts` and `theme.css` with WCAG AA >= 4.5:1 contrast ratios (`theme-tokens.test.ts`, 15/15 passing).
-     - `US-023.2`: `ThemeStore` with OS media listener (`prefers-color-scheme: dark`) and DOM synchronization (`theme-store.test.ts`, 8/8 passing).
-     - `US-023.3`: `zoomController.ts` and keyboard shortcuts (`Ctrl/Cmd` + `+`, `-`, `0`), scale clamping 50%–250% (`zoom-controller.test.ts`, 14/14 passing).
-     - `US-023.4`: Integrated theme and zoom controls in `MarkdownViewer` with toolbar buttons, dual-theme syntax rules, and dynamic Mermaid diagram theme adaptation (`theme-zoom.test.tsx`, 7/7 passing).
-     - `US-023.5`: Native text selection (`user-select: text`), copy shortcut (`Ctrl/Cmd+C`), and unblocked context menu preservation via `--default-contextmenu: show` (`selection-copy.test.tsx`, 12/12 passing).
-   - Requirements `FR-NAV-003`, `FR-NAV-004`, and `FR-NAV-005` are marked `IMPLEMENTED` and `VERIFIED` in `REQUIREMENT-TRACEABILITY.md`.
-2. **Execute Next Story (US-024):**
-   - Story [`US-024: Native WebView Print Workflow & Print Styling`](../stories/US-024-print-workflow-styling.md) is `READY` in Phase 5 / `EPIC-006`.
-   - Prerequisites (`US-009`, `US-023`) are all `DONE`.
-   - First task: `US-024.1: Implement @media print CSS rules and page styling`.
+1. **Confirm Story US-024 Complete & EPIC-006 Complete:**
+   - Story [`US-024: Native WebView Print Workflow & Print Styling`](../stories/US-024-print-workflow-styling.md) is **`DONE`** across all three tasks:
+     - `US-024.1`: Print stylesheet `frontend/src/styles/print.css` with `@media print` rules hiding app chrome, enforcing pure white background/dark text, and configuring page break avoidance (`print-css.test.ts`, 30/30 passing).
+     - `US-024.2`: Print controller and dispatcher `printController.ts` with `triggerPrint()` and `usePrint()` hook, keyboard shortcuts (`Ctrl/Cmd+P`), accessible Print buttons in `AppShell` and `MarkdownViewer`, and page break verification (`print-page-breaks.test.tsx`, 17/17 passing).
+     - `US-024.3`: Verified print behavior, exception handling/graceful degradation on Linux, documented platform caveats (Linux WebKitGTK printer backends vs container fallback; deferred Windows WebView2 and macOS WKWebView runtime validation).
+   - `EPIC-006: Navigation, Search & User Reading Tools` is **`DONE`** across all four stories (`US-021`, `US-022`, `US-023`, `US-024`).
+   - Requirement `FR-NAV-006` is marked `IMPLEMENTED` and `VERIFIED` in `REQUIREMENT-TRACEABILITY.md`.
+2. **Execute Next Story (US-025):**
+   - Story [`US-025: Versioned Settings Service & Atomic Persistence`](../stories/US-025-settings-service-persistence.md) is `READY` in Phase 5 / `EPIC-007: Settings, Persistence & Error Handling`.
+   - Prerequisites (`US-005`) are `DONE`.
+   - First task: `US-025.1: Define versioned settings schema and Go persistence service`.
 3. **Preserve Testing-Sequence Policy:** Testing is Linux-only during implementation. Multi-platform validation is conducted in a separate post-implementation workflow; overall phase cross-platform verdict remains `NOT_READY` until dedicated platform evidence is recorded.

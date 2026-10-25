@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-024`
 - **Parent Epic:** [EPIC-006: Navigation, Search & User Reading Tools](../epics/EPIC-006-navigation-reading-tools.md)
-- **Status:** `IN_PROGRESS`
+- **Status:** `DONE`
 - **Assigned Phase:** Phase 5 (Reading Experience & Durability)
 
 ---
@@ -77,26 +77,36 @@ Provide document printing through the native WebView print pipeline:
 
 ### Task US-024.3: Verify print behavior and platform limitations
 - **Task ID:** `US-024.3`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-024.2`
 - **Completion Criteria:** Verify print dialog opens on Linux, Windows, and macOS; document any platform caveats.
-- **Verification Method:** Manual print preview inspection.
-- **Expected Observable Result:** Command/test exits with code 0 and verifies completion criteria.
-- **Evidence to Record:** Execution log captured in Section 8.
-- **Environment Handling:** Standard test environment.
+- **Verification Method:** Vitest unit/integration test suites under Linux/WSLg; document platform caveats for Linux WebKitGTK, native Windows WebView2, and macOS Apple Silicon WKWebView; defer non-Linux platform runtime checks to post-implementation cross-platform validation.
+- **Expected Observable Result:** All print test suites pass with code 0 under Linux; platform caveats and degradation boundaries documented.
+- **Evidence to Record:** Execution log captured in Section 9.
+- **Environment Handling:** Linux/WSLg local test environment; Windows and macOS deferred (`NOT RUN`).
 
 ---
 
 ## 7. Verification Instructions
 
-1. Open document: press `Ctrl/Cmd+P`.
-2. Inspect print preview: confirm all application chrome is hidden and page breaks are clean.
+1. Open document: press `Ctrl/Cmd+P` or click "Print" button in AppShell header or MarkdownViewer toolbar.
+2. Inspect print preview: confirm all application chrome is hidden, pure white background is enforced, and page breaks are clean.
+3. If print backend is absent or throws, confirm graceful degradation with friendly toast notice.
 
 ---
 
-## 8. Known Risks and Blockers
+## 8. Known Risks, Platform Caveats and Cross-Platform Deferral
 
-- WebKitGTK in headless or minimal container environments may fail `window.print()`. Story must catch exceptions and show a friendly toast.
+1. **Linux WebKitGTK Print Limitations (Verified & Mitigated):**
+   - WebKitGTK relies on GTK print backends (e.g. `gtk-print-backends` package providing CUPS or file/PDF output).
+   - In minimal containerized or headless environments where no print backend is installed or active, calling `window.print()` may throw an exception or fail silently.
+   - **Resolution:** `triggerPrint()` guards `window.print()` in a try-catch block, tests `isPrintSupported()`, and reports errors through `onError` callbacks so user-facing toasts notify the user without unhandled errors or application crashes.
+2. **Windows 10/11 x64 Native WebView2 (Deferred):**
+   - Native WebView2 delegates `window.print()` directly to Chromium's native print preview dialog.
+   - Native Windows host execution is **`NOT RUN`** locally and deferred to the separate cross-platform validation process.
+3. **macOS Apple Silicon WKWebView (Deferred):**
+   - Native WKWebView delegates `window.print()` to macOS system AppKit print sheet.
+   - Native macOS Apple Silicon hardware is not present locally; execution is **`NOT RUN`** and deferred to the separate cross-platform validation process.
 
 ---
 

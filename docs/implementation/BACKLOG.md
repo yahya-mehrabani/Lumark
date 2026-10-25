@@ -87,8 +87,8 @@ This document is the authoritative index of all Epics and User Stories for `mark
 | `US-021` | Interactive Table of Contents & Heading Navigation | P0 | `DONE` | `US-012` | [US-021.md](../stories/US-021-table-of-contents.md) |
 | `US-022` | In-Document Text Search with Match Highlighting | P0 | `DONE` | `US-009` | [US-022.md](../stories/US-022-in-document-search.md) |
 | `US-023` | Document Viewport Controls: Themes, Zoom & Selection (includes FR-NAV-005) | P0 | `DONE` | `US-009`, `US-010`, `US-013` | [US-023.md](../stories/US-023-theme-zoom-selection.md) |
-| `US-024` | Native WebView Print Workflow & Print Styling | P1 | `READY` | `US-009`, `US-023` | [US-024.md](../stories/US-024-print-workflow-styling.md) |
-| `US-025` | Versioned Settings Service & Atomic Persistence | P0 | `DRAFT` | `US-005` | [US-025.md](../stories/US-025-settings-service-persistence.md) |
+| `US-024` | Native WebView Print Workflow & Print Styling | P1 | `DONE` | `US-009`, `US-023` | [US-024.md](../stories/US-024-print-workflow-styling.md) |
+| `US-025` | Versioned Settings Service & Atomic Persistence | P0 | `READY` | `US-005` | [US-025.md](../stories/US-025-settings-service-persistence.md) |
 | `US-026` | Recent Files Tracking & Startup Tab Restoration | P1 | `DRAFT` | `US-025`, `US-007` | [US-026.md](../stories/US-026-recent-files-tab-restore.md) |
 | `US-027` | File Change Watcher & Debounced Auto-Reload | P1 | `DRAFT` | `US-005`, `US-007` | [US-027.md](../stories/US-027-file-change-watcher.md) |
 | `US-028` | Fault Isolation, User-Facing Error Notifications & Local Diagnostics | P0/P1 | `DRAFT` | `US-005`, `US-025` | [US-028.md](../stories/US-028-fault-isolation-diagnostics.md) |

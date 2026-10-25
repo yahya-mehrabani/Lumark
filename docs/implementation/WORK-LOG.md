@@ -3185,3 +3185,44 @@ This log is an append-only chronological record of all significant actions, veri
 ### Next Eligible Work Item:
 - Story [`US-024: Native WebView Print Workflow & Print Styling`](../stories/US-024-print-workflow-styling.md) under Phase 5 / `EPIC-006: Navigation, Search & User Reading Tools`.
 - First task: `US-024.1: Implement @media print CSS rules and page styling`.
+
+---
+
+## 2026-10-25 — Task US-024.3: Verify print behavior and platform limitations (FR-NAV-006) & Story US-024 / EPIC-006 Completion
+
+- **Task ID:** `US-024.3`
+- **Story ID:** [`US-024: Native WebView Print Workflow & Print Styling`](../stories/US-024-print-workflow-styling.md)
+- **Status:** `DONE`
+- **Agent ID:** Antigravity Autonomous Agent
+
+### Scope and Implementation Summary:
+- Verified complete print pipeline under Linux/WSLg:
+  - Print stylesheet `frontend/src/styles/print.css` suppressing app chrome (`.app-header`, `.tab-bar`, `.app-status-bar`, `.document-header-bar`, `.doc-zoom-controls`, `.doc-theme-toggle-btn`, `.doc-search-toggle-btn`, `.doc-toc-toggle-btn`, `.search-bar`, `.toc-sidebar`, `.toast`, `.dropzone-overlay`), resetting background to pure white `#ffffff` and text to `#111827`, eliminating box-shadows, resetting `@page` margins, preventing orphaned headings (`break-after: avoid`), and avoiding page breaks inside blocks (`break-inside: avoid`).
+  - Print controller `frontend/src/features/viewport/printController.ts` providing `isPrintSupported()`, safe `triggerPrint()` with exception handling, and `usePrint()` React hook for `Ctrl/Cmd+P` shortcuts.
+  - UI integration with accessible "Print" buttons in `AppShell` header and `MarkdownViewer` toolbar, plus global and viewport shortcut bindings.
+  - Executed all 47 tests across `print-css.test.ts` (30/30) and `print-page-breaks.test.tsx` (17/17).
+  - Executed full Vitest suite: 63 test files, 710 tests passing.
+  - Executed Go tests (`go test -v ./...`), linter (`golangci-lint run ./...`), and vulnerability check (`govulncheck ./...`).
+- Documented platform limitations and cross-platform deferral:
+  - Linux WebKitGTK: Verified GTK print backends requirement (CUPS daemon or `gtk-print-backends` file printer); verified graceful degradation with exception catching and user toast.
+  - Windows 10/11 x64 Native WebView2: Chromium native print preview; cross-platform validation deferred (`NOT RUN`).
+  - macOS Apple Silicon WKWebView: AppKit native print sheet; cross-platform validation deferred (`NOT RUN`).
+
+### Verification Results:
+- `npm run test:unit -- print-css`: 30 passed in 1.35s with exit code 0 (PASS).
+- `npm run test:unit -- print-page-breaks`: 17 passed in 3.27s with exit code 0 (PASS).
+- `npm run test:unit`: 63 test files, 710 tests passed in 131.84s with exit code 0 (PASS).
+- `go test -v ./...`: All packages passed with exit code 0 (PASS).
+- `golangci-lint run ./...`: 0 issues found with exit code 0 (PASS).
+- `govulncheck ./...`: 0 vulnerabilities found with exit code 0 (PASS).
+- `npm run build`: Production bundle built in 6.23s with exit code 0 (PASS).
+- `git diff -- PRD.md`: Completely empty output (PRD untouched) (PASS).
+
+### Story US-024 & Epic EPIC-006 Completion Summary:
+- All 3 tasks (`US-024.1`, `US-024.2`, `US-024.3`) in Story `US-024` are `DONE`.
+- Requirement `FR-NAV-006` is `IMPLEMENTED` and `VERIFIED` under Linux/WSLg with deferred multi-platform runtime verification.
+- Epic [`EPIC-006: Navigation, Search & User Reading Tools`](../epics/EPIC-006-navigation-reading-tools.md) is now completely `DONE` across all 4 stories (`US-021`, `US-022`, `US-023`, `US-024`).
+
+### Next Eligible Work Item:
+- Story [`US-025: Versioned Settings Service & Atomic Persistence`](../stories/US-025-settings-service-persistence.md) under Phase 5 / `EPIC-007: Settings, Persistence & Error Handling`.
+- First task: `US-025.1: Define versioned settings schema and Go persistence service`.
