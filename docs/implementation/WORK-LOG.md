@@ -2979,3 +2979,31 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Work Item:
 - Task `US-022.3: Wire keyboard shortcuts` under Story [`US-022: In-Document Text Search with Match Highlighting`](../stories/US-022-in-document-search.md).
+
+---
+
+## 2026-10-25 — Task US-022.3: Wire keyboard shortcuts
+
+- **Task ID:** `US-022.3`
+- **Story ID:** [`US-022: In-Document Text Search with Match Highlighting`](../stories/US-022-in-document-search.md)
+- **Status:** `DONE`
+- **Agent ID:** Autonomous Implementation Agent
+
+### Scope and Implementation Summary:
+- Wired search shortcuts and floating bar into `MarkdownViewer.tsx`:
+  - `Ctrl+F` and `Cmd+F` opens search bar and focuses query input.
+  - `F3` advances to next match; `Shift+F3` navigates to previous match.
+  - `Enter` advances to next match; `Shift+Enter` navigates to previous match.
+  - `Escape` closes search bar and clears all highlight marks from the DOM.
+  - Added toolbar "Find" button in document header bar with `data-testid="doc-search-toggle"`, `aria-expanded`, and active styling.
+  - Refactored `MarkdownContentBody` into a memoized component to isolate the rendered document DOM from search state changes, resolving the major risk of virtual DOM reconciliation overwriting highlights.
+  - Added CSS styling in `frontend/src/features/rendering/markdown.css` for `.doc-search-toggle-btn`.
+- Created comprehensive integration test suite `frontend/src/features/navigation/search-highlighting.test.tsx` (7 tests).
+
+### Verification Results:
+- `npm run test:unit -- search-highlighting`: 7 passed in 3.49s with exit code 0 (PASS).
+- `npx tsc --noEmit`: 0 type errors with exit code 0 (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Next Eligible Work Item:
+- Task `US-022.4: Write unit and interaction tests` under Story [`US-022: In-Document Text Search with Match Highlighting`](../stories/US-022-in-document-search.md).

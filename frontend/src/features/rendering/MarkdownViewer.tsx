@@ -23,6 +23,8 @@ import { SlugTracker, SlugContext } from './utils/slugify';
 import { TableOfContents } from '../navigation/TableOfContents';
 import { useTableOfContents } from '../navigation/useTableOfContents';
 import { useTocToggle } from '../navigation/useTocToggle';
+import { SearchBar } from '../navigation/SearchBar';
+import { useSearch } from '../navigation/useSearch';
 import '../../styles/katex.css';
 import './markdown.css';
 
@@ -45,74 +47,33 @@ export interface MarkdownViewerProps {
   onToggleToc?: () => void;
 }
 
-export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
-  document,
-  content: rawContent,
-  className = '',
-  directionPreference,
-  onOpenDocument,
-  onOpenExternalUrl,
-  onNavigateAnchor,
-  showToc,
-  onToggleToc,
-}) => {
-  const [hookPref] = useDirectionPreference();
-  const activePref = directionPreference ?? hookPref;
+interface MarkdownContentBodyProps {
+  content: string;
+  slugTracker: SlugTracker;
+  activePref: DirectionPreference;
+  docDir?: string;
+  onOpenDocument?: (filePath: string, anchor?: string) => void;
+  onOpenExternalUrl?: (url: string) => Promise<void> | void;
+  onNavigateAnchor?: (anchor: string) => void;
+}
 
-  const rawMarkdown = document ? document.content : (rawContent ?? '');
-  const content = React.useMemo(() => escapeCurrencyDollars(rawMarkdown), [rawMarkdown]);
-  const filename = document?.filename;
-  const filePath = document?.filePath;
-
-  const tocData = useTableOfContents({ markdown: rawMarkdown });
-  const tocToggle = useTocToggle({
-    initialOpen: showToc ?? false,
-    hasHeadings: tocData.hasHeadings,
-    onToggle: () => onToggleToc?.(),
-  });
-
-  const isTocOpen = showToc !== undefined ? (showToc && tocData.hasHeadings) : tocToggle.isOpen;
-
-  const slugTracker = React.useMemo(() => new SlugTracker(), [content]);
-  // Reset tracker on every render pass so re-renders of the same content yield deterministic IDs
-  slugTracker.reset();
-
-  return (
-    <div className={`markdown-viewport ${className}`.trim()} data-testid="markdown-viewport">
-      {(filename || filePath) && (
-        <header className="document-header-bar" data-testid="document-header">
-          <div className="doc-title-group">
-            <span className="doc-type-badge">MARKDOWN</span>
-            <h1 className="doc-filename">{filename || 'Untitled Document'}</h1>
-          </div>
-          <div className="doc-header-right">
-            {filePath && (
-              <div className="doc-path-badge" title={filePath}>
-                <span className="path-label">PATH:</span> {filePath}
-              </div>
-            )}
-            <button
-              type="button"
-              className={`doc-toc-toggle-btn ${isTocOpen ? 'active' : ''}`}
-              onClick={tocToggle.toggle}
-              disabled={!tocData.hasHeadings}
-              aria-label="Table of Contents (Ctrl+Shift+O)"
-              title={
-                tocData.hasHeadings
-                  ? 'Table of Contents (Ctrl+Shift+O)'
-                  : 'No headings in document'
-              }
-              aria-expanded={isTocOpen}
-              data-testid="doc-toc-toggle"
-            >
-              Outline
-            </button>
-          </div>
-        </header>
-      )}
-
-      <div className="markdown-viewport-body">
+const MarkdownContentBody = React.memo(
+  React.forwardRef<HTMLElement, MarkdownContentBodyProps>(
+    (
+      {
+        content,
+        slugTracker,
+        activePref,
+        docDir,
+        onOpenDocument,
+        onOpenExternalUrl,
+        onNavigateAnchor,
+      },
+      ref
+    ) => {
+      return (
         <main
+          ref={ref}
           className="markdown-content"
           data-testid="markdown-content"
           dir={activePref !== 'auto' ? activePref : undefined}
@@ -150,10 +111,10 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
                     <table {...props} />
                   </div>
                 ),
-                img: ({ node, ...props }) => <MarkdownImage docDir={document?.dir} {...props} />,
+                img: ({ node, ...props }) => <MarkdownImage docDir={docDir} {...props} />,
                 a: ({ node, ...props }) => (
                   <MarkdownLink
-                    docDir={document?.dir}
+                    docDir={docDir}
                     onOpenMarkdown={onOpenDocument}
                     onOpenExternal={onOpenExternalUrl}
                     onNavigateAnchor={onNavigateAnchor}
@@ -186,6 +147,134 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
             </ReactMarkdown>
           </SlugContext.Provider>
         </main>
+      );
+    }
+  )
+);
+MarkdownContentBody.displayName = 'MarkdownContentBody';
+
+export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
+  document,
+  content: rawContent,
+  className = '',
+  directionPreference,
+  onOpenDocument,
+  onOpenExternalUrl,
+  onNavigateAnchor,
+  showToc,
+  onToggleToc,
+}) => {
+  const [hookPref] = useDirectionPreference();
+  const activePref = directionPreference ?? hookPref;
+
+  const rawMarkdown = document ? document.content : (rawContent ?? '');
+  const content = React.useMemo(() => escapeCurrencyDollars(rawMarkdown), [rawMarkdown]);
+  const filename = document?.filename;
+  const filePath = document?.filePath;
+
+  const tocData = useTableOfContents({ markdown: rawMarkdown });
+  const tocToggle = useTocToggle({
+    initialOpen: showToc ?? false,
+    hasHeadings: tocData.hasHeadings,
+    onToggle: () => onToggleToc?.(),
+  });
+
+  const isTocOpen = showToc !== undefined ? (showToc && tocData.hasHeadings) : tocToggle.isOpen;
+
+  const contentRef = React.useRef<HTMLElement | null>(null);
+  const search = useSearch({ containerRef: contentRef });
+
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl+F or Cmd+F
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f') {
+        e.preventDefault();
+        search.openSearch();
+      } else if (e.key === 'F3' && search.isOpen) {
+        e.preventDefault();
+        if (e.shiftKey) {
+          search.prevMatch();
+        } else {
+          search.nextMatch();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [search]);
+
+  const slugTracker = React.useMemo(() => new SlugTracker(), [content]);
+
+  return (
+    <div className={`markdown-viewport ${className}`.trim()} data-testid="markdown-viewport">
+      {(filename || filePath) && (
+        <header className="document-header-bar" data-testid="document-header">
+          <div className="doc-title-group">
+            <span className="doc-type-badge">MARKDOWN</span>
+            <h1 className="doc-filename">{filename || 'Untitled Document'}</h1>
+          </div>
+          <div className="doc-header-right">
+            {filePath && (
+              <div className="doc-path-badge" title={filePath}>
+                <span className="path-label">PATH:</span> {filePath}
+              </div>
+            )}
+            <button
+              type="button"
+              className={`doc-search-toggle-btn ${search.isOpen ? 'active' : ''}`}
+              onClick={() => (search.isOpen ? search.closeSearch() : search.openSearch())}
+              aria-label="Find in document (Ctrl+F)"
+              title="Find in document (Ctrl+F)"
+              aria-expanded={search.isOpen}
+              data-testid="doc-search-toggle"
+            >
+              Find
+            </button>
+            <button
+              type="button"
+              className={`doc-toc-toggle-btn ${isTocOpen ? 'active' : ''}`}
+              onClick={tocToggle.toggle}
+              disabled={!tocData.hasHeadings}
+              aria-label="Table of Contents (Ctrl+Shift+O)"
+              title={
+                tocData.hasHeadings
+                  ? 'Table of Contents (Ctrl+Shift+O)'
+                  : 'No headings in document'
+              }
+              aria-expanded={isTocOpen}
+              data-testid="doc-toc-toggle"
+            >
+              Outline
+            </button>
+          </div>
+        </header>
+      )}
+
+      <SearchBar
+        isOpen={search.isOpen}
+        query={search.query}
+        onQueryChange={search.setQuery}
+        currentIndex={search.currentIndex}
+        totalMatches={search.totalMatches}
+        onNext={search.nextMatch}
+        onPrevious={search.prevMatch}
+        onClose={search.closeSearch}
+        caseSensitive={search.caseSensitive}
+        onToggleCaseSensitive={search.toggleCaseSensitive}
+      />
+
+      <div className="markdown-viewport-body">
+        <MarkdownContentBody
+          ref={contentRef}
+          content={content}
+          slugTracker={slugTracker}
+          activePref={activePref}
+          docDir={document?.dir}
+          onOpenDocument={onOpenDocument}
+          onOpenExternalUrl={onOpenExternalUrl}
+          onNavigateAnchor={onNavigateAnchor}
+        />
 
         {isTocOpen && (
           <TableOfContents

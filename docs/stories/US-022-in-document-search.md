@@ -76,7 +76,7 @@ Implement fast, non-destructive in-document text search:
 
 ### Task US-022.3: Wire keyboard shortcuts
 - **Task ID:** `US-022.3`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-022.2`
 - **Completion Criteria:** Handles `Ctrl/Cmd+F`, `Enter`, `Shift+Enter`, `F3`, `Escape`.
 - **Verification Command:** `npm run test:unit -- search-highlighting`
@@ -86,7 +86,7 @@ Implement fast, non-destructive in-document text search:
 
 ### Task US-022.4: Write unit and interaction tests
 - **Task ID:** `US-022.4`
-- **Status:** `DRAFT`
+- **Status:** `READY`
 - **Dependencies:** `US-022.3`
 - **Completion Criteria:** Tests assert match count accuracy, cycling, and cleanup on close.
 - **Verification Command:** `npm run test:unit -- search`
@@ -193,5 +193,34 @@ Implement fast, non-destructive in-document text search:
  Test Files  1 passed (1)
       Tests  8 passed (8)
    Duration  8.80s
+- **Platform Limitations & Deferred Checks:** Native Windows/macOS execution deferred to post-implementation validation.
+
+### Task US-022.3 Validation Evidence
+- **Execution Date:** 2026-10-25
+- **Changed Files:**
+  - `frontend/src/features/rendering/MarkdownViewer.tsx`
+  - `frontend/src/features/rendering/markdown.css`
+  - `frontend/src/features/navigation/search-highlighting.test.tsx`
+- **Verification Command:** `npm run test:unit -- search-highlighting`
+- **Terminal Output & Verification Evidence:**
+```text
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run search-highlighting
+
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/navigation/search-highlighting.test.tsx (7 tests) 1007ms
+   ✓ Search Highlighting & Keyboard Shortcuts (US-022.3) (7)
+     ✓ opens search bar when Ctrl+F or Cmd+F is pressed
+     ✓ opens and closes search bar via toolbar Find button
+     ✓ highlights all matching text in document without corrupting underlying DOM
+     ✓ cycles through matches using Enter, Shift+Enter, F3, and Shift+F3
+     ✓ indexes text inside code blocks after code block highlights mount
+     ✓ closes search bar on Escape and immediately clears all highlights
+     ✓ preserves plain text copying across highlighted matches
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Duration  3.49s
 ```
 - **Platform Limitations & Deferred Checks:** Native Windows/macOS execution deferred to post-implementation validation.
