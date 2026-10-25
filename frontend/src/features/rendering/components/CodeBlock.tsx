@@ -93,6 +93,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
       className={`code-block-container ${className}`.trim()}
       data-testid="code-block-container"
       data-language={language || 'text'}
+      dir="ltr"
     >
       <div className="code-block-header" data-testid="code-block-header">
         <span className="code-language-badge" data-testid="code-language-badge">
@@ -180,16 +181,18 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
           role="region"
           aria-label={`Code content (${displayLanguage})`}
           style={{ overflowX: 'auto' }}
+          dir="ltr"
         >
           {highlightedHtml ? (
             <div
               className="shiki-wrapper"
               data-testid="shiki-wrapper"
+              dir="ltr"
               dangerouslySetInnerHTML={{ __html: highlightedHtml }}
             />
           ) : (
-            <pre className="shiki-fallback" data-testid="shiki-fallback">
-              <code>{rawCode}</code>
+            <pre className="shiki-fallback" data-testid="shiki-fallback" dir="ltr">
+              <code dir="ltr">{rawCode}</code>
             </pre>
           )}
         </div>

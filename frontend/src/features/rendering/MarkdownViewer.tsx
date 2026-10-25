@@ -76,8 +76,8 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
               rehypeRaw,
               [rehypeSanitize, SANITY_HTML_SCHEMA],
               rehypeScopedCss,
-              rehypeAutoDirection,
               [rehypeKatex, STRICT_KATEX_OPTIONS],
+              rehypeAutoDirection,
             ]}
             urlTransform={(url) => url}
             components={{
@@ -87,6 +87,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
               h4: ({ node, ...props }) => <Heading level={4} {...props} />,
               h5: ({ node, ...props }) => <Heading level={5} {...props} />,
               h6: ({ node, ...props }) => <Heading level={6} {...props} />,
+              code: ({ node, ...props }) => <code dir="ltr" {...props} />,
               style: ({ node, children, ...props }) => {
                 const cssText =
                   typeof children === 'string'
@@ -125,7 +126,11 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
                   }
                   return <CodeBlock rawCode={rawCode} language={language} />;
                 }
-                return <pre {...props}>{children}</pre>;
+                return (
+                  <pre dir="ltr" {...props}>
+                    {children}
+                  </pre>
+                );
               },
             }}
           >

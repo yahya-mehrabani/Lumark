@@ -22,6 +22,49 @@ export const DEFAULT_AUTO_DIR_TAGS: ReadonlySet<string> = new Set([
 
 export type TextDirection = 'rtl' | 'ltr' | 'auto';
 
+/**
+ * Non-prose elements and container classes that strictly enforce LTR direction (PRD FR-DIR-005, US-019.1).
+ * Code blocks, inline code, math formulas, and diagrams must be protected from bidirectional distortion.
+ */
+export const NON_PROSE_TAGS: ReadonlySet<string> = new Set([
+  'pre',
+  'code',
+  'math',
+]);
+
+export const NON_PROSE_CLASSES: ReadonlySet<string> = new Set([
+  'math',
+  'math-inline',
+  'math-display',
+  'katex',
+  'katex-display',
+  'katex-html',
+  'katex-error',
+  'mermaid',
+  'mermaid-container',
+  'mermaid-svg-wrapper',
+  'mermaid-error-card',
+  'code-block-container',
+  'shiki-wrapper',
+  'shiki-fallback',
+]);
+
+/**
+ * Checks if a HAST element is a non-prose element (code, math, diagram) requiring strict LTR isolation.
+ */
+export function isNonProseNode(node: HastElement): boolean {
+  if (NON_PROSE_TAGS.has(node.tagName.toLowerCase())) {
+    return true;
+  }
+  const classes = getNodeClasses(node);
+  for (const cls of classes) {
+    if (NON_PROSE_CLASSES.has(cls)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export interface ScopedCssDirectionRule {
   direction?: 'rtl' | 'ltr';
   textAlign?: string;
@@ -187,6 +230,13 @@ export function rehypeDirectionResolver(options: DirectionResolverOptions = {}) 
         if (child.type === 'element') {
           if (!child.properties) {
             child.properties = {};
+          }
+
+          // Check 0: Non-prose elements (code, pre, math, diagrams) strictly enforce LTR isolation (FR-DIR-005, US-019.1)
+          if (isNonProseNode(child)) {
+            child.properties.dir = 'ltr';
+            visit(child, 'ltr');
+            continue;
           }
 
           let currentExplicitDir: TextDirection | undefined = undefined;

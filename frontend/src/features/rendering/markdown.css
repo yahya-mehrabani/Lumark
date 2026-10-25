@@ -288,6 +288,8 @@
   padding: 0.2em 0.4em;
   border-radius: 4px;
   white-space: break-spaces;
+  direction: ltr !important;
+  unicode-bidi: isolate;
 }
 
 /* Code (fenced block container & header) */
@@ -299,6 +301,9 @@
   overflow: hidden;
   position: relative;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+  direction: ltr !important;
+  text-align: left !important;
+  unicode-bidi: isolate;
 }
 
 .code-block-header {
@@ -726,6 +731,8 @@
 .markdown-content .katex {
   font-size: 1.1em;
   text-rendering: auto;
+  direction: ltr !important;
+  unicode-bidi: isolate;
 }
 
 .markdown-content .katex-display {
@@ -737,6 +744,8 @@
   max-width: 100%;
   padding: 0.5rem 0;
   -webkit-overflow-scrolling: touch;
+  direction: ltr !important;
+  unicode-bidi: isolate;
 }
 
 .markdown-content .katex-error {

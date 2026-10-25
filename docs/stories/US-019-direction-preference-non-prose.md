@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-019`
 - **Parent Epic:** [EPIC-005: Bidirectional Text & Layout Engine (RTL/LTR)](../epics/EPIC-005-bidirectional-layout.md)
-- **Status:** `DRAFT`
+- **Status:** `IN_PROGRESS`
 - **Assigned Phase:** Phase 4 (Advanced Rendering & Direction)
 
 ---
@@ -57,7 +57,7 @@ Implement user default direction preferences and protect non-prose elements from
 
 ### Task US-019.1: Enforce LTR on non-prose AST nodes
 - **Task ID:** `US-019.1`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** Remark/rehype plugins explicitly assign `dir="ltr"` to `code`, `pre`, math, and diagram nodes.
 - **Verification Command:** `npm run test:unit -- non-prose-ltr`
@@ -102,11 +102,59 @@ Implement user default direction preferences and protect non-prose elements from
 
 ## 9. Implementation Notes and Validation Evidence
 
-*(To be filled by implementation agent during execution)*
-- **Execution Date:** Not yet executed
-- **Agent ID:** N/A
-- **Changed Files:** None
-- **Terminal Output & Verification Evidence:**
+### Task US-019.1 Verification Evidence (Executed 2026-10-25)
+- **Task:** `US-019.1: Enforce LTR on non-prose AST nodes`
+- **Status:** `DONE`
+- **Changed Files:**
+  - `frontend/src/features/direction/resolver.ts`
+  - `frontend/src/features/rendering/components/CodeBlock.tsx`
+  - `frontend/src/features/rendering/MarkdownViewer.tsx`
+  - `frontend/src/features/rendering/markdown.css`
+  - `frontend/src/features/direction/non-prose-ltr.test.tsx`
+  - `frontend/src/features/direction/auto-direction-dom.test.tsx`
+- **Verification Command & Result:**
 ```text
-(Awaiting execution in Phase 4)
+$ npm run test:unit -- non-prose-ltr
+
+> markdown-viewer-frontend@0.1.0 test:unit
+> vitest run non-prose-ltr
+
+ ✓ src/features/direction/non-prose-ltr.test.tsx (13 tests) 836ms
+   ✓ US-019.1: Enforce LTR on Non-Prose AST Nodes (FR-DIR-005) (13)
+     ✓ 1. AST Helper & Tag Class Classification (3)
+       ✓ identifies pre, code, and math as non-prose tags 4ms
+       ✓ identifies math, katex, mermaid, and code container classes as non-prose 1ms
+       ✓ isNonProseNode returns true for non-prose HAST elements 1ms
+     ✓ 2. RehypeDirectionResolver AST Transformation (4)
+       ✓ assigns dir="ltr" to pre and code elements in HAST tree 1ms
+       ✓ assigns dir="ltr" to math and diagram elements in HAST tree 1ms
+       ✓ enforces LTR on non-prose nodes even when nested inside an explicit RTL container 0ms
+       ✓ enforces LTR on inline code within an auto-directed RTL paragraph 0ms
+     ✓ 3. End-to-End MarkdownViewer DOM Verification (6)
+       ✓ renders fenced code block with strict LTR isolation and dir="ltr" 208ms
+       ✓ renders inline code inside Persian text with explicit dir="ltr" 14ms
+       ✓ renders KaTeX inline formula with dir="ltr" in Persian context 41ms
+       ✓ renders KaTeX display equation with dir="ltr" in RTL section 28ms
+       ✓ renders Mermaid diagram with dir="ltr" inside Persian document 519ms
+       ✓ isolates code block inside explicit dir="rtl" blockquote 11ms
+
+ Test Files  1 passed (1)
+      Tests  13 passed (13)
+   Start at  08:51:27
+   Duration  3.00s
+```
+
+Full direction regression test suite verification:
+```text
+$ npm run test:unit -- src/features/direction
+
+ Test Files  8 passed (8)
+      Tests  142 passed (142)
+   Duration  15.85s
+```
+
+Frontend dev build check:
+```text
+$ npm run build:dev
+✓ built in 2.04s (zero TypeScript / Vite bundling errors)
 ```

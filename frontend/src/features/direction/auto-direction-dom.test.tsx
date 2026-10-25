@@ -131,7 +131,8 @@ describe('Block-Level Direction in Markdown AST & DOM (US-017.2 / FR-DIR-001)', 
       const div = tree.children[0] as any;
       expect(div.properties.dir).toBeUndefined();
       expect(div.children[0].properties.dir).toBeUndefined();
-      expect(div.children[1].properties.dir).toBeUndefined();
+      // Non-prose code node receives explicit dir="ltr" per FR-DIR-005 & US-019.1 (not dir="auto")
+      expect(div.children[1].properties.dir).toBe('ltr');
       expect(div.children[2].properties.dir).toBeUndefined();
     });
 
