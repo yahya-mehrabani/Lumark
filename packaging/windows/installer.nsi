@@ -190,7 +190,15 @@ Section "Uninstall"
     ; Remove application open-with registration
     DeleteRegKey HKCU "Software\Classes\Applications\${PRODUCT_EXE}"
 
+    ; Remove Windows Default Programs registration
+    DeleteRegValue HKCU "Software\RegisteredApplications" "${PRODUCT_NAME}"
+
+    ; Remove product capabilities and installation keys
+    DeleteRegKey HKCU "Software\${PRODUCT_NAME}"
+
     ; Remove uninstallation entry
     DeleteRegKey HKCU "${UNINST_KEY}"
-    DeleteRegKey HKCU "Software\${PRODUCT_NAME}"
+
+    ; Notify Windows Shell of file association changes
+    System::Call 'shell32.dll::SHChangeNotify(i 0x08000000, i 0, i 0, i 0)'
 SectionEnd

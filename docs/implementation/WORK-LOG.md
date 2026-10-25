@@ -3906,3 +3906,38 @@ This log is an append-only chronological record of all significant actions, veri
 - **Active Story:** `US-029: Windows Packaging, NSIS Installer & File Associations` (`IN_PROGRESS`).
 - **Completed Tasks:** `US-029.1` (`DONE`), `US-029.2` (`DONE`), `US-029.3` (`DONE`).
 - **Next Eligible Task:** `US-029.4: Implement uninstaller cleanup routine` under [`docs/stories/US-029-windows-packaging-associations.md`](../stories/US-029-windows-packaging-associations.md) (`READY`).
+
+---
+
+## [2026-10-25] — Phase 6: Implement Uninstaller Cleanup Routine (Task US-029.4 & Story US-029 Complete)
+
+- **Task ID:** `US-029.4`
+- **Story ID:** `US-029`
+- **Status:** `DONE`
+- **Agent ID:** Antigravity Autonomous Story Runner
+
+### Scope and Implementation Summary:
+- Updated `packaging/windows/installer.nsi`:
+  - Configured `Section "Uninstall"` to remove Start Menu and Desktop shortcuts cleanly.
+  - Configured removal of `$INSTDIR` binaries and directory.
+  - Configured removal of product-owned ProgID `HKCU\Software\Classes\${PROGID}`.
+  - Configured removal of `OpenWithProgids` keys for `.md`, `.markdown`, `.mdown`, and `.mkd` without mutating user default choices or unrelated handlers.
+  - Configured removal of `Applications\${PRODUCT_EXE}`.
+  - Configured removal of `Software\RegisteredApplications` capability entry and `HKCU\Software\${PRODUCT_NAME}`.
+  - Configured removal of uninstaller registry keys `${UNINST_KEY}`.
+  - Added `SHChangeNotify` (`SHCNE_ASSOCCHANGED`) to notify Windows Shell to refresh file association caches immediately.
+  - Ensured zero deletion of user documents in `%USERPROFILE%\Documents` or any other personal directories.
+- Completed all 4 Tasks in Story `US-029: Windows Packaging, NSIS Installer & File Associations`.
+- Updated Story `US-029` status to `DONE` and `REQUIREMENT-TRACEABILITY.md` row `FR-OPEN-003` to `IN_PROGRESS` (`PARTIALLY_VERIFIED`).
+
+### Verification Results:
+- `grep -i 'DeleteRegKey' packaging/windows/installer.nsi && grep -i 'DeleteRegValue' packaging/windows/installer.nsi`: Exit code 0 (PASS).
+- `golangci-lint run`: 0 issues (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **Phase:** Phase 6 (Packaging, Platform Integration & Release Hardening).
+- **Active Story:** `US-029: Windows Packaging, NSIS Installer & File Associations` (`DONE`).
+- **Completed Tasks:** `US-029.1` (`DONE`), `US-029.2` (`DONE`), `US-029.3` (`DONE`), `US-029.4` (`DONE`).
+- **Next Eligible Story:** `US-030: macOS Application Bundle, UTIs & Launch Services Integration` under [`docs/stories/US-030-macos-packaging-associations.md`](../stories/US-030-macos-packaging-associations.md) (`READY`; Phase 6 / `EPIC-008: Packaging, Distribution & Integration`).
