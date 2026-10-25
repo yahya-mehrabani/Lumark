@@ -3651,3 +3651,38 @@ This log is an append-only chronological record of all significant actions, veri
 
 ### Next Eligible Task:
 - Task `US-027.4: Write unit and integration tests for watcher` under [`docs/stories/US-027-file-change-watcher.md`](../stories/US-027-file-change-watcher.md) (`READY`).
+
+---
+
+## [2026-10-25] — Phase 5: Write Unit and Integration Tests for Watcher (Task US-027.4 & Story US-027 Complete)
+
+- **Task ID:** `US-027.4`
+- **Story ID:** `US-027`
+- **Status:** `DONE`
+- **Agent ID:** Antigravity Autonomous Story Runner
+
+### Scope and Implementation Summary:
+- Created `internal/watcher/integration_test.go`:
+  - `TestFileWatcher_ConcurrentStress`: 8 parallel workers concurrently calling `WatchFile`, modifying files, and calling `UnwatchFile` across 30 iterations with 10ms debounce, asserting zero data races or deadlocks under Go race detector.
+  - `TestFileWatcher_ConcurrentShutdownStress`: 4 concurrent goroutines performing file updates while the service is closed via `w.Close()`, ensuring graceful shutdown with no crashes or panicked channels.
+  - `TestFileWatcher_RapidAtomicSaveCycle`: 3 rapid sequential atomic save operations (temp file write + rename over watched target) verifying `fsnotify` watch re-attachment across multiple rapid cycles.
+- Verification & Cross-Package Integrity:
+  - Verified `go test -v -race -count=1 ./internal/watcher/...`: all 15 tests passed with 0 data races in 3.059s.
+  - Verified `golangci-lint run ./...`: 0 lint errors found across entire project.
+  - Verified `npm run test:unit`: 67 test files, 746 tests passed (100% green).
+  - Verified `npm run build`: Production bundle and TypeScript compilation passed cleanly in 3.56s.
+- Story US-027 Completion:
+  - All 4 tasks (`US-027.1` through `US-027.4`) marked `DONE` with observable evidence recorded in [`US-027-file-change-watcher.md`](../stories/US-027-file-change-watcher.md).
+  - `FR-OPEN-007` updated to `IMPLEMENTED` and `VERIFIED` in [`REQUIREMENT-TRACEABILITY.md`](REQUIREMENT-TRACEABILITY.md).
+  - Story `US-027` marked `DONE` and `US-028` marked `READY` in [`BACKLOG.md`](BACKLOG.md).
+  - Operational snapshot synchronized in [`CURRENT-STATE.md`](CURRENT-STATE.md).
+
+### Verification Results:
+- `go test -v -race -count=1 ./internal/watcher/...`: 15/15 passed with 0 data races in 3.059s (PASS)
+- `golangci-lint run ./...`: 0 issues found (PASS)
+- `npm run test:unit`: 67 passed (67), 746 passed (746) in 125.48s (PASS)
+- `npm run build`: built in 3.56s with 0 errors (PASS)
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS)
+
+### Next Eligible Work Item:
+- Story [`US-028: Fault Isolation, User-Facing Error Notifications & Local Diagnostics`](../stories/US-028-fault-isolation-diagnostics.md) (Task `US-028.1: Implement Go bounded rotating logger`, `READY`).

@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-027`
 - **Parent Epic:** [EPIC-007: Settings, Persistence & Durability](../epics/EPIC-007-settings-durability.md)
-- **Status:** `IN_PROGRESS`
+- **Status:** `DONE`
 - **Assigned Phase:** Phase 5 (Reading Experience & Durability)
 
 ---
@@ -88,7 +88,7 @@ Automatically monitor open documents for external disk modifications:
 
 ### Task US-027.4: Write unit and integration tests for watcher
 - **Task ID:** `US-027.4`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Dependencies:** `US-027.3`
 - **Completion Criteria:** Tests assert debouncing, deletion detection, and cleanup on unwatch.
 - **Verification Command:** `go test -v -race ./internal/watcher/...`
@@ -129,6 +129,7 @@ Automatically monitor open documents for external disk modifications:
   - `frontend/src/features/tabs/index.ts` (Exported tabReload and tabWatcher modules)
   - `frontend/src/App.tsx` (Wired `file:changed` listener, automatic tab watch syncing, and missing-file warning banner in viewport)
   - `frontend/src/features/tabs/reload-scroll-preservation.test.ts` (Added 9 unit tests verifying scroll capture/restoration, active/background tab reload isolation, disk deletion handling, and watcher syncing)
+  - `internal/watcher/integration_test.go` (Added concurrent stress tests, rapid atomic save cycle, and shutdown race tests)
 - **Terminal Output & Verification Evidence:**
 ```text
 === RUN   TestFileWatcher_WatchAndUnwatch
@@ -180,4 +181,38 @@ npm run test:unit -- reload-scroll-preservation:
 
  Test Files  1 passed (1)
       Tests  9 passed (9)
+
+go test -v -race -count=1 ./internal/watcher/...:
+=== RUN   TestWatcherDebounce_DefaultWindowIs300ms
+--- PASS: TestWatcherDebounce_DefaultWindowIs300ms (0.00s)
+=== RUN   TestWatcherDebounce_RapidWritesCoalesce
+--- PASS: TestWatcherDebounce_RapidWritesCoalesce (0.44s)
+=== RUN   TestWatcherDebounce_DistinctSavesSeparatedByWindow
+--- PASS: TestWatcherDebounce_DistinctSavesSeparatedByWindow (0.32s)
+=== RUN   TestWatcherDebounce_MultipleFilesIndependent
+--- PASS: TestWatcherDebounce_MultipleFilesIndependent (0.29s)
+=== RUN   TestWatcherDebounce_UnwatchCancelsPendingTimer
+--- PASS: TestWatcherDebounce_UnwatchCancelsPendingTimer (0.23s)
+=== RUN   TestFileWatcher_WatchAndUnwatch
+--- PASS: TestFileWatcher_WatchAndUnwatch (0.02s)
+=== RUN   TestFileWatcher_ModifyDetection
+--- PASS: TestFileWatcher_ModifyDetection (0.06s)
+=== RUN   TestFileWatcher_NonexistentAndInvalidFile
+--- PASS: TestFileWatcher_NonexistentAndInvalidFile (0.00s)
+=== RUN   TestFileWatcher_UnwatchStopsNotifications
+--- PASS: TestFileWatcher_UnwatchStopsNotifications (0.15s)
+=== RUN   TestFileWatcher_Close
+--- PASS: TestFileWatcher_Close (0.00s)
+=== RUN   TestFileWatcher_AtomicSaveRecreation
+--- PASS: TestFileWatcher_AtomicSaveRecreation (0.13s)
+=== RUN   TestFileWatcher_Deletion
+--- PASS: TestFileWatcher_Deletion (0.08s)
+=== RUN   TestFileWatcher_ConcurrentStress
+--- PASS: TestFileWatcher_ConcurrentStress (0.05s)
+=== RUN   TestFileWatcher_ConcurrentShutdownStress
+--- PASS: TestFileWatcher_ConcurrentShutdownStress (0.05s)
+=== RUN   TestFileWatcher_RapidAtomicSaveCycle
+--- PASS: TestFileWatcher_RapidAtomicSaveCycle (0.22s)
+PASS
+ok      markdown-viewer/internal/watcher        3.059s
 ```

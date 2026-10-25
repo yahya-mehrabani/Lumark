@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-028`
 - **Parent Epic:** [EPIC-007: Settings, Persistence & Durability](../epics/EPIC-007-settings-durability.md)
-- **Status:** `DRAFT`
+- **Status:** `READY`
 - **Assigned Phase:** Phase 5 (Reading Experience & Durability)
 
 ---
@@ -58,7 +58,7 @@ Deliver fault isolation, accessible error notifications, and a privacy-preservin
 
 ### Task US-028.1: Implement Go bounded rotating logger
 - **Task ID:** `US-028.1`
-- **Status:** `DRAFT`
+- **Status:** `READY`
 - **Dependencies:** None
 - **Completion Criteria:** Structured logger writes to file, rotates at 5 MiB, redacts file paths, masks document contents, and excludes credentials and file history (AUD-011).
 - **Verification Command:** `go test -v -run TestDiagnosticsLog ./internal/diagnostics/...`
