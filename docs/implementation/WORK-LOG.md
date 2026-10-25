@@ -3226,3 +3226,35 @@ This log is an append-only chronological record of all significant actions, veri
 ### Next Eligible Work Item:
 - Story [`US-025: Versioned Settings Service & Atomic Persistence`](../stories/US-025-settings-service-persistence.md) under Phase 5 / `EPIC-007: Settings, Persistence & Error Handling`.
 - First task: `US-025.1: Define versioned settings schema and Go persistence service`.
+
+---
+
+## 2026-10-25 — Task US-025.1: Define SettingsDTO and versioned schema v1 (FR-SET-001, FR-SET-003)
+
+- **Task ID:** `US-025.1`
+- **Story ID:** [`US-025: Versioned Settings Service & Atomic Persistence`](../stories/US-025-settings-service-persistence.md)
+- **Status:** `DONE`
+- **Agent ID:** Antigravity Autonomous Agent
+
+### Scope and Implementation Summary:
+- Implemented `internal/settings/dto.go`:
+  - Defined `SettingsDTO` versioned configuration schema with `schemaVersion: 1`, `theme` (`system`, `light`, `dark`), `defaultDirection` (`auto`, `rtl`, `ltr`), `defaultZoom` (0.5 to 2.5), `restoreOpenTabs`, `openTabs`, and `maxRecentFiles` (default 20).
+  - Implemented `DefaultSettings()` returning clean defaults.
+  - Implemented `NormalizeAndValidate()` strictly validating enumerated options and clamping zoom and bounds.
+  - Enforced FR-SET-003 Data Minimization: strictly excludes document contents, extracted document text, credentials, browsing history, and telemetry.
+- Implemented `internal/settings/service.go`:
+  - Platform-aware path resolution via `DefaultConfigPath()` (`~/.config/markdown-viewer/settings.json` on Linux/Unix, `%APPDATA%\markdown-viewer\settings.json` on Windows, `~/Library/Application Support/markdown-viewer/settings.json` on macOS).
+  - Thread-safe `Service` with `GetSettings()`, `SaveSettings()`, `ResetSettings()`, and `GetFilePath()`.
+  - Atomic write semantics: writes JSON to a temporary file (`settings.*.tmp`) in the config directory, performs `Sync()`, closes, and atomically renames over the target file.
+  - Corrupted file recovery: backs up corrupted or empty settings files to `.corrupt.<timestamp>` and initializes fresh defaults without crashing.
+- Implemented `internal/settings/service_test.go`:
+  - `TestSettingsPersistence`: Verified initialization of defaults, modification and saving of preferences, round-trip serialization to disk, restart simulation with new service instance, temporary file cleanup, and data minimization assertions.
+
+### Verification Results:
+- `go test -v -run TestSettingsPersistence ./internal/settings/...`: PASS (exit code 0)
+- `golangci-lint run ./internal/settings/...`: 0 issues found (PASS)
+- `goimports -l ./internal/settings`: 0 formatting issues (PASS)
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS)
+
+### Next Eligible Task:
+- Task `US-025.2: Implement atomic file writer and corruption recovery` under [`US-025`](../stories/US-025-settings-service-persistence.md).

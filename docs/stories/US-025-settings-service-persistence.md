@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-025`
 - **Parent Epic:** [EPIC-007: Settings, Persistence & Durability](../epics/EPIC-007-settings-durability.md)
-- **Status:** `DRAFT`
+- **Status:** `IN_PROGRESS`
 - **Assigned Phase:** Phase 5 (Reading Experience & Durability)
 
 ---
@@ -60,7 +60,7 @@ Implement a versioned, atomic local settings service in the Go backend (`interna
 
 ### Task US-025.1: Define SettingsDTO and versioned schema v1
 - **Task ID:** `US-025.1`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** Go struct with JSON tags for `schemaVersion`, `theme`, `defaultDirection`, `defaultZoom`, `restoreOpenTabs`.
 - **Verification Command:** `go test -v -run TestSettingsPersistence ./internal/settings/...`
@@ -70,7 +70,7 @@ Implement a versioned, atomic local settings service in the Go backend (`interna
 
 ### Task US-025.2: Implement atomic file writer and corruption recovery
 - **Task ID:** `US-025.2`
-- **Status:** `DRAFT`
+- **Status:** `READY`
 - **Dependencies:** `US-025.1`
 - **Completion Criteria:** Go service writes to temp file, syncs, renames; catches JSON unmarshal errors and triggers backup/fallback.
 - **Verification Command:** `go test -v -run TestSettingsCorruptionRecovery ./internal/settings/...`
@@ -116,11 +116,23 @@ Implement a versioned, atomic local settings service in the Go backend (`interna
 
 ## 9. Implementation Notes and Validation Evidence
 
-*(To be filled by implementation agent during execution)*
-- **Execution Date:** Not yet executed
-- **Agent ID:** N/A
-- **Changed Files:** None
-- **Terminal Output & Verification Evidence:**
-```text
-(Awaiting execution in Phase 5)
-```
+### Task US-025.1 Verification Evidence
+- **Execution Date:** 2026-10-25
+- **Agent ID:** Antigravity Autonomous Agent
+- **Changed Files:**
+  - `internal/settings/dto.go`
+  - `internal/settings/service.go`
+  - `internal/settings/service_test.go`
+- **Verification Commands & Results:**
+  - `go test -v -run TestSettingsPersistence ./internal/settings/...`: PASS
+    ```text
+    === RUN   TestSettingsPersistence
+    --- PASS: TestSettingsPersistence (0.00s)
+    PASS
+    ok      markdown-viewer/internal/settings       0.004s
+    ```
+  - `golangci-lint run ./internal/settings/...`: PASS (0 issues)
+  - `goimports -l ./internal/settings`: PASS (canonical formatting verified)
+- **Observations:**
+  - `SettingsDTO` correctly enforces schema v1, enumerated themes (`system`, `light`, `dark`), direction (`auto`, `rtl`, `ltr`), zoom bounds, and tab restoration flags.
+  - Round-trip file persistence to disk verified with atomic temporary write semantics and zero document text / secrets (FR-SET-003 data minimization verified).
