@@ -386,6 +386,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
       )}
 
       <SearchBar
+        className={isTocOpen ? 'has-toc-open' : ''}
         isOpen={search.isOpen}
         query={search.query}
         onQueryChange={search.setQuery}

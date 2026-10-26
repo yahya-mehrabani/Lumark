@@ -12,6 +12,7 @@ export interface SearchBarProps {
   onClose: () => void;
   caseSensitive?: boolean;
   onToggleCaseSensitive?: () => void;
+  className?: string;
 }
 
 export const SearchBar: React.FC<SearchBarProps> = ({
@@ -25,6 +26,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   onClose,
   caseSensitive = false,
   onToggleCaseSensitive,
+  className = '',
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -69,7 +71,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
   return (
     <div
-      className="search-bar-floating app-chrome"
+      className={`search-bar-floating app-chrome ${className}`.trim()}
       role="search"
       aria-label="Find in document"
       data-testid="search-bar"

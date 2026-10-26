@@ -262,4 +262,30 @@ Another search keyword appears here.
     expect(marksCS[0].textContent).toBe('Navigation');
     expect(screen.getByTestId('search-counter')).toHaveTextContent('1 of 1');
   });
+
+  it('Layout positioning: adds has-toc-open class to search bar when outline panel is open', () => {
+    render(
+      <MarkdownViewer
+        document={{
+          filename: 'guide.md',
+          filePath: '/docs/guide.md',
+          content: sampleDocument,
+        }}
+      />
+    );
+
+    // Open search
+    fireEvent.click(screen.getByTestId('doc-search-toggle'));
+    const searchBar = screen.getByTestId('search-bar');
+    expect(searchBar).not.toHaveClass('has-toc-open');
+
+    // Open TOC / Outline
+    const tocToggle = screen.getByTestId('doc-toc-toggle');
+    fireEvent.click(tocToggle);
+    expect(searchBar).toHaveClass('has-toc-open');
+
+    // Close TOC / Outline
+    fireEvent.click(tocToggle);
+    expect(searchBar).not.toHaveClass('has-toc-open');
+  });
 });
