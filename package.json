@@ -6,6 +6,7 @@
   "scripts": {
     "build:deb": "./packaging/linux/build-deb.sh",
     "build:appimage": "./packaging/linux/build-appimage.sh",
-    "test:package:linux": "./scripts/test-package-linux.sh"
+    "test:package:linux": "./scripts/test-package-linux.sh",
+    "benchmark": "./scripts/benchmark.sh"
   }
 }

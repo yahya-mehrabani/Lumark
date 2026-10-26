@@ -12,6 +12,7 @@
     "test:security": "vitest run src/features/rendering/security/",
     "test:fixtures": "vitest run bidi-golden-fixtures bidi-alignment-precedence",
     "test:package:linux": "bash ../scripts/test-package-linux.sh",
+    "benchmark": "bash ../scripts/benchmark.sh",
     "test": "vitest"
   },
   "dependencies": {
