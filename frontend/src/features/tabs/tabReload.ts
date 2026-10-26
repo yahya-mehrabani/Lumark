@@ -27,7 +27,7 @@ export function captureScrollState(container?: HTMLElement | null): ScrollState 
   const el =
     container ||
     (typeof document !== 'undefined'
-      ? document.querySelector<HTMLElement>('.app-viewport, .document-container')
+      ? document.querySelector<HTMLElement>('.markdown-content, .document-container, .app-viewport')
       : null);
 
   if (!el) {
@@ -66,7 +66,7 @@ export function restoreScrollState(
   const el =
     container ||
     (typeof document !== 'undefined'
-      ? document.querySelector<HTMLElement>('.app-viewport, .document-container')
+      ? document.querySelector<HTMLElement>('.markdown-content, .document-container, .app-viewport')
       : null);
 
   if (!el) return;

@@ -462,11 +462,16 @@ input[type="text"] {
 .markdown-viewport {
     max-width: 920px;
     width: min(920px, 100%);
-    margin: 16px auto 24px;
+    margin: 16px auto;
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: calc(100% - 32px);
+    display: flex;
+    flex-direction: column;
     background: var(--bg-surface, rgba(15, 23, 42, 0.85));
     backdrop-filter: blur(16px);
     border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.1));
-    border-radius: 12px;
+    border-radius: 8px;
     box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.3);
     overflow: hidden;
 }

@@ -83,9 +83,11 @@ const MarkdownContentBody = React.memo(
           ref={ref}
           className="markdown-content"
           data-testid="markdown-content"
+          tabIndex={0}
           dir={activePref !== 'auto' ? activePref : undefined}
           style={{
             ['--default-contextmenu' as string]: 'show',
+            outline: 'none',
           }}
         >
           <SlugContext.Provider value={slugTracker}>

@@ -265,14 +265,16 @@ export function App() {
         onClearRecentFiles={clearRecentFiles}
         recentFiles={recentFiles}
         renderDocument={(tab) => (
-          <div className="markdown-viewport">
+          <>
             {tab.status === 'missing' && (
               <div
                 className="document-error-notice"
                 role="alert"
                 data-testid="missing-file-banner"
                 style={{
-                  margin: '16px 24px 0 24px',
+                  margin: '16px auto 0',
+                  maxWidth: '920px',
+                  width: 'min(920px, 100%)',
                   padding: '12px 16px',
                   borderRadius: '6px',
                   background: 'rgba(239, 68, 68, 0.15)',
@@ -281,6 +283,7 @@ export function App() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px',
+                  boxSizing: 'border-box',
                 }}
               >
                 <svg
@@ -313,7 +316,7 @@ export function App() {
               onOpenDocument={(targetPath) => loadDocumentPath(targetPath)}
               onPrint={handlePrint}
             />
-          </div>
+          </>
         )}
       />
 

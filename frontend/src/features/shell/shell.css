@@ -74,7 +74,8 @@
 /* Main Viewport Container */
 .app-viewport {
   flex: 1 1 auto;
-  overflow: auto;
+  min-height: 0;
+  overflow: hidden;
   position: relative;
   display: flex;
   flex-direction: column;
