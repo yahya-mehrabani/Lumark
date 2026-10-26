@@ -35,10 +35,11 @@ export function App() {
       if (toastRef.current) {
         toastRef.current.classList.remove('is-visible');
       }
-    }, 4000);
+    }, 3500);
+    defaultToastStore.showInfo(message);
   };
 
-  const loadDocumentPath = (path: string) => {
+  const loadDocumentPath = (path: string, silent = false) => {
     SpikeDocumentService.LoadFile(path)
       .then((d) => {
         tabStore.openTab({
@@ -49,8 +50,9 @@ export function App() {
           status: 'ready',
         });
         addRecentFile(d.filePath);
-        defaultToastStore.showSuccess(`Loaded ${d.filename}`);
-        showToast(`Loaded ${d.filename}`);
+        if (!silent) {
+          defaultToastStore.showSuccess(`Loaded ${d.filename}`);
+        }
       })
       .catch((err) => {
         console.error('Failed to load document:', err);
@@ -64,13 +66,12 @@ export function App() {
           errorMessage: String(err),
         });
         defaultToastStore.showError(err, () => handleOpenFile());
-        showToast(`Error: ${err}`);
       });
   };
 
   const handlePrint = () => {
     triggerPrint({
-      onError: (err) => showToast(`Print error: ${err.message}`),
+      onError: (err) => defaultToastStore.showError(err),
     });
   };
 
@@ -206,23 +207,27 @@ export function App() {
     try {
       const paths = await DialogService.OpenFiles();
       if (paths && paths.length > 0) {
-        for (const p of paths) {
-          if (p && p.trim()) {
-            loadDocumentPath(p);
+        const validPaths = paths.filter((p) => p && p.trim());
+        if (validPaths.length === 1) {
+          loadDocumentPath(validPaths[0]);
+        } else if (validPaths.length > 1) {
+          for (const p of validPaths) {
+            loadDocumentPath(p, true);
           }
+          defaultToastStore.showSuccess(`Loaded ${validPaths.length} documents`);
         }
       }
     } catch (err) {
       console.error('Failed to open file dialog:', err);
-      showToast(`Dialog error: ${err}`);
+      defaultToastStore.showError(err);
     }
   };
 
   const handleFileDrop = async (files: File[]) => {
     await loadDroppedFiles(files, {
       store: tabStore,
-      notifyWarning: (msg) => showToast(msg),
-      notifySuccess: (msg) => showToast(msg),
+      notifyWarning: (msg) => defaultToastStore.showWarning(msg),
+      notifySuccess: (msg) => defaultToastStore.showSuccess(msg),
     });
   };
 

@@ -209,5 +209,35 @@ describe('Error Toasts & Notifications', () => {
       expect(screen.queryByText('Second toast')).not.toBeInTheDocument();
       expect(screen.getByText('First toast')).toBeInTheDocument();
     });
+
+    it('caps visible toasts at MAX_VISIBLE_TOASTS (3) and evicts the oldest', () => {
+      const store = new ToastStore();
+      render(<ToastContainer store={store} />);
+
+      act(() => {
+        store.showInfo('Toast 1', 0);
+        store.showInfo('Toast 2', 0);
+        store.showInfo('Toast 3', 0);
+        store.showInfo('Toast 4', 0);
+      });
+
+      // Oldest (Toast 1) should be evicted
+      expect(screen.queryByText('Toast 1')).not.toBeInTheDocument();
+      expect(screen.getByText('Toast 2')).toBeInTheDocument();
+      expect(screen.getByText('Toast 3')).toBeInTheDocument();
+      expect(screen.getByText('Toast 4')).toBeInTheDocument();
+    });
+
+    it('deduplicates identical active messages instead of stacking duplicate banners', () => {
+      const store = new ToastStore();
+      render(<ToastContainer store={store} />);
+
+      act(() => {
+        store.showSuccess('Loaded doc.md', 0);
+        store.showSuccess('Loaded doc.md', 0);
+      });
+
+      expect(screen.getAllByText('Loaded doc.md')).toHaveLength(1);
+    });
   });
 });

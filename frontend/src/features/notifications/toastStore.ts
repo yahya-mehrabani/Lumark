@@ -18,6 +18,8 @@ export class ToastStore {
     };
   };
 
+  public static readonly MAX_VISIBLE_TOASTS = 3;
+
   private notify = (): void => {
     for (const listener of this.listeners) {
       listener();
@@ -25,6 +27,14 @@ export class ToastStore {
   };
 
   public showToast = (options: ShowToastOptions): string => {
+    // Deduplicate: if an active toast with identical message and type exists, refresh and return its id
+    const existing = this.toasts.find(
+      (t) => t.message === options.message && t.type === (options.type || 'info')
+    );
+    if (existing) {
+      return existing.id;
+    }
+
     const id = `toast-${this.nextId++}-${Date.now()}`;
     const item: ToastItem = {
       id,
@@ -32,11 +42,18 @@ export class ToastStore {
       type: options.type || 'info',
       title: options.title,
       action: options.action,
-      durationMs: options.durationMs !== undefined ? options.durationMs : 5000,
+      durationMs: options.durationMs !== undefined ? options.durationMs : 3500,
       createdAt: Date.now(),
     };
 
-    this.toasts = [...this.toasts, item];
+    // Cap visible toasts at MAX_VISIBLE_TOASTS, evicting the oldest from the start
+    if (this.toasts.length >= ToastStore.MAX_VISIBLE_TOASTS) {
+      const excess = this.toasts.length - ToastStore.MAX_VISIBLE_TOASTS + 1;
+      this.toasts = [...this.toasts.slice(excess), item];
+    } else {
+      this.toasts = [...this.toasts, item];
+    }
+
     this.notify();
     return id;
   };
