@@ -165,7 +165,7 @@ func main() {
 	// 'BackgroundColour' is the background colour of the window.
 	// 'URL' is the URL that will be loaded into the webview.
 	mainWindow := app.Window.NewWithOptions(application.WebviewWindowOptions{
-		Title: "Markdown Viewer (Spike Baseline)",
+		Title: "Markdown Viewer",
 		// Window sized to the golden ratio (1000 / 618 ≈ 1.618).
 		Width:  1000,
 		Height: 618,

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Events, WML } from "@wailsio/runtime";
+import { Events, WML, Window } from "@wailsio/runtime";
 import { SpikeDocumentService } from "../bindings/markdown-viewer";
 import * as DialogService from "../bindings/markdown-viewer/internal/dialogs/service";
 import { MarkdownViewer } from './MarkdownViewer';
@@ -118,6 +118,26 @@ export function App() {
       watchedPaths = syncTabWatches(tabStore, watcherAdapter, watchedPaths);
     });
 
+    // Synchronize window and document title with active tab file name
+    const syncWindowTitle = () => {
+      const activeTab = tabStore.getActiveTab();
+      const title = activeTab
+        ? `${activeTab.filename || activeTab.displayTitle} — Markdown Viewer`
+        : 'Markdown Viewer';
+
+      if (typeof document !== 'undefined' && document.title !== title) {
+        document.title = title;
+      }
+      try {
+        Window?.SetTitle?.(title)?.catch(() => {});
+      } catch {
+        // Ignore outside desktop runtime
+      }
+    };
+
+    syncWindowTitle();
+    const unsubscribeTitle = tabStore.subscribe(syncWindowTitle);
+
     // 1. Initial check for document loaded via CLI argument in Go backend
     SpikeDocumentService.GetCurrentDocument()
       .then((current) => {
@@ -200,6 +220,7 @@ export function App() {
       clearTimeout(saveTabsTimer);
       unsubscribeTabs();
       unsubscribeWatcher();
+      unsubscribeTitle();
     };
   }, []);
 
