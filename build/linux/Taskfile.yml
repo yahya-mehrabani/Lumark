@@ -170,12 +170,16 @@ tasks:
     dir: build
     cmds:
       - mkdir -p {{.ROOT_DIR}}/build/linux/appimage
-      - wails3 generate .desktop -name "{{.APP_NAME}}" -exec "{{.EXEC}}" -icon "{{.ICON}}" -outputfile "{{.ROOT_DIR}}/build/linux/{{.APP_NAME}}.desktop" -categories "{{.CATEGORIES}}"
+      - wails3 generate .desktop -name "{{.APP_NAME}}" -exec "{{.EXEC}}" -icon "{{.ICON}}" -outputfile "{{.ROOT_DIR}}/build/linux/{{.APP_NAME}}.desktop" -categories "{{.CATEGORIES}}" -mimetype "{{.MIMETYPE}}" -comment "{{.COMMENT}}" -genericname "{{.GENERICNAME}}" -keywords "{{.KEYWORDS}}"
     vars:
       APP_NAME: '{{.APP_NAME}}'
-      EXEC: '{{.APP_NAME}}'
+      EXEC: 'markdown-viewer %F'
       ICON: '{{.APP_NAME}}'
-      CATEGORIES: 'Development;'
+      CATEGORIES: 'Utility;TextEditor;Viewer;'
+      MIMETYPE: 'text/markdown;text/x-markdown;'
+      COMMENT: 'A fast, cross-platform Markdown Viewer'
+      GENERICNAME: 'Markdown Document Viewer'
+      KEYWORDS: 'Markdown;Viewer;Editor;CommonMark;GFM;'
       OUTPUTFILE: '{{.ROOT_DIR}}/build/linux/{{.APP_NAME}}.desktop'
 
   run:

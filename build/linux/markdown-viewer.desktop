@@ -10,5 +10,5 @@ Terminal=false
 Categories=Utility;TextEditor;Viewer;
 MimeType=text/markdown;text/x-markdown;
 Keywords=Markdown;Viewer;Editor;CommonMark;GFM;
-StartupNotify=false
+StartupNotify=true
 StartupWMClass=markdown-viewer
