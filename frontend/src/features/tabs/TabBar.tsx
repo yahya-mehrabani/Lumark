@@ -65,6 +65,36 @@ export const TabBar: React.FC<TabBarProps> = ({
     };
   }, [activeTabId, onCloseTab]);
 
+  // Support horizontal mousewheel scrolling on the tab bar
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const onWheel = (e: WheelEvent) => {
+      if (e.deltaY !== 0 && e.deltaX === 0) {
+        if (el.scrollWidth > el.clientWidth) {
+          e.preventDefault();
+          el.scrollLeft += e.deltaY;
+        }
+      }
+    };
+
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => el.removeEventListener('wheel', onWheel);
+  }, []);
+
+  // Ensure active tab is automatically scrolled into view when selected
+  useEffect(() => {
+    if (!activeTabId || !containerRef.current) return;
+    const activeEl = containerRef.current.querySelector<HTMLElement>(`#tab-${activeTabId}`);
+    if (activeEl && typeof activeEl.scrollIntoView === 'function') {
+      activeEl.scrollIntoView({
+        inline: 'nearest',
+        block: 'nearest',
+      });
+    }
+  }, [activeTabId]);
+
   if (tabs.length === 0) {
     return null;
   }
