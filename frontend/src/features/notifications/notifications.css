@@ -43,7 +43,7 @@
 /* Toast Type Variations */
 .toast-banner.toast-error {
   border-color: #f38ba8;
-  background: #1e1e2e;
+  background: var(--bg-surface-toast, #1e1e2e);
 }
 
 .toast-banner.toast-error .toast-icon {
@@ -52,7 +52,7 @@
 
 .toast-banner.toast-warning {
   border-color: #f9e2af;
-  background: #1e1e2e;
+  background: var(--bg-surface-toast, #1e1e2e);
 }
 
 .toast-banner.toast-warning .toast-icon {
@@ -61,7 +61,7 @@
 
 .toast-banner.toast-success {
   border-color: #a6e3a1;
-  background: #1e1e2e;
+  background: var(--bg-surface-toast, #1e1e2e);
 }
 
 .toast-banner.toast-success .toast-icon {
@@ -70,7 +70,7 @@
 
 .toast-banner.toast-info {
   border-color: #89b4fa;
-  background: #1e1e2e;
+  background: var(--bg-surface-toast, #1e1e2e);
 }
 
 .toast-banner.toast-info .toast-icon {
@@ -146,4 +146,89 @@
 .toast-close-btn:focus-visible {
   outline: 2px solid #89b4fa;
   outline-offset: 2px;
+}
+
+/* Light Theme Toast Overrides (WCAG AA Compliant) */
+[data-theme="light"] .toast-banner,
+.theme-light .toast-banner {
+  background: var(--bg-surface-toast, #ffffff);
+  color: #0f172a;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border-color: #e2e8f0;
+}
+
+[data-theme="light"] .toast-banner .toast-message,
+.theme-light .toast-banner .toast-message {
+  color: #0f172a;
+}
+
+[data-theme="light"] .toast-banner.toast-success,
+.theme-light .toast-banner.toast-success {
+  background: #f0fdf4;
+  border-color: #86efac;
+}
+
+[data-theme="light"] .toast-banner.toast-success .toast-icon,
+.theme-light .toast-banner.toast-success .toast-icon {
+  color: #16a34a;
+}
+
+[data-theme="light"] .toast-banner.toast-error,
+.theme-light .toast-banner.toast-error {
+  background: #fef2f2;
+  border-color: #fca5a5;
+}
+
+[data-theme="light"] .toast-banner.toast-error .toast-icon,
+.theme-light .toast-banner.toast-error .toast-icon {
+  color: #dc2626;
+}
+
+[data-theme="light"] .toast-banner.toast-warning,
+.theme-light .toast-banner.toast-warning {
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+[data-theme="light"] .toast-banner.toast-warning .toast-icon,
+.theme-light .toast-banner.toast-warning .toast-icon {
+  color: #d97706;
+}
+
+[data-theme="light"] .toast-banner.toast-info,
+.theme-light .toast-banner.toast-info {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+[data-theme="light"] .toast-banner.toast-info .toast-icon,
+.theme-light .toast-banner.toast-info .toast-icon {
+  color: #2563eb;
+}
+
+[data-theme="light"] .toast-close-btn,
+.theme-light .toast-close-btn {
+  color: #64748b;
+}
+
+[data-theme="light"] .toast-close-btn:hover,
+.theme-light .toast-close-btn:hover {
+  color: #0f172a;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .toast-close-btn:focus-visible,
+.theme-light .toast-close-btn:focus-visible {
+  outline: 2px solid #2563eb;
+}
+
+[data-theme="light"] .toast-action-btn,
+.theme-light .toast-action-btn {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+[data-theme="light"] .toast-action-btn:hover,
+.theme-light .toast-action-btn:hover {
+  background: #1d4ed8;
 }

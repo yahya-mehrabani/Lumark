@@ -27,6 +27,7 @@
   --focus-ring: rgba(59, 130, 246, 0.5);
   --chrome-bg: #090d16;
   --chrome-border: rgba(255, 255, 255, 0.08);
+  --bg-surface-toast: #1e1e2e;
   color-scheme: dark;
 }
 
@@ -49,6 +50,7 @@
   --focus-ring: rgba(37, 99, 235, 0.5);
   --chrome-bg: #f8fafc;
   --chrome-border: #e2e8f0;
+  --bg-surface-toast: #ffffff;
   color-scheme: light;
 }
 
