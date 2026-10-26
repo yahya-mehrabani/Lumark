@@ -243,7 +243,7 @@
   max-width: 850px;
   margin: 0 auto;
   padding: 32px 24px 64px 24px;
-  color: #e2e8f0;
+  color: var(--text-primary, #e2e8f0);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Vazirmatn", "Tahoma", sans-serif;
   font-size: 16px;
   line-height: 1.75;
@@ -428,7 +428,7 @@
 
 /* Inline text formatting */
 .markdown-content strong {
-  color: #f8fafc;
+  color: var(--text-primary, #f8fafc);
   font-weight: 600;
 }
 
@@ -437,7 +437,7 @@
 }
 
 .markdown-content del {
-  color: #94a3b8;
+  color: var(--text-muted, #94a3b8);
   text-decoration: line-through;
 }
 

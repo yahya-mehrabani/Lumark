@@ -510,7 +510,7 @@ input[type="text"] {
 
 .markdown-content {
     padding: 32px;
-    color: #e2e8f0;
+    color: var(--text-primary, #e2e8f0);
     line-height: 1.75;
     font-size: 15px;
 }
