@@ -127,5 +127,72 @@ describe('Theme Design Tokens & WCAG AA Contrast Compliance (US-023.1)', () => {
       expect(cssContent).toContain('[data-theme="light"]');
       expect(cssContent).toContain('prefers-color-scheme: light');
     });
+
+    it('all component CSS files reference only variables defined in both themes (Item 4 regression guard)', () => {
+      const cssPath = path.resolve(__dirname, 'theme.css');
+      const themeCss = fs.readFileSync(cssPath, 'utf-8');
+
+      // Extract tokens defined in dark block
+      const darkBlockMatch = themeCss.match(/\[data-theme="dark"\][\s\S]*?\{([\s\S]*?)\}/);
+      expect(darkBlockMatch).not.toBeNull();
+      const darkTokens = new Set(
+        Array.from(darkBlockMatch![1].matchAll(/--([a-zA-Z0-9_-]+)\s*:/g)).map((m) => '--' + m[1])
+      );
+
+      // Extract tokens defined in light block
+      const lightBlockMatch = themeCss.match(/\[data-theme="light"\][\s\S]*?\{([\s\S]*?)\}/);
+      expect(lightBlockMatch).not.toBeNull();
+      const lightTokens = new Set(
+        Array.from(lightBlockMatch![1].matchAll(/--([a-zA-Z0-9_-]+)\s*:/g)).map((m) => '--' + m[1])
+      );
+
+      // Tokens defined in BOTH themes
+      const definedInBoth = new Set([...darkTokens].filter((t) => lightTokens.has(t)));
+
+      // Justified allowlist for dynamic runtime variables or temporary migrations
+      const JUSTIFIED_ALLOWLIST = new Set([
+        '--default-contextmenu', // runtime context menu toggle configured on :root
+        '--shiki-dark',          // dynamically set by Shiki syntax engine
+        '--shiki-light',         // dynamically set by Shiki syntax engine
+        // Temporary exemption for errors.css pending Item 6 migration:
+        '--border-error',
+        '--color-error',
+        '--accent-primary',
+      ]);
+
+      const srcDir = path.resolve(__dirname, '../..');
+      const violations: { file: string; token: string; fallback?: string }[] = [];
+
+      function scanDir(dir: string) {
+        const entries = fs.readdirSync(dir, { withFileTypes: true });
+        for (const entry of entries) {
+          const fullPath = path.join(dir, entry.name);
+          if (entry.isDirectory()) {
+            scanDir(fullPath);
+          } else if (entry.isFile() && entry.name.endsWith('.css')) {
+            // Ignore vendor styles (e.g. KaTeX) and theme definition itself
+            if (entry.name === 'katex.css' || entry.name === 'theme.css') {
+              continue;
+            }
+            const content = fs.readFileSync(fullPath, 'utf-8');
+            const varMatches = content.matchAll(/var\(\s*(--[a-zA-Z0-9_-]+)(?:\s*,\s*([^)]+))?\)/g);
+            for (const m of varMatches) {
+              const varName = m[1];
+              const fallback = m[2] ? m[2].trim() : undefined;
+              if (!definedInBoth.has(varName) && !JUSTIFIED_ALLOWLIST.has(varName)) {
+                violations.push({
+                  file: path.relative(srcDir, fullPath),
+                  token: varName,
+                  fallback,
+                });
+              }
+            }
+          }
+        }
+      }
+
+      scanDir(srcDir);
+      expect(violations).toEqual([]);
+    });
   });
 });

@@ -31,6 +31,7 @@
   --danger: #f87171;
   --danger-bg: rgba(239, 68, 68, 0.1);
   --danger-border: rgba(239, 68, 68, 0.35);
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
   color-scheme: dark;
 }
 
@@ -57,6 +58,7 @@
   --danger: #dc2626;
   --danger-bg: rgba(220, 38, 38, 0.06);
   --danger-border: rgba(220, 38, 38, 0.3);
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
   color-scheme: light;
 }
 
@@ -83,6 +85,7 @@
     --danger: #dc2626;
     --danger-bg: rgba(220, 38, 38, 0.06);
     --danger-border: rgba(220, 38, 38, 0.3);
+    --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
     color-scheme: light;
   }
 }
