@@ -36,8 +36,10 @@ let diagramCounter = 0;
  * Mandatory security options (securityLevel: 'strict', startOnLoad: false) cannot be overridden.
  */
 export function initMermaid(config?: Partial<MermaidConfig>): MermaidConfig {
+  const resolvedTheme = config?.theme || (detectAppTheme() as MermaidTheme);
   currentConfig = {
     ...STRICT_MERMAID_CONFIG,
+    theme: resolvedTheme,
     ...config,
     startOnLoad: false,
     securityLevel: 'strict',
@@ -98,13 +100,9 @@ export async function renderMermaid(
   code: string,
   options?: RenderMermaidOptions
 ): Promise<MermaidRenderResult> {
-  if (!isInitialized) {
-    initMermaid();
-  }
-
-  // Handle theme switching if requested
-  if (options?.theme && options.theme !== currentConfig.theme) {
-    initMermaid({ theme: options.theme });
+  const targetTheme = options?.theme || (detectAppTheme() as MermaidTheme);
+  if (!isInitialized || currentConfig.theme !== targetTheme) {
+    initMermaid({ theme: targetTheme });
   }
 
   const trimmedCode = code.trim();

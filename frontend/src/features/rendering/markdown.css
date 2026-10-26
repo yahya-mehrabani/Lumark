@@ -826,8 +826,8 @@
   max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
-  background: rgba(15, 23, 42, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bg-secondary, #111827);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
   border-radius: 8px;
   padding: 1.5em;
   display: flex;
@@ -837,9 +837,15 @@
   direction: ltr !important;
 }
 
+[data-theme="light"] .mermaid-container,
+.theme-light .mermaid-container {
+  background: var(--bg-secondary, #f8fafc);
+  border-color: var(--border-subtle, #e2e8f0);
+}
+
 .mermaid-container.loading {
   min-height: 80px;
-  color: #94a3b8;
+  color: var(--text-muted, #94a3b8);
   font-size: 0.9rem;
   font-style: italic;
 }
