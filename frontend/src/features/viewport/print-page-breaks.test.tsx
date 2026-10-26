@@ -207,17 +207,13 @@ describe('Print Page Break Rules & Command Dispatcher (US-024.2, FR-NAV-006)', (
   });
 
   describe('UI Component Integration', () => {
-    it('AppShell header Print button triggers onPrint callback', () => {
+    it('AppShell header omits redundant Print button in favor of document toolbar', () => {
       const onPrint = vi.fn();
       const store = new TabStore();
 
       render(<AppShell store={store} onPrint={onPrint} />);
 
-      const printBtn = screen.getByTestId('header-print-btn');
-      expect(printBtn).toBeInTheDocument();
-
-      fireEvent.click(printBtn);
-      expect(onPrint).toHaveBeenCalledTimes(1);
+      expect(screen.queryByTestId('header-print-btn')).not.toBeInTheDocument();
     });
 
     it('AppShell global Ctrl+P shortcut triggers onPrint callback', () => {

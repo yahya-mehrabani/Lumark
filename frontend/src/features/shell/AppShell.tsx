@@ -152,16 +152,6 @@ export const AppShell: React.FC<AppShellProps> = ({
           <button
             type="button"
             className="header-btn"
-            onClick={onPrint}
-            aria-label="Print document (Ctrl+P)"
-            title="Print document (Ctrl+P)"
-            data-testid="header-print-btn"
-          >
-            Print
-          </button>
-          <button
-            type="button"
-            className="header-btn"
             onClick={onOpenSettings}
             aria-label="Preferences and settings (Ctrl+,)"
             title="Preferences and settings (Ctrl+,)"
