@@ -18,16 +18,19 @@ release: "1"
 
 contents:
   - src: "./bin/markdown-viewer"
-    dst: "/usr/local/bin/markdown-viewer"
+    dst: "/usr/bin/markdown-viewer"
+  - src: "./packaging/linux/markdown-viewer.svg"
+    dst: "/usr/share/icons/hicolor/scalable/apps/markdown-viewer.svg"
   - src: "./build/appicon.png"
     dst: "/usr/share/icons/hicolor/128x128/apps/markdown-viewer.png"
   - src: "./build/linux/markdown-viewer.desktop"
     dst: "/usr/share/applications/markdown-viewer.desktop"
 
-# Default dependencies for the GTK4 + WebKitGTK 6.0 stack (Ubuntu 24.04+ / Debian 13+)
+# Default dependencies for Ubuntu 24.04+ (GTK4 + WebKitGTK 6.0 with GTK3/WebKit2GTK 4.1 fallback)
 depends:
-  - libgtk-4-1
-  - libwebkitgtk-6.0-4
+  - libc6 (>= 2.38)
+  - libgtk-4-1 (>= 4.12.0) | libgtk-3-0 (>= 3.24.0)
+  - libwebkitgtk-6.0-4 (>= 2.40.0) | libwebkit2gtk-4.1-0 (>= 2.40.0)
 
 # Distribution-specific overrides for different package formats
 overrides:
@@ -43,12 +46,11 @@ overrides:
       - gtk4
       - webkitgtk-6.0
 
-# scripts section to ensure desktop database is updated after install
+# scripts section to ensure desktop and MIME database is updated after install/removal
 scripts:
-  postinstall: "./build/linux/nfpm/scripts/postinstall.sh"
-  # You can also add preremove, postremove if needed
-  # preremove: "./build/linux/nfpm/scripts/preremove.sh"
-  # postremove: "./build/linux/nfpm/scripts/postremove.sh"
+  postinstall: "./packaging/linux/debian/postinst"
+  preremove: "./packaging/linux/debian/prerm"
+  postremove: "./packaging/linux/debian/postrm"
 
 # If you build your app with -tags gtk3 (legacy WebKit2GTK 4.1 stack — supported through v3.0.x, removed in v3.1),
 # replace the depends/overrides above with these:

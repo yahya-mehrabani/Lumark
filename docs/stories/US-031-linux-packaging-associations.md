@@ -72,7 +72,7 @@ Deliver production Linux packaging and desktop integration:
 
 ### Task US-031.2: Implement Debian control file and maintainer scripts
 - **Task ID:** `US-031.2`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** `US-031.1`
 - **Completion Criteria:** Declares `Depends: libgtk-3-0, libwebkit2gtk-4.1-0`; postinst runs `update-desktop-database`.
 - **Verification Command:** `test -f packaging/linux/debian/control && grep -E 'Depends:.*libwebkit' packaging/linux/debian/control`
@@ -157,3 +157,67 @@ Exit code: 0
 - **Cross-Platform Verification Boundary:**
   - Linux Desktop Entry & SVG Validation: `PASS`
   - Native Ubuntu Desktop Association & File Manager Integration: `NOT RUN` (deferred to US-032).
+
+#### Task US-031.2: Implement Debian control file and maintainer scripts
+- **Status:** `DONE`
+- **Changed Files:**
+  - `packaging/linux/debian/control`: Defined package metadata (`Package: markdown-viewer`, `Architecture: amd64`, `Section: utils`) and declared explicit dependencies: `Depends: libc6 (>= 2.38), libgtk-4-1 (>= 4.12.0) | libgtk-3-0 (>= 3.24.0), libwebkitgtk-6.0-4 (>= 2.40.0) | libwebkit2gtk-4.1-0 (>= 2.40.0)`.
+  - `packaging/linux/debian/postinst`: Implemented maintainer script with `command -v` POSIX guards to trigger `update-desktop-database` (`/usr/share/applications`), `update-mime-database` (`/usr/share/mime`), and `gtk-update-icon-cache` (`/usr/share/icons/hicolor`).
+  - `packaging/linux/debian/postrm`: Implemented removal script updating desktop, MIME, and icon databases upon package removal or purge.
+  - `packaging/linux/debian/prerm`: Added clean pre-removal maintainer hook.
+  - `packaging/linux/build-deb.sh`: Updated Debian packaging script to stage `/usr/bin/markdown-viewer`, `/usr/share/applications/markdown-viewer.desktop`, `/usr/share/icons/hicolor/scalable/apps/markdown-viewer.svg`, and `/usr/share/icons/hicolor/128x128/apps/markdown-viewer.png`, set permissions (755 scripts/binaries, 644 configs/assets), and assemble the production `.deb` package using `dpkg-deb --build`.
+  - `build/linux/nfpm/nfpm.yaml`: Synchronized NFPM packaging config to target `/usr/bin/markdown-viewer`, package scalable SVG icon, and wire maintainer scripts.
+- **Verification Commands & Output:**
+```bash
+$ test -f packaging/linux/debian/control && grep -E 'Depends:.*libwebkit' packaging/linux/debian/control
+Depends: libc6 (>= 2.38), libgtk-4-1 (>= 4.12.0) | libgtk-3-0 (>= 3.24.0), libwebkitgtk-6.0-4 (>= 2.40.0) | libwebkit2gtk-4.1-0 (>= 2.40.0)
+Exit code: 0
+
+$ ./packaging/linux/build-deb.sh
+dpkg-deb: building package 'markdown-viewer' in '/home/repos/personal/markdown-go/build/bin/markdown-viewer_0.1.0-1_amd64.deb'.
+Successfully built Debian package: /home/repos/personal/markdown-go/build/bin/markdown-viewer_0.1.0-1_amd64.deb
+Canonical package path: /home/repos/personal/markdown-go/build/bin/markdown-viewer.deb
+Exit code: 0
+
+$ dpkg-deb -I build/bin/markdown-viewer_0.1.0-1_amd64.deb
+ new Debian package, version 2.0.
+ size 3901530 bytes: control archive=893 bytes.
+     664 bytes,    12 lines      control
+     567 bytes,    21 lines   *  postinst             #!/bin/sh
+     562 bytes,    21 lines   *  postrm               #!/bin/sh
+     159 bytes,     9 lines   *  prerm                #!/bin/sh
+ Package: markdown-viewer
+ Version: 0.1.0-1
+ Section: utils
+ Priority: optional
+ Architecture: amd64
+ Maintainer: Markdown Viewer Team <maintainers@markdownviewer.local>
+ Depends: libc6 (>= 2.38), libgtk-4-1 (>= 4.12.0) | libgtk-3-0 (>= 3.24.0), libwebkitgtk-6.0-4 (>= 2.40.0) | libwebkit2gtk-4.1-0 (>= 2.40.0)
+ Description: Fast, cross-platform Markdown Viewer desktop application
+Homepage: https://github.com/personal/markdown-go
+
+$ dpkg-deb -c build/bin/markdown-viewer_0.1.0-1_amd64.deb
+drwxr-xr-x root/root         0 ./
+drwxr-xr-x root/root         0 ./usr/
+drwxr-xr-x root/root         0 ./usr/bin/
+-rwxr-xr-x root/root  10437576 ./usr/bin/markdown-viewer
+drwxr-xr-x root/root         0 ./usr/share/
+drwxr-xr-x root/root         0 ./usr/share/applications/
+-rw-r--r-- root/root       386 ./usr/share/applications/markdown-viewer.desktop
+drwxr-xr-x root/root         0 ./usr/share/icons/
+drwxr-xr-x root/root         0 ./usr/share/icons/hicolor/
+drwxr-xr-x root/root         0 ./usr/share/icons/hicolor/128x128/
+drwxr-xr-x root/root         0 ./usr/share/icons/hicolor/128x128/apps/
+-rw-r--r-- root/root     31495 ./usr/share/icons/hicolor/128x128/apps/markdown-viewer.png
+drwxr-xr-x root/root         0 ./usr/share/icons/hicolor/scalable/
+drwxr-xr-x root/root         0 ./usr/share/icons/hicolor/scalable/apps/
+-rw-r--r-- root/root      1024 ./usr/share/icons/hicolor/scalable/apps/markdown-viewer.svg
+Exit code: 0
+
+$ shellcheck packaging/linux/build-deb.sh packaging/linux/debian/postinst packaging/linux/debian/postrm packaging/linux/debian/prerm
+0 issues.
+Exit code: 0
+```
+- **Cross-Platform Verification Boundary:**
+  - Debian Package Build, Control & Tree Structure: `PASS`
+  - Native Ubuntu Host `dpkg -i` System Installation & Desktop Integration: `NOT RUN` (deferred to US-032).

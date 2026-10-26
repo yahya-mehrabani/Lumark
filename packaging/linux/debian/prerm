@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = "remove" ] || [ "$1" = "deconfigure" ]; then
+	# Pre-removal hook: cleanup or shutdown notifications if required
+	true
+fi
+
+exit 0
