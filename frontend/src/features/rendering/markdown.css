@@ -27,7 +27,7 @@
   gap: 12px;
   padding: 12px 24px;
   background: var(--chrome-bg, rgba(30, 41, 59, 0.6));
-  border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.14));
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
 }
@@ -61,18 +61,18 @@
   align-items: center;
   gap: 6px;
   font-size: 11px;
-  color: #94a3b8;
+  color: #cbd5e1;
   background: rgba(0, 0, 0, 0.25);
   padding: 3px 6px 3px 10px;
   border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   max-width: 480px;
   user-select: text;
 }
 
 .path-label {
   font-weight: 700;
-  opacity: 0.75;
+  color: #94a3b8;
   letter-spacing: 0.05em;
   font-size: 10px;
   flex-shrink: 0;
@@ -80,6 +80,7 @@
 
 .path-text {
   font-family: var(--font-mono, monospace);
+  color: #e2e8f0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -96,7 +97,7 @@
   background: transparent;
   border: 1px solid transparent;
   border-radius: 4px;
-  color: #94a3b8;
+  color: #cbd5e1;
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
   flex-shrink: 0;
@@ -105,7 +106,7 @@
 .doc-copy-path-btn:hover {
   background: rgba(255, 255, 255, 0.1);
   color: #f8fafc;
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .doc-copy-path-btn:active {
@@ -1122,13 +1123,23 @@
 [data-theme="light"] .doc-path-badge,
 .theme-light .doc-path-badge {
   background: var(--bg-tertiary, #f1f5f9);
-  border-color: var(--border-subtle, #e2e8f0);
-  color: var(--text-muted, #475569);
+  border-color: var(--border-subtle, #cbd5e1);
+  color: #334155;
+}
+
+[data-theme="light"] .path-label,
+.theme-light .path-label {
+  color: #475569;
+}
+
+[data-theme="light"] .path-text,
+.theme-light .path-text {
+  color: #0f172a;
 }
 
 [data-theme="light"] .doc-copy-path-btn,
 .theme-light .doc-copy-path-btn {
-  color: var(--text-muted, #475569);
+  color: #475569;
 }
 
 [data-theme="light"] .doc-copy-path-btn:hover,

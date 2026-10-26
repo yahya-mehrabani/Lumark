@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   background: var(--chrome-bg, #090d16);
-  border-bottom: 1px solid var(--chrome-border, rgba(255, 255, 255, 0.12));
+  border-bottom: 1px solid var(--chrome-border, rgba(255, 255, 255, 0.14));
   min-height: 40px;
   max-height: 44px;
   overflow-x: auto;
@@ -29,7 +29,7 @@
   padding: 6px 12px;
   font-size: 13px;
   font-weight: 500;
-  color: var(--text-muted, #9aa6c0);
+  color: var(--text-secondary, #cbd5e1);
   background: transparent;
   border: 1px solid transparent;
   border-bottom: none;
@@ -44,13 +44,13 @@
 
 .tab-item:hover {
   background: var(--bg-tertiary, rgba(255, 255, 255, 0.06));
-  color: var(--text-primary, #f4f6fb);
+  color: var(--text-primary, #ffffff);
 }
 
 .tab-item.is-active {
   background: var(--bg-surface, rgba(255, 255, 255, 0.10));
   color: var(--text-primary, #ffffff);
-  border-color: var(--border-subtle, rgba(255, 255, 255, 0.16));
+  border-color: var(--border-subtle, rgba(255, 255, 255, 0.18));
   border-bottom: 2px solid var(--accent, #3b82f6);
 }
 
