@@ -15,7 +15,6 @@ import { ErrorBoundary } from './features/errors';
 import { ToastContainer, defaultToastStore } from './features/notifications';
 
 export function App() {
-  const [, setTime] = useState<string>('Listening for Time event...');
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   const { recentFiles, addRecentFile, removeRecentFile, clearRecentFiles } = useRecentFiles(recentsStore);
 
@@ -205,13 +204,6 @@ export function App() {
           }
         );
       }
-    });
-
-    // 4. Listen for time event
-    Events.On('time', (timeValue: any) => {
-      const full = timeValue?.data || '';
-      const compact = (full.match(/\d{1,2}:\d{2}:\d{2}/) || [full])[0];
-      setTime(window.matchMedia('(max-width: 640px)').matches ? compact : full);
     });
 
     WML.Reload();

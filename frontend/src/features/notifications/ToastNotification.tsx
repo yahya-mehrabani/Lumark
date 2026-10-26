@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ToastItem } from './types';
 import './notifications.css';
 
@@ -8,15 +8,75 @@ export interface ToastNotificationProps {
 }
 
 export const ToastNotification: React.FC<ToastNotificationProps> = ({ toast, onDismiss }) => {
+  const onDismissRef = useRef(onDismiss);
   useEffect(() => {
-    if (!toast.durationMs || toast.durationMs <= 0) return;
+    onDismissRef.current = onDismiss;
+  });
 
-    const timer = setTimeout(() => {
-      onDismiss(toast.id);
-    }, toast.durationMs);
+  const durationMs = toast.durationMs ?? 0;
+  const remainingMsRef = useRef<number>(durationMs);
+  const startTimeRef = useRef<number>(0);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isHoveredRef = useRef<boolean>(false);
+  const isFocusedRef = useRef<boolean>(false);
 
-    return () => clearTimeout(timer);
-  }, [toast.id, toast.durationMs, onDismiss]);
+  const startTimer = () => {
+    if (remainingMsRef.current <= 0) return;
+    startTimeRef.current = Date.now();
+    timerRef.current = setTimeout(() => {
+      onDismissRef.current(toast.id);
+    }, remainingMsRef.current);
+  };
+
+  const pauseTimer = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+      const elapsed = Date.now() - startTimeRef.current;
+      remainingMsRef.current = Math.max(0, remainingMsRef.current - elapsed);
+    }
+  };
+
+  useEffect(() => {
+    remainingMsRef.current = durationMs;
+    if (durationMs > 0 && !isHoveredRef.current && !isFocusedRef.current) {
+      startTimer();
+    }
+
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, [toast.id, durationMs]);
+
+  const handleMouseEnter = () => {
+    isHoveredRef.current = true;
+    pauseTimer();
+  };
+
+  const handleMouseLeave = () => {
+    isHoveredRef.current = false;
+    if (!isFocusedRef.current) {
+      startTimer();
+    }
+  };
+
+  const handleFocus = () => {
+    isFocusedRef.current = true;
+    pauseTimer();
+  };
+
+  const handleBlur = (e: React.FocusEvent) => {
+    if (e.currentTarget.contains(e.relatedTarget as Node | null)) {
+      return;
+    }
+    isFocusedRef.current = false;
+    if (!isHoveredRef.current) {
+      startTimer();
+    }
+  };
 
   const isAlert = toast.type === 'error' || toast.type === 'warning';
   const role = isAlert ? 'alert' : 'status';
@@ -30,6 +90,10 @@ export const ToastNotification: React.FC<ToastNotificationProps> = ({ toast, onD
       aria-atomic="true"
       data-testid={`toast-${toast.id}`}
       data-toast-type={toast.type}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
     >
       <div className="toast-icon" aria-hidden="true">
         {toast.type === 'error' && (

@@ -36,13 +36,16 @@ export class ToastStore {
     }
 
     const id = `toast-${this.nextId++}-${Date.now()}`;
+    const toastType = options.type || 'info';
+    const defaultDuration =
+      toastType === 'error' ? 6000 : toastType === 'warning' ? 5000 : 4000;
     const item: ToastItem = {
       id,
       message: options.message,
-      type: options.type || 'info',
+      type: toastType,
       title: options.title,
       action: options.action,
-      durationMs: options.durationMs !== undefined ? options.durationMs : 3500,
+      durationMs: options.durationMs !== undefined ? options.durationMs : defaultDuration,
       createdAt: Date.now(),
     };
 

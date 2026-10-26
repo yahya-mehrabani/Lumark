@@ -279,5 +279,174 @@ describe('Error Toasts & Notifications', () => {
 
       expect(screen.getAllByText('Loaded doc.md')).toHaveLength(1);
     });
+
+    it('auto-dismisses with default durations: 4s for success, 5s for warning, 6s for error', () => {
+      const store = new ToastStore();
+      render(<ToastContainer store={store} />);
+
+      act(() => {
+        store.showSuccess('Success message');
+        store.showWarning('Warning message');
+        store.showError('Error message');
+      });
+
+      expect(screen.getByText('Success message')).toBeInTheDocument();
+      expect(screen.getByText('Warning message')).toBeInTheDocument();
+      expect(screen.getByText('Error message')).toBeInTheDocument();
+
+      // At 4000ms: success is dismissed
+      act(() => {
+        vi.advanceTimersByTime(4000);
+      });
+      expect(screen.queryByText('Success message')).not.toBeInTheDocument();
+      expect(screen.getByText('Warning message')).toBeInTheDocument();
+      expect(screen.getByText('Error message')).toBeInTheDocument();
+
+      // At 5000ms: warning is dismissed
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
+      expect(screen.queryByText('Warning message')).not.toBeInTheDocument();
+      expect(screen.getByText('Error message')).toBeInTheDocument();
+
+      // At 6000ms: error is dismissed
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
+      expect(screen.queryByText('Error message')).not.toBeInTheDocument();
+    });
+
+    it('dismisses on schedule despite repeated parent re-renders and adding subsequent toasts', () => {
+      const store = new ToastStore();
+      const { rerender } = render(<ToastContainer store={store} />);
+
+      act(() => {
+        store.showSuccess('Toast 1', 4000);
+      });
+      expect(screen.getByText('Toast 1')).toBeInTheDocument();
+
+      // Advance by 1s, then simulate parent re-render (like App time tick)
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
+      rerender(<ToastContainer store={store} />);
+
+      // Advance by another 1s (total 2s), then add another toast and re-render
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
+      act(() => {
+        store.showInfo('Toast 2', 4000);
+      });
+      rerender(<ToastContainer store={store} />);
+
+      // Advance by 1s (total 3s), re-render again
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
+      rerender(<ToastContainer store={store} />);
+      expect(screen.getByText('Toast 1')).toBeInTheDocument();
+      expect(screen.getByText('Toast 2')).toBeInTheDocument();
+
+      // Advance by final 1s (total 4s from Toast 1 start): Toast 1 must be dismissed now!
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
+      expect(screen.queryByText('Toast 1')).not.toBeInTheDocument();
+      expect(screen.getByText('Toast 2')).toBeInTheDocument();
+
+      // Advance by 2s more (total 4s from Toast 2 start): Toast 2 dismissed
+      act(() => {
+        vi.advanceTimersByTime(2000);
+      });
+      expect(screen.queryByText('Toast 2')).not.toBeInTheDocument();
+    });
+
+    it('pauses timer on hover and resumes with remaining time on mouse leave', () => {
+      const store = new ToastStore();
+      render(<ToastContainer store={store} />);
+
+      act(() => {
+        store.showSuccess('Hoverable toast', 4000);
+      });
+      const banner = screen.getByText('Hoverable toast').closest('.toast-banner')!;
+
+      // Advance 1.5s
+      act(() => {
+        vi.advanceTimersByTime(1500);
+      });
+      expect(screen.getByText('Hoverable toast')).toBeInTheDocument();
+
+      // Hover over toast
+      act(() => {
+        fireEvent.mouseEnter(banner);
+      });
+
+      // Wait 10s while hovered — should NOT dismiss
+      act(() => {
+        vi.advanceTimersByTime(10000);
+      });
+      expect(screen.getByText('Hoverable toast')).toBeInTheDocument();
+
+      // Mouse leave — resumes remaining 2.5s
+      act(() => {
+        fireEvent.mouseLeave(banner);
+      });
+
+      // Advance 2s — still in document
+      act(() => {
+        vi.advanceTimersByTime(2000);
+      });
+      expect(screen.getByText('Hoverable toast')).toBeInTheDocument();
+
+      // Advance remaining 500ms — now dismissed
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+      expect(screen.queryByText('Hoverable toast')).not.toBeInTheDocument();
+    });
+
+    it('pauses timer on focus and resumes with remaining time on blur', () => {
+      const store = new ToastStore();
+      render(<ToastContainer store={store} />);
+
+      act(() => {
+        store.showSuccess('Focusable toast', 4000);
+      });
+      const closeBtn = screen.getByTestId('toast-close-button');
+
+      // Advance 1s
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
+
+      // Focus close button inside toast
+      act(() => {
+        fireEvent.focus(closeBtn);
+      });
+
+      // Wait 10s while focused — should NOT dismiss
+      act(() => {
+        vi.advanceTimersByTime(10000);
+      });
+      expect(screen.getByText('Focusable toast')).toBeInTheDocument();
+
+      // Blur
+      act(() => {
+        fireEvent.blur(closeBtn);
+      });
+
+      // Advance 2.5s — still in document
+      act(() => {
+        vi.advanceTimersByTime(2500);
+      });
+      expect(screen.getByText('Focusable toast')).toBeInTheDocument();
+
+      // Advance remaining 500ms — dismissed
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+      expect(screen.queryByText('Focusable toast')).not.toBeInTheDocument();
+    });
   });
 });

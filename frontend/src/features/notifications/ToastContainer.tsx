@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { ToastNotification } from './ToastNotification';
 import { ToastStore, defaultToastStore, useToasts } from './toastStore';
 import './notifications.css';
@@ -9,6 +9,13 @@ export interface ToastContainerProps {
 
 export const ToastContainer: React.FC<ToastContainerProps> = ({ store = defaultToastStore }) => {
   const toasts = useToasts(store);
+
+  const handleDismiss = useCallback(
+    (id: string) => {
+      store.dismissToast(id);
+    },
+    [store]
+  );
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -39,7 +46,7 @@ export const ToastContainer: React.FC<ToastContainerProps> = ({ store = defaultT
         <ToastNotification
           key={toast.id}
           toast={toast}
-          onDismiss={(id) => store.dismissToast(id)}
+          onDismiss={handleDismiss}
         />
       ))}
     </div>
