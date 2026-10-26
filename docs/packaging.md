@@ -151,3 +151,68 @@ When distributing ad-hoc test builds without an Apple Developer ID certificate:
    xattr -d com.apple.quarantine "/Applications/Markdown Viewer.app"
    ```
    Alternatively, users can right-click (Control-click) `Markdown Viewer.app` in Finder, select **Open**, and click **Open** in the confirmation dialog.
+
+---
+
+## Linux Debian Package (.deb) and AppImage Distribution Workflow
+
+This section provides reproducible instructions for packaging, installing, and verifying Linux distribution artifacts per PRD Section 11.4 and Story `US-031`.
+
+### 1. Target Distribution & Runtime Dependencies
+
+- **Primary Target OS:** Ubuntu 24.04 LTS x64 (compatible with modern Debian 13+ and Ubuntu 26.04).
+- **Required Runtime Libraries (declared in Debian `control`):**
+  - `libc6` (>= 2.38)
+  - `libgtk-4-1` (>= 4.12.0) or `libgtk-3-0` (>= 3.24.0)
+  - `libwebkitgtk-6.0-4` (>= 2.40.0) or `libwebkit2gtk-4.1-0` (>= 2.40.0)
+
+### 2. Desktop Launcher and MIME Type Associations
+
+Standard assets installed by the Debian package:
+- **Binary:** `/usr/bin/markdown-viewer` (mode 0755)
+- **Desktop Entry:** `/usr/share/applications/markdown-viewer.desktop` (mode 0644)
+  - `Exec=markdown-viewer %F` (supports multi-file argument lists)
+  - `Categories=Utility;TextEditor;Viewer;`
+  - `MimeType=text/markdown;text/x-markdown;`
+  - `StartupNotify=true` and `StartupWMClass=markdown-viewer`
+- **Application Icons:**
+  - Scalable vector icon: `/usr/share/icons/hicolor/scalable/apps/markdown-viewer.svg`
+  - Raster icon: `/usr/share/icons/hicolor/128x128/apps/markdown-viewer.png`
+- **MIME Policy:** Strictly excludes `text/plain` to prevent intercepting ordinary text files.
+
+### 3. Maintainer Script Hooks
+
+Debian package maintainer scripts (`packaging/linux/debian/`):
+- `postinst`: Executes `update-desktop-database -q /usr/share/applications`, `update-mime-database /usr/share/mime`, and `gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor` guarded by POSIX `command -v`.
+- `postrm`: Executes database and icon cache updates on `remove` and `purge` actions.
+- `prerm`: Executes pre-removal teardown.
+
+### 4. Step-by-Step Package Build Procedure
+
+#### Step 4.1: Build Debian Package
+```bash
+./packaging/linux/build-deb.sh
+# Or via npm script:
+npm run build:deb
+```
+Outputs:
+- Versioned: `build/bin/markdown-viewer_0.1.0-1_amd64.deb`
+- Canonical: `build/bin/markdown-viewer.deb`
+
+#### Step 4.2: Inspect Package Metadata & File Tree
+```bash
+dpkg-deb -I build/bin/markdown-viewer_0.1.0-1_amd64.deb
+dpkg-deb -c build/bin/markdown-viewer_0.1.0-1_amd64.deb
+```
+
+#### Step 4.3: Build AppImage Pipeline
+```bash
+./packaging/linux/build-appimage.sh
+```
+Stages `build/staging/markdown-viewer.AppDir` containing executable `AppRun`, root `.desktop`, icons, and binary, and generates `build/bin/markdown-viewer.AppImage` when `linuxdeploy` or `appimagetool` is available.
+
+#### Step 4.4: Run Linux Package Verification Suite
+```bash
+npm run test:package:linux
+```
+Verifies control metadata, binary location (`/usr/bin/markdown-viewer`), permissions, FreeDesktop specification compliance, MIME exclusions, maintainer scripts, and AppDir layout.

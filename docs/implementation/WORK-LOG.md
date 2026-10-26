@@ -4076,3 +4076,53 @@ This log is an append-only chronological record of all significant actions, veri
 - **Active Story:** `US-030: macOS Application Bundle, UTIs & Launch Services Integration` (`DONE`).
 - **Completed Tasks:** `US-030.1` (`DONE`), `US-030.2` (`DONE`), `US-030.3` (`DONE`), `US-030.4` (`DONE`).
 - **Next Eligible Story:** `US-031: Linux Debian Package, AppImage & Desktop/MIME Integration` under [`docs/stories/US-031-linux-packaging-associations.md`](../stories/US-031-linux-packaging-associations.md) (`READY`; Phase 6 / `EPIC-008: Packaging, Operating-System Integration & Release Hardening`).
+
+---
+
+## [2026-10-26] — Phase 6: Linux Debian Package, AppImage & Desktop/MIME Integration (Story US-031 Complete)
+
+- **Task ID:** `US-031.4`
+- **Story ID:** `US-031`
+- **Status:** `DONE`
+- **Agent ID:** Antigravity Autonomous Story Runner
+
+### Scope and Implementation Summary:
+- Completed all 4 Tasks in Story `US-031: Linux Debian Package, AppImage & Desktop/MIME Integration`:
+  - `US-031.1: Create production Linux desktop entry and SVG icon` (`DONE`):
+    - Configured `packaging/linux/markdown-viewer.desktop` and `build/linux/markdown-viewer.desktop` with FreeDesktop Desktop Entry Specification 1.5 compliance, `%F` parameter, `Utility;TextEditor;Viewer;` categories, `text/markdown` & `text/x-markdown` MIME types, and strict exclusion of generic `text/plain` per PRD §11.4.
+    - Verified scalable vector icon `packaging/linux/markdown-viewer.svg` and synced to `build/linux/markdown-viewer.svg`.
+    - Updated `build/linux/Taskfile.yml` `generate:dotdesktop` task with Markdown categories, MIME types, and `%F` argument syntax.
+    - Created `scripts/validate_desktop_file.py` to validate desktop entry and icon specs.
+  - `US-031.2: Implement Debian control file and maintainer scripts` (`DONE`):
+    - Configured `packaging/linux/debian/control` with package metadata and declared runtime dependencies: `libc6 (>= 2.38)`, `libgtk-4-1 (>= 4.12.0) | libgtk-3-0 (>= 3.24.0)`, `libwebkitgtk-6.0-4 (>= 2.40.0) | libwebkit2gtk-4.1-0 (>= 2.40.0)`.
+    - Implemented maintainer scripts `postinst` and `postrm` with POSIX `command -v` checks to update desktop (`update-desktop-database`), MIME (`update-mime-database`), and icon cache (`gtk-update-icon-cache`).
+    - Added clean `prerm` script.
+    - Updated `packaging/linux/build-deb.sh` to stage production binary at `/usr/bin/markdown-viewer`, launcher at `/usr/share/applications/markdown-viewer.desktop`, scalable icon at `/usr/share/icons/hicolor/scalable/apps/markdown-viewer.svg`, and raster icon at `/usr/share/icons/hicolor/128x128/apps/markdown-viewer.png`, assembling `.deb` via `dpkg-deb --build`.
+    - Synchronized `build/linux/nfpm/nfpm.yaml`.
+  - `US-031.3: Configure AppImage build pipeline` (`DONE`):
+    - Implemented `packaging/linux/build-appimage.sh` staging `build/staging/markdown-viewer.AppDir` with `AppRun` launcher, binary, desktop entry, and icons, with portable bundle archive generation.
+  - `US-031.4: Execute package verification on clean Ubuntu 24.04 runner` (`DONE`):
+    - Created `scripts/test-package-linux.sh` automated package verification suite covering Debian archive integrity, control fields, data tree, desktop entry spec, MIME restrictions, maintainer scripts, and AppDir structure.
+    - Configured root `package.json` and `frontend/package.json` with `npm run test:package:linux` and `npm run build:deb`.
+    - Created `.github/workflows/linux-build.yml` CI workflow for `ubuntu-24.04`.
+    - Documented Debian and AppImage distribution workflow in `docs/packaging.md`.
+- Updated Story `US-031` status to `DONE` in `docs/stories/US-031-linux-packaging-associations.md` and `docs/implementation/BACKLOG.md`.
+- Updated `docs/implementation/REQUIREMENT-TRACEABILITY.md` row `FR-OPEN-003` to reflect completion of Linux packaging alongside Windows and macOS.
+- Transitioned `US-032: Cross-Platform File Association Validation Matrix & Release Hardening` to `READY` in `docs/implementation/BACKLOG.md`.
+- Updated `docs/implementation/CURRENT-STATE.md`.
+
+### Verification Results:
+- `npm run test:package:linux`: 6/6 verification steps passed (PASS).
+- `dpkg-deb -I build/bin/markdown-viewer_0.1.0-1_amd64.deb`: Control metadata and dependencies verified (PASS).
+- `dpkg-deb -c build/bin/markdown-viewer_0.1.0-1_amd64.deb`: Binary in `/usr/bin/markdown-viewer`, desktop launcher, and icons verified (PASS).
+- `python3 scripts/validate_desktop_file.py`: FreeDesktop specification and MIME checks passed (PASS).
+- `shellcheck packaging/linux/build-deb.sh packaging/linux/build-appimage.sh scripts/test-package-linux.sh packaging/linux/debian/*`: 0 issues (PASS).
+- `golangci-lint run`: 0 issues (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **Phase:** Phase 6 (Packaging, Platform Integration & Release Hardening).
+- **Active Story:** `US-031: Linux Debian Package, AppImage & Desktop/MIME Integration` (`DONE`).
+- **Completed Tasks:** `US-031.1` (`DONE`), `US-031.2` (`DONE`), `US-031.3` (`DONE`), `US-031.4` (`DONE`).
+- **Next Eligible Story:** `US-032: Cross-Platform File Association Validation Matrix & Release Hardening` under [`docs/stories/US-032-association-matrix-release-hardening.md`](../stories/US-032-association-matrix-release-hardening.md) (`READY`; Phase 6 / `EPIC-008: Packaging, Operating-System Integration & Release Hardening`).

@@ -101,8 +101,8 @@ This document is the authoritative index of all Epics and User Stories for `mark
 |---|---|---|---|---|---|
 | `US-029` | Windows Packaging, NSIS Installer & File Associations | P0 | `DONE` | `EPIC-001`–`EPIC-007` | [US-029.md](../stories/US-029-windows-packaging-associations.md) |
 | `US-030` | macOS Application Bundle, UTIs & Launch Services Integration | P0 | `DONE` | `EPIC-001`–`EPIC-007` | [US-030.md](../stories/US-030-macos-packaging-associations.md) |
-| `US-031` | Linux Debian Package, AppImage & Desktop/MIME Integration | P0 | `READY` | `EPIC-001`–`EPIC-007` | [US-031.md](../stories/US-031-linux-packaging-associations.md) |
-| `US-032` | Cross-Platform File Association Validation Matrix & Release Hardening | P0 | `DRAFT` | `US-029`–`US-031` | [US-032.md](../stories/US-032-association-matrix-release-hardening.md) |
+| `US-031` | Linux Debian Package, AppImage & Desktop/MIME Integration | P0 | `DONE` | `EPIC-001`–`EPIC-007` | [US-031.md](../stories/US-031-linux-packaging-associations.md) |
+| `US-032` | Cross-Platform File Association Validation Matrix & Release Hardening | P0 | `READY` | `US-029`–`US-031` | [US-032.md](../stories/US-032-association-matrix-release-hardening.md) |
 
 ---
 

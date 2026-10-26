@@ -1,0 +1,11 @@
+{
+  "name": "markdown-viewer",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Fast, cross-platform Markdown Viewer desktop application",
+  "scripts": {
+    "build:deb": "./packaging/linux/build-deb.sh",
+    "build:appimage": "./packaging/linux/build-appimage.sh",
+    "test:package:linux": "./scripts/test-package-linux.sh"
+  }
+}
