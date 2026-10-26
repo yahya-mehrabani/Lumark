@@ -272,11 +272,12 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
               type="button"
               className="doc-theme-toggle-btn"
               onClick={toggleTheme}
-              aria-label={`Current theme: ${theme}. Click to toggle.`}
+              aria-label={`Theme: ${theme.charAt(0).toUpperCase() + theme.slice(1)}. Click to toggle.`}
               title={`Theme: ${theme.charAt(0).toUpperCase() + theme.slice(1)} (Click to toggle)`}
               data-testid="doc-theme-toggle"
+              data-theme-mode={theme}
             >
-              {theme === 'system' ? 'System' : theme === 'dark' ? 'Dark' : 'Light'}
+              {theme === 'system' ? 'Auto' : theme === 'dark' ? 'Dark' : 'Light'}
             </button>
             <button
               type="button"

@@ -205,11 +205,19 @@
   color: #cbd5e1;
   font-size: 11px;
   font-weight: 500;
-  padding: 4px 10px;
+  padding: 4px 8px;
   border-radius: 5px;
   cursor: pointer;
   transition: all 0.15s ease;
   user-select: none;
+  min-width: 62px;
+  width: 62px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex-shrink: 0;
 }
 
 .doc-theme-toggle-btn:hover {
