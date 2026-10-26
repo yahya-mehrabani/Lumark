@@ -2,9 +2,11 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  width: 100vw;
-  background: #06070f;
-  color: #f4f6fb;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  background: var(--bg-primary, #06070f);
+  color: var(--text-primary, #f4f6fb);
   overflow: hidden;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }

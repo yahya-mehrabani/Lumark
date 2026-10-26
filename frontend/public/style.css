@@ -96,13 +96,11 @@ body {
 body {
     min-height: 100vh;
     min-height: 100dvh;
-    display: flex;
-    flex-direction: column;             /* content area + footer pinned to the bottom */
-    /* Respect mobile safe areas (notch / home indicator). No bottom padding:
-       the footer sits flush at the bottom edge. */
-    /* Wider outer margins on the golden scale (φ² top/right, φ³ left). */
-    padding: max(var(--s-4), env(safe-area-inset-top)) max(var(--s-4), env(safe-area-inset-right))
-             0 max(var(--s-5), env(safe-area-inset-left));
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 
 .container {
