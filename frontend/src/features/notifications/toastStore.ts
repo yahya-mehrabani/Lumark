@@ -46,10 +46,24 @@ export class ToastStore {
       createdAt: Date.now(),
     };
 
-    // Cap visible toasts at MAX_VISIBLE_TOASTS, evicting the oldest from the start
+    // Cap visible toasts at MAX_VISIBLE_TOASTS, evicting the oldest non-error toast.
+    // Critical: Active error toasts must NEVER be evicted in favor of routine success/info toasts!
     if (this.toasts.length >= ToastStore.MAX_VISIBLE_TOASTS) {
-      const excess = this.toasts.length - ToastStore.MAX_VISIBLE_TOASTS + 1;
-      this.toasts = [...this.toasts.slice(excess), item];
+      const nonErrorIdx = this.toasts.findIndex((t) => t.type !== 'error');
+      if (nonErrorIdx !== -1) {
+        // Evict oldest routine (non-error) toast
+        this.toasts = [
+          ...this.toasts.slice(0, nonErrorIdx),
+          ...this.toasts.slice(nonErrorIdx + 1),
+          item,
+        ];
+      } else if (item.type === 'error') {
+        // All active toasts are errors; an incoming error evicts the oldest error
+        this.toasts = [...this.toasts.slice(1), item];
+      } else {
+        // All active toasts are errors; routine success/info toasts do not evict errors
+        return id;
+      }
     } else {
       this.toasts = [...this.toasts, item];
     }

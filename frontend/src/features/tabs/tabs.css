@@ -55,7 +55,9 @@
 }
 
 .tab-item:focus-visible {
-  box-shadow: 0 0 0 2px var(--focus-ring, rgba(59, 130, 246, 0.5));
+  outline: 2px solid var(--focus-ring, #38bdf8);
+  outline-offset: -2px;
+  z-index: 2;
 }
 
 [data-theme="light"] .tab-bar-container,

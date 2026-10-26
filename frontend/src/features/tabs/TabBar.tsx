@@ -20,6 +20,14 @@ export const TabBar: React.FC<TabBarProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
+  const selectAndFocusTab = (tabId: string) => {
+    onSelectTab(tabId);
+    requestAnimationFrame(() => {
+      const el = containerRef.current?.querySelector<HTMLElement>(`#tab-${tabId}`);
+      el?.focus();
+    });
+  };
+
   // Keyboard navigation across tablist (Left/Right/Home/End) and global Ctrl/Cmd+W
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (tabs.length === 0) return;
@@ -29,17 +37,17 @@ export const TabBar: React.FC<TabBarProps> = ({
     if (e.key === 'ArrowRight') {
       e.preventDefault();
       const nextIndex = (currentIndex + 1) % tabs.length;
-      onSelectTab(tabs[nextIndex].id);
+      selectAndFocusTab(tabs[nextIndex].id);
     } else if (e.key === 'ArrowLeft') {
       e.preventDefault();
       const prevIndex = (currentIndex - 1 + tabs.length) % tabs.length;
-      onSelectTab(tabs[prevIndex].id);
+      selectAndFocusTab(tabs[prevIndex].id);
     } else if (e.key === 'Home') {
       e.preventDefault();
-      onSelectTab(tabs[0].id);
+      selectAndFocusTab(tabs[0].id);
     } else if (e.key === 'End') {
       e.preventDefault();
-      onSelectTab(tabs[tabs.length - 1].id);
+      selectAndFocusTab(tabs[tabs.length - 1].id);
     } else if ((e.ctrlKey || e.metaKey) && (e.key === 'w' || e.key === 'W')) {
       e.preventDefault();
       if (activeTabId) {

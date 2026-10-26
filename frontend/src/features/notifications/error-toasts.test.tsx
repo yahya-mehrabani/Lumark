@@ -228,6 +228,46 @@ describe('Error Toasts & Notifications', () => {
       expect(screen.getByText('Toast 4')).toBeInTheDocument();
     });
 
+    it('renders ToastContainer with role="region" and aria-live="polite"', () => {
+      const store = new ToastStore();
+      render(<ToastContainer store={store} />);
+
+      act(() => {
+        store.showInfo('Test notification', 0);
+      });
+
+      const container = screen.getByTestId('toast-container');
+      expect(container).toHaveAttribute('role', 'region');
+      expect(container).toHaveAttribute('aria-live', 'polite');
+      expect(container).toHaveAttribute('aria-label', 'Notifications');
+    });
+
+    it('never evicts active error toasts when routine success/info toasts arrive at the 3-toast cap', () => {
+      const store = new ToastStore();
+      render(<ToastContainer store={store} />);
+
+      act(() => {
+        store.showError('Critical disk error', undefined, 0);
+        store.showSuccess('File A loaded', 0);
+        store.showInfo('Indexing complete', 0);
+      });
+
+      expect(screen.getByText('Critical disk error')).toBeInTheDocument();
+      expect(screen.getByText('File A loaded')).toBeInTheDocument();
+      expect(screen.getByText('Indexing complete')).toBeInTheDocument();
+
+      // Now add a 4th routine toast (Success)
+      act(() => {
+        store.showSuccess('File B loaded', 0);
+      });
+
+      // The oldest routine toast ('File A loaded') should be evicted, but 'Critical disk error' MUST remain!
+      expect(screen.getByText('Critical disk error')).toBeInTheDocument();
+      expect(screen.queryByText('File A loaded')).not.toBeInTheDocument();
+      expect(screen.getByText('Indexing complete')).toBeInTheDocument();
+      expect(screen.getByText('File B loaded')).toBeInTheDocument();
+    });
+
     it('deduplicates identical active messages instead of stacking duplicate banners', () => {
       const store = new ToastStore();
       render(<ToastContainer store={store} />);

@@ -66,6 +66,11 @@
   color: #ffffff;
 }
 
+.header-btn:focus-visible {
+  outline: 2px solid var(--focus-ring, #38bdf8);
+  outline-offset: 1px;
+}
+
 /* Main Viewport Container */
 .app-viewport {
   flex: 1 1 auto;

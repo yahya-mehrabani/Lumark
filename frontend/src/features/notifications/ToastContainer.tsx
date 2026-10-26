@@ -31,7 +31,9 @@ export const ToastContainer: React.FC<ToastContainerProps> = ({ store = defaultT
     <div
       className="toast-container"
       data-testid="toast-container"
+      role="region"
       aria-label="Notifications"
+      aria-live="polite"
     >
       {toasts.map((toast) => (
         <ToastNotification
