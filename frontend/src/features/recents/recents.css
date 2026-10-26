@@ -8,13 +8,14 @@
 .recents-dropdown {
   position: absolute;
   top: calc(100% + 6px);
-  left: 0;
-  width: 320px;
-  max-width: 90vw;
-  background-color: var(--theme-bg-surface, #131722);
-  border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.12));
+  right: 0;
+  left: auto;
+  width: min(420px, calc(100vw - 16px));
+  max-width: calc(100vw - 16px);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
   border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   z-index: 1000;
   display: flex;
   flex-direction: column;
@@ -38,7 +39,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 14px;
-  border-bottom: 1px solid var(--theme-border, rgba(255, 255, 255, 0.08));
+  border-bottom: 1px solid var(--border-subtle);
+  background-color: var(--chrome-bg);
 }
 
 .recents-menu-title {
@@ -46,14 +48,14 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--theme-text-muted, #8b949e);
+  color: var(--text-muted);
 }
 
 .recents-clear-btn {
   background: none;
   border: none;
   font-size: 0.75rem;
-  color: var(--theme-text-muted, #8b949e);
+  color: var(--text-muted);
   cursor: pointer;
   padding: 4px 6px;
   border-radius: 4px;
@@ -61,8 +63,8 @@
 }
 
 .recents-clear-btn:hover {
-  color: #f85149;
-  background-color: rgba(248, 81, 73, 0.1);
+  color: var(--danger);
+  background-color: var(--danger-bg);
 }
 
 .recents-menu-list {
@@ -79,13 +81,13 @@
   justify-content: space-between;
   padding: 8px 12px;
   cursor: pointer;
-  border-bottom: 1px solid var(--theme-border-subtle, rgba(255, 255, 255, 0.04));
+  border-bottom: 1px solid var(--border-subtle);
   transition: background-color 0.15s ease;
 }
 
 .recents-menu-item:hover,
 .recents-menu-item:focus-visible {
-  background-color: var(--theme-bg-hover, rgba(255, 255, 255, 0.06));
+  background-color: var(--bg-tertiary);
   outline: none;
 }
 
@@ -100,7 +102,7 @@
 .recents-item-name {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--theme-text-primary, #e6edf3);
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -108,7 +110,7 @@
 
 .recents-item-path {
   font-size: 0.75rem;
-  color: var(--theme-text-muted, #8b949e);
+  color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -119,15 +121,15 @@
   border: none;
   padding: 4px;
   border-radius: 4px;
-  color: var(--theme-text-muted, #8b949e);
+  color: var(--text-muted);
   cursor: pointer;
-  opacity: 0.6;
+  opacity: 0.7;
   transition: opacity 0.15s ease, color 0.15s ease;
 }
 
 .recents-item-remove-btn:hover {
   opacity: 1;
-  color: #f85149;
+  color: var(--danger);
 }
 
 .recent-file-missing-badge {
@@ -136,9 +138,9 @@
   font-weight: 600;
   padding: 1px 6px;
   border-radius: 4px;
-  background-color: rgba(248, 81, 73, 0.15);
-  color: #f85149;
-  border: 1px solid rgba(248, 81, 73, 0.3);
+  background-color: var(--danger-bg);
+  color: var(--danger);
+  border: 1px solid var(--danger-border);
   margin-top: 3px;
   width: fit-content;
 }
@@ -147,5 +149,5 @@
   padding: 24px 16px;
   text-align: center;
   font-size: 0.8125rem;
-  color: var(--theme-text-muted, #8b949e);
+  color: var(--text-muted);
 }

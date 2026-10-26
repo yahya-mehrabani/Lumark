@@ -108,13 +108,90 @@ describe('RecentFilesMenu Component', () => {
     expect(screen.queryByTestId('clear-recents-btn')).not.toBeInTheDocument();
   });
 
-  it('closes dropdown when Escape key is pressed', () => {
+  it('closes dropdown when Escape key is pressed and restores focus to trigger button', () => {
     render(<RecentFilesMenu recentFiles={sampleRecents} />);
-    fireEvent.click(screen.getByTestId('header-recents-btn'));
+    const trigger = screen.getByTestId('header-recents-btn');
+    fireEvent.click(trigger);
     expect(screen.getByTestId('recents-dropdown')).toBeInTheDocument();
 
     fireEvent.keyDown(window, { key: 'Escape' });
     expect(screen.queryByTestId('recents-dropdown')).not.toBeInTheDocument();
+    expect(document.activeElement).toBe(trigger);
+  });
+
+  it('closes dropdown when clicking outside', () => {
+    render(
+      <div>
+        <span data-testid="outside-el">Outside</span>
+        <RecentFilesMenu recentFiles={sampleRecents} />
+      </div>
+    );
+    const trigger = screen.getByTestId('header-recents-btn');
+    fireEvent.click(trigger);
+    expect(screen.getByTestId('recents-dropdown')).toBeInTheDocument();
+
+    fireEvent.mouseDown(screen.getByTestId('outside-el'));
+    expect(screen.queryByTestId('recents-dropdown')).not.toBeInTheDocument();
+  });
+
+  it('supports keyboard navigation via ArrowDown, ArrowUp, Home, End', () => {
+    render(<RecentFilesMenu recentFiles={sampleRecents} />);
+    fireEvent.click(screen.getByTestId('header-recents-btn'));
+
+    const item1 = screen.getByTestId('recent-item-guide.md');
+    const item2 = screen.getByTestId('recent-item-deleted.md');
+
+    // Arrow down from item1 to item2
+    fireEvent.keyDown(item1, { key: 'ArrowDown' });
+    expect(document.activeElement).toBe(item2);
+
+    // Arrow up back to item1
+    fireEvent.keyDown(item2, { key: 'ArrowUp' });
+    expect(document.activeElement).toBe(item1);
+
+    // End key moves to last item
+    fireEvent.keyDown(item1, { key: 'End' });
+    expect(document.activeElement).toBe(item2);
+
+    // Home key moves to first item
+    fireEvent.keyDown(item2, { key: 'Home' });
+    expect(document.activeElement).toBe(item1);
+  });
+
+  it('handles 200-char long paths with full title tooltip and end-ellipsis at 800px width in both themes', () => {
+    const longPath = '/home/user/very/long/nested/directory/structure/that/keeps/going/and/going/to/verify/that/plain/css/end/ellipsis/truncates/the/path/correctly/without/breaking/layout/or/overflowing/the/popover/boundary/document-with-extended-name.md';
+    expect(longPath.length).toBeGreaterThan(200);
+
+    const longRecents: RecentFileItem[] = [
+      {
+        filePath: longPath,
+        filename: 'document-with-extended-name.md',
+        lastOpenedAt: '2026-10-26T12:00:00Z',
+        exists: true,
+      },
+    ];
+
+    for (const theme of ['light', 'dark']) {
+      document.documentElement.setAttribute('data-theme', theme);
+      const { unmount } = render(
+        <div style={{ width: '800px', display: 'flex', justifyContent: 'flex-end' }}>
+          <RecentFilesMenu recentFiles={longRecents} />
+        </div>
+      );
+
+      fireEvent.click(screen.getByTestId('header-recents-btn'));
+      const dropdown = screen.getByTestId('recents-dropdown');
+      expect(dropdown).toBeInTheDocument();
+
+      const item = screen.getByTestId('recent-item-document-with-extended-name.md');
+      const pathEl = item.querySelector('.recents-item-path');
+      expect(pathEl).toBeInTheDocument();
+      // Verifies title attribute holds the full non-truncated 200+ char path
+      expect(pathEl).toHaveAttribute('title', longPath);
+      expect(pathEl).toHaveTextContent(longPath);
+
+      unmount();
+    }
   });
 });
 

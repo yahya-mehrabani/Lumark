@@ -19,6 +19,15 @@ export const RecentFilesMenu: React.FC<RecentFilesMenuProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const triggerBtnRef = useRef<HTMLButtonElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
+
+  const closeMenu = (restoreFocus = true) => {
+    setIsOpen(false);
+    if (restoreFocus) {
+      triggerBtnRef.current?.focus();
+    }
+  };
 
   // Close when clicking outside or pressing Escape
   useEffect(() => {
@@ -27,13 +36,13 @@ export const RecentFilesMenu: React.FC<RecentFilesMenuProps> = ({
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         e.preventDefault();
-        setIsOpen(false);
+        closeMenu(true);
       }
     };
 
     const handleClickOutside = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setIsOpen(false);
+        closeMenu(false);
       }
     };
 
@@ -46,7 +55,7 @@ export const RecentFilesMenu: React.FC<RecentFilesMenuProps> = ({
   }, [isOpen]);
 
   const handleSelect = (filePath: string) => {
-    setIsOpen(false);
+    closeMenu(true);
     onSelectFile?.(filePath);
   };
 
@@ -58,12 +67,42 @@ export const RecentFilesMenu: React.FC<RecentFilesMenuProps> = ({
   const handleClear = (e: React.MouseEvent) => {
     e.stopPropagation();
     onClearFiles?.();
-    setIsOpen(false);
+    closeMenu(true);
+  };
+
+  const handleItemKeyDown = (e: React.KeyboardEvent<HTMLLIElement>, filePath: string, index: number) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleSelect(filePath);
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      const items = listRef.current?.querySelectorAll<HTMLLIElement>('.recents-menu-item');
+      if (items && items.length > 0) {
+        const nextIdx = (index + 1) % items.length;
+        items[nextIdx]?.focus();
+      }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      const items = listRef.current?.querySelectorAll<HTMLLIElement>('.recents-menu-item');
+      if (items && items.length > 0) {
+        const prevIdx = (index - 1 + items.length) % items.length;
+        items[prevIdx]?.focus();
+      }
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      const items = listRef.current?.querySelectorAll<HTMLLIElement>('.recents-menu-item');
+      items?.[0]?.focus();
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      const items = listRef.current?.querySelectorAll<HTMLLIElement>('.recents-menu-item');
+      items?.[items.length - 1]?.focus();
+    }
   };
 
   return (
     <div className={`recents-menu-wrapper ${className}`} ref={containerRef}>
       <button
+        ref={triggerBtnRef}
         type="button"
         className="header-btn"
         onClick={() => setIsOpen((prev) => !prev)}
@@ -102,20 +141,15 @@ export const RecentFilesMenu: React.FC<RecentFilesMenuProps> = ({
               No recent documents
             </div>
           ) : (
-            <ul className="recents-menu-list" role="menu">
-              {recentFiles.map((file) => (
+            <ul className="recents-menu-list" role="menu" ref={listRef}>
+              {recentFiles.map((file, index) => (
                 <li
                   key={file.filePath}
                   className="recents-menu-item"
                   role="menuitem"
                   tabIndex={0}
                   onClick={() => handleSelect(file.filePath)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      handleSelect(file.filePath);
-                    }
-                  }}
+                  onKeyDown={(e) => handleItemKeyDown(e, file.filePath, index)}
                   data-testid={`recent-item-${file.filename}`}
                 >
                   <div className="recents-item-main">
