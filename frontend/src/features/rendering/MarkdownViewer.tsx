@@ -29,6 +29,8 @@ import { useTheme } from '../viewport/themeStore';
 import { useZoom } from '../viewport/zoomController';
 import { useSelectionCopy } from '../viewport/selectionCopy';
 import { usePrint, triggerPrint } from '../viewport/printController';
+import { copyToClipboard } from './clipboard';
+import { truncateMiddlePath } from './utils/pathTruncate';
 import '../../styles/katex.css';
 import './markdown.css';
 
@@ -218,6 +220,24 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
   const { zoom, zoomFactor, zoomIn, zoomOut, resetZoom, canZoomIn, canZoomOut } = useZoom({ enableShortcuts: true });
   usePrint({ enableShortcuts: true });
 
+  const [copiedPath, setCopiedPath] = React.useState(false);
+  const copyPathTimerRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  const handleCopyPath = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!filePath) return;
+    try {
+      await copyToClipboard(filePath);
+      setCopiedPath(true);
+      clearTimeout(copyPathTimerRef.current);
+      copyPathTimerRef.current = setTimeout(() => {
+        setCopiedPath(false);
+      }, 2000);
+    } catch (err) {
+      console.warn('Failed to copy file path:', err);
+    }
+  };
+
   const slugTracker = React.useMemo(() => new SlugTracker(), [content]);
 
   return (
@@ -230,8 +250,28 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
           </div>
           <div className="doc-header-right">
             {filePath && (
-              <div className="doc-path-badge" title={filePath}>
-                <span className="path-label">PATH:</span> {filePath}
+              <div className="doc-path-badge" title={filePath} data-testid="doc-path-badge">
+                <span className="path-label">PATH:</span>
+                <span className="path-text" title={filePath}>{truncateMiddlePath(filePath)}</span>
+                <button
+                  type="button"
+                  className="doc-copy-path-btn"
+                  onClick={handleCopyPath}
+                  aria-label={copiedPath ? 'Path copied to clipboard' : 'Copy file path to clipboard'}
+                  title={copiedPath ? 'Copied!' : 'Copy full path to clipboard'}
+                  data-testid="doc-copy-path-btn"
+                >
+                  {copiedPath ? (
+                    <svg className="copy-icon" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  ) : (
+                    <svg className="copy-icon" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>
+                  )}
+                </button>
               </div>
             )}
             <div className="doc-zoom-controls" data-testid="doc-zoom-controls" role="group" aria-label="Zoom controls">
