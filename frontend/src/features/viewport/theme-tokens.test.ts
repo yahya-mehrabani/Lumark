@@ -149,15 +149,11 @@ describe('Theme Design Tokens & WCAG AA Contrast Compliance (US-023.1)', () => {
       // Tokens defined in BOTH themes
       const definedInBoth = new Set([...darkTokens].filter((t) => lightTokens.has(t)));
 
-      // Justified allowlist for dynamic runtime variables or temporary migrations
+      // Justified allowlist for dynamic runtime variables
       const JUSTIFIED_ALLOWLIST = new Set([
         '--default-contextmenu', // runtime context menu toggle configured on :root
         '--shiki-dark',          // dynamically set by Shiki syntax engine
         '--shiki-light',         // dynamically set by Shiki syntax engine
-        // Temporary exemption for errors.css pending Item 6 migration:
-        '--border-error',
-        '--color-error',
-        '--accent-primary',
       ]);
 
       const srcDir = path.resolve(__dirname, '../..');
