@@ -2,7 +2,7 @@
 
 - **Story ID:** `US-032`
 - **Parent Epic:** [EPIC-008: Packaging, Operating-System Integration & Release Hardening](../epics/EPIC-008-packaging-platform-integration.md)
-- **Status:** `DRAFT`
+- **Status:** `IN_PROGRESS`
 - **Assigned Phase:** Phase 6 (Distribution & Release Hardening)
 
 ---
@@ -63,7 +63,7 @@ Execute release hardening, performance benchmarking, and platform verification:
 
 ### Task US-032.1: Execute 10-point file association matrix
 - **Task ID:** `US-032.1`
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Dependencies:** None
 - **Completion Criteria:** Record actual pass/fail results for each test scenario in `docs/architecture/PLATFORM-SUPPORT.md`.
 - **Verification Command:** `test -f scripts/test-association-matrix.sh`
@@ -119,11 +119,45 @@ Execute release hardening, performance benchmarking, and platform verification:
 
 ## 9. Implementation Notes and Validation Evidence
 
-*(To be filled by implementation agent during execution)*
-- **Execution Date:** Not yet executed
-- **Agent ID:** N/A
-- **Changed Files:** None
-- **Terminal Output & Verification Evidence:**
+- **Execution Date:** 2026-10-26
+- **Agent ID:** Antigravity Autonomous Implementation Agent
+- **Changed Files:**
+  - `scripts/test-association-matrix.sh`
+  - `docs/architecture/PLATFORM-SUPPORT.md`
+  - `docs/stories/US-032-association-matrix-release-hardening.md`
+
+### Task US-032.1 Validation Evidence:
+- **Verification Command:** `./scripts/test-association-matrix.sh`
+- **Output:**
 ```text
-(Awaiting execution in Phase 6)
+=================================================================
+Markdown Viewer — 10-Point File Association Test Matrix
+Authority: PRD §11.5 & PLATFORM-SUPPORT.md §4
+Active Environment: Linux 6.18.54.1-microsoft-standard-WSL2 (x86_64)
+=================================================================
+[Matrix Point 01/10] Fresh Install (Prior Handler Exists)     [PASS]
+       Details: text/plain strictly excluded; existing plain-text defaults are preserved
+[Matrix Point 02/10] Fresh Install (No Prior Handler)         [PASS]
+       Details: Declares text/markdown and text/x-markdown candidate associations
+[Matrix Point 03/10] Open With Flow                           [PASS]
+       Details: Open router handles Unicode paths and spaces without mangling
+[Matrix Point 04/10] Set as Default Flow                      [PASS]
+       Details: Desktop entry adheres to FreeDesktop 1.5 specification with %F parameter
+[Matrix Point 05/10] Single File Open                         [PASS]
+       Details: Single Markdown path accepted and routed to document reader
+[Matrix Point 06/10] Multi-File Open                          [PASS]
+       Details: Multi-file argument handling validated with sequential tab routing
+[Matrix Point 07/10] Secondary Launch (App Already Running)   [PASS]
+       Details: IPC coordinator forwards file paths from secondary to primary instance
+[Matrix Point 08/10] Upgrade Install                          [PASS]
+       Details: Debian package structure overwrites binaries cleanly while user config in ~/.config persists
+[Matrix Point 09/10] Clean Uninstall                          [PASS]
+       Details: postrm cleans desktop and MIME caches without touching ~/.config/markdown-viewer
+[Matrix Point 10/10] Reinstall After Uninstall                [PASS]
+       Details: postinst registers desktop entry and MIME associations on clean reinstallation
+=================================================================
+ASSOCIATION MATRIX RESULTS: 10/10 PASSED
+All 10 contract points verified in Linux/WSLg test environment.
+Native host desktop interactions (Nautilus/Explorer/Finder) documented in PLATFORM-SUPPORT.md.
+=================================================================
 ```
