@@ -29,11 +29,16 @@
 * { box-sizing: border-box; }
 
 html {
-    background: var(--ink);
+    background: var(--bg-primary, var(--ink));
 }
+[data-theme="light"] html,
+.theme-light html {
+    background: var(--bg-primary, #ffffff);
+}
+
 html, body {
     margin: 0;
-    color: var(--text);
+    color: var(--text-primary, var(--text));
 }
 body {
     overflow-x: hidden;
@@ -73,6 +78,19 @@ body {
             rgba(6, 7, 15, 0.42) 64%, rgba(6, 7, 15, 0.30) 100%),
         linear-gradient(0deg, rgba(6, 7, 15, 0.70) 0%, rgba(6, 7, 15, 0.10) 45%),
         url("/bg-desktop.jpg") center / cover no-repeat;
+}
+
+[data-theme="light"] .bg,
+.theme-light .bg {
+    display: none;
+    background: var(--bg-primary, #ffffff);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bg {
+        animation: none !important;
+        transition: none !important;
+    }
 }
 
 body {
