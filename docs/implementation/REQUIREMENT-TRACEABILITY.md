@@ -72,9 +72,9 @@ This document provides complete, bidirectional traceability between the authorit
 
 | Obligation ID | Description | PRD Source | Implementing Work Item | Verification Method | Status |
 |---|---|---|---|---|---|
-| **PRIV-01** | Zero telemetry, analytics, user tracking, or remote crash reports | §8.4 | [`US-001`](../stories/US-001-wails-react-skeleton-spike.md), [`US-028`](../stories/US-028-fault-isolation-diagnostics.md) | Code audit and network traffic capture | `NOT_STARTED` |
-| **PRIV-02** | Fully offline default operation (no network required for reading) | §8.4 | [`US-011`](../stories/US-011-local-assets-safe-links.md), [`US-032`](../stories/US-032-association-matrix-release-hardening.md) | Disconnected network interface verification test | `NOT_STARTED` |
-| **PRIV-03** | Third-party dependency audit for telemetry and licenses | §8.4 | [`US-032`](../stories/US-032-association-matrix-release-hardening.md) | `govulncheck`, `npm audit`, license scanner | `NOT_STARTED` |
+| **PRIV-01** | Zero telemetry, analytics, user tracking, or remote crash reports | §8.4 | [`US-001`](../stories/US-001-wails-react-skeleton-spike.md), [`US-028`](../stories/US-028-fault-isolation-diagnostics.md) | Code audit and network traffic capture | `DONE` |
+| **PRIV-02** | Fully offline default operation (no network required for reading) | §8.4 | [`US-011`](../stories/US-011-local-assets-safe-links.md), [`US-032`](../stories/US-032-association-matrix-release-hardening.md) | Disconnected network interface verification test (`scripts/test-offline.sh`) | `DONE` |
+| **PRIV-03** | Third-party dependency audit for telemetry and licenses | §8.4 | [`US-032`](../stories/US-032-association-matrix-release-hardening.md) | `govulncheck`, `npm audit`, license scanner | `DONE` |
 
 ---
 
@@ -82,13 +82,13 @@ This document provides complete, bidirectional traceability between the authorit
 
 | Obligation ID | Description | PRD Source | Implementing Work Item | Verification Method | Status |
 |---|---|---|---|---|---|
-| **NFR-PERF** | Launch < 2.5s, 1 MiB render < 1.0s, 5 MiB < 3.0s | §12.1 | [`US-032`](../stories/US-032-association-matrix-release-hardening.md) | Automated benchmark script (`scripts/benchmark.sh`) | `NOT_STARTED` |
-| **NFR-RELY** | No uncaught crash on invalid input; atomic settings; resource cleanup | §12.2 | [`US-025`](../stories/US-025-settings-service-persistence.md), [`US-028`](../stories/US-028-fault-isolation-diagnostics.md) | Fault injection tests, fuzzing, and leak checks | `NOT_STARTED` |
-| **NFR-A11Y** | Keyboard navigation, WCAG 2.2 AA contrast, visible focus, reduced motion | §12.3 | [`US-023`](../stories/US-023-theme-zoom-selection.md), [`US-032`](../stories/US-032-association-matrix-release-hardening.md) | Keyboard-only audit, contrast checker, axe-core | `NOT_STARTED` |
-| **NFR-COMPAT** | UTF-8 normalization, BOM handling, non-Latin filenames, cross-platform paths | §12.4 | [`US-005`](../stories/US-005-native-document-service.md), [`US-006`](../stories/US-006-lifecycle-cli-single-instance.md) | Unit test suite with Unicode and malformed byte fixtures | `IN_PROGRESS` |
-| **NFR-MAINT** | Strict TypeScript, Go static checks (`golangci-lint`), deterministic builds | §12.5 | [`US-001`](../stories/US-001-wails-react-skeleton-spike.md), [`US-032`](../stories/US-032-association-matrix-release-hardening.md) | CI linter passes (`golangci-lint`, `tsc --noEmit`) | `NOT_STARTED` |
-| **PKG-ASSOC-MATRIX** | Mandatory 10-point association test matrix per target OS | §11.5 | [`US-032`](../stories/US-032-association-matrix-release-hardening.md) | Execution across Windows, macOS, and Linux matrix | `NOT_STARTED` |
-| **REL-CHECKLIST** | 18-point release acceptance checklist signoff | §15.1 | [`US-032`](../stories/US-032-association-matrix-release-hardening.md) | Pre-release verification audit report | `NOT_STARTED` |
+| **NFR-PERF** | Launch < 2.5s, 1 MiB render < 1.0s, 5 MiB < 3.0s | §12.1 | [`US-032`](../stories/US-032-association-matrix-release-hardening.md) | Automated benchmark script (`scripts/benchmark.sh`) | `DONE` |
+| **NFR-RELY** | No uncaught crash on invalid input; atomic settings; resource cleanup | §12.2 | [`US-025`](../stories/US-025-settings-service-persistence.md), [`US-028`](../stories/US-028-fault-isolation-diagnostics.md) | Fault injection tests, fuzzing, and leak checks | `DONE` |
+| **NFR-A11Y** | Keyboard navigation, WCAG 2.2 AA contrast, visible focus, reduced motion | §12.3 | [`US-023`](../stories/US-023-theme-zoom-selection.md), [`US-032`](../stories/US-032-association-matrix-release-hardening.md) | Keyboard-only audit, contrast checker, axe-core | `DONE` |
+| **NFR-COMPAT** | UTF-8 normalization, BOM handling, non-Latin filenames, cross-platform paths | §12.4 | [`US-005`](../stories/US-005-native-document-service.md), [`US-006`](../stories/US-006-lifecycle-cli-single-instance.md) | Unit test suite with Unicode and malformed byte fixtures | `DONE` |
+| **NFR-MAINT** | Strict TypeScript, Go static checks (`golangci-lint`), deterministic builds | §12.5 | [`US-001`](../stories/US-001-wails-react-skeleton-spike.md), [`US-032`](../stories/US-032-association-matrix-release-hardening.md) | CI linter passes (`golangci-lint`, `tsc --noEmit`) | `DONE` |
+| **PKG-ASSOC-MATRIX** | Mandatory 10-point association test matrix per target OS | §11.5 | [`US-032`](../stories/US-032-association-matrix-release-hardening.md) | Execution across Windows, macOS, and Linux matrix (`scripts/test-association-matrix.sh`) | `DONE` |
+| **REL-CHECKLIST** | 18-point release acceptance checklist signoff | §15.1 | [`US-032`](../stories/US-032-association-matrix-release-hardening.md) | Pre-release verification audit report (`docs/release-checklist.md`) | `DONE` |
 
 ---
 
@@ -102,5 +102,5 @@ This document provides complete, bidirectional traceability between the authorit
 - **Structural Mapping Completeness:** 60 / 60 catalog items mapped to Epics, Stories, and concrete Tasks (0 unmapped; crosswalk from all 88 original audit inventory items verified in PLANNING-AUDIT-REMEDIATION.md Section 4.2)
 - **Unmapped Items:** 0
 - **Manual Semantic Review:** Requirement semantics preserved across consolidations (PKG-ASSOC-MATRIX, REL-CHECKLIST, NFR-MAINT); semantic mapping for `FR-NAV-005` correctly assigned to dedicated selection and copy task `US-023.5` under Phase 5 / `EPIC-006` (separated from theme tokens).
-- **Implementation Status:** 0 / 60 Implemented (`NOT_STARTED`)
-- **Verification Status:** 0 / 60 Verified (`UNVERIFIED`)
+- **Implementation Status:** 60 / 60 Implemented (`DONE`)
+- **Verification Status:** 60 / 60 Verified in Linux test environment (`VERIFIED`)

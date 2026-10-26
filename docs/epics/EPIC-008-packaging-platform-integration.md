@@ -2,7 +2,7 @@
 
 - **Epic ID:** `EPIC-008`
 - **Title:** Packaging, Operating-System Integration & Release Hardening
-- **Status:** `DRAFT`
+- **Status:** `DONE`
 - **Phase:** Phase 6 (Distribution & Release Hardening)
 - **Target Release:** MVP Release
 

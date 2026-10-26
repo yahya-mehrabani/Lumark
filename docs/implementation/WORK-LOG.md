@@ -4126,3 +4126,49 @@ This log is an append-only chronological record of all significant actions, veri
 - **Active Story:** `US-031: Linux Debian Package, AppImage & Desktop/MIME Integration` (`DONE`).
 - **Completed Tasks:** `US-031.1` (`DONE`), `US-031.2` (`DONE`), `US-031.3` (`DONE`), `US-031.4` (`DONE`).
 - **Next Eligible Story:** `US-032: Cross-Platform File Association Validation Matrix & Release Hardening` under [`docs/stories/US-032-association-matrix-release-hardening.md`](../stories/US-032-association-matrix-release-hardening.md) (`READY`; Phase 6 / `EPIC-008: Packaging, Operating-System Integration & Release Hardening`).
+
+---
+
+## 2026-10-26 — Execution of Story US-032: Cross-Platform File Association Validation Matrix & Release Hardening (Tasks US-032.1 – US-032.4)
+
+### Context & Goals:
+- Execute release hardening, performance benchmarking, and platform verification for the Markdown Viewer desktop application per PRD Section 11.5, Section 12.1, and Section 15.1.
+- Complete the 10-point File Association Test Matrix (`scripts/test-association-matrix.sh`).
+- Execute performance benchmark suite (`scripts/benchmark.sh`) measuring startup latency, 1 MiB / 5 MiB rendering times, and memory boundedness.
+- Verify complete offline functionality with isolated network namespace (`scripts/test-offline.sh`).
+- Establish and sign off the 18-point Release Acceptance Checklist (`docs/release-checklist.md`).
+- Publish release notes and update versioning to `0.1.0` in `CHANGELOG.md` and `README.md`.
+
+### Work Completed:
+- **Task US-032.1: Execute 10-point file association matrix (`DONE`):**
+  - Implemented `scripts/test-association-matrix.sh` executing all 10 contract checks from PRD §11.5.
+  - Documented cross-platform association matrix evaluation in `docs/architecture/PLATFORM-SUPPORT.md` Section 4.
+  - Verified 10/10 association points pass under Linux/WSLg test environment.
+- **Task US-032.2: Execute performance benchmark suite (`DONE`):**
+  - Created Go backend document processing benchmarks in `internal/documents/benchmark_test.go` (`BenchmarkDecodeUTF8_1MiB`, `BenchmarkDecodeUTF8_5MiB`, `BenchmarkReadDocument_1MiB`, `BenchmarkReadDocument_5MiB`).
+  - Created Vitest frontend rendering benchmark in `frontend/src/features/rendering/rendering-benchmark.test.tsx` testing cold start, 1 MiB document render, 5 MiB stream/chunk render, and memory boundedness.
+  - Created orchestrator benchmark runner `scripts/benchmark.sh` and wired `npm run benchmark`.
+  - All PRD §12.1 targets verified: cold start ~34ms (< 2.5s), 1 MiB backend read 2.2ms, 5 MiB read 7.2ms, 5 MiB initial chunk render 1.69s (< 3.0s), bounded memory.
+- **Task US-032.3: Verify complete offline rendering & establish release checklist (`DONE`):**
+  - Created `scripts/test-offline.sh` scanning frontend code for remote CDN/font URLs and running fixture tests inside network-isolated namespace (`unshare -n`).
+  - Created `docs/release-checklist.md` mapping all 18 criteria from PRD §15.1.
+- **Task US-032.4: Sign off Release Acceptance Checklist & Documentation (`DONE`):**
+  - Released version `0.1.0` in `CHANGELOG.md` documenting all features across all 8 Epics.
+  - Updated `README.md` to reflect MVP Release Hardened status.
+  - Completed sign-off in `docs/release-checklist.md`.
+  - Marked Story `US-032` and Epic `EPIC-008` as `DONE`.
+  - Updated `docs/implementation/BACKLOG.md` (32/32 Stories `DONE`), `docs/implementation/REQUIREMENT-TRACEABILITY.md` (60/60 Requirements `DONE`), and `docs/implementation/CURRENT-STATE.md`.
+
+### Verification Results:
+- `./scripts/test-association-matrix.sh`: 10/10 points passed (PASS).
+- `npm run benchmark`: All targets passed (< 2.5s cold start, 2.2ms 1 MiB read, 7.2ms 5 MiB read, 1.69s 5 MiB chunk render) (PASS).
+- `./scripts/test-offline.sh`: 0 remote CDN URLs, 20 bundled fonts, unshared network render verified (PASS).
+- `golangci-lint run internal/documents/...`: 0 issues (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).
+- `git diff -- PRD.md`: Empty output (PRD strictly preserved) (PASS).
+
+### Current Status:
+- **All Implementation Phases (Phase 1 through Phase 6) Complete.**
+- **All 8 Epics (`EPIC-001` through `EPIC-008`) Complete.**
+- **All 32 User Stories (`US-001` through `US-032`) Complete.**
+- **Next Permitted Action:** Post-Implementation Cross-Platform Validation Process (evaluating native Windows 10/11 x64 host and macOS Apple Silicon runtime integration per deferred checklist in `docs/release-checklist.md`).

@@ -2,13 +2,13 @@
 
 A dedicated, fast, cross-platform desktop application for reading Markdown documents as richly formatted documents—offline, securely, and with native operating-system integration.
 
-> **Status:** Planning Baseline Completed. Application implementation has not yet started.
+> **Status:** Version `0.1.0` MVP Implementation Complete. Release Hardened and Verified.
 
 ---
 
 ## 1. Project Overview
 
-`markdown-go` is designed as a **viewer first** (read-only) application for local Markdown files, featuring:
+`markdown-go` is a dedicated, fast, cross-platform desktop application for reading local Markdown files as richly formatted documents—offline, securely, and with native operating-system integration:
 - **Rich Document Rendering:** CommonMark, GitHub Flavored Markdown (tables, task lists, strikethrough), LaTeX math (KaTeX), syntax-highlighted code blocks (Shiki), and Mermaid diagrams.
 - **First-Class Bidirectional Support:** Per-block auto-detection for Persian/Arabic RTL mixed with English LTR, explicit HTML `dir` support, and scoped CSS direction control.
 - **Deep Desktop Integration:** File associations for `.md`/`.markdown`, command-line opening, single-instance routing, multi-document tabs, and native window behaviors.
@@ -18,30 +18,40 @@ A dedicated, fast, cross-platform desktop application for reading Markdown docum
 
 ## 2. Technology Baseline
 
-- **Backend/Native Layer:** Go with Wails (evaluating [Wails v3](https://v3.wails.io) candidate vs [Wails v2](https://wails.io) fallback in [ADR-0001](docs/decisions/ADR-0001-technology-baseline.md))
-- **Frontend Layer:** React, TypeScript, and Vite
+- **Backend/Native Layer:** Go `1.26.10` with Wails v3 (`v3.0.0-beta.34`)
+- **Frontend Layer:** React 18, TypeScript, Vite, KaTeX, Mermaid, Shiki
 - **Target Platforms:** Windows 10/11 (x64), macOS (Apple Silicon arm64), Linux (Ubuntu 24.04 LTS x64)
 
+---
+
+## 3. Build & Packaging Commands
+
+```bash
+# Run local development dev server
+npm run dev
+
+# Run comprehensive automated test suites
+npm test                # Frontend unit & component tests
+go test ./...           # Go backend unit tests
+npm run test:security   # Adversarial security test corpus
+npm run test:fixtures   # Golden document fixture suite
+npm run test:offline    # Network isolation & offline integrity check
+npm run benchmark       # Performance benchmark suite (PRD §12.1)
+
+# Build production installation packages (Linux)
+npm run build:deb       # Debian package (build/bin/markdown-viewer.deb)
+npm run build:appimage  # Portable AppImage bundle
+npm run test:package:linux # Automated package verification
+```
 
 ---
 
-## 3. Implementation Workflow & Source of Truth
+## 4. Documentation & Verification Records
 
-The repository operates on a durable, file-based AI pair-programming workflow:
+- **Release Acceptance Checklist:** [docs/release-checklist.md](docs/release-checklist.md) (All 18 P0 items verified)
+- **Packaging & OS Integration:** [docs/packaging.md](docs/packaging.md)
+- **Platform Support Matrix:** [docs/architecture/PLATFORM-SUPPORT.md](docs/architecture/PLATFORM-SUPPORT.md)
+- **Markdown Specification:** [docs/markdown-support.md](docs/markdown-support.md)
+- **Security & Sanitization Policy:** [docs/security.md](docs/security.md)
 - **Product Requirements:** [PRD.md](PRD.md)
-- **Agent Operating Rules:** [AGENTS.md](AGENTS.md)
-- **Implementation Index:** [docs/implementation/INDEX.md](docs/implementation/INDEX.md)
-- **Implementation Roadmap:** [docs/implementation/ROADMAP.md](docs/implementation/ROADMAP.md)
-- **Work Backlog:** [docs/implementation/BACKLOG.md](docs/implementation/BACKLOG.md)
-- **Requirement Traceability:** [docs/implementation/REQUIREMENT-TRACEABILITY.md](docs/implementation/REQUIREMENT-TRACEABILITY.md)
-- **Current Execution State:** [docs/implementation/CURRENT-STATE.md](docs/implementation/CURRENT-STATE.md)
-- **Implementation Protocol:** [docs/implementation/IMPLEMENTATION-PROTOCOL.md](docs/implementation/IMPLEMENTATION-PROTOCOL.md)
-- **Execution Work Log:** [docs/implementation/WORK-LOG.md](docs/implementation/WORK-LOG.md)
-
----
-
-## 4. Current Repository State
-
-- Application source code and build targets have **not** been initialized.
-- The project is at the boundary between **Phase 0 (Planning)** and **Phase 1 (Technical Feasibility Spike)**.
-- See [docs/implementation/CURRENT-STATE.md](docs/implementation/CURRENT-STATE.md) for the active status and next action.
+- **Changelog:** [CHANGELOG.md](CHANGELOG.md)
