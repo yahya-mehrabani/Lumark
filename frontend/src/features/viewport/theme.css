@@ -28,6 +28,9 @@
   --chrome-bg: #090d16;
   --chrome-border: rgba(255, 255, 255, 0.14);
   --bg-surface-toast: #1e1e2e;
+  --danger: #f87171;
+  --danger-bg: rgba(239, 68, 68, 0.1);
+  --danger-border: rgba(239, 68, 68, 0.35);
   color-scheme: dark;
 }
 
@@ -51,6 +54,9 @@
   --chrome-bg: #f8fafc;
   --chrome-border: #e2e8f0;
   --bg-surface-toast: #ffffff;
+  --danger: #dc2626;
+  --danger-bg: rgba(220, 38, 38, 0.06);
+  --danger-border: rgba(220, 38, 38, 0.3);
   color-scheme: light;
 }
 
@@ -74,6 +80,9 @@
     --focus-ring: rgba(37, 99, 235, 0.5);
     --chrome-bg: #f8fafc;
     --chrome-border: #e2e8f0;
+    --danger: #dc2626;
+    --danger-bg: rgba(220, 38, 38, 0.06);
+    --danger-border: rgba(220, 38, 38, 0.3);
     color-scheme: light;
   }
 }
