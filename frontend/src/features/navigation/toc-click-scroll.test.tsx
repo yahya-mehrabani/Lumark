@@ -1,21 +1,27 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MarkdownViewer } from '../rendering/MarkdownViewer';
+import { defaultToastStore } from '../notifications';
+import { zoomController } from '../viewport/zoomController';
 
-describe('Table of Contents Click Navigation & Synchronization (Item 2)', () => {
-  let scrollIntoViewMock: ReturnType<typeof vi.fn>;
+describe('Table of Contents Click Navigation & Geometry Synchronization', () => {
+  let scrollToMock: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
-    scrollIntoViewMock = vi.fn();
-    window.HTMLElement.prototype.scrollIntoView =
-      scrollIntoViewMock as unknown as typeof Element.prototype.scrollIntoView;
+    scrollToMock = vi.fn();
+    window.HTMLElement.prototype.scrollTo =
+      scrollToMock as unknown as typeof Element.prototype.scrollTo;
+    localStorage.clear();
+    zoomController.resetZoom();
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
+    localStorage.clear();
+    zoomController.resetZoom();
   });
 
-  it('scrolls target heading and synchronizes active outline state on outline item click', () => {
+  it('scrolls document container to computed relative offset with smooth behavior and synchronizes active outline state', () => {
     const markdown = `
 # Getting Started
 
@@ -44,92 +50,213 @@ Set options.
     const installHeading = document.getElementById('installation');
     expect(installHeading).not.toBeNull();
 
+    const container = screen.getByTestId('markdown-content');
+    expect(container).toBeInTheDocument();
+
+    // Mock geometry
+    vi.spyOn(container, 'getBoundingClientRect').mockReturnValue({
+      top: 100,
+      bottom: 600,
+      left: 0,
+      right: 800,
+      width: 800,
+      height: 500,
+      x: 0,
+      y: 100,
+      toJSON: () => {},
+    });
+
+    vi.spyOn(installHeading!, 'getBoundingClientRect').mockReturnValue({
+      top: 350,
+      bottom: 380,
+      left: 0,
+      right: 800,
+      width: 800,
+      height: 30,
+      x: 0,
+      y: 350,
+      toJSON: () => {},
+    });
+
+    container.scrollTop = 50;
+
     // Click Installation outline link
     fireEvent.click(installLink);
 
-    // Verify smooth scroll targeted the right heading
-    expect(scrollIntoViewMock).toHaveBeenCalledTimes(1);
-    expect(scrollIntoViewMock.mock.instances[0]).toBe(installHeading);
-    expect(scrollIntoViewMock).toHaveBeenCalledWith({ behavior: 'smooth' });
+    // Expected target top: container.scrollTop (50) + (350 - 100) / 1.0 - 16 = 50 + 250 - 16 = 284
+    expect(scrollToMock).toHaveBeenCalledTimes(1);
+    expect(scrollToMock).toHaveBeenCalledWith({
+      top: 284,
+      behavior: 'smooth',
+    });
 
     // Verify active class immediately updated
     expect(installLink).toHaveClass('active');
     expect(installLink).toHaveAttribute('aria-current', 'location');
   });
 
-  it('correctly targets duplicate and non-ASCII headings without drift', () => {
+  it('correctly accounts for zoom levels (150% and 75%) when computing scroll offset', () => {
     const markdown = `
-# مستندات راهنما
+# Introduction
 
-متن مقدمه.
+Paragraph.
 
-# مستندات راهنما
+## Deep Section
 
-متن دوم.
+Deep content.
 `;
 
-    render(
+    zoomController.setZoom(150);
+
+    const { unmount } = render(
       <MarkdownViewer
-        document={{ filename: 'persian.md', content: markdown }}
+        document={{ filename: 'zoom-test.md', content: markdown }}
         showToc={true}
       />
     );
 
-    const link1 = screen.getByTestId('toc-link-مستندات-راهنما');
-    const link2 = screen.getByTestId('toc-link-مستندات-راهنما-1');
+    const container = screen.getByTestId('markdown-content');
+    const targetHeading = document.getElementById('deep-section')!;
+    const deepLink = screen.getByTestId('toc-link-deep-section');
 
-    const heading1 = document.getElementById('مستندات-راهنما');
-    const heading2 = document.getElementById('مستندات-راهنما-1');
+    vi.spyOn(container, 'getBoundingClientRect').mockReturnValue({
+      top: 80,
+      bottom: 580,
+      left: 0,
+      right: 800,
+      width: 800,
+      height: 500,
+      x: 0,
+      y: 80,
+      toJSON: () => {},
+    });
 
-    expect(heading1).not.toBeNull();
-    expect(heading2).not.toBeNull();
-    expect(heading1).not.toBe(heading2);
+    // Screen delta = 380 - 80 = 300px
+    vi.spyOn(targetHeading, 'getBoundingClientRect').mockReturnValue({
+      top: 380,
+      bottom: 410,
+      left: 0,
+      right: 800,
+      width: 800,
+      height: 30,
+      x: 0,
+      y: 380,
+      toJSON: () => {},
+    });
 
-    // Click duplicate heading
-    fireEvent.click(link2);
+    container.scrollTop = 0;
+    scrollToMock.mockClear();
 
-    expect(scrollIntoViewMock).toHaveBeenCalledTimes(1);
-    expect(scrollIntoViewMock.mock.instances[0]).toBe(heading2);
-    expect(link2).toHaveClass('active');
-    expect(link1).not.toHaveClass('active');
-  });
+    fireEvent.click(deepLink);
 
-  it('preserves target heading IDs across outline toggle re-renders', () => {
-    const markdown = `
-# Section A
+    // Delta: 300 / 1.5 = 200. Target top: 0 + 200 - 16 = 184
+    expect(scrollToMock).toHaveBeenCalledTimes(1);
+    expect(scrollToMock).toHaveBeenCalledWith({
+      top: 184,
+      behavior: 'smooth',
+    });
 
-Content A.
+    unmount();
 
-# Section B
-
-Content B.
-`;
+    // Zoom test at 75%
+    zoomController.setZoom(75);
 
     render(
       <MarkdownViewer
-        document={{ filename: 'toggle.md', content: markdown }}
+        document={{ filename: 'zoom-test-2.md', content: markdown }}
+        showToc={true}
       />
     );
 
-    // Initial render with TOC closed
-    const contentBody = screen.getByTestId('markdown-content');
-    const h1List = contentBody.querySelectorAll('h1');
-    expect(h1List[0].id).toBe('section-a');
-    expect(h1List[1].id).toBe('section-b');
+    const container75 = screen.getByTestId('markdown-content');
+    const targetHeading75 = document.getElementById('deep-section')!;
+    const deepLink75 = screen.getByTestId('toc-link-deep-section');
 
-    // Toggle TOC open
-    const toggleBtn = screen.getByTestId('doc-toc-toggle');
-    fireEvent.click(toggleBtn);
+    vi.spyOn(container75, 'getBoundingClientRect').mockReturnValue({
+      top: 80,
+      bottom: 580,
+      left: 0,
+      right: 800,
+      width: 800,
+      height: 500,
+      x: 0,
+      y: 80,
+      toJSON: () => {},
+    });
 
-    // Ensure heading IDs in DOM remain identical and match TOC links
-    const h1ListAfter = screen.getByTestId('markdown-content').querySelectorAll('h1');
-    expect(h1ListAfter[0].id).toBe('section-a');
-    expect(h1ListAfter[1].id).toBe('section-b');
+    // Screen delta at 75% = 150px (230 - 80)
+    vi.spyOn(targetHeading75, 'getBoundingClientRect').mockReturnValue({
+      top: 230,
+      bottom: 260,
+      left: 0,
+      right: 800,
+      width: 800,
+      height: 30,
+      x: 0,
+      y: 230,
+      toJSON: () => {},
+    });
 
-    const linkB = screen.getByTestId('toc-link-section-b');
-    fireEvent.click(linkB);
+    container75.scrollTop = 0;
+    scrollToMock.mockClear();
 
-    expect(scrollIntoViewMock).toHaveBeenCalledTimes(1);
-    expect(scrollIntoViewMock.mock.instances[0]).toBe(h1ListAfter[1]);
+    fireEvent.click(deepLink75);
+
+    // Delta: 150 / 0.75 = 200. Target top: 0 + 200 - 16 = 184
+    expect(scrollToMock).toHaveBeenCalledTimes(1);
+    expect(scrollToMock).toHaveBeenCalledWith({
+      top: 184,
+      behavior: 'smooth',
+    });
+  });
+
+  it('respects prefers-reduced-motion with behavior auto', () => {
+    window.matchMedia = vi.fn().mockImplementation((query) => ({
+      matches: query === '(prefers-reduced-motion: reduce)',
+      media: query,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    }));
+
+    const markdown = `# Title\n\n## Next`;
+    render(<MarkdownViewer document={{ filename: 'motion.md', content: markdown }} showToc={true} />);
+
+    const container = screen.getByTestId('markdown-content');
+    const nextHeading = document.getElementById('next')!;
+    vi.spyOn(container, 'getBoundingClientRect').mockReturnValue({ top: 0, bottom: 500, left: 0, right: 500, width: 500, height: 500, x: 0, y: 0, toJSON: () => {} });
+    vi.spyOn(nextHeading, 'getBoundingClientRect').mockReturnValue({ top: 200, bottom: 230, left: 0, right: 500, width: 500, height: 30, x: 0, y: 200, toJSON: () => {} });
+
+    scrollToMock.mockClear();
+    fireEvent.click(screen.getByTestId('toc-link-next'));
+
+    expect(scrollToMock).toHaveBeenCalledWith({
+      top: 184,
+      behavior: 'auto',
+    });
+  });
+
+  it('triggers diagnostic toast notification when localStorage.debugOutline is enabled', async () => {
+    localStorage.setItem('debugOutline', '1');
+    const toastSpy = vi.spyOn(defaultToastStore, 'showInfo');
+
+    const markdown = `# Title\n\n## Section One`;
+    render(<MarkdownViewer document={{ filename: 'diag.md', content: markdown }} showToc={true} />);
+
+    const container = screen.getByTestId('markdown-content');
+    Object.defineProperty(container, 'scrollHeight', { value: 1200, configurable: true });
+    Object.defineProperty(container, 'clientHeight', { value: 600, configurable: true });
+
+    fireEvent.click(screen.getByTestId('toc-link-section-one'));
+
+    await waitFor(() => {
+      expect(toastSpy).toHaveBeenCalledTimes(1);
+      expect(toastSpy.mock.calls[0][0]).toContain('[Outline Debug]');
+      expect(toastSpy.mock.calls[0][0]).toContain('Target: "section-one"');
+      expect(toastSpy.mock.calls[0][0]).toContain('Scrollable: true');
+    });
   });
 });

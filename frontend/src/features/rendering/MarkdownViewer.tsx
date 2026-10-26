@@ -423,6 +423,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
             onClose={tocToggle.close}
             onSelectHeading={onNavigateAnchor}
             containerRef={contentRef}
+            zoomFactor={zoomFactor}
           />
         )}
       </div>

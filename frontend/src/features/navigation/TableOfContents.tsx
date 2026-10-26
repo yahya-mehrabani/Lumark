@@ -3,6 +3,7 @@ import { TocItem, TocNode } from './types';
 import { buildTocTree } from './tocGenerator';
 import { useTableOfContents } from './useTableOfContents';
 import { useScrollSpy } from './useScrollSpy';
+import { defaultToastStore } from '../notifications';
 import './toc.css';
 
 export interface TableOfContentsProps {
@@ -10,6 +11,7 @@ export interface TableOfContentsProps {
   tree?: TocNode[];
   markdown?: string;
   containerRef?: React.RefObject<HTMLElement | null>;
+  zoomFactor?: number;
   activeId?: string;
   onSelectHeading?: (id: string) => void;
   onClose?: () => void;
@@ -30,6 +32,7 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
   tree: propsTree,
   markdown,
   containerRef,
+  zoomFactor: propsZoomFactor,
   activeId: propsActiveId,
   onSelectHeading,
   onClose,
@@ -132,7 +135,57 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
       }
     }
 
-    if (target) {
+    if (container && target) {
+      const TOP_SCROLL_PADDING = 16;
+      const containerRect = container.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+
+      const currentZoom =
+        propsZoomFactor ??
+        (() => {
+          if (typeof window !== 'undefined' && container.parentElement) {
+            const z = parseFloat(window.getComputedStyle(container.parentElement).zoom || '1');
+            return isNaN(z) || z <= 0 ? 1 : z;
+          }
+          return 1;
+        })();
+
+      const deltaY = (targetRect.top - containerRect.top) / currentZoom;
+      const targetScrollTop = Math.max(0, container.scrollTop + deltaY - TOP_SCROLL_PADDING);
+
+      const prefersReducedMotion =
+        typeof window !== 'undefined' &&
+        window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+      const behavior: ScrollBehavior = prefersReducedMotion ? 'auto' : 'smooth';
+
+      const beforeScrollTop = container.scrollTop;
+
+      if (typeof container.scrollTo === 'function') {
+        try {
+          container.scrollTo({ top: targetScrollTop, behavior });
+        } catch {
+          container.scrollTop = targetScrollTop;
+        }
+      } else {
+        container.scrollTop = targetScrollTop;
+      }
+
+      // Explicit fallback for non-animating environments
+      if (behavior === 'auto' && container.scrollTop !== targetScrollTop) {
+        container.scrollTop = targetScrollTop;
+      }
+
+      // DIAGNOSTIC MODE: Opt-in via localStorage.debugOutline = "1"
+      if (typeof window !== 'undefined' && window.localStorage?.getItem('debugOutline') === '1') {
+        requestAnimationFrame(() => {
+          const afterScrollTop = container.scrollTop;
+          const isScrollable = container.scrollHeight > container.clientHeight;
+          const diagMsg = `[Outline Debug] Target: "${target?.id}" | Scrollable: ${isScrollable} (scrollHeight: ${container.scrollHeight}px, clientHeight: ${container.clientHeight}px) | scrollTop: ${beforeScrollTop} -> ${afterScrollTop} (target: ${Math.round(targetScrollTop)}) | zoom: ${currentZoom}`;
+          defaultToastStore.showInfo(diagMsg);
+          console.info(diagMsg);
+        });
+      }
+    } else if (target) {
       target.scrollIntoView({ behavior: 'smooth' });
     }
   };
