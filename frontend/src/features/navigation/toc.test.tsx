@@ -6,11 +6,15 @@ import { extractHeadingsFromMarkdown, buildTocTree } from './tocGenerator';
 
 describe('Table of Contents Acceptance Criteria & Integration Suite (US-021.4)', () => {
   let scrollIntoViewMock: ReturnType<typeof vi.fn>;
+  let scrollToMock: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     scrollIntoViewMock = vi.fn();
     window.HTMLElement.prototype.scrollIntoView =
       scrollIntoViewMock as unknown as typeof Element.prototype.scrollIntoView;
+    scrollToMock = vi.fn();
+    window.HTMLElement.prototype.scrollTo =
+      scrollToMock as unknown as typeof Element.prototype.scrollTo;
 
     // Mock IntersectionObserver
     window.IntersectionObserver = vi.fn(function (this: any) {
@@ -102,8 +106,10 @@ describe('Table of Contents Acceptance Criteria & Integration Suite (US-021.4)',
     fireEvent.click(fifthHeadingLink);
 
     // Verify smooth scroll was dispatched
-    expect(scrollIntoViewMock).toHaveBeenCalledTimes(1);
-    expect(scrollIntoViewMock).toHaveBeenCalledWith({ behavior: 'smooth' });
+    expect(scrollToMock).toHaveBeenCalledTimes(1);
+    expect(scrollToMock).toHaveBeenCalledWith(
+      expect.objectContaining({ behavior: 'smooth' })
+    );
   });
 
   it('Criterion 3: Scrolling down updates the highlighted TOC item to match the current viewport section', () => {
@@ -166,7 +172,9 @@ Third example code.
 
     // Clicking the 2nd duplicate heading scrolls to #example-1
     fireEvent.click(tocLinks[1]);
-    expect(scrollIntoViewMock).toHaveBeenCalledWith({ behavior: 'smooth' });
+    expect(scrollToMock).toHaveBeenCalledWith(
+      expect.objectContaining({ behavior: 'smooth' })
+    );
   });
 
   it('Criterion 5: Documents without headings collapse the TOC sidebar cleanly and disable the toggle', () => {
@@ -220,7 +228,9 @@ console.log('No headings here');
     expect(link).toHaveAttribute('href', '#راهنمای-نصب-و-راه-اندازی');
 
     fireEvent.click(link);
-    expect(scrollIntoViewMock).toHaveBeenCalledWith({ behavior: 'smooth' });
+    expect(scrollToMock).toHaveBeenCalledWith(
+      expect.objectContaining({ behavior: 'smooth' })
+    );
   });
 
   it('Keyboard Navigation: Toggles outline on Ctrl+Shift+O keyboard shortcut', () => {
