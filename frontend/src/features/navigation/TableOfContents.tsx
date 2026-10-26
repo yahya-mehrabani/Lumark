@@ -49,11 +49,30 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
     return hookData.tree;
   }, [propsTree, propsItems, hookData.tree]);
 
+  const itemIds = useMemo(() => {
+    return propsActiveId ? undefined : effectiveItems.map((i) => i.id);
+  }, [propsActiveId, effectiveItems]);
+
+  const [clickedId, setClickedId] = React.useState<string | null>(null);
+
   const spyData = useScrollSpy({
     containerRef,
-    itemIds: propsActiveId ? undefined : effectiveItems.map((i) => i.id),
+    itemIds,
   });
-  const activeId = propsActiveId ?? spyData.activeId;
+
+  React.useEffect(() => {
+    const scrollTarget = containerRef?.current ?? (typeof window !== 'undefined' ? window : null);
+    if (!scrollTarget) return;
+
+    const handleScroll = () => {
+      setClickedId(null);
+    };
+
+    scrollTarget.addEventListener('scroll', handleScroll, { passive: true });
+    return () => scrollTarget.removeEventListener('scroll', handleScroll);
+  }, [containerRef]);
+
+  const activeId = propsActiveId ?? clickedId ?? spyData.activeId;
 
   const hasHeadings = effectiveItems.length > 0;
 
@@ -64,19 +83,50 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
   const handleHeadingClick = (e: React.MouseEvent, id: string) => {
     e.preventDefault();
 
+    setClickedId(id);
+    spyData.setActiveId(id);
+
     if (onSelectHeading) {
       onSelectHeading(id);
     }
 
-    // Attempt to locate target element by id, data-heading-id, or name
-    let target: HTMLElement | null = document.getElementById(id);
+    const decodedId = (() => {
+      try {
+        return decodeURIComponent(id);
+      } catch {
+        return id;
+      }
+    })();
+
+    // Attempt to locate target element within container or document
+    const container = containerRef?.current;
+    let target: HTMLElement | null = null;
+
+    if (container && typeof CSS !== 'undefined') {
+      try {
+        target =
+          container.querySelector<HTMLElement>(`#${CSS.escape(id)}`) ||
+          container.querySelector<HTMLElement>(`#${CSS.escape(decodedId)}`) ||
+          container.querySelector<HTMLElement>(`[data-heading-id="${CSS.escape(id)}"]`) ||
+          container.querySelector<HTMLElement>(`[data-heading-id="${CSS.escape(decodedId)}"]`);
+      } catch {
+        target = null;
+      }
+    }
+
+    if (!target) {
+      target = document.getElementById(id) || document.getElementById(decodedId);
+    }
 
     if (!target && typeof CSS !== 'undefined') {
       try {
         const escaped = CSS.escape(id);
+        const escapedDecoded = CSS.escape(decodedId);
         target =
-          document.querySelector(`[data-heading-id="${escaped}"]`) ||
-          document.querySelector(`[name="${escaped}"]`);
+          document.querySelector<HTMLElement>(`[data-heading-id="${escaped}"]`) ||
+          document.querySelector<HTMLElement>(`[data-heading-id="${escapedDecoded}"]`) ||
+          document.querySelector<HTMLElement>(`[name="${escaped}"]`) ||
+          document.querySelector<HTMLElement>(`[name="${escapedDecoded}"]`);
       } catch {
         target = null;
       }

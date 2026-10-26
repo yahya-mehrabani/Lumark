@@ -421,6 +421,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
             isOpen={isTocOpen}
             onClose={tocToggle.close}
             onSelectHeading={onNavigateAnchor}
+            containerRef={contentRef}
           />
         )}
       </div>
