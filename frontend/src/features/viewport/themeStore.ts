@@ -10,6 +10,32 @@ export interface ThemeState {
   systemDark: boolean;
 }
 
+export const THEME_STORAGE_KEY = 'markdown-viewer-theme';
+
+function getStoredTheme(): ThemePreference | null {
+  if (typeof window !== 'undefined' && window.localStorage) {
+    try {
+      const val = window.localStorage.getItem(THEME_STORAGE_KEY);
+      if (val === 'light' || val === 'dark' || val === 'system') {
+        return val as ThemePreference;
+      }
+    } catch {
+      // ignore in environments without localStorage
+    }
+  }
+  return null;
+}
+
+function persistStoredTheme(pref: ThemePreference): void {
+  if (typeof window !== 'undefined' && window.localStorage) {
+    try {
+      window.localStorage.setItem(THEME_STORAGE_KEY, pref);
+    } catch {
+      // ignore in environments without localStorage
+    }
+  }
+}
+
 export class ThemeStore {
   private preference: ThemePreference;
   private systemDark: boolean;
@@ -17,8 +43,9 @@ export class ThemeStore {
   private listeners: Set<(state: ThemeState) => void> = new Set();
   private mediaQueryCleanup: (() => void) | null = null;
 
-  constructor(initialPreference: ThemePreference = 'system') {
-    this.preference = initialPreference;
+  constructor(initialPreference?: ThemePreference) {
+    const stored = getStoredTheme();
+    this.preference = initialPreference ?? (stored ?? 'system');
     this.systemDark = this.detectSystemDark();
     this.state = {
       preference: this.preference,
@@ -106,6 +133,7 @@ export class ThemeStore {
 
   public setTheme(preference: ThemePreference): void {
     this.preference = preference;
+    persistStoredTheme(preference);
     this.updateState();
     this.applyToDom();
     this.notify();

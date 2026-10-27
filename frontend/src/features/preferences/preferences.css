@@ -321,7 +321,7 @@
   transform: translateX(18px);
 }
 
-/* Modal Footer with Minimalist Reset Button */
+/* Modal Footer with Minimalist Reset Button & Clean Inline Confirmation */
 .settings-modal-footer,
 .modal-footer {
   padding: 12px 20px;
@@ -330,16 +330,24 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px;
+  flex-wrap: nowrap;
+  gap: 12px;
   flex-shrink: 0;
+  min-height: 58px;
+  box-sizing: border-box;
+}
+
+.modal-footer-left {
+  display: flex;
+  align-items: center;
+  min-width: 0;
 }
 
 .btn-reset-minimal {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  height: 30px;
+  height: 32px;
   padding: 0 10px;
   margin-left: -4px;
   border-radius: 6px;
@@ -368,42 +376,39 @@
   transform: rotate(-45deg);
 }
 
+.settings-confirmation-group,
 .settings-confirmation-box {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
   gap: 8px;
   padding: 4px 10px;
-  border-radius: 6px;
+  border-radius: 8px;
   background-color: var(--danger-bg);
   border: 1px solid var(--danger-border);
-  flex: 1 1 auto;
-  min-width: 0;
+  animation: modal-fade-in 0.15s ease-out;
 }
 
-.settings-confirm-text {
-  font-family: var(--font-sans);
-  font-size: 11px;
+.reset-alert-icon {
   color: var(--danger-text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  flex-shrink: 0;
 }
 
-.settings-confirmation-actions {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.reset-prompt-label {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--danger-text);
+  margin-right: 2px;
 }
 
 .settings-confirm-btn {
-  padding: 3px 8px;
-  border-radius: 4px;
+  padding: 3px 10px;
+  border-radius: 5px;
   border: none;
   background-color: var(--danger);
   color: #ffffff;
   font-family: var(--font-sans);
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 600;
   cursor: pointer;
   transition: opacity 0.15s;
@@ -414,13 +419,14 @@
 }
 
 .settings-cancel-btn {
-  padding: 3px 8px;
-  border-radius: 4px;
+  padding: 3px 10px;
+  border-radius: 5px;
   border: 1px solid var(--border-subtle);
   background-color: var(--bg-control);
   color: var(--text-primary);
   font-family: var(--font-sans);
-  font-size: 11px;
+  font-size: 11.5px;
+  font-weight: 500;
   cursor: pointer;
   transition: border-color 0.15s;
 }

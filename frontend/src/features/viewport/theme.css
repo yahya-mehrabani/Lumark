@@ -54,11 +54,16 @@ body.theme-dark,
   --border-strong: #3E3C37;
   --spy-inactive: #3A3833;
 
-  --syn-comment: #7D786E;
+  --syn-comment: #9E988B;
   --syn-command: #38BDF8;
-  --syn-arg: #E5E3DB;
-  --syn-flag: #FBBF24;
+  --syn-arg: #F2F0E8;
+  --syn-flag: #FCD34D;
   --syn-string: #4ADE80;
+
+  --shiki-dark: #E5E3DB;
+  --shiki-dark-bg: #141311;
+  --shiki-light: #24292E;
+  --shiki-light-bg: #EFECE6;
 
   --danger-text-muted: rgba(248, 113, 113, 0.72);
   --danger-text: #F87171;
@@ -141,6 +146,11 @@ body.theme-light,
   --syn-flag: #853703;
   --syn-string: #14532D;
 
+  --shiki-dark: #E5E3DB;
+  --shiki-dark-bg: #141311;
+  --shiki-light: #24292E;
+  --shiki-light-bg: #EFECE6;
+
   --danger-text-muted: rgba(158, 42, 34, 0.72);
   --danger-text: #9E2A22;
   --danger-btn-hover: rgba(180, 52, 42, 0.1);
@@ -221,6 +231,11 @@ body.theme-light,
     --syn-arg: #1C1B18;
     --syn-flag: #853703;
     --syn-string: #14532D;
+
+    --shiki-dark: #E5E3DB;
+    --shiki-dark-bg: #141311;
+    --shiki-light: #24292E;
+    --shiki-light-bg: #EFECE6;
 
     --danger-text-muted: rgba(158, 42, 34, 0.72);
     --danger-text: #9E2A22;

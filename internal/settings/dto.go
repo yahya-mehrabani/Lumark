@@ -23,25 +23,28 @@ const (
 // In accordance with FR-SET-003 (Data Minimization), it never stores document text,
 // credentials, browsing history, or telemetry.
 type SettingsDTO struct {
-	SchemaVersion    int      `json:"schemaVersion"`
-	Theme            string   `json:"theme"`
-	DefaultDirection string   `json:"defaultDirection"`
-	DefaultZoom      float64  `json:"defaultZoom"`
-	RestoreOpenTabs  bool     `json:"restoreOpenTabs"`
-	OpenTabs         []string `json:"openTabs,omitempty"`
-	MaxRecentFiles   int      `json:"maxRecentFiles"`
+	SchemaVersion       int      `json:"schemaVersion"`
+	Theme               string   `json:"theme"`
+	DefaultDirection    string   `json:"defaultDirection"`
+	DefaultZoom         float64  `json:"defaultZoom"`
+	RestoreOpenTabs     bool     `json:"restoreOpenTabs"`
+	OpenTabs            []string `json:"openTabs,omitempty"`
+	MaxRecentFiles      int      `json:"maxRecentFiles"`
+	ShowTableOfContents *bool    `json:"showToc,omitempty"`
 }
 
 // DefaultSettings returns a fresh SettingsDTO initialized to canonical defaults.
 func DefaultSettings() SettingsDTO {
+	defaultShowTOC := true
 	return SettingsDTO{
-		SchemaVersion:    CurrentSchemaVersion,
-		Theme:            ThemeSystem,
-		DefaultDirection: DirectionAuto,
-		DefaultZoom:      DefaultZoom,
-		RestoreOpenTabs:  true,
-		OpenTabs:         []string{},
-		MaxRecentFiles:   DefaultMaxRecent,
+		SchemaVersion:       CurrentSchemaVersion,
+		Theme:               ThemeSystem,
+		DefaultDirection:    DirectionAuto,
+		DefaultZoom:         DefaultZoom,
+		RestoreOpenTabs:     true,
+		OpenTabs:            []string{},
+		MaxRecentFiles:      DefaultMaxRecent,
+		ShowTableOfContents: &defaultShowTOC,
 	}
 }
 
@@ -78,5 +81,10 @@ func (s *SettingsDTO) NormalizeAndValidate() {
 
 	if s.OpenTabs == nil {
 		s.OpenTabs = []string{}
+	}
+
+	if s.ShowTableOfContents == nil {
+		t := true
+		s.ShowTableOfContents = &t
 	}
 }

@@ -137,7 +137,8 @@ describe('SettingsModal Component', () => {
     // Confirmation dialog appears
     const confirmBox = screen.getByTestId('settings-reset-confirm-box');
     expect(confirmBox).toBeDefined();
-    expect(screen.getByText(/All preferences will be reset to default values/i)).toBeDefined();
+    expect(screen.getByTestId('settings-confirm-reset-btn')).toBeDefined();
+    expect(screen.getByTestId('settings-cancel-reset-btn')).toBeDefined();
 
     // Click cancel
     const cancelBtn = screen.getByTestId('settings-cancel-reset-btn');
@@ -146,6 +147,19 @@ describe('SettingsModal Component', () => {
     expect(screen.queryByTestId('settings-reset-confirm-box')).toBeNull();
     // Theme should still be dark
     expect(store.getSettings().theme).toBe('dark');
+  });
+
+  it('toggles showTableOfContents checkbox', async () => {
+    render(<SettingsModal isOpen={true} onClose={vi.fn()} store={store} />);
+
+    const checkbox = screen.getByTestId('settings-show-toc-checkbox') as HTMLInputElement;
+    expect(checkbox.checked).toBe(true);
+
+    fireEvent.click(checkbox);
+
+    await waitFor(() => {
+      expect(store.getSettings().showTableOfContents).toBe(false);
+    });
   });
 
   it('resets preferences to canonical defaults on confirmation', async () => {

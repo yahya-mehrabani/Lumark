@@ -14,4 +14,5 @@ export interface SettingsDTO {
     "restoreOpenTabs": boolean;
     "openTabs"?: string[] | null;
     "maxRecentFiles": number;
+    "showToc"?: boolean | null;
 }

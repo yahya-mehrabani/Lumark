@@ -11,13 +11,14 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 10px;
-  padding: 12px 0;
+  padding: 16px 0 16px 320px;
   background: transparent;
   border: none;
   user-select: none;
-  pointer-events: auto;
+  pointer-events: none;
   max-height: calc(100vh - 120px);
-  overflow: visible;
+  overflow-y: auto;
+  overflow-x: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -43,6 +44,7 @@
   align-items: flex-end;
   gap: 10px;
   overflow: visible;
+  pointer-events: auto;
 }
 
 .toc-item {
@@ -154,6 +156,17 @@
 }
 
 body.focus-mode .scrollspy-rail,
-body.focus-mode .toc-sidebar {
+body.focus-mode .toc-sidebar,
+body.toc-disabled .scrollspy-rail,
+body.toc-disabled .toc-sidebar {
   display: none !important;
+}
+
+.spy-item,
+.toc-link,
+.spy-marker,
+.toc-bullet,
+.spy-label,
+.toc-text {
+  pointer-events: auto;
 }

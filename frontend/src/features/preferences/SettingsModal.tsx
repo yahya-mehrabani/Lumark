@@ -278,6 +278,33 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </select>
           </div>
 
+          {/* Show Table of Contents: Modern Toggle Row */}
+          <div className="setting-toggle-row">
+            <div className="toggle-text-group">
+              <span className="setting-label">Show Table of Contents</span>
+              <p className="settings-description">
+                Display the outline and scrollspy navigation rail alongside Markdown documents.
+              </p>
+            </div>
+            <label className="toggle-switch" htmlFor="settings-show-toc">
+              <input
+                type="checkbox"
+                id="settings-show-toc"
+                checked={settings.showTableOfContents ?? settings.showToc ?? true}
+                onChange={(e) =>
+                  updateSettings({
+                    showTableOfContents: e.target.checked,
+                    showToc: e.target.checked,
+                  })
+                }
+                data-testid="settings-show-toc-checkbox"
+              />
+              <span className="toggle-track">
+                <span className="toggle-thumb" />
+              </span>
+            </label>
+          </div>
+
           {/* Restore Open Tabs: Modern Toggle Row */}
           <div className="setting-toggle-row">
             <div className="toggle-text-group">
@@ -303,23 +330,22 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
         {/* Footer with Minimalist Reset Button */}
         <footer className="settings-modal-footer modal-footer">
-          {!showResetConfirm ? (
-            <button
-              type="button"
-              className="btn-reset-minimal"
-              onClick={() => setShowResetConfirm(true)}
-              data-testid="settings-reset-btn"
-              title="Reset preferences to default values"
-            >
-              <Icon name="reset" size={14} />
-              <span>Reset to Defaults</span>
-            </button>
-          ) : (
-            <div className="settings-confirmation-box" role="alert" data-testid="settings-reset-confirm-box">
-              <span className="settings-confirm-text">
-                All preferences will be reset to default values.
-              </span>
-              <div className="settings-confirmation-actions">
+          <div className="modal-footer-left">
+            {!showResetConfirm ? (
+              <button
+                type="button"
+                className="btn-reset-minimal"
+                onClick={() => setShowResetConfirm(true)}
+                data-testid="settings-reset-btn"
+                title="Reset preferences to default values"
+              >
+                <Icon name="reset" size={14} />
+                <span>Reset to Defaults</span>
+              </button>
+            ) : (
+              <div className="settings-confirmation-group" role="alert" data-testid="settings-reset-confirm-box">
+                <Icon name="alert" size={14} className="reset-alert-icon" />
+                <span className="reset-prompt-label">Reset?</span>
                 <button
                   type="button"
                   className="settings-confirm-btn"
@@ -337,8 +363,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   Cancel
                 </button>
               </div>
-            </div>
-          )}
+            )}
+          </div>
 
           <button
             type="button"

@@ -12,6 +12,8 @@ export interface AppSettings {
   restoreOpenTabs: boolean;
   openTabs?: string[];
   maxRecentFiles: number;
+  showToc?: boolean;
+  showTableOfContents?: boolean;
 }
 
 export const DEFAULT_APP_SETTINGS: AppSettings = {
@@ -22,4 +24,6 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
   restoreOpenTabs: true,
   openTabs: [],
   maxRecentFiles: 20,
+  showToc: true,
+  showTableOfContents: true,
 };

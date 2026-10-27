@@ -1,5 +1,6 @@
 import React, { useEffect, useState, Component, type ErrorInfo, type ReactNode } from 'react';
 import { renderMermaid, detectAppTheme, type MermaidTheme } from '../mermaid-adapter';
+import { Icon } from '../../../components/Icon';
 
 export interface MermaidBlockProps {
   rawCode: string;
@@ -103,6 +104,23 @@ export const MermaidBlockInner: React.FC<MermaidBlockProps> = ({
   const [svgHtml, setSvgHtml] = useState<string | null>(null);
   const [error, setError] = useState<{ message: string; rawCode: string } | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  // Close lightbox on Escape key
+  useEffect(() => {
+    if (!isModalOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsModalOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isModalOpen]);
 
   // Synchronize theme with application theme changes
   useEffect(() => {
@@ -198,22 +216,61 @@ export const MermaidBlockInner: React.FC<MermaidBlockProps> = ({
   }
 
   return (
-    <div
-      className={`mermaid-container ${className}`.trim()}
-      data-testid="mermaid-container"
-      data-mermaid-theme={activeTheme}
-      dir="ltr"
-      role="region"
-      tabIndex={0}
-      aria-label="Mermaid diagram"
-      style={{ overflowX: 'auto', maxWidth: '100%' }}
-    >
+    <>
       <div
-        className="mermaid-svg-wrapper"
-        data-testid="mermaid-svg-wrapper"
-        dangerouslySetInnerHTML={{ __html: svgHtml || '' }}
-      />
-    </div>
+        className={`mermaid-container ${className}`.trim()}
+        data-testid="mermaid-container"
+        data-mermaid-theme={activeTheme}
+        dir="ltr"
+        role="region"
+        tabIndex={0}
+        aria-label="Mermaid diagram"
+        title="Click to view diagram in fullscreen modal"
+        onClick={() => {
+          if (svgHtml) {
+            setIsModalOpen(true);
+          }
+        }}
+        style={{ overflowX: 'auto', maxWidth: '100%', cursor: 'zoom-in' }}
+      >
+        <div
+          className="mermaid-svg-wrapper"
+          data-testid="mermaid-svg-wrapper"
+          dangerouslySetInnerHTML={{ __html: svgHtml || '' }}
+        />
+      </div>
+
+      {isModalOpen && svgHtml && (
+        <div
+          className="mermaid-lightbox-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Mermaid diagram fullscreen view"
+          data-testid="mermaid-modal-overlay"
+          onClick={() => setIsModalOpen(false)}
+        >
+          <button
+            type="button"
+            className="mermaid-lightbox-close"
+            aria-label="Close fullscreen view (Esc)"
+            title="Close (Esc)"
+            data-testid="mermaid-modal-close"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsModalOpen(false);
+            }}
+          >
+            <Icon name="close" size={20} />
+          </button>
+          <div
+            className="mermaid-lightbox-content"
+            data-testid="mermaid-modal-content"
+            onClick={(e) => e.stopPropagation()}
+            dangerouslySetInnerHTML={{ __html: svgHtml }}
+          />
+        </div>
+      )}
+    </>
   );
 };
 

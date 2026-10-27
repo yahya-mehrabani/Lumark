@@ -31,6 +31,7 @@ import { useSelectionCopy } from '../viewport/selectionCopy';
 import { usePrint, triggerPrint } from '../viewport/printController';
 import { copyToClipboard } from './clipboard';
 import { truncateMiddlePath } from './utils/pathTruncate';
+import { useSettings } from '../preferences';
 import '../../styles/katex.css';
 import './markdown.css';
 
@@ -185,6 +186,9 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
   const filename = document?.filename;
   const filePath = document?.filePath;
 
+  const { settings } = useSettings();
+  const isTocEnabled = settings.showTableOfContents ?? settings.showToc ?? true;
+
   const tocData = useTableOfContents({ markdown: rawMarkdown });
   const tocToggle = useTocToggle({
     initialOpen: showToc ?? false,
@@ -192,7 +196,13 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
     onToggle: () => onToggleToc?.(),
   });
 
-  const isTocOpen = showToc !== undefined ? (showToc && tocData.hasHeadings) : tocToggle.isOpen;
+  const isTocOpen = isTocEnabled && (showToc !== undefined ? (showToc && tocData.hasHeadings) : tocToggle.isOpen);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined' && window.document?.body) {
+      window.document.body.classList.toggle('toc-disabled', !isTocEnabled);
+    }
+  }, [isTocEnabled]);
 
   const contentRef = React.useRef<HTMLElement | null>(null);
   const search = useSearch({ containerRef: contentRef });

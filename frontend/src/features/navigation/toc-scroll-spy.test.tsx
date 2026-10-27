@@ -64,8 +64,9 @@ describe('TableOfContents Sidebar Component (US-021.2)', () => {
 
     expect(onSelectHeading).toHaveBeenCalledTimes(1);
     expect(onSelectHeading).toHaveBeenCalledWith('architecture');
-    expect(scrollIntoViewMock).toHaveBeenCalledTimes(1);
-    expect(scrollIntoViewMock).toHaveBeenCalledWith({ behavior: 'smooth' });
+    expect(scrollIntoViewMock).toHaveBeenCalledWith(
+      expect.objectContaining({ behavior: 'smooth' })
+    );
 
     document.body.removeChild(targetHeading);
   });

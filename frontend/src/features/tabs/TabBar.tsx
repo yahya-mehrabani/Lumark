@@ -159,22 +159,22 @@ export const TabBar: React.FC<TabBarProps> = ({
               onClose={onCloseTab}
             />
           ))}
+          <button
+            type="button"
+            className="tab-icon-btn tab-add-btn"
+            id="addTabBtn"
+            onClick={onOpenFile}
+            title="Open File (Ctrl+O)"
+            aria-label="Open File"
+            data-testid="tab-add-btn"
+          >
+            <Icon name="plus" size={14} strokeWidth={2.2} />
+          </button>
         </div>
       </div>
 
-      {/* Tab Utility Controls: + Open File & Overflow Dropdown */}
+      {/* Tab Utility Controls: Overflow Dropdown */}
       <div className="tab-utility-controls" ref={overflowRef}>
-        <button
-          type="button"
-          className="tab-icon-btn"
-          id="addTabBtn"
-          onClick={onOpenFile}
-          title="Open File (Ctrl+O)"
-          aria-label="Open File"
-          data-testid="tab-add-btn"
-        >
-          <Icon name="plus" size={14} strokeWidth={2.2} />
-        </button>
 
         <button
           type="button"

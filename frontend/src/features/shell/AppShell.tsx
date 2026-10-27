@@ -210,6 +210,13 @@ export const AppShell: React.FC<AppShellProps> = ({
             <span>Open</span>
           </button>
 
+          <RecentFilesMenu
+            recentFiles={recentFiles}
+            onSelectFile={onSelectRecentFile}
+            onRemoveFile={onRemoveRecentFile}
+            onClearFiles={onClearRecentFiles}
+          />
+
           <button
             type="button"
             className="ghost-btn header-btn theme-toggle-btn"
@@ -223,13 +230,6 @@ export const AppShell: React.FC<AppShellProps> = ({
             <Icon name={theme === 'dark' ? 'moon' : theme === 'light' ? 'sun' : 'monitor'} size={14} />
             <span>{theme === 'dark' ? 'Dark' : theme === 'light' ? 'Light' : 'Auto'}</span>
           </button>
-
-          <RecentFilesMenu
-            recentFiles={recentFiles}
-            onSelectFile={onSelectRecentFile}
-            onRemoveFile={onRemoveRecentFile}
-            onClearFiles={onClearRecentFiles}
-          />
 
           <button
             type="button"

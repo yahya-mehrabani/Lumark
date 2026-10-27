@@ -10,12 +10,29 @@ export interface SettingsBackendAdapter {
   resetSettings: () => Promise<AppSettings>;
 }
 
+export const SETTINGS_STORAGE_KEY = 'markdown-viewer-settings';
+
 // In-memory fallback adapter when running without Wails RPC (e.g. tests or headless preview)
 export class InMemorySettingsAdapter implements SettingsBackendAdapter {
   private current: AppSettings;
 
   constructor(initial: AppSettings = DEFAULT_APP_SETTINGS) {
-    this.current = { ...initial, openTabs: [...(initial.openTabs || [])] };
+    let stored: Partial<AppSettings> | null = null;
+    if (typeof window !== 'undefined' && window.localStorage) {
+      try {
+        const raw = window.localStorage.getItem(SETTINGS_STORAGE_KEY);
+        if (raw) {
+          stored = JSON.parse(raw);
+        }
+      } catch {
+        // ignore
+      }
+    }
+    this.current = {
+      ...initial,
+      ...(stored || {}),
+      openTabs: [...(stored?.openTabs || initial.openTabs || [])],
+    };
   }
 
   async getSettings(): Promise<AppSettings> {
@@ -24,10 +41,24 @@ export class InMemorySettingsAdapter implements SettingsBackendAdapter {
 
   async saveSettings(settings: AppSettings): Promise<void> {
     this.current = { ...settings, openTabs: [...(settings.openTabs || [])] };
+    if (typeof window !== 'undefined' && window.localStorage) {
+      try {
+        window.localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(this.current));
+      } catch {
+        // ignore
+      }
+    }
   }
 
   async resetSettings(): Promise<AppSettings> {
     this.current = { ...DEFAULT_APP_SETTINGS, openTabs: [] };
+    if (typeof window !== 'undefined' && window.localStorage) {
+      try {
+        window.localStorage.removeItem(SETTINGS_STORAGE_KEY);
+      } catch {
+        // ignore
+      }
+    }
     return { ...this.current };
   }
 }
@@ -41,6 +72,14 @@ export class SettingsStore {
   constructor(adapter: SettingsBackendAdapter = new InMemorySettingsAdapter()) {
     this.adapter = adapter;
     this.current = { ...DEFAULT_APP_SETTINGS, openTabs: [] };
+
+    // Synchronize settings whenever themeStore changes (e.g. top bar toggle)
+    themeStore.subscribe((themeState) => {
+      if (this.current.theme !== themeState.preference) {
+        this.current.theme = themeState.preference;
+        this.adapter.saveSettings(this.current).catch(() => {});
+      }
+    });
   }
 
   public getSettings(): AppSettings {
@@ -56,8 +95,8 @@ export class SettingsStore {
   }
 
   public applyToApp(settings: AppSettings): void {
-    // 1. Synchronize themeStore
-    if (settings.theme) {
+    // 1. Synchronize themeStore if different from current preference
+    if (settings.theme && themeStore.getPreference() !== settings.theme) {
       themeStore.setTheme(settings.theme);
     }
     // 2. Synchronize direction preferences

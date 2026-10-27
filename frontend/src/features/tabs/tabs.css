@@ -163,6 +163,13 @@
   height: 14px;
 }
 
+.tab-add-btn {
+  align-self: center;
+  margin-left: 2px;
+  margin-bottom: 2px;
+  flex-shrink: 0;
+}
+
 /* Tab Overflow Dropdown Menu */
 .tab-overflow-menu {
   position: absolute;
