@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { Icon } from '../../components/Icon';
 import './search.css';
 
 export interface SearchBarProps {
@@ -124,18 +125,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           title="Previous match (Shift+Enter, Shift+F3)"
           data-testid="search-prev-btn"
         >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polyline points="18 15 12 9 6 15" />
-          </svg>
+          <Icon name="chevron-up" size={14} strokeWidth={2.5} />
         </button>
 
         <button
@@ -147,18 +137,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           title="Next match (Enter, F3)"
           data-testid="search-next-btn"
         >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
+          <Icon name="chevron-down" size={14} strokeWidth={2.5} />
         </button>
 
         <div className="search-bar-divider" />
@@ -171,19 +150,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           title="Close search (Escape)"
           data-testid="search-close-btn"
         >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
+          <Icon name="close" size={14} strokeWidth={2.5} />
         </button>
       </div>
     </div>

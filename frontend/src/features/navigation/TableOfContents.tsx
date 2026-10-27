@@ -173,6 +173,15 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
         container.scrollTop = targetScrollTop;
       }
 
+      // Also invoke native scrollIntoView to ensure reliable section alignment accounting for scroll-margin-top
+      if (typeof target.scrollIntoView === 'function') {
+        try {
+          target.scrollIntoView({ behavior, block: 'start' });
+        } catch {
+          // ignore scrollIntoView failure in environments without it
+        }
+      }
+
       if (typeof window !== 'undefined' && window.localStorage?.getItem('debugOutline') === '1') {
         requestAnimationFrame(() => {
           const afterScrollTop = container.scrollTop;
@@ -183,7 +192,13 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
         });
       }
     } else if (target) {
-      target.scrollIntoView({ behavior: 'smooth' });
+      if (typeof target.scrollIntoView === 'function') {
+        try {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } catch {
+          // fallback
+        }
+      }
     }
   };
 

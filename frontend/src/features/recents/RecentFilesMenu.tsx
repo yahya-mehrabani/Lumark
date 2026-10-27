@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { RecentFileItem } from './types';
+import { Icon } from '../../components/Icon';
 import './recents.css';
 
 export interface RecentFilesMenuProps {
@@ -104,14 +105,15 @@ export const RecentFilesMenu: React.FC<RecentFilesMenuProps> = ({
       <button
         ref={triggerBtnRef}
         type="button"
-        className="header-btn"
+        className="ghost-btn header-btn"
         onClick={() => setIsOpen((prev) => !prev)}
         aria-haspopup="true"
         aria-expanded={isOpen}
         data-testid="header-recents-btn"
         title="View recently opened Markdown files"
       >
-        Recent Files
+        <Icon name="clock" size={14} />
+        <span>Recent Files</span>
       </button>
 
       {isOpen && (
@@ -176,20 +178,7 @@ export const RecentFilesMenu: React.FC<RecentFilesMenuProps> = ({
                     aria-label={`Remove ${file.filename} from recents`}
                     data-testid={`remove-recent-${file.filename}`}
                   >
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      aria-hidden="true"
-                    >
-                      <line x1="18" y1="6" x2="6" y2="18" />
-                      <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
+                    <Icon name="close" size={12} strokeWidth={2.2} />
                   </button>
                 </li>
               ))}

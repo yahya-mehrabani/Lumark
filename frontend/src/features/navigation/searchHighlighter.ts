@@ -77,6 +77,7 @@ export function applyHighlights(
         mark.className = 'search-match';
         mark.setAttribute('data-search-match', 'true');
         mark.setAttribute('data-match-index', String(match.index));
+        mark.style.unicodeBidi = 'isolate';
 
         if (match.index === activeIndex) {
           mark.classList.add('active');

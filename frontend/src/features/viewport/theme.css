@@ -135,11 +135,11 @@ body.theme-light,
   --border-strong: #D5D2C9;
   --spy-inactive: #D5D2C9;
 
-  --syn-comment: #78736A;
-  --syn-command: #0F5378;
-  --syn-arg: #2E2B26;
-  --syn-flag: #9A4406;
-  --syn-string: #166534;
+  --syn-comment: #5C5850;
+  --syn-command: #0A4A6B;
+  --syn-arg: #1C1B18;
+  --syn-flag: #853703;
+  --syn-string: #14532D;
 
   --danger-text-muted: rgba(158, 42, 34, 0.72);
   --danger-text: #9E2A22;
@@ -216,11 +216,11 @@ body.theme-light,
     --border-strong: #D5D2C9;
     --spy-inactive: #D5D2C9;
 
-    --syn-comment: #78736A;
-    --syn-command: #0F5378;
-    --syn-arg: #2E2B26;
-    --syn-flag: #9A4406;
-    --syn-string: #166534;
+    --syn-comment: #5C5850;
+    --syn-command: #0A4A6B;
+    --syn-arg: #1C1B18;
+    --syn-flag: #853703;
+    --syn-string: #14532D;
 
     --danger-text-muted: rgba(158, 42, 34, 0.72);
     --danger-text: #9E2A22;

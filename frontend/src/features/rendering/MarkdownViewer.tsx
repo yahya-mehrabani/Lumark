@@ -25,7 +25,7 @@ import { useTableOfContents } from '../navigation/useTableOfContents';
 import { useTocToggle } from '../navigation/useTocToggle';
 import { SearchBar } from '../navigation/SearchBar';
 import { useSearch } from '../navigation/useSearch';
-import { useTheme } from '../viewport/themeStore';
+import { Icon } from '../../components/Icon';
 import { useZoom } from '../viewport/zoomController';
 import { useSelectionCopy } from '../viewport/selectionCopy';
 import { usePrint, triggerPrint } from '../viewport/printController';
@@ -218,7 +218,6 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [search]);
 
-  const { theme, toggleTheme } = useTheme();
   const { zoom, zoomFactor, zoomIn, zoomOut, resetZoom, canZoomIn, canZoomOut } = useZoom({ enableShortcuts: true });
   usePrint({ enableShortcuts: true });
 
@@ -283,18 +282,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
               onClick={handleCopyPath}
               style={{ cursor: filePath ? 'pointer' : 'default' }}
             >
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                <polyline points="14 2 14 8 20 8" />
-              </svg>
+              <Icon name="file" size={15} strokeWidth={1.8} />
               {repoName && (
                 <>
                   <span className="repo-name">{repoName}</span>
@@ -344,9 +332,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
                 title="Zoom Out (Ctrl+-)"
                 data-testid="doc-zoom-out"
               >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
+                <Icon name="minus" size={14} strokeWidth={2} />
               </button>
               <button
                 type="button"
@@ -369,10 +355,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
                 title="Zoom In (Ctrl++)"
                 data-testid="doc-zoom-in"
               >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
+                <Icon name="plus" size={14} strokeWidth={2} />
               </button>
             </div>
 
@@ -388,10 +371,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
               aria-expanded={search.isOpen}
               data-testid="doc-search-toggle"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
+              <Icon name="search" size={14} strokeWidth={1.9} />
             </button>
 
             <button
@@ -402,11 +382,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
               title="Print Document (Ctrl+P)"
               data-testid="doc-print-btn"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="6 9 6 2 18 2 18 9" />
-                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-                <rect x="6" y="14" width="12" height="8" />
-              </svg>
+              <Icon name="printer" size={14} strokeWidth={1.9} />
               <span
                 style={{
                   position: 'absolute',
@@ -439,45 +415,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
               aria-expanded={isTocOpen}
               data-testid="doc-toc-toggle"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="4" y1="6" x2="20" y2="6" />
-                <line x1="4" y1="12" x2="14" y2="12" />
-                <line x1="4" y1="18" x2="18" y2="18" />
-              </svg>
-            </button>
-
-            <button
-              type="button"
-              className="pill-icon-btn doc-theme-toggle-btn"
-              onClick={toggleTheme}
-              aria-label={`Theme: ${theme === 'system' ? 'Auto (System)' : theme === 'dark' ? 'Dark' : 'Light'}. Click to toggle.`}
-              title={`Theme: ${theme === 'system' ? 'Auto (System)' : theme === 'dark' ? 'Dark' : 'Light'} (Click to toggle)`}
-              data-testid="doc-theme-toggle"
-              data-theme-mode={theme}
-            >
-              {theme === 'dark' ? (
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                </svg>
-              ) : theme === 'light' ? (
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <circle cx="12" cy="12" r="5" />
-                  <line x1="12" y1="1" x2="12" y2="3" />
-                  <line x1="12" y1="21" x2="12" y2="23" />
-                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                  <line x1="1" y1="12" x2="3" y2="12" />
-                  <line x1="21" y1="12" x2="23" y2="12" />
-                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-                </svg>
-              ) : (
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-                  <line x1="8" y1="21" x2="16" y2="21" />
-                  <line x1="12" y1="17" x2="12" y2="21" />
-                </svg>
-              )}
+              <Icon name="outline" size={14} strokeWidth={1.9} />
             </button>
 
             <button
@@ -489,9 +427,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
               aria-label="Enter Focus Mode"
               data-testid="doc-focus-toggle"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
-              </svg>
+              <Icon name="focus" size={14} strokeWidth={1.9} />
             </button>
           </div>
 

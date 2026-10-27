@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { TabItem as TabItemData } from './types';
 import { TabItem } from './TabItem';
+import { Icon } from '../../components/Icon';
 import './tabs.css';
 
 export interface TabBarProps {
@@ -136,84 +137,81 @@ export const TabBar: React.FC<TabBarProps> = ({
   }
 
   return (
-    <div
-      ref={containerRef}
-      className={`tab-bar-container app-chrome ${className}`.trim()}
-      role="region"
-      aria-label="Document tabs"
-    >
+    <div className={`tab-bar-wrapper app-chrome ${className}`.trim()}>
       <div
-        className="tab-list tabs-list"
-        role="tablist"
-        aria-orientation="horizontal"
-        onKeyDown={handleKeyDown}
+        ref={containerRef}
+        className="tab-bar-container"
+        role="region"
+        aria-label="Document tabs"
       >
-        {tabs.map((tab) => (
-          <TabItem
-            key={tab.id}
-            tab={tab}
-            isActive={tab.id === activeTabId}
-            onSelect={onSelectTab}
-            onClose={onCloseTab}
-          />
-        ))}
-
-        {/* Tab Utility Controls: + Open File & Overflow Dropdown */}
-        <div className="tab-utility-controls" ref={overflowRef}>
-          <button
-            type="button"
-            className="tab-icon-btn"
-            id="addTabBtn"
-            onClick={onOpenFile}
-            title="Open File (Ctrl+O)"
-            aria-label="Open File"
-            data-testid="tab-add-btn"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-          </button>
-
-          <button
-            type="button"
-            className={`tab-icon-btn ${isOverflowOpen ? 'active' : ''}`}
-            id="tabOverflowBtn"
-            onClick={() => setIsOverflowOpen((prev) => !prev)}
-            title="All Open Tabs"
-            aria-haspopup="true"
-            aria-expanded={isOverflowOpen}
-            data-testid="tab-overflow-btn"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </button>
-
-          {isOverflowOpen && (
-            <div className="tab-overflow-menu open" id="tabOverflowMenu" role="menu">
-              <div className="overflow-menu-header">Open Tabs ({tabs.length})</div>
-              {tabs.map((tab) => {
-                const isActive = tab.id === activeTabId;
-                return (
-                  <div
-                    key={tab.id}
-                    className={`overflow-tab-item ${isActive ? 'active' : ''}`}
-                    role="menuitem"
-                    onClick={() => {
-                      onSelectTab(tab.id);
-                      setIsOverflowOpen(false);
-                    }}
-                    data-testid={`overflow-item-${tab.id}`}
-                  >
-                    <span>{tab.filename || tab.displayTitle}</span>
-                    <span className="overflow-tab-dot" />
-                  </div>
-                );
-              })}
-            </div>
-          )}
+        <div
+          className="tab-list tabs-list"
+          role="tablist"
+          aria-orientation="horizontal"
+          onKeyDown={handleKeyDown}
+        >
+          {tabs.map((tab) => (
+            <TabItem
+              key={tab.id}
+              tab={tab}
+              isActive={tab.id === activeTabId}
+              onSelect={onSelectTab}
+              onClose={onCloseTab}
+            />
+          ))}
         </div>
+      </div>
+
+      {/* Tab Utility Controls: + Open File & Overflow Dropdown */}
+      <div className="tab-utility-controls" ref={overflowRef}>
+        <button
+          type="button"
+          className="tab-icon-btn"
+          id="addTabBtn"
+          onClick={onOpenFile}
+          title="Open File (Ctrl+O)"
+          aria-label="Open File"
+          data-testid="tab-add-btn"
+        >
+          <Icon name="plus" size={14} strokeWidth={2.2} />
+        </button>
+
+        <button
+          type="button"
+          className={`tab-icon-btn ${isOverflowOpen ? 'active' : ''}`}
+          id="tabOverflowBtn"
+          onClick={() => setIsOverflowOpen((prev) => !prev)}
+          title="All Open Tabs"
+          aria-haspopup="true"
+          aria-expanded={isOverflowOpen}
+          data-testid="tab-overflow-btn"
+        >
+          <Icon name="chevron-down" size={14} strokeWidth={2.2} />
+        </button>
+
+        {isOverflowOpen && (
+          <div className="tab-overflow-menu open" id="tabOverflowMenu" role="menu">
+            <div className="overflow-menu-header">Open Tabs ({tabs.length})</div>
+            {tabs.map((tab) => {
+              const isActive = tab.id === activeTabId;
+              return (
+                <div
+                  key={tab.id}
+                  className={`overflow-tab-item ${isActive ? 'active' : ''}`}
+                  role="menuitem"
+                  onClick={() => {
+                    onSelectTab(tab.id);
+                    setIsOverflowOpen(false);
+                  }}
+                  data-testid={`overflow-item-${tab.id}`}
+                >
+                  <span>{tab.filename || tab.displayTitle}</span>
+                  <span className="overflow-tab-dot" />
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

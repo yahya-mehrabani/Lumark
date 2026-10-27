@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { MarkdownViewer } from '../rendering/MarkdownViewer';
+import { AppShell } from '../shell/AppShell';
 import { themeStore } from './themeStore';
 import { zoomController } from './zoomController';
 import { detectAppTheme } from '../rendering/mermaid-adapter';
@@ -37,17 +38,9 @@ describe('Document Viewport Controls: Themes & Zoom Integration Suite (US-023.4)
 
   describe('Theme Controls and DOM Synchronization', () => {
     it('cycles theme between system, light, and dark via toolbar button', async () => {
-      render(
-        <MarkdownViewer
-          document={{
-            filename: 'test.md',
-            filePath: '/docs/test.md',
-            content: '# Heading 1\n\nParagraph text.',
-          }}
-        />
-      );
+      render(<AppShell />);
 
-      const themeBtn = screen.getByTestId('doc-theme-toggle');
+      const themeBtn = screen.getByTestId('top-theme-toggle');
       expect(themeBtn).toBeInTheDocument();
 
       // Default system with dark OS

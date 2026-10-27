@@ -6,7 +6,7 @@
   right: 28px;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 15;
+  z-index: 100;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -17,8 +17,7 @@
   user-select: none;
   pointer-events: auto;
   max-height: calc(100vh - 120px);
-  overflow-y: auto;
-  overflow-x: visible;
+  overflow: visible;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -43,6 +42,7 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 10px;
+  overflow: visible;
 }
 
 .toc-item {
@@ -54,6 +54,7 @@
   align-items: flex-end;
   gap: 10px;
   position: relative;
+  overflow: visible;
 }
 
 .spy-item,
@@ -70,30 +71,42 @@
   position: relative;
 }
 
-/* Text labels: completely hidden by default (opacity: 0).
+/* Text labels: hidden by default (opacity: 0, visibility: hidden).
    Positioned absolutely to the left of the rail so they never push or take up layout space */
 .spy-label,
 .toc-text {
   font-family: var(--font-sans);
   font-size: 11.5px;
-  font-weight: 400;
+  font-weight: 500;
   color: var(--text-muted);
   opacity: 0;
-  transition: opacity 0.18s ease, transform 0.18s ease, color 0.18s ease;
+  visibility: hidden;
+  transition: opacity 0.18s ease, transform 0.18s ease, color 0.18s ease, visibility 0.18s ease;
   white-space: nowrap;
   pointer-events: none;
   position: absolute;
-  right: calc(100% + 8px);
+  right: calc(100% + 10px);
   top: 50%;
   transform: translateY(-50%) translateX(4px);
+  z-index: 101;
+  background: var(--bg-pill);
+  padding: 3px 9px;
+  border-radius: 6px;
+  box-shadow: var(--shadow-find);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
 }
 
-/* Reveal label on item hover */
+/* Reveal labels on rail hover or item hover */
+.scrollspy-rail:hover .spy-label,
+.scrollspy-rail:hover .toc-text,
 .spy-item:hover .spy-label,
 .toc-link:hover .toc-text,
 .toc-item:hover > .toc-link .spy-label,
 .toc-item:hover > .toc-link .toc-text {
   opacity: 1;
+  visibility: visible;
   transform: translateY(-50%) translateX(0);
   color: var(--text-primary);
 }
@@ -104,9 +117,11 @@
 .toc-item.active > .toc-link .spy-label,
 .toc-item.active > .toc-link .toc-text {
   opacity: 1;
+  visibility: visible;
   transform: translateY(-50%) translateX(0);
   color: var(--accent-teal);
   font-weight: 600;
+  border-color: var(--accent-teal-border);
 }
 
 /* Horizontal line markers */

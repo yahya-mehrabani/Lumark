@@ -1,3 +1,12 @@
+.tab-bar-wrapper {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 40px;
+  position: relative;
+}
+
 .tab-bar-container {
   display: flex;
   align-items: center;
@@ -12,6 +21,7 @@
   border-bottom: 1px solid var(--border-subtle);
   padding: 0 4px;
   flex: 1 1 auto;
+  min-width: 0;
 }
 
 .tab-bar-container::-webkit-scrollbar {
@@ -119,9 +129,13 @@
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  height: 34px;
-  padding-left: 4px;
+  height: 40px;
+  padding: 0 6px 0 4px;
   position: relative;
+  flex-shrink: 0;
+  background-color: var(--bg-chrome);
+  border-bottom: 1px solid var(--border-subtle);
+  z-index: 40;
 }
 
 .tab-icon-btn {
@@ -153,14 +167,15 @@
 .tab-overflow-menu {
   position: absolute;
   top: calc(100% + 4px);
-  left: 4px;
-  min-width: 200px;
+  right: 0;
+  left: auto;
+  min-width: 220px;
   background-color: var(--bg-modal);
   border: 1px solid var(--border-strong);
   border-radius: 10px;
   padding: 5px;
   box-shadow: var(--shadow-dropdown);
-  z-index: 65;
+  z-index: 100;
   display: flex;
   flex-direction: column;
   gap: 2px;
