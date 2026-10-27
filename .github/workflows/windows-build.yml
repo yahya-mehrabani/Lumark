@@ -18,7 +18,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.26.x'
+          go-version: '1.27.x'
           cache: true
 
       - name: Set up Node.js
@@ -32,19 +32,14 @@ jobs:
         working-directory: frontend
         run: npm ci
 
-      - name: Build Frontend
-        working-directory: frontend
-        run: npm run build
-
       - name: Install Wails CLI
         run: go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-beta.34
 
       - name: Verify Wails CLI
         run: wails3 version
 
-      - name: Build Application Binary
-        run: |
-          go build -trimpath -ldflags="-w -s -H windowsgui" -o bin/markdown-viewer.exe .
+      - name: Build Wails App
+        run: wails3 build
 
       - name: Build NSIS Installer
         shell: bash
