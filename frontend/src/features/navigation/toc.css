@@ -1,93 +1,37 @@
-/* Table of Contents (TOC) Sidebar Styles */
+/* Right-Side Scrollspy Outline — Minimalist Rail */
+
+.scrollspy-rail,
 .toc-sidebar {
+  position: fixed;
+  right: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 15;
   display: flex;
   flex-direction: column;
-  width: 280px;
-  min-width: 240px;
-  max-width: 380px;
-  height: 100%;
-  background: var(--bg-secondary, #1e1e24);
-  border-inline-start: 1px solid var(--border-subtle, #2d2d38);
-  color: var(--text-primary, #e0e0e6);
-  font-family: inherit;
-  font-size: 0.875rem;
-  overflow: hidden;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 12px 0;
+  background: transparent;
+  border: none;
   user-select: none;
-  transition: transform 0.2s ease, width 0.2s ease, opacity 0.2s ease;
-  z-index: 20;
+  pointer-events: auto;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  overflow-x: visible;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-.toc-sidebar.is-collapsed {
+.scrollspy-rail::-webkit-scrollbar,
+.toc-sidebar::-webkit-scrollbar {
   display: none;
 }
 
-.toc-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--border-subtle, #2d2d38);
-  background: var(--chrome-bg, #18181c);
-}
-
-.toc-title-group {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.toc-icon {
-  width: 1rem;
-  height: 1rem;
-  opacity: 0.75;
-}
-
-.toc-title {
-  margin: 0;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted, #a0a0aa);
-}
-
-.toc-close-btn {
-  background: transparent;
-  border: none;
-  color: var(--text-muted, #a0a0aa);
-  cursor: pointer;
-  padding: 0.25rem;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.15s, color 0.15s;
-}
-
-.toc-close-btn:hover {
-  background-color: var(--bg-tertiary, rgba(255, 255, 255, 0.08));
-  color: var(--text-primary, #ffffff);
-}
-
-.toc-content {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 0.75rem 0.5rem;
-}
-
-/* Custom scrollbar for TOC */
-.toc-content::-webkit-scrollbar {
-  width: 6px;
-}
-
-.toc-content::-webkit-scrollbar-thumb {
-  background: var(--border-subtle, #2d2d38);
-  border-radius: 3px;
-}
-
-.toc-content::-webkit-scrollbar-thumb:hover {
-  background: var(--border-strong, #444455);
+.scrollspy-rail.hidden,
+.toc-sidebar.hidden,
+.toc-sidebar.is-collapsed {
+  display: none;
 }
 
 .toc-list,
@@ -95,95 +39,106 @@
   list-style: none;
   margin: 0;
   padding: 0;
-}
-
-.toc-sublist {
-  padding-inline-start: 0.875rem;
-  border-inline-start: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
-  margin-inline-start: 0.5rem;
-  margin-top: 0.125rem;
-  margin-bottom: 0.125rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
 }
 
 .toc-item {
-  margin: 0.125rem 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
   position: relative;
 }
 
+.spy-item,
 .toc-link {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.375rem 0.625rem;
-  border-radius: 6px;
-  color: var(--text-secondary, #9494a0);
+  justify-content: flex-end;
+  gap: 10px;
   text-decoration: none;
-  font-size: 0.8125rem;
-  line-height: 1.35;
-  transition: background-color 0.15s ease, color 0.15s ease;
-  word-break: break-word;
+  cursor: pointer;
+  padding: 2px 0;
+  background: transparent;
+  border: none;
+  position: relative;
 }
 
-.toc-link:hover {
-  background-color: var(--bg-tertiary, rgba(255, 255, 255, 0.05));
-  color: var(--text-primary, #ffffff);
-}
-
-.toc-link:focus-visible {
-  outline: 2px solid var(--accent, #3b82f6);
-  outline-offset: -1px;
-}
-
-.toc-link.active {
-  background-color: var(--bg-tertiary, rgba(59, 130, 246, 0.15));
-  color: var(--accent, #60a5fa);
-  font-weight: 500;
-}
-
-.toc-bullet {
-  flex-shrink: 0;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background-color: currentColor;
-  opacity: 0.4;
-  transition: opacity 0.15s, transform 0.15s;
-}
-
-.toc-link.active .toc-bullet {
-  opacity: 1;
-  transform: scale(1.3);
-  background-color: var(--accent, #60a5fa);
-}
-
+/* Text labels: completely hidden by default (opacity: 0).
+   Positioned absolutely to the left of the rail so they never push or take up layout space */
+.spy-label,
 .toc-text {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  font-weight: 400;
+  color: var(--text-muted);
+  opacity: 0;
+  transition: opacity 0.18s ease, transform 0.18s ease, color 0.18s ease;
   white-space: nowrap;
+  pointer-events: none;
+  position: absolute;
+  right: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%) translateX(4px);
 }
 
-/* Level-specific styling */
-.toc-level-1 > .toc-link {
+/* Reveal label on item hover */
+.spy-item:hover .spy-label,
+.toc-link:hover .toc-text,
+.toc-item:hover > .toc-link .spy-label,
+.toc-item:hover > .toc-link .toc-text {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+  color: var(--text-primary);
+}
+
+/* Reveal and highlight label for the active item */
+.spy-item.active .spy-label,
+.toc-link.active .toc-text,
+.toc-item.active > .toc-link .spy-label,
+.toc-item.active > .toc-link .toc-text {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+  color: var(--accent-teal);
   font-weight: 600;
-  font-size: 0.84rem;
 }
 
-.toc-level-2 > .toc-link {
-  font-size: 0.8125rem;
+/* Horizontal line markers */
+.spy-marker,
+.toc-bullet {
+  height: 2px;
+  width: 14px;
+  background-color: var(--spy-inactive);
+  border-radius: 2px;
+  transition: width 0.2s ease, height 0.2s ease, background-color 0.2s ease;
+  display: inline-block;
+  flex-shrink: 0;
 }
 
-.toc-level-3 > .toc-link,
-.toc-level-4 > .toc-link,
-.toc-level-5 > .toc-link,
-.toc-level-6 > .toc-link {
-  font-size: 0.775rem;
+.spy-item:hover .spy-marker,
+.toc-link:hover .toc-bullet,
+.toc-item:hover > .toc-link .spy-marker,
+.toc-item:hover > .toc-link .toc-bullet {
+  background-color: var(--text-secondary);
+  width: 18px;
 }
 
-.toc-empty {
-  padding: 1.5rem 1rem;
-  text-align: center;
-  color: var(--text-muted, #71717a);
-  font-size: 0.8125rem;
-  font-style: italic;
+.spy-item.active .spy-marker,
+.toc-link.active .toc-bullet,
+.toc-item.active > .toc-link .spy-marker,
+.toc-item.active > .toc-link .toc-bullet {
+  width: 24px;
+  height: 2.5px;
+  background-color: var(--accent-teal);
+}
+
+body.focus-mode .scrollspy-rail,
+body.focus-mode .toc-sidebar {
+  display: none !important;
 }

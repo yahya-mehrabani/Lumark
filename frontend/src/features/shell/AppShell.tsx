@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TabStore, tabStore as defaultStore } from '../tabs/tabStore';
 import { useTabStore, useActiveTab, useTabActions } from '../tabs/useTabStore';
 import { TabBar } from '../tabs/TabBar';
@@ -84,8 +84,24 @@ export const AppShell: React.FC<AppShellProps> = ({
   const state = useTabStore(store);
   const activeTab = useActiveTab(store);
   const actions = useTabActions(store);
+  const [, setIsFocusMode] = useState(false);
 
-  // Global Ctrl+O shortcut to open file, Ctrl+P to print, Ctrl+, for settings
+  const exitFocusMode = () => {
+    document.body.classList.remove('focus-mode');
+    setIsFocusMode(false);
+    window.dispatchEvent(new CustomEvent('focus-mode-change', { detail: false }));
+  };
+
+  useEffect(() => {
+    const handleFocusChange = (e: Event) => {
+      const custom = e as CustomEvent<boolean>;
+      setIsFocusMode(custom.detail ?? document.body.classList.contains('focus-mode'));
+    };
+    window.addEventListener('focus-mode-change', handleFocusChange);
+    return () => window.removeEventListener('focus-mode-change', handleFocusChange);
+  }, []);
+
+  // Global shortcuts
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && (e.key === 'o' || e.key === 'O')) {
@@ -97,6 +113,9 @@ export const AppShell: React.FC<AppShellProps> = ({
       } else if ((e.ctrlKey || e.metaKey) && e.key === ',') {
         e.preventDefault();
         onOpenSettings?.();
+      } else if (e.key === 'Escape' && document.body.classList.contains('focus-mode')) {
+        e.preventDefault();
+        exitFocusMode();
       }
     };
 
@@ -111,67 +130,112 @@ export const AppShell: React.FC<AppShellProps> = ({
   return (
     <DropZone
       onFilesDropped={(files) => onFileDrop?.(files)}
-      className={`app-shell-root ${className}`}
+      className={`app-shell-root app-window ${className}`.trim()}
       testId="app-shell-root"
     >
-      {/* Top Header / Menu Bar Chrome */}
-      <header className="app-header app-chrome" role="banner">
-        <div className="app-brand">
-          <svg
-            className="brand-icon"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
+      {/* Floating Exit Button for Focus Mode */}
+      <button
+        type="button"
+        className="focus-exit-btn"
+        id="exitFocusBtn"
+        title="Exit Focus Mode (Esc)"
+        onClick={exitFocusMode}
+        aria-label="Exit Focus Mode"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
+        </svg>
+        <span>Exit Focus</span>
+        <kbd>Esc</kbd>
+      </button>
+
+      {/* Top Bar Header */}
+      <header className="top-bar app-header app-chrome" role="banner">
+        <div className="top-bar-left">
+          <div
+            className={`app-brand ${!hasTabs ? 'no-divider' : ''}`}
+            id="appBrand"
+            role="button"
+            tabIndex={0}
+            onClick={onOpenFile}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onOpenFile?.();
+              }
+            }}
+            title="Open a new Markdown file (Ctrl+O)"
+            aria-label="Open a new Markdown file (Ctrl+O)"
           >
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-          </svg>
-          <span>Markdown Viewer</span>
+            <svg
+              className="brand-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
+            </svg>
+            <span>Markdown Viewer</span>
+          </div>
+
+          {/* Render TabBar inside top-bar-left when tabs exist */}
+          {hasTabs && (
+            <TabBar
+              tabs={state.tabs}
+              activeTabId={state.activeTabId}
+              onSelectTab={actions.switchTab}
+              onCloseTab={actions.closeTab}
+              onOpenFile={onOpenFile}
+            />
+          )}
         </div>
 
-        <div className="header-actions">
+        <div className="top-bar-right header-actions">
           <button
             type="button"
-            className="header-btn"
+            className="ghost-btn header-btn"
+            id="topOpenBtn"
             onClick={onOpenFile}
             aria-label="Open document file (Ctrl+O)"
             title="Open document file (Ctrl+O)"
           >
-            Open File
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+            </svg>
+            <span>Open</span>
           </button>
+
           <RecentFilesMenu
             recentFiles={recentFiles}
             onSelectFile={onSelectRecentFile}
             onRemoveFile={onRemoveRecentFile}
             onClearFiles={onClearRecentFiles}
           />
+
           <button
             type="button"
-            className="header-btn"
+            className="ghost-btn header-btn"
+            id="openPrefsBtn"
             onClick={onOpenSettings}
             aria-label="Preferences and settings (Ctrl+,)"
             title="Preferences and settings (Ctrl+,)"
             data-testid="header-settings-btn"
           >
-            Preferences
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="3" />
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg>
+            <span>Preferences</span>
           </button>
         </div>
       </header>
 
-      {/* Tab Strip */}
-      <TabBar
-        tabs={state.tabs}
-        activeTabId={state.activeTabId}
-        onSelectTab={actions.switchTab}
-        onCloseTab={actions.closeTab}
-      />
-
       {/* Main Viewport Container */}
-      <main className="app-viewport" role="main">
+      <main className="app-viewport main-stage" role="main">
         {!hasTabs || !activeTab ? (
           <EmptyState
             onOpenFile={onOpenFile}
@@ -193,7 +257,7 @@ export const AppShell: React.FC<AppShellProps> = ({
       </main>
 
       {/* Status Bar */}
-      <footer className="app-status-bar app-chrome" role="status">
+      <footer className="status-bar app-status-bar app-chrome" role="status">
         <div className="status-left">
           <span>{activeTab ? activeTab.filePath : 'Ready'}</span>
         </div>
@@ -205,7 +269,10 @@ export const AppShell: React.FC<AppShellProps> = ({
           </span>
         </div>
         <div className="status-right">
-          <span>{activeTab && activeTab.isReadOnly ? 'Read-Only' : 'Markdown'}</span>
+          <span>
+            <span className={`status-dot ${!activeTab ? 'inactive' : ''}`} />
+            {activeTab && activeTab.isReadOnly ? 'Read-Only' : 'Markdown'}
+          </span>
         </div>
       </footer>
     </DropZone>

@@ -81,7 +81,7 @@ const MarkdownContentBody = React.memo(
       return (
         <main
           ref={ref}
-          className="markdown-content"
+          className="markdown-content document-wrapper markdown-body"
           data-testid="markdown-content"
           tabIndex={0}
           dir={activePref !== 'auto' ? activePref : undefined}
@@ -222,6 +222,35 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
   const { zoom, zoomFactor, zoomIn, zoomOut, resetZoom, canZoomIn, canZoomOut } = useZoom({ enableShortcuts: true });
   usePrint({ enableShortcuts: true });
 
+  const [isFocusMode, setIsFocusMode] = React.useState<boolean>(() => {
+    return typeof window !== 'undefined' && window.document.body.classList.contains('focus-mode');
+  });
+
+  React.useEffect(() => {
+    const handleFocusChange = () => {
+      setIsFocusMode(typeof window !== 'undefined' && window.document.body.classList.contains('focus-mode'));
+    };
+    window.addEventListener('focus-mode-change', handleFocusChange);
+    return () => window.removeEventListener('focus-mode-change', handleFocusChange);
+  }, []);
+
+  const toggleFocusMode = React.useCallback(() => {
+    if (typeof window !== 'undefined') {
+      const active = window.document.body.classList.toggle('focus-mode');
+      setIsFocusMode(active);
+      window.dispatchEvent(new CustomEvent('focus-mode-change'));
+    }
+  }, []);
+
+  const repoName = React.useMemo(() => {
+    if (!filePath) return '';
+    const parts = filePath.replace(/\\/g, '/').split('/').filter(Boolean);
+    if (parts.length >= 2) {
+      return parts[parts.length - 2];
+    }
+    return '';
+  }, [filePath]);
+
   const [copiedPath, setCopiedPath] = React.useState(false);
   const copyPathTimerRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
@@ -245,52 +274,84 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
   return (
     <div className={`markdown-viewport ${className}`.trim()} data-testid="markdown-viewport">
       {(filename || filePath) && (
-        <header className="document-header-bar app-chrome" data-testid="document-header">
-          <div className="doc-title-group">
-            <span className="doc-type-badge">MARKDOWN</span>
-            <h1 className="doc-filename">{filename || 'Untitled Document'}</h1>
-          </div>
-          <div className="doc-header-right">
-            {filePath && (
-              <div className="doc-path-badge" title={filePath} data-testid="doc-path-badge">
-                <span className="path-label">PATH:</span>
-                <span className="path-text" title={filePath}>{truncateMiddlePath(filePath)}</span>
-                <button
-                  type="button"
-                  className="doc-copy-path-btn"
-                  onClick={handleCopyPath}
-                  aria-label={copiedPath ? 'Path copied to clipboard' : 'Copy file path to clipboard'}
-                  title={copiedPath ? 'Copied!' : 'Copy full path to clipboard'}
-                  data-testid="doc-copy-path-btn"
+        <div className="floating-toolbar-container" data-testid="document-header">
+          <div className="floating-pill" role="toolbar" aria-label="Document controls">
+            <div
+              className="pill-breadcrumb"
+              title={copiedPath ? 'Copied path to clipboard!' : (filePath ? `${filePath} (Click to copy)` : (filename || 'Document'))}
+              data-testid="doc-path-badge"
+              onClick={handleCopyPath}
+              style={{ cursor: filePath ? 'pointer' : 'default' }}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+              </svg>
+              {repoName && (
+                <>
+                  <span className="repo-name">{repoName}</span>
+                  <span className="slash">/</span>
+                </>
+              )}
+              <h1 className="file-name doc-filename" id="pillFileName">
+                {filename || 'Untitled Document'}
+              </h1>
+              {filePath && (
+                <span
+                  className="path-text"
+                  data-testid="doc-path-text"
+                  title={truncateMiddlePath(filePath)}
+                  style={{
+                    position: 'absolute',
+                    width: '1px',
+                    height: '1px',
+                    padding: 0,
+                    margin: '-1px',
+                    overflow: 'hidden',
+                    clip: 'rect(0, 0, 0, 0)',
+                    whiteSpace: 'nowrap',
+                    borderWidth: 0,
+                  }}
                 >
-                  {copiedPath ? (
-                    <svg className="copy-icon" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                  ) : (
-                    <svg className="copy-icon" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                    </svg>
-                  )}
-                </button>
-              </div>
-            )}
-            <div className="doc-zoom-controls" data-testid="doc-zoom-controls" role="group" aria-label="Zoom controls">
+                  {filePath}
+                </span>
+              )}
+            </div>
+
+            <div className="pill-divider" />
+
+            <div
+              className="zoom-controls doc-zoom-controls"
+              data-testid="doc-zoom-controls"
+              role="group"
+              aria-label="Zoom controls"
+            >
               <button
                 type="button"
-                className="doc-zoom-btn"
+                className="pill-icon-btn doc-zoom-btn"
+                id="zoomOutBtn"
                 onClick={zoomOut}
                 disabled={!canZoomOut}
                 aria-label="Zoom out (Ctrl+-)"
-                title="Zoom out (Ctrl+-)"
+                title="Zoom Out (Ctrl+-)"
                 data-testid="doc-zoom-out"
               >
-                -
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
               </button>
               <button
                 type="button"
-                className="doc-zoom-display-btn"
+                className="zoom-readout doc-zoom-display-btn"
+                id="zoomReadout"
                 onClick={resetZoom}
                 aria-label={`Current zoom ${zoom}%. Click to reset (Ctrl+0)`}
                 title="Reset zoom to 100% (Ctrl+0)"
@@ -300,19 +361,94 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
               </button>
               <button
                 type="button"
-                className="doc-zoom-btn"
+                className="pill-icon-btn doc-zoom-btn"
+                id="zoomInBtn"
                 onClick={zoomIn}
                 disabled={!canZoomIn}
                 aria-label="Zoom in (Ctrl+=)"
-                title="Zoom in (Ctrl+=)"
+                title="Zoom In (Ctrl++)"
                 data-testid="doc-zoom-in"
               >
-                +
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
               </button>
             </div>
+
+            <div className="pill-divider" />
+
             <button
               type="button"
-              className="doc-theme-toggle-btn"
+              className={`pill-icon-btn doc-search-toggle-btn ${search.isOpen ? 'active' : ''}`}
+              id="findToggleBtn"
+              onClick={() => (search.isOpen ? search.closeSearch() : search.openSearch())}
+              aria-label="Find in Document (Ctrl+F)"
+              title="Find in Document (Ctrl+F)"
+              aria-expanded={search.isOpen}
+              data-testid="doc-search-toggle"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </button>
+
+            <button
+              type="button"
+              className="pill-icon-btn doc-print-btn"
+              onClick={() => (onPrint ? onPrint() : triggerPrint())}
+              aria-label="Print Document (Ctrl+P)"
+              title="Print Document (Ctrl+P)"
+              data-testid="doc-print-btn"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="6 9 6 2 18 2 18 9" />
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                <rect x="6" y="14" width="12" height="8" />
+              </svg>
+              <span
+                style={{
+                  position: 'absolute',
+                  width: '1px',
+                  height: '1px',
+                  padding: 0,
+                  margin: '-1px',
+                  overflow: 'hidden',
+                  clip: 'rect(0, 0, 0, 0)',
+                  whiteSpace: 'nowrap',
+                  borderWidth: 0,
+                }}
+              >
+                Print
+              </span>
+            </button>
+
+            <button
+              type="button"
+              className={`pill-icon-btn doc-toc-toggle-btn ${isTocOpen ? 'active' : ''}`}
+              id="outlineToggleBtn"
+              onClick={tocToggle.toggle}
+              disabled={!tocData.hasHeadings}
+              aria-label="Toggle Outline Scrollspy (Ctrl+Shift+O)"
+              title={
+                tocData.hasHeadings
+                  ? 'Toggle Outline Scrollspy (Ctrl+Shift+O)'
+                  : 'No headings in document'
+              }
+              aria-expanded={isTocOpen}
+              data-testid="doc-toc-toggle"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="4" y1="6" x2="20" y2="6" />
+                <line x1="4" y1="12" x2="14" y2="12" />
+                <line x1="4" y1="18" x2="18" y2="18" />
+              </svg>
+            </button>
+
+            <button
+              type="button"
+              className="pill-icon-btn doc-theme-toggle-btn"
               onClick={toggleTheme}
               aria-label={`Theme: ${theme === 'system' ? 'Auto (System)' : theme === 'dark' ? 'Dark' : 'Light'}. Click to toggle.`}
               title={`Theme: ${theme === 'system' ? 'Auto (System)' : theme === 'dark' ? 'Dark' : 'Light'} (Click to toggle)`}
@@ -320,11 +456,11 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
               data-theme-mode={theme}
             >
               {theme === 'dark' ? (
-                <svg className="theme-btn-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
                 </svg>
               ) : theme === 'light' ? (
-                <svg className="theme-btn-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <circle cx="12" cy="12" r="5" />
                   <line x1="12" y1="1" x2="12" y2="3" />
                   <line x1="12" y1="21" x2="12" y2="23" />
@@ -336,68 +472,44 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
                   <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
                 </svg>
               ) : (
-                <svg className="theme-btn-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
                   <line x1="8" y1="21" x2="16" y2="21" />
                   <line x1="12" y1="17" x2="12" y2="21" />
                 </svg>
               )}
-              <span className="theme-btn-label">{theme === 'system' ? 'Auto' : theme === 'dark' ? 'Dark' : 'Light'}</span>
             </button>
+
             <button
               type="button"
-              className="doc-print-btn"
-              onClick={() => (onPrint ? onPrint() : triggerPrint())}
-              aria-label="Print document (Ctrl+P)"
-              title="Print document (Ctrl+P)"
-              data-testid="doc-print-btn"
+              className={`pill-icon-btn ${isFocusMode ? 'active' : ''}`}
+              id="focusModeBtn"
+              onClick={toggleFocusMode}
+              title="Enter Focus Mode (Distraction-Free)"
+              aria-label="Enter Focus Mode"
+              data-testid="doc-focus-toggle"
             >
-              Print
-            </button>
-            <button
-              type="button"
-              className={`doc-search-toggle-btn ${search.isOpen ? 'active' : ''}`}
-              onClick={() => (search.isOpen ? search.closeSearch() : search.openSearch())}
-              aria-label="Find in document (Ctrl+F)"
-              title="Find in document (Ctrl+F)"
-              aria-expanded={search.isOpen}
-              data-testid="doc-search-toggle"
-            >
-              Find
-            </button>
-            <button
-              type="button"
-              className={`doc-toc-toggle-btn ${isTocOpen ? 'active' : ''}`}
-              onClick={tocToggle.toggle}
-              disabled={!tocData.hasHeadings}
-              aria-label="Table of Contents (Ctrl+Shift+O)"
-              title={
-                tocData.hasHeadings
-                  ? 'Table of Contents (Ctrl+Shift+O)'
-                  : 'No headings in document'
-              }
-              aria-expanded={isTocOpen}
-              data-testid="doc-toc-toggle"
-            >
-              Outline
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+              </svg>
             </button>
           </div>
-        </header>
-      )}
 
-      <SearchBar
-        className={isTocOpen ? 'has-toc-open' : ''}
-        isOpen={search.isOpen}
-        query={search.query}
-        onQueryChange={search.setQuery}
-        currentIndex={search.currentIndex}
-        totalMatches={search.totalMatches}
-        onNext={search.nextMatch}
-        onPrevious={search.prevMatch}
-        onClose={search.closeSearch}
-        caseSensitive={search.caseSensitive}
-        onToggleCaseSensitive={search.toggleCaseSensitive}
-      />
+          <SearchBar
+            className={isTocOpen ? 'has-toc-open' : ''}
+            isOpen={search.isOpen}
+            query={search.query}
+            onQueryChange={search.setQuery}
+            currentIndex={search.currentIndex}
+            totalMatches={search.totalMatches}
+            onNext={search.nextMatch}
+            onPrevious={search.prevMatch}
+            onClose={search.closeSearch}
+            caseSensitive={search.caseSensitive}
+            onToggleCaseSensitive={search.toggleCaseSensitive}
+          />
+        </div>
+      )}
 
       <div
         className="markdown-viewport-body"
@@ -414,19 +526,19 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
           onOpenExternalUrl={onOpenExternalUrl}
           onNavigateAnchor={onNavigateAnchor}
         />
-
-        {isTocOpen && (
-          <TableOfContents
-            items={tocData.items}
-            tree={tocData.tree}
-            isOpen={isTocOpen}
-            onClose={tocToggle.close}
-            onSelectHeading={onNavigateAnchor}
-            containerRef={contentRef}
-            zoomFactor={zoomFactor}
-          />
-        )}
       </div>
+
+      {isTocOpen && (
+        <TableOfContents
+          items={tocData.items}
+          tree={tocData.tree}
+          isOpen={isTocOpen}
+          onClose={tocToggle.close}
+          onSelectHeading={onNavigateAnchor}
+          containerRef={contentRef}
+          zoomFactor={zoomFactor}
+        />
+      )}
     </div>
   );
 };

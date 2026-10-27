@@ -59,31 +59,30 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       role="region"
       aria-label="Empty state - no document open"
     >
-      <div className="empty-state-card">
-        {/* Document Icon */}
-        <svg
-          className="empty-state-icon"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.75"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-          <polyline points="14 2 14 8 20 8" />
-          <line x1="16" y1="13" x2="8" y2="13" />
-          <line x1="16" y1="17" x2="8" y2="17" />
-          <line x1="10" y1="9" x2="8" y2="9" />
-        </svg>
+      <div className="empty-container">
+        {/* Document Icon Emblem */}
+        <div className="hero-icon-wrap" aria-hidden="true">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="8" y1="13" x2="16" y2="13" />
+            <line x1="8" y1="17" x2="13" y2="17" />
+          </svg>
+        </div>
 
         <h2 className="empty-state-title">No Document Open</h2>
         <p className="empty-state-subtitle">
           Open a Markdown file to view, preview diagrams, and inspect math formulas.
         </p>
 
-        {/* Primary Action Button */}
+        {/* Primary Action Button & Shortcut Keycap */}
         <div className="empty-state-actions">
           <button
             type="button"
@@ -92,8 +91,8 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
             aria-label="Open Markdown file"
           >
             <svg
-              width="16"
-              height="16"
+              width="15"
+              height="15"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -104,9 +103,11 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
             >
               <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
             </svg>
-            Open File
-            <span className="shortcut-badge">Ctrl+O</span>
+            <span>Open File</span>
           </button>
+          <span className="kbd-group" aria-label="Shortcut Control plus O">
+            <kbd>Ctrl</kbd><span>+</span><kbd>O</kbd>
+          </span>
         </div>
 
         {/* Drop Zone */}
@@ -118,16 +119,31 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           onClick={onOpenFile}
           role="region"
           aria-label="Dropzone for Markdown files"
+          tabIndex={0}
         >
+          <svg
+            className="dropzone-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
           <span className="dropzone-text">
             {isDragOver ? 'Release to open Markdown files' : 'Drop Markdown (.md) files here'}
           </span>
         </div>
 
         {/* Recent Files List */}
-        <div className="recent-files-section">
+        <div className="recent-files-section" role="region" aria-labelledby="recentHeading">
           <div className="recent-files-header">
-            <h3 className="recent-files-title">Recent Files</h3>
+            <h3 className="recent-files-title" id="recentHeading">Recent Files</h3>
             {recentFiles.length > 0 && onClearRecentFiles && (
               <button
                 type="button"
@@ -159,7 +175,22 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
                   data-testid={`empty-recent-item-${file.filename}`}
                 >
                   <div className="recent-file-info">
-                    <span className="recent-file-name">{file.filename}</span>
+                    <div className="recent-file-main">
+                      <svg
+                        className="recent-file-icon"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                      </svg>
+                      <span className="recent-file-name">{file.filename}</span>
+                    </div>
                     <span className="recent-file-path" title={file.filePath}>
                       {file.filePath}
                     </span>
@@ -207,30 +238,32 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 
         {/* Shortcuts Cheatsheet */}
         <div className="shortcuts-cheatsheet" role="region" aria-label="Keyboard shortcuts">
-          <h3 className="shortcuts-title">Keyboard Shortcuts</h3>
+          <div className="recent-files-header">
+            <h3 className="shortcuts-title">Keyboard Shortcuts</h3>
+          </div>
           <div className="shortcuts-grid">
             <div className="shortcut-row">
               <span>Open Document</span>
-              <span className="shortcut-keys">
-                <kbd className="kbd-key">Ctrl</kbd>+<kbd className="kbd-key">O</kbd>
+              <span className="kbd-group">
+                <kbd className="kbd-key">Ctrl</kbd><span>+</span><kbd className="kbd-key">O</kbd>
               </span>
             </div>
             <div className="shortcut-row">
               <span>Close Tab</span>
-              <span className="shortcut-keys">
-                <kbd className="kbd-key">Ctrl</kbd>+<kbd className="kbd-key">W</kbd>
+              <span className="kbd-group">
+                <kbd className="kbd-key">Ctrl</kbd><span>+</span><kbd className="kbd-key">W</kbd>
               </span>
             </div>
             <div className="shortcut-row">
               <span>Switch Tabs</span>
-              <span className="shortcut-keys">
-                <kbd className="kbd-key">←</kbd> / <kbd className="kbd-key">→</kbd>
+              <span className="kbd-group">
+                <kbd className="kbd-key">←</kbd><span>/</span><kbd className="kbd-key">→</kbd>
               </span>
             </div>
             <div className="shortcut-row">
               <span>Search Text</span>
-              <span className="shortcut-keys">
-                <kbd className="kbd-key">Ctrl</kbd>+<kbd className="kbd-key">F</kbd>
+              <span className="kbd-group">
+                <kbd className="kbd-key">Ctrl</kbd><span>+</span><kbd className="kbd-key">F</kbd>
               </span>
             </div>
           </div>

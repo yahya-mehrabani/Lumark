@@ -14,7 +14,17 @@ import "../github.com/wailsapp/wails/v3/internal/eventcreate.js";
 export const DocumentOpen = "document:open";
 
 /**
+ * Name of the custom event "file:changed".
+ */
+export const FileChanged = "file:changed";
+
+/**
  * Name of the custom event "time".
  */
 export const Time = "time";
+
+/**
+ * Name of the custom event "wails:file-changed".
+ */
+export const WailsFileChanged = "wails:file-changed";
 

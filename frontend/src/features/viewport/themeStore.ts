@@ -135,6 +135,17 @@ export class ThemeStore {
           document.body.classList.remove('theme-dark');
         }
       }
+
+      const rootEl = document.getElementById('root');
+      if (rootEl) {
+        if (resolved === 'dark') {
+          rootEl.classList.add('theme-dark');
+          rootEl.classList.remove('theme-light');
+        } else {
+          rootEl.classList.add('theme-light');
+          rootEl.classList.remove('theme-dark');
+        }
+      }
     }
   }
 

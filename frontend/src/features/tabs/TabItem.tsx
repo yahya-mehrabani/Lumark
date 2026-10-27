@@ -53,7 +53,7 @@ export const TabItem: React.FC<TabItemProps> = ({ tab, isActive, onSelect, onClo
       aria-selected={isActive}
       aria-controls={`tabpanel-${tab.id}`}
       tabIndex={isActive ? 0 : -1}
-      className={`tab-item ${isActive ? 'is-active' : ''} ${tab.status !== 'ready' ? `status-${tab.status}` : ''}`}
+      className={`tab-item ${isActive ? 'is-active active' : ''} ${tab.status !== 'ready' ? `status-${tab.status}` : ''}`}
       onClick={handleClick}
       onMouseDown={handleMiddleClick}
       onAuxClick={handleMiddleClick}
@@ -83,13 +83,15 @@ export const TabItem: React.FC<TabItemProps> = ({ tab, isActive, onSelect, onClo
       <span className="tab-title">{tab.displayTitle}</span>
       <button
         type="button"
-        className="tab-close-btn"
+        className="tab-close tab-close-btn"
         aria-label={`Close tab: ${tab.displayTitle}`}
         title="Close tab (Ctrl+W or Middle-Click)"
         onClick={handleCloseClick}
         tabIndex={-1}
       >
-        ×
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
       </button>
     </div>
   );

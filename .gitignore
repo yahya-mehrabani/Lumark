@@ -33,6 +33,7 @@ dist/
 /build/bin/
 build/staging/
 .task/
+.design/
 bin/
 build/linux/appimage/build/
 build/windows/nsis/MicrosoftEdgeWebview2Setup.exe

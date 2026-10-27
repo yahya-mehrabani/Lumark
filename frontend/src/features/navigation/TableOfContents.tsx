@@ -20,12 +20,12 @@ export interface TableOfContentsProps {
 }
 
 /**
- * TableOfContents Component.
- * Conforms to PRD FR-NAV-001 and Section 5.5.
- * - Extracts and presents a hierarchical document outline from h1-h6 headings.
- * - Click-to-scroll smooth navigation to document headings.
- * - Highlights currently visible active heading.
- * - Cleanly collapses/handles documents with zero headings.
+ * TableOfContents Component — Minimalist Scrollspy Rail.
+ * Conforms to Warm Editorial Minimalist Desktop design.
+ * - Minimalist fixed right-side rail of horizontal bar markers.
+ * - Text labels hidden by default; revealed on rail hover or when active.
+ * - Active heading highlighted with teal accent.
+ * - Click-to-scroll smooth navigation.
  */
 export const TableOfContents: React.FC<TableOfContentsProps> = ({
   items: propsItems,
@@ -76,7 +76,6 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
   }, [containerRef]);
 
   const activeId = propsActiveId ?? clickedId ?? spyData.activeId;
-
   const hasHeadings = effectiveItems.length > 0;
 
   if (!isOpen) {
@@ -101,7 +100,7 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
       }
     })();
 
-    // Attempt to locate target element within container or document
+    // Locate target element within container or document
     const container = containerRef?.current;
     let target: HTMLElement | null = null;
 
@@ -170,17 +169,15 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
         container.scrollTop = targetScrollTop;
       }
 
-      // Explicit fallback for non-animating environments
       if (behavior === 'auto' && container.scrollTop !== targetScrollTop) {
         container.scrollTop = targetScrollTop;
       }
 
-      // DIAGNOSTIC MODE: Opt-in via localStorage.debugOutline = "1"
       if (typeof window !== 'undefined' && window.localStorage?.getItem('debugOutline') === '1') {
         requestAnimationFrame(() => {
           const afterScrollTop = container.scrollTop;
           const isScrollable = container.scrollHeight > container.clientHeight;
-          const diagMsg = `[Outline Debug] Target: "${target?.id}" | Scrollable: ${isScrollable} (scrollHeight: ${container.scrollHeight}px, clientHeight: ${container.clientHeight}px) | scrollTop: ${beforeScrollTop} -> ${afterScrollTop} (target: ${Math.round(targetScrollTop)}) | zoom: ${currentZoom}`;
+          const diagMsg = `[Outline Debug] Target: "${target?.id}" | Scrollable: ${isScrollable} | scrollTop: ${beforeScrollTop} -> ${afterScrollTop} | zoom: ${currentZoom}`;
           defaultToastStore.showInfo(diagMsg);
           console.info(diagMsg);
         });
@@ -202,16 +199,17 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
       >
         <a
           href={`#${node.id}`}
-          className={`toc-link ${isActive ? 'active' : ''}`}
+          className={`spy-item toc-link ${isActive ? 'active' : ''}`}
           aria-current={isActive ? 'location' : undefined}
           onClick={(e) => handleHeadingClick(e, node.id)}
           title={node.text}
           data-testid={`toc-link-${node.id}`}
+          data-target={node.id}
         >
-          <span className="toc-bullet" aria-hidden="true" />
-          <span className="toc-text" dir="auto">
+          <span className="spy-label toc-text" dir="auto">
             {node.text}
           </span>
+          <span className="spy-marker toc-bullet" aria-hidden="true" />
         </a>
 
         {node.children && node.children.length > 0 && (
@@ -225,70 +223,42 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
 
   return (
     <nav
-      className={`toc-sidebar app-chrome ${className}`.trim()}
+      className={`scrollspy-rail toc-sidebar ${!isOpen ? 'hidden' : ''} ${className}`.trim()}
       aria-label="Table of Contents"
       data-testid="toc-sidebar"
     >
-      <header className="toc-header">
-        <div className="toc-title-group">
-          <svg
-            className="toc-icon"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <line x1="8" y1="6" x2="21" y2="6" />
-            <line x1="8" y1="12" x2="21" y2="12" />
-            <line x1="8" y1="18" x2="21" y2="18" />
-            <line x1="3" y1="6" x2="3.01" y2="6" />
-            <line x1="3" y1="12" x2="3.01" y2="12" />
-            <line x1="3" y1="18" x2="3.01" y2="18" />
-          </svg>
-          <h2 className="toc-title">Table of Contents</h2>
+      {onClose && (
+        <button
+          type="button"
+          className="toc-close-btn"
+          onClick={onClose}
+          aria-label="Close Table of Contents"
+          title="Close outline"
+          data-testid="toc-close-button"
+          style={{
+            position: 'absolute',
+            width: '1px',
+            height: '1px',
+            padding: 0,
+            margin: '-1px',
+            overflow: 'hidden',
+            clip: 'rect(0, 0, 0, 0)',
+            whiteSpace: 'nowrap',
+            borderWidth: 0,
+          }}
+        >
+          Close
+        </button>
+      )}
+      {!hasHeadings ? (
+        <div className="toc-empty" data-testid="toc-empty" style={{ display: 'none' }}>
+          No headings found in document.
         </div>
-
-        {onClose && (
-          <button
-            type="button"
-            className="toc-close-btn"
-            onClick={onClose}
-            aria-label="Close Table of Contents"
-            title="Close outline"
-            data-testid="toc-close-button"
-          >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
-        )}
-      </header>
-
-      <div className="toc-content">
-        {!hasHeadings ? (
-          <div className="toc-empty" data-testid="toc-empty">
-            No headings found in document.
-          </div>
-        ) : (
-          <ul className="toc-list" role="list" data-testid="toc-list">
-            {effectiveTree.map(renderNode)}
-          </ul>
-        )}
-      </div>
+      ) : (
+        <ul className="toc-list" role="list" data-testid="toc-list">
+          {effectiveTree.map(renderNode)}
+        </ul>
+      )}
     </nav>
   );
 };

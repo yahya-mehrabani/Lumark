@@ -1,159 +1,229 @@
+/* Empty State View — Warm Editorial Minimalist Desktop */
+
 .empty-state-container {
   display: flex;
-  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
   align-items: center;
   justify-content: center;
-  min-height: 80vh;
-  padding: 40px 24px;
-  text-align: center;
+  padding: 36px 24px;
+  background-color: var(--bg-canvas);
   color: var(--text-primary);
   user-select: none;
 }
 
-.empty-state-card {
+.empty-container {
+  width: 100%;
+  max-width: 540px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 580px;
-  width: 100%;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: 14px;
-  padding: 36px 32px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
-.empty-state-icon {
+/* Hero Icon Emblem */
+.hero-icon-wrap {
   width: 56px;
   height: 56px;
+  border-radius: 14px;
+  background-color: var(--accent-teal-soft);
+  border: 1px solid var(--hero-icon-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-teal);
   margin-bottom: 20px;
-  color: var(--accent);
 }
 
+.hero-icon-wrap svg {
+  width: 28px;
+  height: 28px;
+}
+
+/* Typography */
 .empty-state-title {
-  margin: 0 0 8px 0;
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-family: var(--font-serif);
+  font-size: 26px;
+  font-weight: 600;
   color: var(--text-primary);
+  letter-spacing: -0.015em;
+  margin: 0 0 8px 0;
+  text-align: center;
 }
 
 .empty-state-subtitle {
-  margin: 0 0 24px 0;
-  font-size: 14px;
-  line-height: 1.5;
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  line-height: 1.55;
   color: var(--text-muted);
+  text-align: center;
+  max-width: 420px;
+  margin: 0 0 24px 0;
 }
 
+/* Primary Action Row */
 .empty-state-actions {
   display: flex;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.empty-state-btn {
-  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  font-size: 14px;
-  font-weight: 600;
-  border-radius: 8px;
-  border: 1px solid transparent;
-  cursor: pointer;
-  transition: all 0.15s ease;
+  gap: 10px;
+  margin-bottom: 24px;
 }
 
 .empty-state-btn.primary {
-  background: var(--accent);
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 18px;
+  border-radius: 8px;
+  border: none;
+  background-color: var(--accent-teal);
+  color: var(--btn-primary-text);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow-button);
+  transition: background-color 0.15s ease, transform 0.1s ease;
 }
 
 .empty-state-btn.primary:hover {
-  background: var(--accent-hover);
+  background-color: var(--accent-teal-hover);
+}
+
+.empty-state-btn.primary:active {
+  transform: translateY(1px);
+}
+
+.empty-state-btn.primary svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* Keyboard Caps */
+.kbd-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+kbd,
+.kbd-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 21px;
+  padding: 0 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background-color: var(--bg-chrome);
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  box-shadow: var(--shadow-keycap);
+  line-height: 1;
+}
+
+/* Drag & Drop Zone */
+.empty-state-dropzone {
+  width: 100%;
+  padding: 20px 24px;
+  border-radius: 10px;
+  border: 1.5px dashed var(--border-strong);
+  background-color: var(--bg-surface-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: border-color 0.18s ease, background-color 0.18s ease, color 0.18s ease;
+  margin-bottom: 32px;
+  box-sizing: border-box;
+}
+
+.empty-state-dropzone .dropzone-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--text-muted);
+  transition: color 0.18s ease, transform 0.18s ease;
+}
+
+.empty-state-dropzone:hover,
+.empty-state-dropzone.is-drag-over {
+  border-color: var(--accent-teal);
+  background-color: var(--accent-teal-soft);
+  color: var(--accent-teal);
+}
+
+.empty-state-dropzone:hover .dropzone-icon,
+.empty-state-dropzone.is-drag-over .dropzone-icon {
+  color: var(--accent-teal);
   transform: translateY(-1px);
 }
 
-.empty-state-btn:active {
-  transform: translateY(0);
-}
-
-.shortcut-badge {
-  display: inline-block;
-  padding: 2px 6px;
-  font-size: 11px;
-  font-family: var(--font-mono, monospace);
-  font-weight: 500;
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-  border-radius: 4px;
+.empty-state-dropzone code {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  background-color: var(--bg-inline-code);
   border: 1px solid var(--border-subtle);
-}
-
-.empty-state-dropzone {
-  width: 100%;
-  border: 2px dashed var(--border-subtle);
-  border-radius: 10px;
-  padding: 24px 16px;
-  margin-bottom: 28px;
-  background: var(--bg-primary);
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.empty-state-dropzone:hover {
-  border-color: var(--border-strong);
-  background: var(--bg-tertiary);
-}
-
-.empty-state-dropzone.is-drag-over {
-  border-color: var(--accent);
-  background: var(--bg-tertiary);
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: var(--text-primary);
 }
 
 .dropzone-text {
-  font-size: 13px;
-  color: var(--text-muted);
-  display: block;
+  font-size: 12.5px;
+  color: inherit;
 }
 
+/* Recent Files Section */
 .recent-files-section {
   width: 100%;
-  margin-bottom: 24px;
-  text-align: left;
+  margin-bottom: 28px;
 }
 
 .recent-files-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
-.recent-files-title {
-  font-size: 12px;
+.recent-files-title,
+.shortcuts-title {
+  font-family: var(--font-sans);
+  font-size: 10.5px;
   font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
   color: var(--text-muted);
   margin: 0;
 }
 
 .empty-clear-recents-btn {
-  background: none;
-  border: none;
+  font-family: var(--font-sans);
   font-size: 11px;
   color: var(--text-muted);
+  background: none;
+  border: none;
   cursor: pointer;
   padding: 2px 6px;
   border-radius: 4px;
-  transition: all 0.15s ease;
+  transition: color 0.15s ease;
 }
 
 .empty-clear-recents-btn:hover {
-  color: var(--danger);
-  background: var(--danger-bg);
+  color: var(--text-primary);
 }
 
 .recent-files-list {
@@ -162,58 +232,77 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  max-height: 180px;
-  overflow-y: auto;
+  gap: 2px;
 }
 
 .recent-file-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
-  border-radius: 6px;
-  background: var(--bg-primary);
-  border: 1px solid var(--border-subtle);
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 7px;
+  background: transparent;
+  border: 1px solid transparent;
   cursor: pointer;
-  transition: background 0.12s, border-color 0.12s;
+  transition: background-color 0.14s ease, border-color 0.14s ease;
+}
+
+.recent-file-item:hover {
+  background-color: var(--bg-surface-hover);
 }
 
 .recent-file-item.is-missing {
   border-color: var(--danger-border);
-  background: var(--danger-bg);
-}
-
-.recent-file-item:hover {
-  background: var(--bg-tertiary);
-  border-color: var(--border-strong);
+  background-color: var(--danger-bg);
 }
 
 .recent-file-info {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   min-width: 0;
   flex: 1;
 }
 
+.recent-file-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.recent-file-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
 .recent-file-name {
-  font-size: 13px;
+  font-family: var(--font-sans);
+  font-size: 12.5px;
   font-weight: 500;
   color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .recent-file-path {
+  font-family: var(--font-mono);
   font-size: 11px;
   color: var(--text-muted);
-  max-width: 280px;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  max-width: 260px;
+  text-align: right;
 }
 
 .recent-file-missing-badge {
-  display: inline-block;
+  font-family: var(--font-sans);
   font-size: 10px;
   font-weight: 600;
   padding: 1px 6px;
@@ -221,8 +310,8 @@
   background-color: var(--danger-bg);
   color: var(--danger);
   border: 1px solid var(--danger-border);
-  margin-top: 2px;
-  width: fit-content;
+  margin-left: 6px;
+  flex-shrink: 0;
 }
 
 .recent-file-remove-btn {
@@ -232,9 +321,11 @@
   border-radius: 4px;
   color: var(--text-muted);
   cursor: pointer;
-  opacity: 0.7;
-  transition: all 0.15s ease;
-  margin-left: 8px;
+  opacity: 0.6;
+  transition: opacity 0.15s ease, color 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .recent-file-remove-btn:hover {
@@ -243,56 +334,32 @@
 }
 
 .no-recents {
-  font-size: 13px;
+  font-family: var(--font-sans);
+  font-size: 12px;
   color: var(--text-muted);
   font-style: italic;
   display: block;
   text-align: center;
-  padding: 8px 0;
+  padding: 12px 0;
 }
 
+/* Shortcuts Cheatsheet */
 .shortcuts-cheatsheet {
   width: 100%;
-  border-top: 1px solid var(--border-subtle);
-  padding-top: 20px;
-  text-align: left;
-}
-
-.shortcuts-title {
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-muted);
-  margin: 0 0 12px 4px;
 }
 
 .shortcuts-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px 16px;
+  gap: 8px 24px;
 }
 
 .shortcut-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 4px 0;
+  font-family: var(--font-sans);
   font-size: 12px;
   color: var(--text-secondary);
-}
-
-.shortcut-keys {
-  display: inline-flex;
-  gap: 4px;
-}
-
-.kbd-key {
-  padding: 2px 5px;
-  font-size: 11px;
-  font-family: var(--font-mono, monospace);
-  font-weight: 600;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-subtle);
-  border-radius: 4px;
-  color: var(--text-primary);
 }
