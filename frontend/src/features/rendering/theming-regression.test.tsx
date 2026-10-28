@@ -24,6 +24,13 @@ describe('Category 3: Theming & Typography Verification', () => {
       expect(markdownCss).toMatch(darkModeSpanRuleRegex);
     });
 
+    it('markdown.css overrides inner pre, code, and Shiki wrappers to transparent so container --bg-code is the only visible layer', () => {
+      // Must set background to transparent on inner elements
+      expect(markdownCss).toContain('.shiki-wrapper,');
+      expect(markdownCss).toContain('background: transparent !important;');
+      expect(markdownCss).toContain('background-color: transparent !important;');
+    });
+
     it('CodeBlock renders code with dual themes and dark token variables', async () => {
       const codeSnippet = 'const greeting = "Hello World";';
       render(<CodeBlock rawCode={codeSnippet} language="typescript" />);

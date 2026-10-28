@@ -780,6 +780,8 @@ h6,
   padding: 14px 16px;
   -webkit-overflow-scrolling: touch;
   line-height: 1.5;
+  background: transparent !important;
+  background-color: transparent !important;
 }
 
 .code-scroll-container pre,
@@ -787,6 +789,7 @@ h6,
   margin: 0;
   padding: 0;
   background: transparent !important;
+  background-color: transparent !important;
   border: none !important;
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
   font-size: 0.9em;
@@ -800,15 +803,25 @@ h6,
   color: var(--text-body);
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
   font-size: 0.9em;
-  background: transparent;
+  background: transparent !important;
+  background-color: transparent !important;
   padding: 0;
   border: none;
   display: block;
 }
 
-/* Shiki Dual-Themes CSS rules */
-.shiki {
-  background-color: var(--shiki-dark-bg, var(--bg-code, #141311));
+/* Shiki Dual-Themes CSS rules & single-layer background overrides */
+.shiki-wrapper,
+.shiki-wrapper pre,
+.shiki-wrapper code,
+.shiki,
+.shiki code,
+pre.shiki-fallback,
+pre.shiki-fallback code,
+.code-block-container pre,
+.code-block-container code {
+  background: transparent !important;
+  background-color: transparent !important;
 }
 
 /* Dark mode applies dark tokens */
@@ -816,7 +829,7 @@ h6,
 .theme-dark .code-block-container,
 body.theme-dark .code-block-container,
 :root:not([data-theme="light"]):not(.theme-light) .code-block-container {
-  background-color: var(--bg-code, #141311) !important;
+  background-color: var(--bg-code, var(--shiki-dark-bg, #141311)) !important;
   border-color: var(--border-subtle, #2E2D29) !important;
 }
 
@@ -841,7 +854,8 @@ body.theme-dark .code-line-numbers,
 .theme-dark .code-scroll-container,
 body.theme-dark .code-scroll-container,
 :root:not([data-theme="light"]):not(.theme-light) .code-scroll-container {
-  background-color: var(--bg-code, #141311) !important;
+  background-color: transparent !important;
+  background: transparent !important;
 }
 
 [data-theme="dark"] .shiki-wrapper,
@@ -864,7 +878,8 @@ body.theme-dark pre.shiki-fallback,
 .theme-dark .markdown-content pre,
 body.theme-dark .markdown-content pre,
 :root:not([data-theme="light"]):not(.theme-light) .markdown-content pre {
-  background-color: var(--shiki-dark-bg, var(--bg-code, #141311)) !important;
+  background-color: transparent !important;
+  background: transparent !important;
   color: var(--shiki-dark, var(--text-body)) !important;
 }
 
@@ -875,14 +890,21 @@ body.theme-dark .shiki span,
   color: var(--shiki-dark, inherit) !important;
 }
 
-/* Light mode preserves Shiki's inline light theme colors */
+/* Light mode preserves Shiki's inline light theme colors while keeping inner backgrounds transparent */
+[data-theme="light"] .code-scroll-container,
+.theme-light .code-scroll-container,
+[data-theme="light"] .shiki-wrapper,
+.theme-light .shiki-wrapper,
 [data-theme="light"] .shiki,
 [data-theme="light"] .shiki code,
 .theme-light .shiki,
 .theme-light .shiki code,
 [data-theme="light"] pre.shiki-fallback,
-.theme-light pre.shiki-fallback {
-  background-color: var(--shiki-light-bg, var(--bg-code, #EFECE6)) !important;
+.theme-light pre.shiki-fallback,
+[data-theme="light"] .markdown-content pre,
+.theme-light .markdown-content pre {
+  background-color: transparent !important;
+  background: transparent !important;
   color: var(--shiki-light, var(--text-primary)) !important;
 }
 
@@ -1555,6 +1577,12 @@ body.theme-dark .shiki span,
   background: var(--bg-code, #f6f8fa);
   border-color: var(--border-subtle, #e2e8f0);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .code-scroll-container,
+.theme-light .code-scroll-container {
+  background: transparent !important;
+  background-color: transparent !important;
 }
 
 [data-theme="light"] .code-block-header,
