@@ -158,17 +158,6 @@ export const AppShell: React.FC<AppShellProps> = ({
           <div
             className={`app-brand ${!hasTabs ? 'no-divider' : ''}`}
             id="appBrand"
-            role="button"
-            tabIndex={0}
-            onClick={onOpenFile}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                onOpenFile?.();
-              }
-            }}
-            title="Open a new Markdown file (Ctrl+O)"
-            aria-label="Open a new Markdown file (Ctrl+O)"
           >
             <svg
               className="brand-icon"

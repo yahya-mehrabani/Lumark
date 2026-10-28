@@ -159,6 +159,11 @@ func main() {
 		})
 	}
 
+	// Ensure Linux GTK theme defaults to dark mode if unset, matching application theme
+	if os.Getenv("GTK_THEME") == "" {
+		_ = os.Setenv("GTK_THEME", "Adwaita:dark")
+	}
+
 	// Create a new window with the necessary options.
 	// 'Title' is the title of the window.
 	// 'Mac' options tailor the window when running on macOS.
@@ -167,14 +172,44 @@ func main() {
 	mainWindow := app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Title: "Markdown Viewer",
 		// Window sized to the golden ratio (1000 / 618 ≈ 1.618).
-		Width:  1000,
-		Height: 618,
+		Width:               1000,
+		Height:              618,
+		StartState:          application.WindowStateMaximised,
+		Frameless:           false,
+		MinimiseButtonState: application.ButtonEnabled,
+		MaximiseButtonState: application.ButtonEnabled,
+		CloseButtonState:    application.ButtonEnabled,
 		Mac: application.MacWindow{
 			InvisibleTitleBarHeight: 50,
 			Backdrop:                application.MacBackdropTranslucent,
 			TitleBar:                application.MacTitleBarHiddenInset,
 		},
-		BackgroundColour: application.NewRGB(6, 7, 15),
+		Windows: application.WindowsWindow{
+			Theme: application.SystemDefault,
+			CustomTheme: application.ThemeSettings{
+				DarkModeActive: &application.WindowTheme{
+					TitleBarColour:  rgbColor(0x24, 0x23, 0x20),
+					TitleTextColour: rgbColor(0xF2, 0xF0, 0xE8),
+					BorderColour:    rgbColor(0x2E, 0x2D, 0x29),
+				},
+				DarkModeInactive: &application.WindowTheme{
+					TitleBarColour:  rgbColor(0x24, 0x23, 0x20),
+					TitleTextColour: rgbColor(0xA3, 0x9E, 0x93),
+					BorderColour:    rgbColor(0x2E, 0x2D, 0x29),
+				},
+				LightModeActive: &application.WindowTheme{
+					TitleBarColour:  rgbColor(0xF2, 0xF1, 0xEC),
+					TitleTextColour: rgbColor(0x1C, 0x1B, 0x18),
+					BorderColour:    rgbColor(0xE4, 0xE2, 0xDC),
+				},
+				LightModeInactive: &application.WindowTheme{
+					TitleBarColour:  rgbColor(0xF2, 0xF1, 0xEC),
+					TitleTextColour: rgbColor(0x6E, 0x6A, 0x63),
+					BorderColour:    rgbColor(0xE4, 0xE2, 0xDC),
+				},
+			},
+		},
+		BackgroundColour: application.NewRGB(28, 27, 24),
 		URL:              "/",
 	})
 
@@ -276,4 +311,11 @@ func (a *spikeDocLoaderAdapter) LoadFile(filePath string) (interface{}, error) {
 		return nil, err
 	}
 	return doc, nil
+}
+
+// rgbColor converts red, green, blue color components into a 0x00BBGGRR uint32 pointer
+// as expected by Windows DWM title bar and menu theme settings.
+func rgbColor(r, g, b uint8) *uint32 {
+	v := uint32(r) | (uint32(g) << 8) | (uint32(b) << 16)
+	return &v
 }

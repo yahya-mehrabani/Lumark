@@ -185,4 +185,27 @@ describe('TabBar & TabItem Components (US-007.2)', () => {
     fireEvent.keyDown(window, { key: 'W', metaKey: true });
     expect(handleClose).toHaveBeenCalledTimes(2);
   });
+
+  it('renders tab overflow chevron button to the left of the tab list', () => {
+    const { container } = render(
+      <TabBar
+        tabs={mockTabs}
+        activeTabId="tab-1"
+        onSelectTab={vi.fn()}
+        onCloseTab={vi.fn()}
+      />
+    );
+
+    const overflowBtn = screen.getByTestId('tab-overflow-btn');
+    const tablist = screen.getByRole('tablist');
+    expect(overflowBtn).toBeInTheDocument();
+    expect(tablist).toBeInTheDocument();
+
+    // Verify DOM order: overflowBtn container precedes tab-bar-container
+    const wrapper = container.querySelector('.tab-bar-wrapper');
+    const utilityControls = container.querySelector('.tab-utility-controls');
+    const tabBarContainer = container.querySelector('.tab-bar-container');
+    expect(wrapper?.firstElementChild).toBe(utilityControls);
+    expect(utilityControls?.nextElementSibling).toBe(tabBarContainer);
+  });
 });

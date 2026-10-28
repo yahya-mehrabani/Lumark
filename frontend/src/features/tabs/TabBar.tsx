@@ -138,44 +138,8 @@ export const TabBar: React.FC<TabBarProps> = ({
 
   return (
     <div className={`tab-bar-wrapper app-chrome ${className}`.trim()}>
-      <div
-        ref={containerRef}
-        className="tab-bar-container"
-        role="region"
-        aria-label="Document tabs"
-      >
-        <div
-          className="tab-list tabs-list"
-          role="tablist"
-          aria-orientation="horizontal"
-          onKeyDown={handleKeyDown}
-        >
-          {tabs.map((tab) => (
-            <TabItem
-              key={tab.id}
-              tab={tab}
-              isActive={tab.id === activeTabId}
-              onSelect={onSelectTab}
-              onClose={onCloseTab}
-            />
-          ))}
-          <button
-            type="button"
-            className="tab-icon-btn tab-add-btn"
-            id="addTabBtn"
-            onClick={onOpenFile}
-            title="Open File (Ctrl+O)"
-            aria-label="Open File"
-            data-testid="tab-add-btn"
-          >
-            <Icon name="plus" size={14} strokeWidth={2.2} />
-          </button>
-        </div>
-      </div>
-
-      {/* Tab Utility Controls: Overflow Dropdown */}
+      {/* Tab Utility Controls: Overflow Dropdown positioned to the left of the first tab */}
       <div className="tab-utility-controls" ref={overflowRef}>
-
         <button
           type="button"
           className={`tab-icon-btn ${isOverflowOpen ? 'active' : ''}`}
@@ -212,6 +176,41 @@ export const TabBar: React.FC<TabBarProps> = ({
             })}
           </div>
         )}
+      </div>
+
+      <div
+        ref={containerRef}
+        className="tab-bar-container"
+        role="region"
+        aria-label="Document tabs"
+      >
+        <div
+          className="tab-list tabs-list"
+          role="tablist"
+          aria-orientation="horizontal"
+          onKeyDown={handleKeyDown}
+        >
+          {tabs.map((tab) => (
+            <TabItem
+              key={tab.id}
+              tab={tab}
+              isActive={tab.id === activeTabId}
+              onSelect={onSelectTab}
+              onClose={onCloseTab}
+            />
+          ))}
+          <button
+            type="button"
+            className="tab-icon-btn tab-add-btn"
+            id="addTabBtn"
+            onClick={onOpenFile}
+            title="Open File (Ctrl+O)"
+            aria-label="Open File"
+            data-testid="tab-add-btn"
+          >
+            <Icon name="plus" size={14} strokeWidth={2.2} />
+          </button>
+        </div>
       </div>
     </div>
   );

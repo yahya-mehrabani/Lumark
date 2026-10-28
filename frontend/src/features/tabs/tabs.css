@@ -130,7 +130,7 @@
   align-items: center;
   gap: 2px;
   height: 40px;
-  padding: 0 6px 0 4px;
+  padding: 0 4px 0 2px;
   position: relative;
   flex-shrink: 0;
   background-color: var(--bg-chrome);
@@ -174,8 +174,8 @@
 .tab-overflow-menu {
   position: absolute;
   top: calc(100% + 4px);
-  right: 0;
-  left: auto;
+  left: 0;
+  right: auto;
   min-width: 220px;
   background-color: var(--bg-modal);
   border: 1px solid var(--border-strong);

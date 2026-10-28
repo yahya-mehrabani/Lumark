@@ -55,16 +55,12 @@
   font-size: 12.5px;
   letter-spacing: -0.01em;
   white-space: nowrap;
-  cursor: pointer;
+  cursor: default;
   border-radius: 5px 0 0 5px;
-  transition: color 0.15s ease, opacity 0.15s ease;
   outline: none;
   flex-shrink: 0;
-}
-
-.app-brand:hover,
-.app-brand:focus-visible {
-  color: var(--accent-teal);
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .app-brand.no-divider {

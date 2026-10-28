@@ -138,4 +138,19 @@ describe('AppShell Integration & Component Tests (US-007.4)', () => {
     fireEvent.keyDown(window, { key: 'O', metaKey: true });
     expect(handleOpenFile).toHaveBeenCalledTimes(2);
   });
+
+  it('renders appBrand as a static, non-interactive branding element', () => {
+    const handleOpenFile = vi.fn();
+    const { container } = render(<AppShell store={store} onOpenFile={handleOpenFile} />);
+
+    const brand = container.querySelector('#appBrand');
+    expect(brand).toBeInTheDocument();
+    expect(brand).not.toHaveAttribute('role', 'button');
+    expect(brand).not.toHaveAttribute('tabindex');
+
+    if (brand) {
+      fireEvent.click(brand);
+    }
+    expect(handleOpenFile).not.toHaveBeenCalled();
+  });
 });
