@@ -187,7 +187,10 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
   const filePath = document?.filePath;
 
   const { settings } = useSettings();
-  const globalTocDefault = settings.showTableOfContents ?? settings.showToc ?? true;
+  const isDocument = Boolean(document);
+  const globalTocDefault = isDocument
+    ? settings.showTableOfContents ?? settings.showToc ?? true
+    : false;
 
   const tocData = useTableOfContents({ markdown: rawMarkdown });
   const initialTocOpen = showToc !== undefined ? showToc : globalTocDefault;
