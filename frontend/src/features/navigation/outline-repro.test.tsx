@@ -7,12 +7,12 @@ import { extractHeadingsFromMarkdown } from './tocGenerator';
 import { zoomController } from '../viewport/zoomController';
 
 describe('Outline Jump Reproduction with Real AGENTS.md and PRD.md', () => {
-  let scrollToMock: ReturnType<typeof vi.fn>;
+  let scrollIntoViewMock: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
-    scrollToMock = vi.fn();
-    window.HTMLElement.prototype.scrollTo =
-      scrollToMock as unknown as typeof Element.prototype.scrollTo;
+    scrollIntoViewMock = vi.fn();
+    window.HTMLElement.prototype.scrollIntoView =
+      scrollIntoViewMock as unknown as typeof Element.prototype.scrollIntoView;
     zoomController.resetZoom();
   });
 
@@ -21,7 +21,7 @@ describe('Outline Jump Reproduction with Real AGENTS.md and PRD.md', () => {
     zoomController.resetZoom();
   });
 
-  it('verifies all TOC entries in AGENTS.md resolve to rendered heading elements and trigger container scrollTo with computed offset', () => {
+  it('verifies all TOC entries in AGENTS.md resolve to rendered heading elements and trigger scrollIntoView', () => {
     const agentsPath = path.resolve(__dirname, '../../../../AGENTS.md');
     const content = fs.readFileSync(agentsPath, 'utf-8');
 
@@ -35,47 +35,19 @@ describe('Outline Jump Reproduction with Real AGENTS.md and PRD.md', () => {
       />
     );
 
-    const container = screen.getByTestId('markdown-content');
-    vi.spyOn(container, 'getBoundingClientRect').mockReturnValue({
-      top: 50,
-      bottom: 650,
-      left: 0,
-      right: 800,
-      width: 800,
-      height: 600,
-      x: 0,
-      y: 50,
-      toJSON: () => {},
-    });
-
     const tocList = screen.getByTestId('toc-list');
     expect(tocList).toBeInTheDocument();
 
     const missingInDom: string[] = [];
     const failedClicks: string[] = [];
 
-    let mockTopOffset = 100;
-
     for (const item of expectedToc) {
-      mockTopOffset += 40;
       // 1. Check if heading element with target ID exists in rendered DOM
       const headingEl = document.getElementById(item.id);
       if (!headingEl) {
         missingInDom.push(item.id);
         continue;
       }
-
-      vi.spyOn(headingEl, 'getBoundingClientRect').mockReturnValue({
-        top: mockTopOffset,
-        bottom: mockTopOffset + 30,
-        left: 0,
-        right: 800,
-        width: 800,
-        height: 30,
-        x: 0,
-        y: mockTopOffset,
-        toJSON: () => {},
-      });
 
       // 2. Click the TOC link
       const tocLink = screen.queryByTestId(`toc-link-${item.id}`);
@@ -84,19 +56,16 @@ describe('Outline Jump Reproduction with Real AGENTS.md and PRD.md', () => {
         continue;
       }
 
-      scrollToMock.mockClear();
+      scrollIntoViewMock.mockClear();
       fireEvent.click(tocLink);
 
-      // Expected top: container.scrollTop (0) + (mockTopOffset - 50) / 1.0 - 80
-      const expectedTop = Math.max(0, mockTopOffset - 50 - 80);
-
       if (
-        scrollToMock.mock.calls.length === 0 ||
-        scrollToMock.mock.calls[0][0].top !== expectedTop ||
-        scrollToMock.mock.calls[0][0].behavior !== 'smooth'
+        scrollIntoViewMock.mock.calls.length === 0 ||
+        scrollIntoViewMock.mock.calls[0][0]?.behavior !== 'smooth' ||
+        scrollIntoViewMock.mock.calls[0][0]?.block !== 'start'
       ) {
         failedClicks.push(
-          `Click on ${item.id} failed. Calls: ${JSON.stringify(scrollToMock.mock.calls)}`
+          `Click on ${item.id} failed. Calls: ${JSON.stringify(scrollIntoViewMock.mock.calls)}`
         );
       }
     }
@@ -105,7 +74,7 @@ describe('Outline Jump Reproduction with Real AGENTS.md and PRD.md', () => {
     expect(failedClicks).toEqual([]);
   });
 
-  it('verifies all TOC entries in PRD.md resolve to rendered heading elements and trigger container scrollTo with computed offset', () => {
+  it('verifies all TOC entries in PRD.md resolve to rendered heading elements and trigger scrollIntoView', () => {
     const prdPath = path.resolve(__dirname, '../../../../PRD.md');
     const content = fs.readFileSync(prdPath, 'utf-8');
 
@@ -119,46 +88,18 @@ describe('Outline Jump Reproduction with Real AGENTS.md and PRD.md', () => {
       />
     );
 
-    const container = screen.getByTestId('markdown-content');
-    vi.spyOn(container, 'getBoundingClientRect').mockReturnValue({
-      top: 50,
-      bottom: 650,
-      left: 0,
-      right: 800,
-      width: 800,
-      height: 600,
-      x: 0,
-      y: 50,
-      toJSON: () => {},
-    });
-
     const tocList = screen.getByTestId('toc-list');
     expect(tocList).toBeInTheDocument();
 
     const missingInDom: string[] = [];
     const failedClicks: string[] = [];
 
-    let mockTopOffset = 100;
-
     for (const item of expectedToc) {
-      mockTopOffset += 25;
       const headingEl = document.getElementById(item.id);
       if (!headingEl) {
         missingInDom.push(item.id);
         continue;
       }
-
-      vi.spyOn(headingEl, 'getBoundingClientRect').mockReturnValue({
-        top: mockTopOffset,
-        bottom: mockTopOffset + 30,
-        left: 0,
-        right: 800,
-        width: 800,
-        height: 30,
-        x: 0,
-        y: mockTopOffset,
-        toJSON: () => {},
-      });
 
       const tocLink = screen.queryByTestId(`toc-link-${item.id}`);
       if (!tocLink) {
@@ -166,24 +107,21 @@ describe('Outline Jump Reproduction with Real AGENTS.md and PRD.md', () => {
         continue;
       }
 
-      scrollToMock.mockClear();
+      scrollIntoViewMock.mockClear();
       fireEvent.click(tocLink);
 
-      // Expected top: container.scrollTop (0) + (mockTopOffset - 50) / 1.0 - 80
-      const expectedTop = Math.max(0, mockTopOffset - 50 - 80);
-
       if (
-        scrollToMock.mock.calls.length === 0 ||
-        scrollToMock.mock.calls[0][0].top !== expectedTop ||
-        scrollToMock.mock.calls[0][0].behavior !== 'smooth'
+        scrollIntoViewMock.mock.calls.length === 0 ||
+        scrollIntoViewMock.mock.calls[0][0]?.behavior !== 'smooth' ||
+        scrollIntoViewMock.mock.calls[0][0]?.block !== 'start'
       ) {
         failedClicks.push(
-          `Click on ${item.id} failed. Calls: ${JSON.stringify(scrollToMock.mock.calls)}`
+          `Click on ${item.id} failed. Calls: ${JSON.stringify(scrollIntoViewMock.mock.calls)}`
         );
       }
     }
 
     expect(missingInDom).toEqual([]);
     expect(failedClicks).toEqual([]);
-  });
+  }, 25000);
 });

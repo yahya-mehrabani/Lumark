@@ -106,9 +106,9 @@ describe('Table of Contents Acceptance Criteria & Integration Suite (US-021.4)',
     fireEvent.click(fifthHeadingLink);
 
     // Verify smooth scroll was dispatched
-    expect(scrollToMock).toHaveBeenCalledTimes(1);
-    expect(scrollToMock).toHaveBeenCalledWith(
-      expect.objectContaining({ behavior: 'smooth' })
+    expect(scrollIntoViewMock).toHaveBeenCalledTimes(1);
+    expect(scrollIntoViewMock).toHaveBeenCalledWith(
+      expect.objectContaining({ behavior: 'smooth', block: 'start' })
     );
   });
 
@@ -172,8 +172,8 @@ Third example code.
 
     // Clicking the 2nd duplicate heading scrolls to #example-1
     fireEvent.click(tocLinks[1]);
-    expect(scrollToMock).toHaveBeenCalledWith(
-      expect.objectContaining({ behavior: 'smooth' })
+    expect(scrollIntoViewMock).toHaveBeenCalledWith(
+      expect.objectContaining({ behavior: 'smooth', block: 'start' })
     );
   });
 
@@ -228,8 +228,8 @@ console.log('No headings here');
     expect(link).toHaveAttribute('href', '#راهنمای-نصب-و-راه-اندازی');
 
     fireEvent.click(link);
-    expect(scrollToMock).toHaveBeenCalledWith(
-      expect.objectContaining({ behavior: 'smooth' })
+    expect(scrollIntoViewMock).toHaveBeenCalledWith(
+      expect.objectContaining({ behavior: 'smooth', block: 'start' })
     );
   });
 

@@ -490,6 +490,12 @@ body.focus-mode .markdown-content {
 }
 
 /* Headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
 .markdown-content h1,
 .markdown-content h2,
 .markdown-content h3,
@@ -509,6 +515,12 @@ body.focus-mode .markdown-content {
   margin-top: 0;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
 .markdown-content h1,
 .markdown-body h1,
 .markdown-content h2,
@@ -535,6 +547,7 @@ body.focus-mode .markdown-content {
   margin-bottom: 26px;
   padding-bottom: 20px;
   border-bottom: 1px solid var(--border-subtle);
+  scroll-margin-top: 80px;
 }
 
 .markdown-content h2,

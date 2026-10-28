@@ -163,78 +163,26 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
       }
     }
 
-    if (container && target) {
-      const HEADER_OFFSET = 80;
-
-      const currentZoom =
-        propsZoomFactor ??
-        (() => {
-          if (typeof window !== 'undefined' && container.parentElement) {
-            const z = parseFloat(window.getComputedStyle(container.parentElement).zoom || '1');
-            return isNaN(z) || z <= 0 ? 1 : z;
-          }
-          return 1;
-        })();
-
-      // Calculate target heading position relative to container
-      // Use target.offsetTop when available, or derive from getBoundingClientRect with zoom compensation
-      let targetHeadingTop = target.offsetTop;
-      if (typeof targetHeadingTop !== 'number' || targetHeadingTop === 0) {
-        const containerRect = container.getBoundingClientRect();
-        const targetRect = target.getBoundingClientRect();
-        const deltaY = (targetRect.top - containerRect.top) / currentZoom;
-        targetHeadingTop = container.scrollTop + deltaY;
-      } else if (target.offsetParent && target.offsetParent !== container) {
-        let curr: HTMLElement | null = target;
-        let cumulative = 0;
-        while (curr && curr !== container && curr !== document.body) {
-          cumulative += curr.offsetTop;
-          curr = curr.offsetParent as HTMLElement | null;
-        }
-        if (curr === container) {
-          targetHeadingTop = cumulative;
-        }
-      }
-
-      const targetScrollTop = Math.max(0, targetHeadingTop - HEADER_OFFSET);
-
+    if (target) {
       const prefersReducedMotion =
         typeof window !== 'undefined' &&
         window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
       const behavior: ScrollBehavior = prefersReducedMotion ? 'auto' : 'smooth';
 
-      const beforeScrollTop = container.scrollTop;
-
-      if (typeof container.scrollTo === 'function') {
+      if (typeof target.scrollIntoView === 'function') {
         try {
-          container.scrollTo({ top: targetScrollTop, behavior });
+          target.scrollIntoView({ behavior, block: 'start' });
         } catch {
-          container.scrollTop = targetScrollTop;
+          target.scrollIntoView(true);
         }
-      } else {
-        container.scrollTop = targetScrollTop;
-      }
-
-      if (behavior === 'auto' && container.scrollTop !== targetScrollTop) {
-        container.scrollTop = targetScrollTop;
       }
 
       if (typeof window !== 'undefined' && window.localStorage?.getItem('debugOutline') === '1') {
         requestAnimationFrame(() => {
-          const afterScrollTop = container.scrollTop;
-          const isScrollable = container.scrollHeight > container.clientHeight;
-          const diagMsg = `[Outline Debug] Target: "${target?.id}" | Scrollable: ${isScrollable} | scrollTop: ${beforeScrollTop} -> ${afterScrollTop} | zoom: ${currentZoom}`;
+          const diagMsg = `[Outline Debug] Target: "${target?.id}" | scrollIntoView dispatched (behavior: ${behavior})`;
           defaultToastStore.showInfo(diagMsg);
           console.info(diagMsg);
         });
-      }
-    } else if (target) {
-      if (typeof target.scrollIntoView === 'function') {
-        try {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        } catch {
-          // fallback
-        }
       }
     }
   };
