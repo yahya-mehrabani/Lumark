@@ -7,12 +7,12 @@ import { extractHeadingsFromMarkdown } from './tocGenerator';
 import { zoomController } from '../viewport/zoomController';
 
 describe('Outline Jump Reproduction with Real AGENTS.md and PRD.md', () => {
-  let scrollIntoViewMock: ReturnType<typeof vi.fn>;
+  let scrollToMock: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
-    scrollIntoViewMock = vi.fn();
-    window.HTMLElement.prototype.scrollIntoView =
-      scrollIntoViewMock as unknown as typeof Element.prototype.scrollIntoView;
+    scrollToMock = vi.fn();
+    window.HTMLElement.prototype.scrollTo =
+      scrollToMock as unknown as typeof Element.prototype.scrollTo;
     zoomController.resetZoom();
   });
 
@@ -21,7 +21,7 @@ describe('Outline Jump Reproduction with Real AGENTS.md and PRD.md', () => {
     zoomController.resetZoom();
   });
 
-  it('verifies all TOC entries in AGENTS.md resolve to rendered heading elements and trigger scrollIntoView', () => {
+  it('verifies all TOC entries in AGENTS.md resolve to rendered heading elements and trigger scrollTo', () => {
     const agentsPath = path.resolve(__dirname, '../../../../AGENTS.md');
     const content = fs.readFileSync(agentsPath, 'utf-8');
 
@@ -56,16 +56,15 @@ describe('Outline Jump Reproduction with Real AGENTS.md and PRD.md', () => {
         continue;
       }
 
-      scrollIntoViewMock.mockClear();
+      scrollToMock.mockClear();
       fireEvent.click(tocLink);
 
       if (
-        scrollIntoViewMock.mock.calls.length === 0 ||
-        scrollIntoViewMock.mock.calls[0][0]?.behavior !== 'smooth' ||
-        scrollIntoViewMock.mock.calls[0][0]?.block !== 'start'
+        scrollToMock.mock.calls.length === 0 ||
+        scrollToMock.mock.calls[0][0]?.behavior !== 'smooth'
       ) {
         failedClicks.push(
-          `Click on ${item.id} failed. Calls: ${JSON.stringify(scrollIntoViewMock.mock.calls)}`
+          `Click on ${item.id} failed. Calls: ${JSON.stringify(scrollToMock.mock.calls)}`
         );
       }
     }
@@ -74,7 +73,7 @@ describe('Outline Jump Reproduction with Real AGENTS.md and PRD.md', () => {
     expect(failedClicks).toEqual([]);
   });
 
-  it('verifies all TOC entries in PRD.md resolve to rendered heading elements and trigger scrollIntoView', () => {
+  it('verifies all TOC entries in PRD.md resolve to rendered heading elements and trigger scrollTo', () => {
     const prdPath = path.resolve(__dirname, '../../../../PRD.md');
     const content = fs.readFileSync(prdPath, 'utf-8');
 
@@ -107,16 +106,15 @@ describe('Outline Jump Reproduction with Real AGENTS.md and PRD.md', () => {
         continue;
       }
 
-      scrollIntoViewMock.mockClear();
+      scrollToMock.mockClear();
       fireEvent.click(tocLink);
 
       if (
-        scrollIntoViewMock.mock.calls.length === 0 ||
-        scrollIntoViewMock.mock.calls[0][0]?.behavior !== 'smooth' ||
-        scrollIntoViewMock.mock.calls[0][0]?.block !== 'start'
+        scrollToMock.mock.calls.length === 0 ||
+        scrollToMock.mock.calls[0][0]?.behavior !== 'smooth'
       ) {
         failedClicks.push(
-          `Click on ${item.id} failed. Calls: ${JSON.stringify(scrollIntoViewMock.mock.calls)}`
+          `Click on ${item.id} failed. Calls: ${JSON.stringify(scrollToMock.mock.calls)}`
         );
       }
     }

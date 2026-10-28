@@ -4,12 +4,12 @@ import { TableOfContents } from './TableOfContents';
 import { TocItem } from './types';
 
 describe('TableOfContents Sidebar Component (US-021.2)', () => {
-  let scrollIntoViewMock: ReturnType<typeof vi.fn>;
+  let scrollToMock: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
-    scrollIntoViewMock = vi.fn();
-    window.HTMLElement.prototype.scrollIntoView =
-      scrollIntoViewMock as unknown as typeof Element.prototype.scrollIntoView;
+    scrollToMock = vi.fn();
+    window.HTMLElement.prototype.scrollTo =
+      scrollToMock as unknown as typeof Element.prototype.scrollTo;
   });
 
   afterEach(() => {
@@ -64,7 +64,7 @@ describe('TableOfContents Sidebar Component (US-021.2)', () => {
 
     expect(onSelectHeading).toHaveBeenCalledTimes(1);
     expect(onSelectHeading).toHaveBeenCalledWith('architecture');
-    expect(scrollIntoViewMock).toHaveBeenCalledWith(
+    expect(scrollToMock).toHaveBeenCalledWith(
       expect.objectContaining({ behavior: 'smooth' })
     );
 

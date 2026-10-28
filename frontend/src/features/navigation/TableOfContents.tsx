@@ -130,7 +130,14 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
     })();
 
     // Locate target element within container or document
-    const container = containerRef?.current;
+    const container =
+      (containerRef?.current?.closest?.('.markdown-viewport') as HTMLElement | null) ||
+      document.querySelector<HTMLElement>('.markdown-viewport') ||
+      (containerRef?.current as HTMLElement | null) ||
+      (typeof document !== 'undefined'
+        ? (document.scrollingElement as HTMLElement) || document.documentElement || document.body
+        : null);
+
     let target: HTMLElement | null = null;
 
     if (container && typeof CSS !== 'undefined') {
@@ -163,23 +170,28 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
       }
     }
 
-    if (target) {
+    if (target && container) {
       const prefersReducedMotion =
         typeof window !== 'undefined' &&
         window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
       const behavior: ScrollBehavior = prefersReducedMotion ? 'auto' : 'smooth';
 
-      if (typeof target.scrollIntoView === 'function') {
-        try {
-          target.scrollIntoView({ behavior, block: 'start' });
-        } catch {
-          target.scrollIntoView(true);
-        }
+      const targetRect =
+        typeof target.getBoundingClientRect === 'function'
+          ? target.getBoundingClientRect()
+          : { top: 0 };
+      const currentScrollTop = container.scrollTop || 0;
+      const targetTop = targetRect.top + currentScrollTop - 80;
+
+      if (typeof container.scrollTo === 'function') {
+        container.scrollTo({ top: targetTop, behavior });
+      } else {
+        container.scrollTop = targetTop;
       }
 
       if (typeof window !== 'undefined' && window.localStorage?.getItem('debugOutline') === '1') {
         requestAnimationFrame(() => {
-          const diagMsg = `[Outline Debug] Target: "${target?.id}" | scrollIntoView dispatched (behavior: ${behavior})`;
+          const diagMsg = `[Outline Debug] Target: "${target?.id}" | scrollTo dispatched (top: ${targetTop}, behavior: ${behavior})`;
           defaultToastStore.showInfo(diagMsg);
           console.info(diagMsg);
         });
