@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, renderHook, act } from '@testing-library/react';
+import { render, screen, renderHook, act, fireEvent } from '@testing-library/react';
 import { useScrollSpy } from './useScrollSpy';
 import { useTocToggle } from './useTocToggle';
 import { TableOfContents } from './TableOfContents';
@@ -293,6 +293,33 @@ describe('Active Heading Scroll Spy & Sidebar Toggle (US-021.3)', () => {
         await settingsStore.updateSettings({ showTableOfContents: true });
       });
       expect(screen.getByTestId('toc-sidebar')).toBeInTheDocument();
+    });
+
+    it('allows user to manually toggle TOC ON inside a document when global setting showTableOfContents is false', async () => {
+      await act(async () => {
+        await settingsStore.updateSettings({ showTableOfContents: false });
+      });
+
+      const markdown = '# Document Heading\n\nSome text.';
+      render(<MarkdownViewer document={{ filename: 'test.md', content: markdown }} />);
+
+      // Initially closed due to global default
+      expect(screen.queryByTestId('toc-sidebar')).not.toBeInTheDocument();
+
+      // Per-document toggle button must remain functional
+      const toggleBtn = screen.getByTestId('doc-toc-toggle');
+      expect(toggleBtn).toBeInTheDocument();
+      expect(toggleBtn).not.toBeDisabled();
+
+      fireEvent.click(toggleBtn);
+
+      // TOC should now be visible
+      expect(screen.getByTestId('toc-sidebar')).toBeInTheDocument();
+      expect(screen.getByTestId('toc-link-document-heading')).toBeInTheDocument();
+
+      // Toggle off again
+      fireEvent.click(toggleBtn);
+      expect(screen.queryByTestId('toc-sidebar')).not.toBeInTheDocument();
     });
   });
 

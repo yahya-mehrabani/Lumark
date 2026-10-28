@@ -167,9 +167,7 @@
 }
 
 body.focus-mode .scrollspy-rail,
-body.focus-mode .toc-sidebar,
-body.toc-disabled .scrollspy-rail,
-body.toc-disabled .toc-sidebar {
+body.focus-mode .toc-sidebar {
   display: none !important;
 }
 

@@ -187,10 +187,10 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
   const filePath = document?.filePath;
 
   const { settings } = useSettings();
-  const isTocEnabled = settings.showTableOfContents ?? settings.showToc ?? true;
+  const globalTocDefault = settings.showTableOfContents ?? settings.showToc ?? true;
 
   const tocData = useTableOfContents({ markdown: rawMarkdown });
-  const initialTocOpen = showToc !== undefined ? showToc : isTocEnabled;
+  const initialTocOpen = showToc !== undefined ? showToc : globalTocDefault;
 
   const tocToggle = useTocToggle({
     initialOpen: initialTocOpen,
@@ -198,22 +198,39 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
     onToggle: () => onToggleToc?.(),
   });
 
-  // Keep TOC toggle state strictly synchronized with settingsStore and controlled props
+  // When global setting changes in preferences, update TOC visibility
+  const prevGlobalSettingRef = React.useRef(globalTocDefault);
+  React.useEffect(() => {
+    if (prevGlobalSettingRef.current !== globalTocDefault) {
+      prevGlobalSettingRef.current = globalTocDefault;
+      if (showToc === undefined) {
+        tocToggle.setIsOpen(globalTocDefault);
+      }
+    }
+  }, [globalTocDefault, showToc, tocToggle]);
+
+  // When controlled showToc prop changes, synchronize
   React.useEffect(() => {
     if (showToc !== undefined) {
       tocToggle.setIsOpen(showToc);
-    } else {
-      tocToggle.setIsOpen(isTocEnabled);
     }
-  }, [showToc, isTocEnabled]);
+  }, [showToc, tocToggle]);
 
-  const isTocOpen = isTocEnabled && (showToc !== undefined ? (showToc && tocData.hasHeadings) : tocToggle.isOpen);
-
+  // When document changes (new document mounted), initialize per-document TOC state to global default
+  const prevDocRef = React.useRef<string | undefined>(filePath);
   React.useEffect(() => {
-    if (typeof window !== 'undefined' && window.document?.body) {
-      window.document.body.classList.toggle('toc-disabled', !isTocEnabled);
+    if (filePath !== prevDocRef.current) {
+      prevDocRef.current = filePath;
+      if (showToc === undefined) {
+        tocToggle.setIsOpen(globalTocDefault);
+      }
     }
-  }, [isTocEnabled]);
+  }, [filePath, globalTocDefault, showToc, tocToggle]);
+
+  const isTocOpen =
+    showToc !== undefined
+      ? showToc && tocData.hasHeadings
+      : tocToggle.isOpen && tocData.hasHeadings;
 
   const contentRef = React.useRef<HTMLElement | null>(null);
   const search = useSearch({ containerRef: contentRef });

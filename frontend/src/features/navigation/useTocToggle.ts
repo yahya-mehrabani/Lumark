@@ -17,10 +17,6 @@ export function useTocToggle(options: UseTocToggleOptions = {}) {
 
   const [isOpenState, setIsOpenState] = useState<boolean>(initialOpen);
 
-  useEffect(() => {
-    setIsOpenState(initialOpen);
-  }, [initialOpen]);
-
   // If document has zero headings, force collapsed state
   const effectiveIsOpen = hasHeadings && isOpenState;
 
