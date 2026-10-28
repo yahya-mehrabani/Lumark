@@ -792,10 +792,46 @@ body.focus-mode .markdown-content {
 
 /* Shiki Dual-Themes CSS rules */
 .shiki {
-  background-color: transparent !important;
+  background-color: var(--shiki-dark-bg, var(--bg-code, #141311));
 }
 
 /* Dark mode applies dark tokens */
+[data-theme="dark"] .code-block-container,
+.theme-dark .code-block-container,
+body.theme-dark .code-block-container,
+:root:not([data-theme="light"]):not(.theme-light) .code-block-container {
+  background-color: var(--bg-code, #141311) !important;
+  border-color: var(--border-subtle, #2E2D29) !important;
+}
+
+[data-theme="dark"] .code-block-header,
+.theme-dark .code-block-header,
+body.theme-dark .code-block-header,
+:root:not([data-theme="light"]):not(.theme-light) .code-block-header {
+  background-color: var(--bg-code-header, #1F1E1B) !important;
+  border-bottom-color: var(--border-subtle, #2E2D29) !important;
+}
+
+[data-theme="dark"] .code-line-numbers,
+.theme-dark .code-line-numbers,
+body.theme-dark .code-line-numbers,
+:root:not([data-theme="light"]):not(.theme-light) .code-line-numbers {
+  background-color: var(--bg-code-header, #1F1E1B) !important;
+  border-right-color: var(--border-subtle, #2E2D29) !important;
+  color: var(--text-muted, #726E65) !important;
+}
+
+[data-theme="dark"] .code-scroll-container,
+.theme-dark .code-scroll-container,
+body.theme-dark .code-scroll-container,
+:root:not([data-theme="light"]):not(.theme-light) .code-scroll-container {
+  background-color: var(--bg-code, #141311) !important;
+}
+
+[data-theme="dark"] .shiki-wrapper,
+.theme-dark .shiki-wrapper,
+body.theme-dark .shiki-wrapper,
+:root:not([data-theme="light"]):not(.theme-light) .shiki-wrapper,
 [data-theme="dark"] .shiki,
 [data-theme="dark"] .shiki code,
 .theme-dark .shiki,
@@ -803,7 +839,16 @@ body.focus-mode .markdown-content {
 body.theme-dark .shiki,
 body.theme-dark .shiki code,
 :root:not([data-theme="light"]):not(.theme-light) .shiki,
-:root:not([data-theme="light"]):not(.theme-light) .shiki code {
+:root:not([data-theme="light"]):not(.theme-light) .shiki code,
+[data-theme="dark"] pre.shiki-fallback,
+.theme-dark pre.shiki-fallback,
+body.theme-dark pre.shiki-fallback,
+:root:not([data-theme="light"]):not(.theme-light) pre.shiki-fallback,
+[data-theme="dark"] .markdown-content pre,
+.theme-dark .markdown-content pre,
+body.theme-dark .markdown-content pre,
+:root:not([data-theme="light"]):not(.theme-light) .markdown-content pre {
+  background-color: var(--shiki-dark-bg, var(--bg-code, #141311)) !important;
   color: var(--shiki-dark, var(--text-body)) !important;
 }
 
@@ -811,15 +856,18 @@ body.theme-dark .shiki code,
 .theme-dark .shiki span,
 body.theme-dark .shiki span,
 :root:not([data-theme="light"]):not(.theme-light) .shiki span {
-  color: var(--shiki-dark, inherit);
+  color: var(--shiki-dark, inherit) !important;
 }
 
 /* Light mode preserves Shiki's inline light theme colors */
 [data-theme="light"] .shiki,
 [data-theme="light"] .shiki code,
 .theme-light .shiki,
-.theme-light .shiki code {
-  color: var(--shiki-light, var(--text-primary));
+.theme-light .shiki code,
+[data-theme="light"] pre.shiki-fallback,
+.theme-light pre.shiki-fallback {
+  background-color: var(--shiki-light-bg, var(--bg-code, #EFECE6)) !important;
+  color: var(--shiki-light, var(--text-primary)) !important;
 }
 
 [data-theme="light"] .shiki span,
@@ -1564,7 +1612,7 @@ body.theme-dark .shiki span,
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background-color: rgba(10, 10, 9, 0.88);
+  background-color: var(--bg-canvas);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex;
@@ -1582,20 +1630,22 @@ body.theme-dark .shiki span,
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(30, 30, 30, 0.7);
-  color: #F2F0E8;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  color: var(--text-primary);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.15s ease;
   z-index: 1001;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
 }
 
 .mermaid-lightbox-close:hover {
-  background: rgba(50, 50, 50, 0.95);
-  border-color: rgba(255, 255, 255, 0.4);
+  background: var(--bg-chrome-hover);
+  border-color: var(--border-strong);
+  color: var(--text-primary);
   transform: scale(1.08);
 }
 

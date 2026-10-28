@@ -247,7 +247,7 @@ describe('Comprehensive Golden Fixtures Test Suite (US-012.4)', () => {
       expect(container).toBeInTheDocument();
       const mainHeading = within(container.querySelector('main')!).getByRole('heading', { level: 1 });
       expect(mainHeading).toHaveTextContent('نمونه سند فارسی');
-      expect(container.querySelectorAll('ul li').length).toBe(2);
+      expect(container.querySelector('main')!.querySelectorAll('ul li').length).toBe(2);
     });
   });
 });

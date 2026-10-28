@@ -165,6 +165,7 @@ export async function highlightCode(
     const html = highlighter.codeToHtml(code, {
       lang: normalizedLang,
       themes: DUAL_THEMES,
+      defaultColor: false,
     });
 
     return {
