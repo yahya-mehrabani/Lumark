@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
+import { Window } from '@wailsio/runtime';
 import { AppShell } from './AppShell';
 import { createTabStore, TabStore } from '../tabs/tabStore';
 
@@ -152,5 +153,33 @@ describe('AppShell Integration & Component Tests (US-007.4)', () => {
       fireEvent.click(brand);
     }
     expect(handleOpenFile).not.toHaveBeenCalled();
+  });
+
+  it('renders window control buttons (minimize, maximize, close) and triggers Wails Window runtime methods', () => {
+    const minSpy = vi.spyOn(Window, 'Minimise').mockImplementation(() => Promise.resolve());
+    const maxSpy = vi.spyOn(Window, 'ToggleMaximise').mockImplementation(() => Promise.resolve());
+    const closeSpy = vi.spyOn(Window, 'Close').mockImplementation(() => Promise.resolve());
+
+    render(<AppShell store={store} />);
+
+    const controls = screen.getByTestId('window-controls');
+    expect(controls).toBeInTheDocument();
+
+    const minBtn = screen.getByTestId('window-minimize-btn');
+    const maxBtn = screen.getByTestId('window-maximize-btn');
+    const closeBtn = screen.getByTestId('window-close-btn');
+
+    expect(minBtn).toBeInTheDocument();
+    expect(maxBtn).toBeInTheDocument();
+    expect(closeBtn).toBeInTheDocument();
+
+    fireEvent.click(minBtn);
+    expect(minSpy).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(maxBtn);
+    expect(maxSpy).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(closeBtn);
+    expect(closeSpy).toHaveBeenCalledTimes(1);
   });
 });

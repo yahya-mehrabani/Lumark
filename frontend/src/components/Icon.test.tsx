@@ -26,6 +26,7 @@ describe('Icon Component', () => {
     'alert',
     'file',
     'reset',
+    'maximize',
   ];
 
   it('renders all defined icon types without crashing', () => {

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Window } from '@wailsio/runtime';
 import { TabStore, tabStore as defaultStore } from '../tabs/tabStore';
 import { useTabStore, useActiveTab, useTabActions } from '../tabs/useTabStore';
 import { TabBar } from '../tabs/TabBar';
@@ -130,6 +131,30 @@ export const AppShell: React.FC<AppShellProps> = ({
 
   const hasTabs = state.tabs.length > 0;
 
+  const handleMinimizeWindow = () => {
+    try {
+      Window.Minimise?.();
+    } catch (err) {
+      console.warn('Failed to minimize window:', err);
+    }
+  };
+
+  const handleMaximizeWindow = () => {
+    try {
+      Window.ToggleMaximise?.();
+    } catch (err) {
+      console.warn('Failed to toggle maximize window:', err);
+    }
+  };
+
+  const handleCloseWindow = () => {
+    try {
+      Window.Close?.();
+    } catch (err) {
+      console.warn('Failed to close window:', err);
+    }
+  };
+
   return (
     <DropZone
       onFilesDropped={(files) => onFileDrop?.(files)}
@@ -232,6 +257,51 @@ export const AppShell: React.FC<AppShellProps> = ({
             <Icon name="settings" size={14} />
             <span>Preferences</span>
           </button>
+
+          <div className="window-controls-divider" aria-hidden="true" />
+
+          <div
+            className="window-controls"
+            data-testid="window-controls"
+            role="group"
+            aria-label="Window Controls"
+          >
+            <button
+              type="button"
+              className="window-control-btn window-minimize-btn"
+              id="windowMinimizeBtn"
+              onClick={handleMinimizeWindow}
+              aria-label="Minimize Window"
+              title="Minimize Window"
+              data-testid="window-minimize-btn"
+            >
+              <Icon name="minus" size={13} strokeWidth={2.2} />
+            </button>
+
+            <button
+              type="button"
+              className="window-control-btn window-maximize-btn"
+              id="windowMaximizeBtn"
+              onClick={handleMaximizeWindow}
+              aria-label="Maximize / Restore Window"
+              title="Maximize / Restore Window"
+              data-testid="window-maximize-btn"
+            >
+              <Icon name="maximize" size={12} strokeWidth={2} />
+            </button>
+
+            <button
+              type="button"
+              className="window-control-btn window-close-btn"
+              id="windowCloseBtn"
+              onClick={handleCloseWindow}
+              aria-label="Close Window"
+              title="Close Window"
+              data-testid="window-close-btn"
+            >
+              <Icon name="close" size={13} strokeWidth={2.2} />
+            </button>
+          </div>
         </div>
       </header>
 

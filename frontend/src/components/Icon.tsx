@@ -22,7 +22,8 @@ export type IconName =
   | 'check'
   | 'alert'
   | 'file'
-  | 'reset';
+  | 'reset'
+  | 'maximize';
 
 export interface IconProps extends React.SVGAttributes<SVGElement> {
   name: IconName;
@@ -192,6 +193,9 @@ export const Icon: React.FC<IconProps> = ({
             <path d="M3 3v5h5" />
           </>
         );
+
+      case 'maximize':
+        return <rect x="3.5" y="3.5" width="17" height="17" rx="2" ry="2" />;
 
       default:
         return null;
