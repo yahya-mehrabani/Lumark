@@ -19,7 +19,7 @@
   -webkit-user-select: none;
 }
 
-/* Top Bar & Header Strip */
+/* Top Bar & Header Strip (Frameless Window Draggable Region) */
 .top-bar,
 .app-header {
   height: 40px;
@@ -32,6 +32,25 @@
   flex-shrink: 0;
   z-index: 30;
   user-select: none;
+  --wails-draggable: drag;
+  -webkit-app-region: drag;
+}
+
+/* Ensure all buttons, links, inputs, and controls inside the header remain clickable (no-drag) */
+.top-bar button,
+.top-bar a,
+.top-bar input,
+.app-brand,
+.header-actions,
+.ghost-btn,
+.header-btn,
+.theme-toggle-btn,
+.recents-menu-wrapper,
+.recent-files-menu,
+.window-controls,
+.window-control-btn {
+  --wails-draggable: no-drag;
+  -webkit-app-region: no-drag;
 }
 
 .top-bar-left {

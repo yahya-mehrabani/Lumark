@@ -175,7 +175,7 @@ func main() {
 		Width:               1000,
 		Height:              618,
 		StartState:          application.WindowStateMaximised,
-		Frameless:           false,
+		Frameless:           true,
 		MinimiseButtonState: application.ButtonEnabled,
 		MaximiseButtonState: application.ButtonEnabled,
 		CloseButtonState:    application.ButtonEnabled,

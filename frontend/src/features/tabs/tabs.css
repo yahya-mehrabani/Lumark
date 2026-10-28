@@ -60,6 +60,17 @@
   outline: none;
   flex-shrink: 0;
   max-width: 240px;
+  --wails-draggable: no-drag;
+  -webkit-app-region: no-drag;
+}
+
+.tab-close,
+.tab-close-btn,
+.tab-icon-btn,
+.tab-overflow-btn,
+.overflow-tab-item {
+  --wails-draggable: no-drag;
+  -webkit-app-region: no-drag;
 }
 
 .tab-item:hover,

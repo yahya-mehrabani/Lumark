@@ -182,4 +182,31 @@ describe('AppShell Integration & Component Tests (US-007.4)', () => {
     fireEvent.click(closeBtn);
     expect(closeSpy).toHaveBeenCalledTimes(1);
   });
+
+  it('implements frameless window configuration and draggable top bar with non-draggable controls', async () => {
+    const fs = await import('fs');
+    const path = await import('path');
+
+    // 1. Verify main.go configures Frameless: true
+    const mainGoPath = path.resolve(__dirname, '../../../../main.go');
+    const mainGoContent = fs.readFileSync(mainGoPath, 'utf-8');
+    expect(mainGoContent).toMatch(/Frameless:\s*true/);
+
+    // 2. Verify shell.css sets draggable region on top-bar
+    const shellCssPath = path.resolve(__dirname, 'shell.css');
+    const shellCssContent = fs.readFileSync(shellCssPath, 'utf-8');
+    expect(shellCssContent).toMatch(/\.top-bar[^{]*\{[^}]*--wails-draggable:\s*drag/);
+    expect(shellCssContent).toMatch(/\.top-bar[^{]*\{[^}]*-webkit-app-region:\s*drag/);
+
+    // 3. Verify shell.css marks buttons, inputs, and window controls as no-drag
+    expect(shellCssContent).toMatch(/--wails-draggable:\s*no-drag/);
+    expect(shellCssContent).toMatch(/-webkit-app-region:\s*no-drag/);
+    expect(shellCssContent).toMatch(/\.window-control-btn/);
+
+    // 4. Verify tabs.css marks tab items and controls as no-drag
+    const tabsCssPath = path.resolve(__dirname, '../tabs/tabs.css');
+    const tabsCssContent = fs.readFileSync(tabsCssPath, 'utf-8');
+    expect(tabsCssContent).toMatch(/\.tab-item[^{]*\{[^}]*--wails-draggable:\s*no-drag/);
+    expect(tabsCssContent).toMatch(/\.tab-item[^{]*\{[^}]*-webkit-app-region:\s*no-drag/);
+  });
 });
