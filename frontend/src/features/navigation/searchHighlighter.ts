@@ -78,6 +78,9 @@ export function applyHighlights(
         mark.setAttribute('data-search-match', 'true');
         mark.setAttribute('data-match-index', String(match.index));
         mark.style.unicodeBidi = 'isolate';
+        mark.style.display = 'inline';
+        mark.style.padding = '0';
+        mark.style.margin = '0';
 
         if (match.index === activeIndex) {
           mark.classList.add('active');

@@ -227,6 +227,35 @@ Another search keyword appears here.
     expect(screen.getByTestId('search-counter')).toHaveTextContent('1 of 2');
   });
 
+  it('Persian Cursive Highlight: preserves unicode-bidi isolate and inline formatting on mark', () => {
+    const persianContent = 'سند راهنما برای تست می‌رسد';
+    render(
+      <MarkdownViewer
+        document={{
+          filename: 'persian.md',
+          filePath: '/docs/persian.md',
+          content: persianContent,
+        }}
+      />
+    );
+
+    fireEvent.click(screen.getByTestId('doc-search-toggle'));
+    const input = screen.getByTestId('search-input');
+
+    act(() => {
+      fireEvent.change(input, { target: { value: 'س' } });
+    });
+
+    const marks = screen.getByTestId('markdown-content').querySelectorAll<HTMLElement>('mark[data-search-match="true"]');
+    expect(marks.length).toBeGreaterThan(0);
+    const firstMark = marks[0];
+    expect(firstMark.textContent).toBe('س');
+    expect(firstMark.style.unicodeBidi).toBe('isolate');
+    expect(firstMark.style.display).toBe('inline');
+    expect(firstMark.style.padding).toBe('0px');
+    expect(firstMark.nextSibling?.textContent).toContain('ند');
+  });
+
   it('Case Sensitivity Toggle: updates matches dynamically between case-insensitive and case-sensitive', () => {
     render(
       <MarkdownViewer
