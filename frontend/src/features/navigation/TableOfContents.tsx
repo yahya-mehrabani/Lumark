@@ -164,9 +164,7 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
     }
 
     if (container && target) {
-      const TOP_SCROLL_PADDING = 16;
-      const containerRect = container.getBoundingClientRect();
-      const targetRect = target.getBoundingClientRect();
+      const HEADER_OFFSET = 80;
 
       const currentZoom =
         propsZoomFactor ??
@@ -178,8 +176,27 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
           return 1;
         })();
 
-      const deltaY = (targetRect.top - containerRect.top) / currentZoom;
-      const targetScrollTop = Math.max(0, container.scrollTop + deltaY - TOP_SCROLL_PADDING);
+      // Calculate target heading position relative to container
+      // Use target.offsetTop when available, or derive from getBoundingClientRect with zoom compensation
+      let targetHeadingTop = target.offsetTop;
+      if (typeof targetHeadingTop !== 'number' || targetHeadingTop === 0) {
+        const containerRect = container.getBoundingClientRect();
+        const targetRect = target.getBoundingClientRect();
+        const deltaY = (targetRect.top - containerRect.top) / currentZoom;
+        targetHeadingTop = container.scrollTop + deltaY;
+      } else if (target.offsetParent && target.offsetParent !== container) {
+        let curr: HTMLElement | null = target;
+        let cumulative = 0;
+        while (curr && curr !== container && curr !== document.body) {
+          cumulative += curr.offsetTop;
+          curr = curr.offsetParent as HTMLElement | null;
+        }
+        if (curr === container) {
+          targetHeadingTop = cumulative;
+        }
+      }
+
+      const targetScrollTop = Math.max(0, targetHeadingTop - HEADER_OFFSET);
 
       const prefersReducedMotion =
         typeof window !== 'undefined' &&
@@ -200,15 +217,6 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
 
       if (behavior === 'auto' && container.scrollTop !== targetScrollTop) {
         container.scrollTop = targetScrollTop;
-      }
-
-      // Also invoke native scrollIntoView to ensure reliable section alignment accounting for scroll-margin-top
-      if (typeof target.scrollIntoView === 'function') {
-        try {
-          target.scrollIntoView({ behavior, block: 'start' });
-        } catch {
-          // ignore scrollIntoView failure in environments without it
-        }
       }
 
       if (typeof window !== 'undefined' && window.localStorage?.getItem('debugOutline') === '1') {

@@ -327,6 +327,7 @@ body.focus-mode .floating-toolbar-container {
   overflow-x: hidden;
   box-sizing: border-box;
   scrollbar-gutter: stable;
+  position: relative;
 }
 
 .path-label {

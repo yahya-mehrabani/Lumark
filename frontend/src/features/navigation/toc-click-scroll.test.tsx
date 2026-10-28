@@ -6,17 +6,29 @@ import { zoomController } from '../viewport/zoomController';
 
 describe('Table of Contents Click Navigation & Geometry Synchronization', () => {
   let scrollToMock: ReturnType<typeof vi.fn>;
+  const originalMatchMedia = window.matchMedia;
 
   beforeEach(() => {
     scrollToMock = vi.fn();
     window.HTMLElement.prototype.scrollTo =
       scrollToMock as unknown as typeof Element.prototype.scrollTo;
+    window.matchMedia = vi.fn().mockImplementation((query) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    }));
     localStorage.clear();
     zoomController.resetZoom();
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
+    window.matchMedia = originalMatchMedia;
     localStorage.clear();
     zoomController.resetZoom();
   });
@@ -83,10 +95,10 @@ Set options.
     // Click Installation outline link
     fireEvent.click(installLink);
 
-    // Expected target top: container.scrollTop (50) + (350 - 100) / 1.0 - 16 = 50 + 250 - 16 = 284
+    // Expected target top: container.scrollTop (50) + (350 - 100) / 1.0 - 80 = 50 + 250 - 80 = 220
     expect(scrollToMock).toHaveBeenCalledTimes(1);
     expect(scrollToMock).toHaveBeenCalledWith({
-      top: 284,
+      top: 220,
       behavior: 'smooth',
     });
 
@@ -149,10 +161,10 @@ Deep content.
 
     fireEvent.click(deepLink);
 
-    // Delta: 300 / 1.5 = 200. Target top: 0 + 200 - 16 = 184
+    // Delta: 300 / 1.5 = 200. Target top: 0 + 200 - 80 = 120
     expect(scrollToMock).toHaveBeenCalledTimes(1);
     expect(scrollToMock).toHaveBeenCalledWith({
-      top: 184,
+      top: 120,
       behavior: 'smooth',
     });
 
@@ -202,10 +214,10 @@ Deep content.
 
     fireEvent.click(deepLink75);
 
-    // Delta: 150 / 0.75 = 200. Target top: 0 + 200 - 16 = 184
+    // Delta: 150 / 0.75 = 200. Target top: 0 + 200 - 80 = 120
     expect(scrollToMock).toHaveBeenCalledTimes(1);
     expect(scrollToMock).toHaveBeenCalledWith({
-      top: 184,
+      top: 120,
       behavior: 'smooth',
     });
   });
@@ -234,7 +246,7 @@ Deep content.
     fireEvent.click(screen.getByTestId('toc-link-next'));
 
     expect(scrollToMock).toHaveBeenCalledWith({
-      top: 184,
+      top: 120,
       behavior: 'auto',
     });
   });
@@ -258,5 +270,30 @@ Deep content.
       expect(toastSpy.mock.calls[0][0]).toContain('Target: "section-one"');
       expect(toastSpy.mock.calls[0][0]).toContain('Scrollable: true');
     });
+  });
+
+  it('calculates scroll position from target.offsetTop minus HEADER_OFFSET without calling scrollIntoView', () => {
+    const markdown = `# Title\n\n## Custom Offset Heading`;
+    render(<MarkdownViewer document={{ filename: 'offset.md', content: markdown }} showToc={true} />);
+
+    const container = screen.getByTestId('markdown-content');
+    const targetHeading = document.getElementById('custom-offset-heading')!;
+
+    // Simulate real browser offsetTop
+    Object.defineProperty(targetHeading, 'offsetTop', { value: 450, configurable: true });
+    Object.defineProperty(targetHeading, 'offsetParent', { value: container, configurable: true });
+
+    const scrollIntoViewSpy = vi.fn();
+    targetHeading.scrollIntoView = scrollIntoViewSpy;
+
+    scrollToMock.mockClear();
+    fireEvent.click(screen.getByTestId('toc-link-custom-offset-heading'));
+
+    // offsetTop (450) - HEADER_OFFSET (80) = 370
+    expect(scrollToMock).toHaveBeenCalledWith({
+      top: 370,
+      behavior: 'smooth',
+    });
+    expect(scrollIntoViewSpy).not.toHaveBeenCalled();
   });
 });

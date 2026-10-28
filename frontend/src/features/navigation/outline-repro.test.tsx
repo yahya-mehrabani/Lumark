@@ -87,8 +87,8 @@ describe('Outline Jump Reproduction with Real AGENTS.md and PRD.md', () => {
       scrollToMock.mockClear();
       fireEvent.click(tocLink);
 
-      // Expected top: container.scrollTop (0) + (mockTopOffset - 50) / 1.0 - 16
-      const expectedTop = Math.max(0, mockTopOffset - 50 - 16);
+      // Expected top: container.scrollTop (0) + (mockTopOffset - 50) / 1.0 - 80
+      const expectedTop = Math.max(0, mockTopOffset - 50 - 80);
 
       if (
         scrollToMock.mock.calls.length === 0 ||
@@ -169,7 +169,8 @@ describe('Outline Jump Reproduction with Real AGENTS.md and PRD.md', () => {
       scrollToMock.mockClear();
       fireEvent.click(tocLink);
 
-      const expectedTop = Math.max(0, mockTopOffset - 50 - 16);
+      // Expected top: container.scrollTop (0) + (mockTopOffset - 50) / 1.0 - 80
+      const expectedTop = Math.max(0, mockTopOffset - 50 - 80);
 
       if (
         scrollToMock.mock.calls.length === 0 ||
