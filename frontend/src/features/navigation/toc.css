@@ -46,17 +46,7 @@
   overflow: visible;
   pointer-events: auto;
   position: relative;
-}
-
-.toc-list::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  width: 48px;
-  pointer-events: auto;
-  background: transparent;
+  width: 44px;
 }
 
 .toc-item {
@@ -70,6 +60,7 @@
   position: relative;
   overflow: visible;
   pointer-events: auto;
+  width: 100%;
 }
 
 .spy-item,
@@ -90,11 +81,26 @@
   position: relative;
   box-sizing: border-box;
   pointer-events: auto;
+  width: 100%;
+}
+
+/* Continuous invisible hitbox covering vertical rail area so mouse never falls into gaps */
+.spy-item::before,
+.toc-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: -8px;
+  left: -20px;
+  background: transparent;
+  pointer-events: auto;
 }
 
 /* Text labels: hidden by default (opacity: 0, visibility: hidden).
    Positioned absolutely to the left of the rail with ellipsis truncation
-   so long text never bleeds off-screen and items never overlap. */
+   so long text never bleeds off-screen and items never overlap.
+   pointer-events: none ensures labels never steal mouse hover from .spy-item. */
 .spy-label,
 .toc-text {
   font-family: var(--font-sans);
@@ -109,7 +115,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: min(220px, calc(100vw - 80px));
-  pointer-events: none;
+  pointer-events: none !important;
   position: absolute;
   right: calc(100% + 8px);
   top: 50%;
@@ -125,12 +131,10 @@
   box-sizing: border-box;
 }
 
-/* Reveal labels on rail hover or item hover */
-.scrollspy-rail:hover .spy-label,
-.scrollspy-rail:hover .toc-text,
-.toc-sidebar:hover .spy-label,
-.toc-sidebar:hover .toc-text,
+/* Reveal labels strictly on parent item hover */
 .spy-item:hover .spy-label,
+.spy-item:hover .toc-text,
+.toc-link:hover .spy-label,
 .toc-link:hover .toc-text,
 .toc-item:hover > .toc-link .spy-label,
 .toc-item:hover > .toc-link .toc-text {
@@ -138,7 +142,7 @@
   visibility: visible;
   transform: translateY(-50%) translateX(0);
   color: var(--text-primary);
-  pointer-events: auto;
+  pointer-events: none !important;
 }
 
 /* Reveal and highlight label for the active item */
@@ -152,6 +156,7 @@
   color: var(--accent-teal);
   font-weight: 600;
   border-color: var(--accent-teal-border);
+  pointer-events: none !important;
 }
 
 /* Horizontal line markers */
@@ -164,6 +169,7 @@
   transition: width 0.2s ease, height 0.2s ease, background-color 0.2s ease;
   display: inline-block;
   flex-shrink: 0;
+  pointer-events: none;
 }
 
 .spy-item:hover .spy-marker,
@@ -189,10 +195,11 @@ body.focus-mode .toc-sidebar {
 }
 
 .spy-item,
-.toc-link,
-.spy-marker,
-.toc-bullet,
+.toc-link {
+  pointer-events: auto;
+}
+
 .spy-label,
 .toc-text {
-  pointer-events: auto;
+  pointer-events: none !important;
 }

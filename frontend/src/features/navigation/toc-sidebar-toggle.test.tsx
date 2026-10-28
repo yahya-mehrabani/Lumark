@@ -386,5 +386,18 @@ describe('Active Heading Scroll Spy & Sidebar Toggle (US-021.3)', () => {
       expect(screen.getByTestId('toc-link-h2')).toBeInTheDocument();
       expect(screen.getByTestId('toc-link-h3')).toBeInTheDocument();
     });
+
+    it('verifies toc.css enforces pointer-events: none on spy-label and toc-text to eliminate hover loop flickering', async () => {
+      const fs = await import('fs');
+      const path = await import('path');
+      const cssContent = fs.readFileSync(path.resolve(__dirname, 'toc.css'), 'utf-8');
+
+      // Ensure spy-label and toc-text are set to pointer-events: none
+      expect(cssContent).toMatch(/\.spy-label[^{]*\{[^}]*pointer-events:\s*none/);
+      expect(cssContent).toMatch(/\.spy-item:hover\s+\.spy-label[^{]*\{[^}]*pointer-events:\s*none/);
+      // Ensure spy-label is not given pointer-events: auto anywhere
+      expect(cssContent).not.toMatch(/\.spy-label[^{]*\{[^}]*pointer-events:\s*auto/);
+      expect(cssContent).not.toMatch(/\.toc-text[^{]*\{[^}]*pointer-events:\s*auto/);
+    });
   });
 });
