@@ -192,25 +192,17 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
     ? settings.showTableOfContents ?? settings.showToc ?? true
     : false;
 
+  // Read global setting once during initial state setup of a tab
+  const initialGlobalTocRef = React.useRef(globalTocDefault);
+
   const tocData = useTableOfContents({ markdown: rawMarkdown });
-  const initialTocOpen = showToc !== undefined ? showToc : globalTocDefault;
+  const initialTocOpen = showToc !== undefined ? showToc : initialGlobalTocRef.current;
 
   const tocToggle = useTocToggle({
     initialOpen: initialTocOpen,
     hasHeadings: tocData.hasHeadings,
     onToggle: () => onToggleToc?.(),
   });
-
-  // When global setting changes in preferences, update TOC visibility
-  const prevGlobalSettingRef = React.useRef(globalTocDefault);
-  React.useEffect(() => {
-    if (prevGlobalSettingRef.current !== globalTocDefault) {
-      prevGlobalSettingRef.current = globalTocDefault;
-      if (showToc === undefined) {
-        tocToggle.setIsOpen(globalTocDefault);
-      }
-    }
-  }, [globalTocDefault, showToc, tocToggle]);
 
   // When controlled showToc prop changes, synchronize
   React.useEffect(() => {

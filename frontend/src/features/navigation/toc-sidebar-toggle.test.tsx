@@ -275,24 +275,49 @@ describe('Active Heading Scroll Spy & Sidebar Toggle (US-021.3)', () => {
       expect(screen.getByTestId('toc-link-document-heading')).toBeInTheDocument();
     });
 
-    it('synchronizes TOC visibility dynamically when settingsStore showTableOfContents changes', async () => {
+    it('prevents global settings from overriding active tab TOC toggle state after initial mount', async () => {
       const markdown = '# Heading 1\n## Heading 2';
-      render(<MarkdownViewer document={{ filename: 'test.md', content: markdown }} />);
+      render(<MarkdownViewer document={{ filename: 'active-tab.md', content: markdown }} />);
 
-      // Initially open
+      // Initially open from default settings
       expect(screen.getByTestId('toc-sidebar')).toBeInTheDocument();
 
-      // Disable TOC in settings
+      // Disable TOC in global settings
       await act(async () => {
         await settingsStore.updateSettings({ showTableOfContents: false });
       });
-      expect(screen.queryByTestId('toc-sidebar')).not.toBeInTheDocument();
 
-      // Re-enable TOC in settings
-      await act(async () => {
-        await settingsStore.updateSettings({ showTableOfContents: true });
-      });
+      // Active mounted tab retains its independent state (still open!)
       expect(screen.getByTestId('toc-sidebar')).toBeInTheDocument();
+
+      // User can still manually toggle it in this tab
+      const toggleBtn = screen.getByTestId('doc-toc-toggle');
+      fireEvent.click(toggleBtn);
+      expect(screen.queryByTestId('toc-sidebar')).not.toBeInTheDocument();
+    });
+
+    it('applies updated global setting as default for newly opened tabs without affecting active tabs', async () => {
+      const markdown = '# Heading 1\n## Heading 2';
+
+      // Open Tab 1 under default setting (showTableOfContents: true)
+      render(<MarkdownViewer document={{ filename: 'tab1.md', content: markdown }} />);
+      expect(screen.getByTestId('toc-sidebar')).toBeInTheDocument();
+
+      // Change global setting to false
+      await act(async () => {
+        await settingsStore.updateSettings({ showTableOfContents: false });
+      });
+
+      // Tab 1 is still open
+      expect(screen.getByTestId('toc-sidebar')).toBeInTheDocument();
+
+      // Now open a newly opened tab (Tab 2)
+      render(<MarkdownViewer document={{ filename: 'tab2.md', content: markdown }} />);
+
+      // Since global setting is false, newly opened tab has TOC closed by default
+      const sidebars = screen.getAllByTestId('toc-sidebar');
+      // Only Tab 1 has an active TOC sidebar (1 sidebar rendered total)
+      expect(sidebars).toHaveLength(1);
     });
 
     it('allows user to manually toggle TOC ON inside a document when global setting showTableOfContents is false', async () => {
