@@ -250,7 +250,7 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
           data-testid={`toc-link-${node.id}`}
           data-target={node.id}
         >
-          <span className="spy-label toc-text" dir="auto">
+          <span className="spy-label toc-text" dir="auto" title={node.text}>
             {node.text}
           </span>
           <span className="spy-marker toc-bullet" aria-hidden="true" />

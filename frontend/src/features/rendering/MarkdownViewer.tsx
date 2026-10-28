@@ -190,11 +190,22 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
   const isTocEnabled = settings.showTableOfContents ?? settings.showToc ?? true;
 
   const tocData = useTableOfContents({ markdown: rawMarkdown });
+  const initialTocOpen = showToc !== undefined ? showToc : isTocEnabled;
+
   const tocToggle = useTocToggle({
-    initialOpen: showToc ?? false,
+    initialOpen: initialTocOpen,
     hasHeadings: tocData.hasHeadings,
     onToggle: () => onToggleToc?.(),
   });
+
+  // Keep TOC toggle state strictly synchronized with settingsStore and controlled props
+  React.useEffect(() => {
+    if (showToc !== undefined) {
+      tocToggle.setIsOpen(showToc);
+    } else {
+      tocToggle.setIsOpen(isTocEnabled);
+    }
+  }, [showToc, isTocEnabled]);
 
   const isTocOpen = isTocEnabled && (showToc !== undefined ? (showToc && tocData.hasHeadings) : tocToggle.isOpen);
 

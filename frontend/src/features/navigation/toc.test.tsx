@@ -244,10 +244,24 @@ console.log('No headings here');
       />
     );
 
-    // Initially closed
+    // Initially open by default when document has headings (Issue 2)
+    expect(screen.getByTestId('toc-sidebar')).toBeInTheDocument();
+
+    // Press Ctrl+Shift+O to close
+    act(() => {
+      window.dispatchEvent(
+        new KeyboardEvent('keydown', {
+          key: 'o',
+          ctrlKey: true,
+          shiftKey: true,
+          bubbles: true,
+        })
+      );
+    });
+
     expect(screen.queryByTestId('toc-sidebar')).not.toBeInTheDocument();
 
-    // Press Ctrl+Shift+O to open
+    // Press Ctrl+Shift+O again to re-open
     act(() => {
       window.dispatchEvent(
         new KeyboardEvent('keydown', {
@@ -260,19 +274,5 @@ console.log('No headings here');
     });
 
     expect(screen.getByTestId('toc-sidebar')).toBeInTheDocument();
-
-    // Press Ctrl+Shift+O again to close
-    act(() => {
-      window.dispatchEvent(
-        new KeyboardEvent('keydown', {
-          key: 'o',
-          ctrlKey: true,
-          shiftKey: true,
-          bubbles: true,
-        })
-      );
-    });
-
-    expect(screen.queryByTestId('toc-sidebar')).not.toBeInTheDocument();
   });
 });

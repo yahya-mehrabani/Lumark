@@ -277,15 +277,16 @@ Another search keyword appears here.
     // Open search
     fireEvent.click(screen.getByTestId('doc-search-toggle'));
     const searchBar = screen.getByTestId('search-bar');
-    expect(searchBar).not.toHaveClass('has-toc-open');
-
-    // Open TOC / Outline
-    const tocToggle = screen.getByTestId('doc-toc-toggle');
-    fireEvent.click(tocToggle);
+    // Outline panel is open by default when document has headings (Issue 2)
     expect(searchBar).toHaveClass('has-toc-open');
 
-    // Close TOC / Outline
+    // Close TOC / Outline via toolbar button
+    const tocToggle = screen.getByTestId('doc-toc-toggle');
     fireEvent.click(tocToggle);
     expect(searchBar).not.toHaveClass('has-toc-open');
+
+    // Re-open TOC / Outline
+    fireEvent.click(tocToggle);
+    expect(searchBar).toHaveClass('has-toc-open');
   });
 });

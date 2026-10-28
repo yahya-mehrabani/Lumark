@@ -4,6 +4,8 @@ import { useScrollSpy } from './useScrollSpy';
 import { useTocToggle } from './useTocToggle';
 import { TableOfContents } from './TableOfContents';
 import { TocItem } from './types';
+import { MarkdownViewer } from '../rendering/MarkdownViewer';
+import { settingsStore } from '../preferences';
 
 describe('Active Heading Scroll Spy & Sidebar Toggle (US-021.3)', () => {
   let observeMock: ReturnType<typeof vi.fn>;
@@ -257,6 +259,80 @@ describe('Active Heading Scroll Spy & Sidebar Toggle (US-021.3)', () => {
       );
 
       expect(screen.getByTestId('toc-sidebar')).toBeInTheDocument();
+    });
+  });
+
+  describe('Default Visibility & Settings Store Integration (Issue 2)', () => {
+    beforeEach(() => {
+      settingsStore.resetSettings();
+    });
+
+    it('renders TOC by default when document is mounted with default settings (showTableOfContents: true)', () => {
+      const markdown = '# Document Heading\n\nSome text.';
+      render(<MarkdownViewer document={{ filename: 'test.md', content: markdown }} />);
+
+      expect(screen.getByTestId('toc-sidebar')).toBeInTheDocument();
+      expect(screen.getByTestId('toc-link-document-heading')).toBeInTheDocument();
+    });
+
+    it('synchronizes TOC visibility dynamically when settingsStore showTableOfContents changes', async () => {
+      const markdown = '# Heading 1\n## Heading 2';
+      render(<MarkdownViewer document={{ filename: 'test.md', content: markdown }} />);
+
+      // Initially open
+      expect(screen.getByTestId('toc-sidebar')).toBeInTheDocument();
+
+      // Disable TOC in settings
+      await act(async () => {
+        await settingsStore.updateSettings({ showTableOfContents: false });
+      });
+      expect(screen.queryByTestId('toc-sidebar')).not.toBeInTheDocument();
+
+      // Re-enable TOC in settings
+      await act(async () => {
+        await settingsStore.updateSettings({ showTableOfContents: true });
+      });
+      expect(screen.getByTestId('toc-sidebar')).toBeInTheDocument();
+    });
+  });
+
+  describe('TOC Item Layout and Truncation (Issues 3 & 5)', () => {
+    it('renders long heading labels with title attribute on both link and label', () => {
+      const longTitle = 'Very Long Section Title That Should Not Bleed Off Screen Or Cause Visual Regressions';
+      const items: TocItem[] = [
+        { id: 'long-section', text: longTitle, level: 1 },
+        { id: 'short-section', text: 'Short', level: 2 },
+      ];
+
+      render(<TableOfContents items={items} isOpen={true} />);
+
+      const link = screen.getByTestId('toc-link-long-section');
+      expect(link).toHaveAttribute('title', longTitle);
+
+      const label = link.querySelector('.spy-label');
+      expect(label).toHaveAttribute('title', longTitle);
+      expect(label).toHaveTextContent(longTitle);
+    });
+
+    it('renders multiple TOC items with distinct link containers ensuring no DOM overlapping', () => {
+      const items: TocItem[] = [
+        { id: 'h1', text: 'Heading 1', level: 1 },
+        { id: 'h2', text: 'Heading 2', level: 2 },
+        { id: 'h3', text: 'Heading 3', level: 3 },
+      ];
+
+      const { container } = render(<TableOfContents items={items} isOpen={true} />);
+
+      const links = container.querySelectorAll('.spy-item');
+      expect(links).toHaveLength(3);
+
+      const labels = container.querySelectorAll('.spy-label');
+      expect(labels).toHaveLength(3);
+
+      // Verify each item has a distinct container and correct test ID
+      expect(screen.getByTestId('toc-link-h1')).toBeInTheDocument();
+      expect(screen.getByTestId('toc-link-h2')).toBeInTheDocument();
+      expect(screen.getByTestId('toc-link-h3')).toBeInTheDocument();
     });
   });
 });
