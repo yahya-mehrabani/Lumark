@@ -202,11 +202,10 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
           className={`spy-item toc-link ${isActive ? 'active' : ''}`}
           aria-current={isActive ? 'location' : undefined}
           onClick={(e) => handleHeadingClick(e, node.id)}
-          title={node.text}
           data-testid={`toc-link-${node.id}`}
           data-target={node.id}
         >
-          <span className="spy-label toc-text" dir="auto" title={node.text}>
+          <span className="spy-label toc-text" dir="auto">
             {node.text}
           </span>
           <span className="spy-marker toc-bullet" aria-hidden="true" />
@@ -234,7 +233,6 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
           className="toc-close-btn"
           onClick={onClose}
           aria-label="Close Table of Contents"
-          title="Close outline"
           data-testid="toc-close-button"
           style={{
             position: 'absolute',

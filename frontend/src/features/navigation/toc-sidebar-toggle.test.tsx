@@ -324,7 +324,7 @@ describe('Active Heading Scroll Spy & Sidebar Toggle (US-021.3)', () => {
   });
 
   describe('TOC Item Layout and Truncation (Issues 3 & 5)', () => {
-    it('renders long heading labels with title attribute on both link and label', () => {
+    it('renders long heading labels without native title attribute on link and label', () => {
       const longTitle = 'Very Long Section Title That Should Not Bleed Off Screen Or Cause Visual Regressions';
       const items: TocItem[] = [
         { id: 'long-section', text: longTitle, level: 1 },
@@ -334,10 +334,10 @@ describe('Active Heading Scroll Spy & Sidebar Toggle (US-021.3)', () => {
       render(<TableOfContents items={items} isOpen={true} />);
 
       const link = screen.getByTestId('toc-link-long-section');
-      expect(link).toHaveAttribute('title', longTitle);
+      expect(link).not.toHaveAttribute('title');
 
       const label = link.querySelector('.spy-label');
-      expect(label).toHaveAttribute('title', longTitle);
+      expect(label).not.toHaveAttribute('title');
       expect(label).toHaveTextContent(longTitle);
     });
 
