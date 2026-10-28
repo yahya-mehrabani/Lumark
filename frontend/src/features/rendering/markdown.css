@@ -19,6 +19,7 @@
   box-shadow: none;
   overflow-y: auto;
   overflow-x: hidden;
+  scrollbar-gutter: stable;
   position: relative;
   --default-contextmenu: show;
 }
@@ -471,8 +472,9 @@ body.focus-mode .markdown-content {
 .markdown-content ol[dir="rtl"],
 .markdown-content[dir="rtl"] ul,
 .markdown-content[dir="rtl"] ol {
-  padding-left: 0;
+  padding-left: 16px;
   padding-right: 2em;
+  box-sizing: border-box;
 }
 
 /* RTL table header & cell alignment */
@@ -902,6 +904,8 @@ body.theme-dark .shiki span,
   margin-top: 0;
   margin-bottom: 1.25em;
   padding-left: 2em;
+  padding-right: 16px;
+  box-sizing: border-box;
 }
 
 .markdown-content li {

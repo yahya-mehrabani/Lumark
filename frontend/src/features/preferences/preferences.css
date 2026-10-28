@@ -259,7 +259,35 @@
   background: var(--accent-teal-hover);
 }
 
-/* Minimal Toggle Row */
+/* Minimal Combined Toggles Card */
+.setting-toggles-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  background-color: var(--bg-toggle-row);
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+}
+
+.setting-toggles-card .setting-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 14px;
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+}
+
+.setting-toggles-card .setting-toggle-divider {
+  height: 1px;
+  background-color: var(--border-subtle);
+  margin: 0;
+  width: 100%;
+}
+
+/* Minimal Toggle Row (standalone fallback) */
 .setting-toggle-row {
   display: flex;
   align-items: center;
@@ -402,7 +430,12 @@
 }
 
 .settings-confirm-btn {
-  padding: 3px 10px;
+  min-width: 64px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
   border-radius: 5px;
   border: none;
   background-color: var(--danger);
@@ -419,7 +452,12 @@
 }
 
 .settings-cancel-btn {
-  padding: 3px 10px;
+  min-width: 64px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
   border-radius: 5px;
   border: 1px solid var(--border-subtle);
   background-color: var(--bg-control);

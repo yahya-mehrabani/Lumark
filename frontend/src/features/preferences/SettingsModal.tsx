@@ -278,53 +278,46 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </select>
           </div>
 
-          {/* Show Table of Contents: Modern Toggle Row */}
-          <div className="setting-toggle-row">
-            <div className="toggle-text-group">
+          {/* Minimalist Combined Toggles Card */}
+          <div className="setting-toggles-card" data-testid="settings-toggles-card">
+            <div className="setting-toggle-row">
               <span className="setting-label">Show Table of Contents</span>
-              <p className="settings-description">
-                Display the outline and scrollspy navigation rail alongside Markdown documents.
-              </p>
+              <label className="toggle-switch" htmlFor="settings-show-toc">
+                <input
+                  type="checkbox"
+                  id="settings-show-toc"
+                  checked={settings.showTableOfContents ?? settings.showToc ?? true}
+                  onChange={(e) =>
+                    updateSettings({
+                      showTableOfContents: e.target.checked,
+                      showToc: e.target.checked,
+                    })
+                  }
+                  data-testid="settings-show-toc-checkbox"
+                />
+                <span className="toggle-track">
+                  <span className="toggle-thumb" />
+                </span>
+              </label>
             </div>
-            <label className="toggle-switch" htmlFor="settings-show-toc">
-              <input
-                type="checkbox"
-                id="settings-show-toc"
-                checked={settings.showTableOfContents ?? settings.showToc ?? true}
-                onChange={(e) =>
-                  updateSettings({
-                    showTableOfContents: e.target.checked,
-                    showToc: e.target.checked,
-                  })
-                }
-                data-testid="settings-show-toc-checkbox"
-              />
-              <span className="toggle-track">
-                <span className="toggle-thumb" />
-              </span>
-            </label>
-          </div>
 
-          {/* Restore Open Tabs: Modern Toggle Row */}
-          <div className="setting-toggle-row">
-            <div className="toggle-text-group">
+            <div className="setting-toggle-divider" />
+
+            <div className="setting-toggle-row">
               <span className="setting-label">Restore open tabs on startup</span>
-              <p className="settings-description">
-                Automatically reopen previously viewed documents when starting the application.
-              </p>
+              <label className="toggle-switch" htmlFor="settings-restore-tabs">
+                <input
+                  type="checkbox"
+                  id="settings-restore-tabs"
+                  checked={settings.restoreOpenTabs}
+                  onChange={handleRestoreTabsChange}
+                  data-testid="settings-restore-tabs-checkbox"
+                />
+                <span className="toggle-track">
+                  <span className="toggle-thumb" />
+                </span>
+              </label>
             </div>
-            <label className="toggle-switch" htmlFor="settings-restore-tabs">
-              <input
-                type="checkbox"
-                id="settings-restore-tabs"
-                checked={settings.restoreOpenTabs}
-                onChange={handleRestoreTabsChange}
-                data-testid="settings-restore-tabs-checkbox"
-              />
-              <span className="toggle-track">
-                <span className="toggle-thumb" />
-              </span>
-            </label>
           </div>
         </div>
 
