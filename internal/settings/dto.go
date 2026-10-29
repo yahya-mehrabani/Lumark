@@ -31,6 +31,7 @@ type SettingsDTO struct {
 	OpenTabs            []string `json:"openTabs,omitempty"`
 	MaxRecentFiles      int      `json:"maxRecentFiles"`
 	ShowTableOfContents *bool    `json:"showToc,omitempty"`
+	TocPosition         string   `json:"tocPosition,omitempty"`
 }
 
 // DefaultSettings returns a fresh SettingsDTO initialized to canonical defaults.
@@ -45,6 +46,7 @@ func DefaultSettings() SettingsDTO {
 		OpenTabs:            []string{},
 		MaxRecentFiles:      DefaultMaxRecent,
 		ShowTableOfContents: &defaultShowTOC,
+		TocPosition:         "left",
 	}
 }
 
@@ -52,6 +54,12 @@ func DefaultSettings() SettingsDTO {
 func (s *SettingsDTO) NormalizeAndValidate() {
 	if s.SchemaVersion <= 0 {
 		s.SchemaVersion = CurrentSchemaVersion
+	}
+
+	switch s.TocPosition {
+	case "left", "right", "auto":
+	default:
+		s.TocPosition = "left"
 	}
 
 	switch s.Theme {

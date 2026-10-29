@@ -32,6 +32,7 @@ export class InMemorySettingsAdapter implements SettingsBackendAdapter {
       ...initial,
       ...(stored || {}),
       openTabs: [...(stored?.openTabs || initial.openTabs || [])],
+      tocPosition: stored?.tocPosition || initial.tocPosition || 'left',
     };
   }
 
@@ -83,7 +84,11 @@ export class SettingsStore {
   }
 
   public getSettings(): AppSettings {
-    return { ...this.current, openTabs: [...(this.current.openTabs || [])] };
+    return {
+      ...this.current,
+      openTabs: [...(this.current.openTabs || [])],
+      tocPosition: this.current.tocPosition || 'left',
+    };
   }
 
   public isReady(): boolean {

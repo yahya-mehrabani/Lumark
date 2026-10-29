@@ -39,6 +39,9 @@ func TestSettingsPersistence(t *testing.T) {
 	if initial.MaxRecentFiles != 20 {
 		t.Errorf("Expected default maxRecentFiles 20, got %d", initial.MaxRecentFiles)
 	}
+	if initial.TocPosition != "left" {
+		t.Errorf("Expected default tocPosition left, got %s", initial.TocPosition)
+	}
 
 	// Verify file was created on disk
 	if _, statErr := os.Stat(targetPath); statErr != nil {
@@ -304,6 +307,9 @@ func TestSettingsReset(t *testing.T) {
 	if defaults.MaxRecentFiles != 20 {
 		t.Errorf("Expected reset maxRecentFiles to be 20, got %d", defaults.MaxRecentFiles)
 	}
+	if defaults.TocPosition != "left" {
+		t.Errorf("Expected reset tocPosition to be left, got %s", defaults.TocPosition)
+	}
 
 	// 3. Verify in-memory state
 	current := svc.GetSettings()
@@ -381,6 +387,34 @@ func TestSettingsNormalization(t *testing.T) {
 				DefaultDirection: DirectionAuto,
 				DefaultZoom:      1.0,
 				MaxRecentFiles:   20,
+			},
+		},
+		{
+			name: "Unknown tocPosition normalizes to left",
+			input: SettingsDTO{
+				TocPosition: "invalid-position",
+			},
+			expected: SettingsDTO{
+				SchemaVersion:    1,
+				Theme:            ThemeSystem,
+				DefaultDirection: DirectionAuto,
+				DefaultZoom:      1.0,
+				MaxRecentFiles:   20,
+				TocPosition:      "left",
+			},
+		},
+		{
+			name: "Valid tocPosition preserved",
+			input: SettingsDTO{
+				TocPosition: "right",
+			},
+			expected: SettingsDTO{
+				SchemaVersion:    1,
+				Theme:            ThemeSystem,
+				DefaultDirection: DirectionAuto,
+				DefaultZoom:      1.0,
+				MaxRecentFiles:   20,
+				TocPosition:      "right",
 			},
 		},
 	}

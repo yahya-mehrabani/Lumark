@@ -3,6 +3,7 @@ import { DirectionPreference } from '../direction/directionPreferences';
 
 export type ThemeOption = ThemePreference;
 export type DirectionOption = DirectionPreference;
+export type TocPosition = 'left' | 'right' | 'auto';
 
 export interface AppSettings {
   schemaVersion: number;
@@ -14,6 +15,7 @@ export interface AppSettings {
   maxRecentFiles: number;
   showToc?: boolean;
   showTableOfContents?: boolean;
+  tocPosition?: TocPosition;
 }
 
 export const DEFAULT_APP_SETTINGS: AppSettings = {
@@ -26,4 +28,5 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
   maxRecentFiles: 20,
   showToc: true,
   showTableOfContents: true,
+  tocPosition: 'left',
 };

@@ -37,7 +37,7 @@ describe('Document Viewport Controls: Themes & Zoom Integration Suite (US-023.4)
   });
 
   describe('Theme Controls and DOM Synchronization', () => {
-    it('cycles theme between system, light, and dark via toolbar button', async () => {
+    it('cycles theme between light and dark via toolbar button with override from system', async () => {
       render(<AppShell />);
 
       const themeBtn = screen.getByTestId('top-theme-toggle');
@@ -60,9 +60,9 @@ describe('Document Viewport Controls: Themes & Zoom Integration Suite (US-023.4)
       expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
       expect(document.body.classList.contains('theme-dark')).toBe(true);
 
-      // 3. Click to toggle -> System
+      // 3. Click to toggle -> Light (cycles only between light and dark)
       fireEvent.click(themeBtn);
-      expect(themeStore.getPreference()).toBe('system');
+      expect(themeStore.getPreference()).toBe('light');
     });
 
     it('adapts Mermaid diagram theme dynamically when themeStore changes', async () => {

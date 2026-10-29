@@ -140,12 +140,14 @@ export class ThemeStore {
   }
 
   public toggleTheme(): void {
-    const next: Record<ThemePreference, ThemePreference> = {
-      system: 'light',
-      light: 'dark',
-      dark: 'system',
-    };
-    this.setTheme(next[this.preference]);
+    if (this.preference === 'system') {
+      // If the global setting is 'system', clicking forces a manual override to the opposite theme
+      const target: ResolvedTheme = this.state.resolved === 'dark' ? 'light' : 'dark';
+      this.setTheme(target);
+    } else {
+      // The toggle button only cycles between 'light' and 'dark'
+      this.setTheme(this.preference === 'dark' ? 'light' : 'dark');
+    }
   }
 
   public applyToDom(): void {

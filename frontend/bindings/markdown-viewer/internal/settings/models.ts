@@ -15,4 +15,5 @@ export interface SettingsDTO {
     "openTabs"?: string[] | null;
     "maxRecentFiles": number;
     "showToc"?: boolean | null;
+    "tocPosition"?: string;
 }

@@ -80,17 +80,32 @@ describe('ThemeStore and OS Media Listener (US-023.2)', () => {
     store.cleanupMediaListener();
   });
 
-  it('cycles through system -> light -> dark -> system via toggleTheme()', () => {
+  it('cycles only between light and dark via toggleTheme() with override from system', () => {
+    matchesDark = true;
     const store = new ThemeStore('system');
 
+    // System is dark, toggle overrides to opposite (light)
     store.toggleTheme();
     expect(store.getPreference()).toBe('light');
 
+    // From light, toggles to dark
     store.toggleTheme();
     expect(store.getPreference()).toBe('dark');
 
+    // From dark, toggles back to light (never cycles back to system)
     store.toggleTheme();
-    expect(store.getPreference()).toBe('system');
+    expect(store.getPreference()).toBe('light');
+    store.cleanupMediaListener();
+  });
+
+  it('overrides system light preference to dark on toggle', () => {
+    matchesDark = false;
+    const store = new ThemeStore('system');
+    expect(store.getResolvedTheme()).toBe('light');
+
+    store.toggleTheme();
+    expect(store.getPreference()).toBe('dark');
+    expect(store.getResolvedTheme()).toBe('dark');
     store.cleanupMediaListener();
   });
 

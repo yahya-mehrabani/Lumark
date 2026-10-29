@@ -87,7 +87,7 @@ export const AppShell: React.FC<AppShellProps> = ({
   const state = useTabStore(store);
   const activeTab = useActiveTab(store);
   const actions = useTabActions(store);
-  const { theme, toggleTheme } = useTheme();
+  const { theme, resolvedTheme, toggleTheme } = useTheme();
   const [, setIsFocusMode] = useState(false);
 
   const exitFocusMode = () => {
@@ -236,13 +236,14 @@ export const AppShell: React.FC<AppShellProps> = ({
             className="ghost-btn header-btn theme-toggle-btn"
             id="topThemeBtn"
             onClick={toggleTheme}
-            aria-label={`Theme: ${theme === 'system' ? 'Auto (System)' : theme === 'dark' ? 'Dark' : 'Light'}. Click to toggle.`}
-            title={`Theme: ${theme === 'system' ? 'Auto (System)' : theme === 'dark' ? 'Dark' : 'Light'} (Click to toggle)`}
+            aria-label={`Theme: ${theme === 'system' ? `Auto (${resolvedTheme === 'dark' ? 'Dark' : 'Light'})` : resolvedTheme === 'dark' ? 'Dark' : 'Light'}. Click to toggle.`}
+            title={`Theme: ${theme === 'system' ? `Auto (${resolvedTheme === 'dark' ? 'Dark' : 'Light'})` : resolvedTheme === 'dark' ? 'Dark' : 'Light'} (Click to toggle)`}
             data-testid="top-theme-toggle"
             data-theme-mode={theme}
+            data-resolved-theme={resolvedTheme}
           >
-            <Icon name={theme === 'dark' ? 'moon' : theme === 'light' ? 'sun' : 'monitor'} size={14} />
-            <span>{theme === 'dark' ? 'Dark' : theme === 'light' ? 'Light' : 'Auto'}</span>
+            <Icon name={resolvedTheme === 'dark' ? 'moon' : 'sun'} size={14} />
+            <span>{theme === 'system' ? (resolvedTheme === 'dark' ? 'Dark' : 'Light') : theme === 'dark' ? 'Dark' : 'Light'}</span>
           </button>
 
           <button

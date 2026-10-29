@@ -33,7 +33,7 @@ html {
 }
 [data-theme="light"] html,
 .theme-light html {
-    background: var(--bg-canvas, #F9F9F6);
+    background: var(--bg-canvas, #F7F3EB);
 }
 
 html, body {
