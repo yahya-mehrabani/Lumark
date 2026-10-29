@@ -226,6 +226,21 @@ export class TabStore {
   };
 
   /**
+   * Closes all tabs except the specified tab.
+   * If the kept tab was not active, it becomes active.
+   */
+  public closeOtherTabs = (tabId: string): void => {
+    const keepTab = this.state.tabs.find((t) => t.id === tabId);
+    if (!keepTab) return;
+
+    this.state = {
+      tabs: [keepTab],
+      activeTabId: keepTab.id,
+    };
+    this.notify();
+  };
+
+  /**
    * Closes all tabs and returns to empty state.
    */
   public closeAllTabs = (): void => {

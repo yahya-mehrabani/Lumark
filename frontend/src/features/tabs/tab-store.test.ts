@@ -158,6 +158,18 @@ describe('TabStateStore (US-007.1)', () => {
     expect(store.getState().activeTabId).toBeNull();
   });
 
+  it('closeOtherTabs keeps only the selected tab and makes it active', () => {
+    store.openTab({ filePath: '/1.md' });
+    const tab2 = store.openTab({ filePath: '/2.md' });
+    store.openTab({ filePath: '/3.md' });
+    expect(store.getState().tabs).toHaveLength(3);
+
+    store.closeOtherTabs(tab2.id);
+    expect(store.getState().tabs).toHaveLength(1);
+    expect(store.getState().tabs[0].id).toBe(tab2.id);
+    expect(store.getState().activeTabId).toBe(tab2.id);
+  });
+
   it('integrates with React hook useTabStore', () => {
     const testStore = createTabStore();
     const { result } = renderHook(() => ({

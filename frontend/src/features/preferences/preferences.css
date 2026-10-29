@@ -185,6 +185,7 @@
 
 .seg-btn:hover {
   color: var(--text-primary);
+  background-color: var(--bg-chrome-hover);
 }
 
 .seg-btn.active {

@@ -9,6 +9,8 @@ export interface TabBarProps {
   activeTabId: string | null;
   onSelectTab: (tabId: string) => void;
   onCloseTab: (tabId: string) => void;
+  onCloseAllTabs?: () => void;
+  onCloseOtherTabs?: (tabId: string) => void;
   onOpenFile?: () => void;
   maxVisibleTabs?: number;
   className?: string;
@@ -19,6 +21,8 @@ export const TabBar: React.FC<TabBarProps> = ({
   activeTabId,
   onSelectTab,
   onCloseTab,
+  onCloseAllTabs,
+  onCloseOtherTabs,
   onOpenFile,
   maxVisibleTabs,
   className = '',
@@ -27,6 +31,8 @@ export const TabBar: React.FC<TabBarProps> = ({
   const [isOverflowOpen, setIsOverflowOpen] = useState(false);
   const overflowRef = useRef<HTMLDivElement | null>(null);
   const [containerWidth, setContainerWidth] = useState(0);
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; tabId: string } | null>(null);
+  const contextMenuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -110,6 +116,64 @@ export const TabBar: React.FC<TabBarProps> = ({
       window.removeEventListener('keydown', handleEsc);
     };
   }, [isOverflowOpen]);
+
+  // Context menu dismissal on click outside or Escape
+  useEffect(() => {
+    if (!contextMenu) return;
+
+    const handlePointerDown = (e: MouseEvent) => {
+      if (contextMenuRef.current && !contextMenuRef.current.contains(e.target as Node)) {
+        setContextMenu(null);
+      }
+    };
+
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setContextMenu(null);
+      }
+    };
+
+    window.addEventListener('mousedown', handlePointerDown);
+    window.addEventListener('keydown', handleEsc);
+    return () => {
+      window.removeEventListener('mousedown', handlePointerDown);
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, [contextMenu]);
+
+  const handleTabContextMenu = (e: React.MouseEvent, tabId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const x = Math.min(e.clientX, typeof window !== 'undefined' ? window.innerWidth - 160 : e.clientX);
+    const y = Math.min(e.clientY, typeof window !== 'undefined' ? window.innerHeight - 120 : e.clientY);
+    setContextMenu({ x, y, tabId });
+  };
+
+  const handleCloseThisTab = () => {
+    if (!contextMenu) return;
+    onCloseTab(contextMenu.tabId);
+    setContextMenu(null);
+  };
+
+  const handleCloseOtherTabs = () => {
+    if (!contextMenu) return;
+    if (onCloseOtherTabs) {
+      onCloseOtherTabs(contextMenu.tabId);
+    } else {
+      tabs.filter((t) => t.id !== contextMenu.tabId).forEach((t) => onCloseTab(t.id));
+    }
+    setContextMenu(null);
+  };
+
+  const handleCloseAllTabs = () => {
+    if (!contextMenu) return;
+    if (onCloseAllTabs) {
+      onCloseAllTabs();
+    } else {
+      tabs.forEach((t) => onCloseTab(t.id));
+    }
+    setContextMenu(null);
+  };
 
   // Keyboard navigation across tablist (Left/Right/Home/End) and global Ctrl/Cmd+W
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -218,6 +282,7 @@ export const TabBar: React.FC<TabBarProps> = ({
                   isActive={isActive}
                   onSelect={onSelectTab}
                   onClose={onCloseTab}
+                  onContextMenu={handleTabContextMenu}
                 />
               </React.Fragment>
             );
@@ -288,6 +353,52 @@ export const TabBar: React.FC<TabBarProps> = ({
           </button>
         </div>
       </div>
+
+      {/* Custom Right-Click Context Menu for Tabs */}
+      {contextMenu && (
+        <div
+          ref={contextMenuRef}
+          className="tab-context-menu"
+          data-testid="tab-context-menu"
+          role="menu"
+          aria-label="Tab actions"
+          style={{
+            position: 'fixed',
+            left: `${contextMenu.x}px`,
+            top: `${contextMenu.y}px`,
+          }}
+        >
+          <button
+            type="button"
+            className="context-menu-item"
+            data-testid="tab-menu-close"
+            role="menuitem"
+            onClick={handleCloseThisTab}
+          >
+            <Icon name="close" size={13} strokeWidth={2.2} />
+            <span>Close</span>
+          </button>
+          <button
+            type="button"
+            className="context-menu-item"
+            data-testid="tab-menu-close-others"
+            role="menuitem"
+            onClick={handleCloseOtherTabs}
+          >
+            <span>Close Others</span>
+          </button>
+          <div className="context-menu-divider" />
+          <button
+            type="button"
+            className="context-menu-item"
+            data-testid="tab-menu-close-all"
+            role="menuitem"
+            onClick={handleCloseAllTabs}
+          >
+            <span>Close All</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };

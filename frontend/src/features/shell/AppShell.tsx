@@ -260,6 +260,8 @@ export const AppShell: React.FC<AppShellProps> = ({
               activeTabId={state.activeTabId}
               onSelectTab={actions.switchTab}
               onCloseTab={actions.closeTab}
+              onCloseAllTabs={actions.closeAllTabs}
+              onCloseOtherTabs={actions.closeOtherTabs}
               onOpenFile={onOpenFile}
             />
           )}

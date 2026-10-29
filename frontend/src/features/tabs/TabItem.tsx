@@ -7,9 +7,10 @@ export interface TabItemProps {
   isActive: boolean;
   onSelect: (tabId: string) => void;
   onClose: (tabId: string) => void;
+  onContextMenu?: (e: React.MouseEvent, tabId: string) => void;
 }
 
-export const TabItem: React.FC<TabItemProps> = ({ tab, isActive, onSelect, onClose }) => {
+export const TabItem: React.FC<TabItemProps> = ({ tab, isActive, onSelect, onClose, onContextMenu }) => {
   const handleClick = (e: React.MouseEvent) => {
     // Only handle primary click
     if (e.button === 0) {
@@ -58,6 +59,11 @@ export const TabItem: React.FC<TabItemProps> = ({ tab, isActive, onSelect, onClo
       onClick={handleClick}
       onMouseDown={handleMiddleClick}
       onAuxClick={handleMiddleClick}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onContextMenu?.(e, tab.id);
+      }}
       onKeyDown={handleKeyDown}
       title={tab.filePath}
     >

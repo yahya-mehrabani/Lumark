@@ -57,7 +57,8 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
     <div
       className={`empty-state-container ${className}`}
       role="region"
-      aria-label="Empty state - no document open"
+      aria-label="Home - no document open"
+      data-testid="home-view"
     >
       <div className="empty-container">
         {/* Document Icon Emblem */}
@@ -272,3 +273,5 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
     </div>
   );
 };
+
+export const HomeView = EmptyState;

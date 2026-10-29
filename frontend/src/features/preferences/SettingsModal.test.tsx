@@ -80,6 +80,31 @@ describe('SettingsModal Component', () => {
     });
   });
 
+  it('updates TOC position setting via segmented control', async () => {
+    render(<SettingsModal isOpen={true} onClose={vi.fn()} store={store} />);
+
+    const rightBtn = screen.getByTestId('settings-toc-pos-right');
+    fireEvent.click(rightBtn);
+
+    await waitFor(() => {
+      expect(store.getSettings().tocPosition).toBe('right');
+    });
+
+    const autoBtn = screen.getByTestId('settings-toc-pos-auto');
+    fireEvent.click(autoBtn);
+
+    await waitFor(() => {
+      expect(store.getSettings().tocPosition).toBe('auto');
+    });
+
+    const leftBtn = screen.getByTestId('settings-toc-pos-left');
+    fireEvent.click(leftBtn);
+
+    await waitFor(() => {
+      expect(store.getSettings().tocPosition).toBe('left');
+    });
+  });
+
   it('updates zoom setting and synchronizes with zoomController', async () => {
     render(<SettingsModal isOpen={true} onClose={vi.fn()} store={store} />);
 

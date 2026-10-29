@@ -75,6 +75,12 @@ export function App() {
   };
 
   useEffect(() => {
+    // Globally disable browser default right-click menu
+    const handleGlobalContextMenu = (e: MouseEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener('contextmenu', handleGlobalContextMenu);
+
     // 0. Load persisted user preferences and recent files
     recentsStore.load().catch((err) => {
       console.warn('Failed to load recent files on startup:', err);
@@ -209,6 +215,7 @@ export function App() {
     WML.Reload();
 
     return () => {
+      window.removeEventListener('contextmenu', handleGlobalContextMenu);
       clearTimeout(saveTabsTimer);
       unsubscribeTabs();
       unsubscribeWatcher();

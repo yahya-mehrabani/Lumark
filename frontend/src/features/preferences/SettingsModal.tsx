@@ -48,6 +48,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     updateSettings({ defaultDirection: e.target.value as DirectionOption });
   };
 
+  const handleTocPositionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    updateSettings({ tocPosition: e.target.value as 'left' | 'right' | 'auto' });
+  };
+
   const handleZoomChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     updateSettings({ defaultZoom: parseFloat(e.target.value) });
   };
@@ -198,6 +202,56 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <option value="auto">Auto-detect (Unicode First Strong)</option>
               <option value="rtl">Right-to-Left (RTL fallback)</option>
               <option value="ltr">Left-to-Right (LTR fallback)</option>
+            </select>
+          </div>
+
+          {/* TOC Position: 3-Way Segmented Control */}
+          <div className="setting-block">
+            <span className="setting-label">TOC Position</span>
+            <div className="segmented-control" role="radiogroup" aria-label="TOC Position">
+              <button
+                type="button"
+                className={`seg-btn ${settings.tocPosition === 'left' ? 'active' : ''}`}
+                onClick={() => updateSettings({ tocPosition: 'left' })}
+                role="radio"
+                aria-checked={settings.tocPosition === 'left'}
+                data-testid="settings-toc-pos-left"
+              >
+                <span>Left</span>
+              </button>
+              <button
+                type="button"
+                className={`seg-btn ${settings.tocPosition === 'right' ? 'active' : ''}`}
+                onClick={() => updateSettings({ tocPosition: 'right' })}
+                role="radio"
+                aria-checked={settings.tocPosition === 'right'}
+                data-testid="settings-toc-pos-right"
+              >
+                <span>Right</span>
+              </button>
+              <button
+                type="button"
+                className={`seg-btn ${settings.tocPosition === 'auto' ? 'active' : ''}`}
+                onClick={() => updateSettings({ tocPosition: 'auto' })}
+                role="radio"
+                aria-checked={settings.tocPosition === 'auto'}
+                data-testid="settings-toc-pos-auto"
+              >
+                <span>Auto</span>
+              </button>
+            </div>
+            {/* Backward-compatible select for automated tests */}
+            <select
+              id="settings-toc-position-select"
+              value={settings.tocPosition}
+              onChange={handleTocPositionChange}
+              data-testid="settings-toc-position-select"
+              style={{ display: 'none' }}
+              aria-hidden="true"
+            >
+              <option value="left">Left (Default)</option>
+              <option value="right">Right</option>
+              <option value="auto">Auto (LTR: Left, RTL: Right)</option>
             </select>
           </div>
 

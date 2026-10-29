@@ -41,6 +41,7 @@ export function useTabActions(store: TabStore = defaultStore) {
       setTabStatus: store.setTabStatus,
       updateTabContent: store.updateTabContent,
       closeAllTabs: store.closeAllTabs,
+      closeOtherTabs: store.closeOtherTabs,
       getActiveTab: store.getActiveTab,
     }),
     [store]

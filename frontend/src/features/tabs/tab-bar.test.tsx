@@ -220,4 +220,79 @@ describe('TabBar & TabItem Components (US-007.2)', () => {
     expect(handleSelect).toHaveBeenCalledWith('tab-3');
     expect(screen.queryByTestId('tab-overflow-menu')).toBeNull();
   });
+
+  describe('Tab Context Menu', () => {
+    it('opens context menu on right-click on a tab and supports Close, Close Others, and Close All', () => {
+      const handleClose = vi.fn();
+      const handleCloseAll = vi.fn();
+      const handleCloseOthers = vi.fn();
+
+      render(
+        <TabBar
+          tabs={mockTabs}
+          activeTabId="tab-1"
+          onSelectTab={vi.fn()}
+          onCloseTab={handleClose}
+          onCloseAllTabs={handleCloseAll}
+          onCloseOtherTabs={handleCloseOthers}
+        />
+      );
+
+      const tabs = screen.getAllByRole('tab');
+
+      // Right-click on setup.md (tab-2)
+      fireEvent.contextMenu(tabs[1]);
+
+      const contextMenu = screen.getByTestId('tab-context-menu');
+      expect(contextMenu).toBeInTheDocument();
+      expect(screen.getByTestId('tab-menu-close')).toHaveTextContent('Close');
+      expect(screen.getByTestId('tab-menu-close-others')).toHaveTextContent('Close Others');
+      expect(screen.getByTestId('tab-menu-close-all')).toHaveTextContent('Close All');
+
+      // Clicking Close calls onCloseTab with tab-2 and closes context menu
+      fireEvent.click(screen.getByTestId('tab-menu-close'));
+      expect(handleClose).toHaveBeenCalledWith('tab-2');
+      expect(screen.queryByTestId('tab-context-menu')).toBeNull();
+
+      // Right-click again and click Close Others
+      fireEvent.contextMenu(tabs[0]);
+      expect(screen.getByTestId('tab-context-menu')).toBeInTheDocument();
+      fireEvent.click(screen.getByTestId('tab-menu-close-others'));
+      expect(handleCloseOthers).toHaveBeenCalledWith('tab-1');
+      expect(screen.queryByTestId('tab-context-menu')).toBeNull();
+
+      // Right-click again and click Close All
+      fireEvent.contextMenu(tabs[0]);
+      expect(screen.getByTestId('tab-context-menu')).toBeInTheDocument();
+      fireEvent.click(screen.getByTestId('tab-menu-close-all'));
+      expect(handleCloseAll).toHaveBeenCalledTimes(1);
+      expect(screen.queryByTestId('tab-context-menu')).toBeNull();
+    });
+
+    it('dismisses context menu on Escape key press and outside click', () => {
+      render(
+        <TabBar
+          tabs={mockTabs}
+          activeTabId="tab-1"
+          onSelectTab={vi.fn()}
+          onCloseTab={vi.fn()}
+        />
+      );
+
+      const tabs = screen.getAllByRole('tab');
+      fireEvent.contextMenu(tabs[0]);
+      expect(screen.getByTestId('tab-context-menu')).toBeInTheDocument();
+
+      // Press Escape
+      fireEvent.keyDown(window, { key: 'Escape' });
+      expect(screen.queryByTestId('tab-context-menu')).toBeNull();
+
+      // Right click again, then click outside
+      fireEvent.contextMenu(tabs[0]);
+      expect(screen.getByTestId('tab-context-menu')).toBeInTheDocument();
+
+      fireEvent.mouseDown(document.body);
+      expect(screen.queryByTestId('tab-context-menu')).toBeNull();
+    });
+  });
 });
