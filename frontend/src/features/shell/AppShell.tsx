@@ -206,6 +206,14 @@ export const AppShell: React.FC<AppShellProps> = ({
     }
   };
 
+  const readingTime = React.useMemo(() => {
+    if (!activeTab || !activeTab.content) return '';
+    const words = activeTab.content.trim().split(/\s+/).filter(Boolean).length;
+    if (words === 0) return '';
+    const minutes = Math.max(1, Math.ceil(words / 200));
+    return `${minutes} min read`;
+  }, [activeTab]);
+
   return (
     <DropZone
       onFilesDropped={(files) => onFileDrop?.(files)}
@@ -546,18 +554,9 @@ export const AppShell: React.FC<AppShellProps> = ({
         <div className="status-left">
           <span>{activeTab ? activeTab.filePath : 'Ready'}</span>
         </div>
-        <div className="status-center">
-          <span>
-            {state.tabs.length === 0
-              ? 'No document open'
-              : `${state.tabs.length} tab${state.tabs.length > 1 ? 's' : ''} open`}
-          </span>
-        </div>
+        <div className="status-center" />
         <div className="status-right">
-          <span>
-            <span className={`status-dot ${!activeTab ? 'inactive' : ''}`} />
-            {activeTab && activeTab.isReadOnly ? 'Read-Only' : 'Markdown'}
-          </span>
+          {readingTime && <span>{readingTime}</span>}
         </div>
       </footer>
     </DropZone>

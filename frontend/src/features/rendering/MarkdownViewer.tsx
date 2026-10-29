@@ -10,6 +10,7 @@ import { rehypeScopedCss } from './security/cssSanitizer';
 import { rehypeAutoDirection } from '../direction/autoDirectionPlugin';
 import {
   useDirectionPreference,
+  detectFirstStrongDirection,
   type DirectionPreference,
 } from '../direction/autoDirection';
 import { remarkStrictMath, escapeCurrencyDollars } from './utils/remark-strict-math';
@@ -28,9 +29,8 @@ import { useSearch } from '../navigation/useSearch';
 import { Icon } from '../../components/Icon';
 import { useZoom } from '../viewport/zoomController';
 import { useSelectionCopy } from '../viewport/selectionCopy';
-import { usePrint, triggerPrint } from '../viewport/printController';
-import { copyToClipboard } from './clipboard';
-import { truncateMiddlePath } from './utils/pathTruncate';
+import { usePrint } from '../viewport/printController';
+import { ReadingScrollbar } from '../viewport/ReadingScrollbar';
 import { useSettings } from '../preferences';
 import '../../styles/katex.css';
 import './markdown.css';
@@ -274,81 +274,56 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
     }
   }, []);
 
-  const repoName = React.useMemo(() => {
-    if (!filePath) return '';
-    const parts = filePath.replace(/\\/g, '/').split('/').filter(Boolean);
-    if (parts.length >= 2) {
-      return parts[parts.length - 2];
-    }
-    return '';
-  }, [filePath]);
-
-  const [copiedPath, setCopiedPath] = React.useState(false);
-  const copyPathTimerRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-
-  const handleCopyPath = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!filePath) return;
-    try {
-      await copyToClipboard(filePath);
-      setCopiedPath(true);
-      clearTimeout(copyPathTimerRef.current);
-      copyPathTimerRef.current = setTimeout(() => {
-        setCopiedPath(false);
-      }, 2000);
-    } catch (err) {
-      console.warn('Failed to copy file path:', err);
-    }
-  };
-
   const slugTracker = React.useMemo(() => new SlugTracker(), [content]);
 
+  const viewportRef = React.useRef<HTMLDivElement | null>(null);
+
+  const docDir = React.useMemo(() => {
+    if (activePref === 'rtl' || activePref === 'ltr') {
+      return activePref;
+    }
+    return detectFirstStrongDirection(rawMarkdown, { fallback: 'ltr' }) ?? 'ltr';
+  }, [activePref, rawMarkdown]);
+
+  const resolvedTocPosition: 'left' | 'right' = React.useMemo(() => {
+    const pos = settings.tocPosition ?? 'left';
+    if (pos === 'left') return 'left';
+    if (pos === 'right') return 'right';
+    return docDir === 'rtl' ? 'right' : 'left';
+  }, [settings.tocPosition, docDir]);
+
+  const resolvedScrollbarPosition: 'left' | 'right' =
+    resolvedTocPosition === 'left' ? 'right' : 'left';
+
   return (
-    <div className={`markdown-viewport ${className}`.trim()} data-testid="markdown-viewport">
-      {(filename || filePath) && (
+    <div
+      ref={viewportRef}
+      className={`markdown-viewport ${className}`.trim()}
+      data-testid="markdown-viewport"
+    >
+      {Boolean(filename || filePath) && (
         <div className="floating-toolbar-container" data-testid="document-header">
+          {/* Visually hidden document metadata for accessibility and document identification */}
+          <span
+            style={{
+              position: 'absolute',
+              width: '1px',
+              height: '1px',
+              padding: 0,
+              margin: '-1px',
+              overflow: 'hidden',
+              clip: 'rect(0, 0, 0, 0)',
+              whiteSpace: 'nowrap',
+              borderWidth: 0,
+            }}
+          >
+            <h1 className="file-name doc-filename" id="pillFileName">
+              {filename || 'Untitled Document'}
+            </h1>
+            {filePath && <span>{filePath}</span>}
+          </span>
+
           <div className="floating-pill" role="toolbar" aria-label="Document controls">
-            <div
-              className="pill-breadcrumb"
-              title={copiedPath ? 'Copied path to clipboard!' : (filePath ? `${filePath} (Click to copy)` : (filename || 'Document'))}
-              data-testid="doc-path-badge"
-              onClick={handleCopyPath}
-              style={{ cursor: filePath ? 'pointer' : 'default' }}
-            >
-              <Icon name="file" size={15} strokeWidth={1.8} />
-              {repoName && (
-                <>
-                  <span className="repo-name">{repoName}</span>
-                  <span className="slash">/</span>
-                </>
-              )}
-              <h1 className="file-name doc-filename" id="pillFileName">
-                {filename || 'Untitled Document'}
-              </h1>
-              {filePath && (
-                <span
-                  className="path-text"
-                  data-testid="doc-path-text"
-                  title={truncateMiddlePath(filePath)}
-                  style={{
-                    position: 'absolute',
-                    width: '1px',
-                    height: '1px',
-                    padding: 0,
-                    margin: '-1px',
-                    overflow: 'hidden',
-                    clip: 'rect(0, 0, 0, 0)',
-                    whiteSpace: 'nowrap',
-                    borderWidth: 0,
-                  }}
-                >
-                  {filePath}
-                </span>
-              )}
-            </div>
-
-            <div className="pill-divider" />
-
             <div
               className="zoom-controls doc-zoom-controls"
               data-testid="doc-zoom-controls"
@@ -409,32 +384,6 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
 
             <button
               type="button"
-              className="pill-icon-btn doc-print-btn"
-              onClick={() => (onPrint ? onPrint() : triggerPrint())}
-              aria-label="Print Document (Ctrl+P)"
-              title="Print Document (Ctrl+P)"
-              data-testid="doc-print-btn"
-            >
-              <Icon name="printer" size={14} strokeWidth={1.9} />
-              <span
-                style={{
-                  position: 'absolute',
-                  width: '1px',
-                  height: '1px',
-                  padding: 0,
-                  margin: '-1px',
-                  overflow: 'hidden',
-                  clip: 'rect(0, 0, 0, 0)',
-                  whiteSpace: 'nowrap',
-                  borderWidth: 0,
-                }}
-              >
-                Print
-              </span>
-            </button>
-
-            <button
-              type="button"
               className={`pill-icon-btn doc-toc-toggle-btn ${isTocOpen ? 'active' : ''}`}
               id="outlineToggleBtn"
               onClick={tocToggle.toggle}
@@ -453,7 +402,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
 
             <button
               type="button"
-              className={`pill-icon-btn ${isFocusMode ? 'active' : ''}`}
+              className={`pill-icon-btn doc-focus-btn ${isFocusMode ? 'active' : ''}`}
               id="focusModeBtn"
               onClick={toggleFocusMode}
               title="Enter Focus Mode (Distraction-Free)"
@@ -502,12 +451,18 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
           items={tocData.items}
           tree={tocData.tree}
           isOpen={isTocOpen}
+          position={resolvedTocPosition}
           onClose={tocToggle.close}
           onSelectHeading={onNavigateAnchor}
           containerRef={contentRef}
           zoomFactor={zoomFactor}
         />
       )}
+
+      <ReadingScrollbar
+        viewportRef={viewportRef}
+        side={resolvedScrollbarPosition}
+      />
     </div>
   );
 };

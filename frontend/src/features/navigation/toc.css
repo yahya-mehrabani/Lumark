@@ -1,26 +1,24 @@
-/* Right-Side Scrollspy Outline — Minimalist Rail */
+/* Table of Contents — Editorial Scrollspy Outline */
 
 .scrollspy-rail,
 .toc-sidebar {
   position: fixed;
-  right: 28px;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 100px;
   z-index: 100;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: 0;
-  padding: 16px 0 16px 260px;
+  padding: 16px 0;
   background: transparent;
   border: none;
   user-select: none;
-  pointer-events: none;
-  max-height: calc(100vh - 120px);
+  pointer-events: auto;
+  max-height: calc(100vh - 160px);
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  width: 220px;
+  box-sizing: border-box;
 }
 
 .scrollspy-rail::-webkit-scrollbar,
@@ -34,6 +32,39 @@
   display: none;
 }
 
+/* Left-side placement (default) */
+.scrollspy-rail.toc-left,
+.toc-sidebar.toc-left,
+.scrollspy-rail:not(.toc-right),
+.toc-sidebar:not(.toc-right) {
+  left: 36px;
+  right: auto;
+  align-items: flex-start;
+  text-align: left;
+}
+
+/* Right-side placement */
+.scrollspy-rail.toc-right,
+.toc-sidebar.toc-right {
+  right: 36px;
+  left: auto;
+  align-items: flex-start;
+  text-align: left;
+}
+
+/* Section Counter (e.g., "02 / 12") */
+.toc-counter {
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  padding: 0 10px;
+  margin-bottom: 12px;
+  user-select: none;
+  line-height: 1;
+}
+
 .toc-list,
 .toc-sublist {
   list-style: none;
@@ -41,12 +72,9 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: 0;
-  overflow: visible;
-  pointer-events: auto;
-  position: relative;
-  width: 44px;
+  align-items: stretch;
+  gap: 2px;
+  width: 100%;
 }
 
 .toc-item {
@@ -55,11 +83,8 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: 0;
+  align-items: stretch;
   position: relative;
-  overflow: visible;
-  pointer-events: auto;
   width: 100%;
 }
 
@@ -67,139 +92,106 @@
 .toc-link {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 10px;
+  justify-content: flex-start;
+  padding: 6px 10px;
+  border-radius: 4px;
   text-decoration: none;
   cursor: pointer;
-  height: 28px;
-  min-height: 28px;
-  line-height: 28px;
-  padding: 0 4px;
-  margin: 0;
   background: transparent;
   border: none;
-  position: relative;
+  border-left: 2.5px solid transparent;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  width: 100%;
   box-sizing: border-box;
   pointer-events: auto;
-  width: 100%;
 }
 
-/* Continuous invisible hitbox covering vertical rail area so mouse never falls into gaps */
-.spy-item::before,
-.toc-link::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: -8px;
-  left: -20px;
-  background: transparent;
-  pointer-events: auto;
+.toc-right .spy-item,
+.toc-right .toc-link {
+  border-left: none;
+  border-right: 2.5px solid transparent;
 }
 
-/* Text labels: hidden by default (opacity: 0, visibility: hidden).
-   Positioned absolutely to the left of the rail with ellipsis truncation
-   so long text never bleeds off-screen and items never overlap.
-   pointer-events: none ensures labels never steal mouse hover from .spy-item. */
+.spy-item:hover,
+.toc-link:hover {
+  background-color: var(--bg-chrome-hover);
+}
+
+/* Active TOC item */
+.spy-item.active,
+.toc-link.active {
+  background-color: var(--accent-teal-soft, rgba(42, 127, 123, 0.12));
+  border-left-color: var(--accent-teal);
+}
+
+.toc-right .spy-item.active,
+.toc-right .toc-link.active {
+  border-right-color: var(--accent-teal);
+  border-left-color: transparent;
+}
+
+/* Text labels */
 .spy-label,
 .toc-text {
   font-family: var(--font-sans);
-  font-size: 11.5px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 450;
   line-height: 1.4;
-  color: var(--text-muted);
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.18s ease, transform 0.18s ease, color 0.18s ease, visibility 0.18s ease;
+  color: var(--text-secondary);
+  opacity: 1;
+  visibility: visible;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: min(220px, calc(100vw - 80px));
+  max-width: 100%;
   pointer-events: none !important;
-  position: absolute;
-  right: calc(100% + 8px);
-  top: 50%;
-  transform: translateY(-50%) translateX(4px);
-  z-index: 101;
-  background: var(--bg-pill);
-  padding: 3px 9px;
-  border-radius: 6px;
-  box-shadow: var(--shadow-find);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--border-subtle);
-  box-sizing: border-box;
+  transition: color 0.15s ease;
 }
 
-/* Reveal labels strictly on parent item hover */
 .spy-item:hover .spy-label,
-.spy-item:hover .toc-text,
 .toc-link:hover .spy-label,
-.toc-link:hover .toc-text,
-.toc-item:hover > .toc-link .spy-label,
-.toc-item:hover > .toc-link .toc-text {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(-50%) translateX(0);
+.spy-item:hover .toc-text,
+.toc-link:hover .toc-text {
   color: var(--text-primary);
   pointer-events: none !important;
 }
 
-/* Reveal and highlight label for the active item */
 .spy-item.active .spy-label,
-.toc-link.active .toc-text,
-.toc-item.active > .toc-link .spy-label,
-.toc-item.active > .toc-link .toc-text {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(-50%) translateX(0);
+.toc-link.active .spy-label,
+.spy-item.active .toc-text,
+.toc-link.active .toc-text {
   color: var(--accent-teal);
   font-weight: 600;
-  border-color: var(--accent-teal-border);
   pointer-events: none !important;
 }
 
-/* Horizontal line markers */
+/* Markers: hidden in modern outline design, but preserved in DOM */
 .spy-marker,
 .toc-bullet {
-  height: 2px;
-  width: 14px;
-  background-color: var(--spy-inactive);
-  border-radius: 2px;
-  transition: width 0.2s ease, height 0.2s ease, background-color 0.2s ease;
-  display: inline-block;
-  flex-shrink: 0;
-  pointer-events: none;
+  display: none;
 }
 
-.spy-item:hover .spy-marker,
-.toc-link:hover .toc-bullet,
-.toc-item:hover > .toc-link .spy-marker,
-.toc-item:hover > .toc-link .toc-bullet {
-  background-color: var(--text-secondary);
-  width: 18px;
+/* Indent levels */
+.toc-level-2 .spy-item,
+.toc-level-2 .toc-link {
+  padding-left: 18px;
 }
 
-.spy-item.active .spy-marker,
-.toc-link.active .toc-bullet,
-.toc-item.active > .toc-link .spy-marker,
-.toc-item.active > .toc-link .toc-bullet {
-  width: 24px;
-  height: 2.5px;
-  background-color: var(--accent-teal);
+.toc-level-3 .spy-item,
+.toc-level-3 .toc-link {
+  padding-left: 26px;
+}
+
+.toc-level-4 .spy-item,
+.toc-level-4 .toc-link,
+.toc-level-5 .spy-item,
+.toc-level-5 .toc-link,
+.toc-level-6 .spy-item,
+.toc-level-6 .toc-link {
+  padding-left: 34px;
 }
 
 body.focus-mode .scrollspy-rail,
 body.focus-mode .toc-sidebar {
   display: none !important;
-}
-
-.spy-item,
-.toc-link {
-  pointer-events: auto;
-}
-
-.spy-label,
-.toc-text {
-  pointer-events: none !important;
 }

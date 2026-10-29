@@ -17,14 +17,15 @@ export interface TableOfContentsProps {
   onClose?: () => void;
   isOpen?: boolean;
   className?: string;
+  position?: 'left' | 'right';
 }
 
 /**
- * TableOfContents Component — Minimalist Scrollspy Rail.
+ * TableOfContents Component — Editorial Scrollspy Outline.
  * Conforms to Warm Editorial Minimalist Desktop design.
- * - Minimalist fixed right-side rail of horizontal bar markers.
- * - Text labels hidden by default; revealed on rail hover or when active.
- * - Active heading highlighted with teal accent.
+ * - Section counter (e.g. "02 / 12") at the top.
+ * - Positionable on left (default) or right.
+ * - Active heading highlighted with teal accent line and background.
  * - Click-to-scroll smooth navigation.
  */
 export const TableOfContents: React.FC<TableOfContentsProps> = ({
@@ -38,6 +39,7 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
   onClose,
   isOpen = true,
   className = '',
+  position = 'left',
 }) => {
   // Use hook if explicit items/tree are not supplied
   const hookData = useTableOfContents({
@@ -77,6 +79,19 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
 
   const activeId = propsActiveId ?? clickedId ?? spyData.activeId;
   const hasHeadings = effectiveItems.length > 0;
+
+  const activeIndex = useMemo(() => {
+    if (!activeId) return 0;
+    const idx = effectiveItems.findIndex((item) => item.id === activeId);
+    return idx >= 0 ? idx : 0;
+  }, [effectiveItems, activeId]);
+
+  const counterText = useMemo(() => {
+    if (effectiveItems.length === 0) return '';
+    const current = String(activeIndex + 1).padStart(2, '0');
+    const total = String(effectiveItems.length).padStart(2, '0');
+    return `${current} / ${total}`;
+  }, [activeIndex, effectiveItems.length]);
 
   const railRef = React.useRef<HTMLElement | null>(null);
 
@@ -235,9 +250,10 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
   return (
     <nav
       ref={railRef}
-      className={`scrollspy-rail toc-sidebar ${!isOpen ? 'hidden' : ''} ${className}`.trim()}
+      className={`scrollspy-rail toc-sidebar toc-${position} ${!isOpen ? 'hidden' : ''} ${className}`.trim()}
       aria-label="Table of Contents"
       data-testid="toc-sidebar"
+      data-position={position}
     >
       {onClose && (
         <button
@@ -260,6 +276,11 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
         >
           Close
         </button>
+      )}
+      {hasHeadings && counterText && (
+        <div className="toc-counter" data-testid="toc-counter">
+          {counterText}
+        </div>
       )}
       {!hasHeadings ? (
         <div className="toc-empty" data-testid="toc-empty" style={{ display: 'none' }}>

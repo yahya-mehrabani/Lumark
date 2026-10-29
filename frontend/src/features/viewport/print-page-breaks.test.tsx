@@ -235,31 +235,24 @@ describe('Print Page Break Rules & Command Dispatcher (US-024.2, FR-NAV-006)', (
       expect(onPrint).toHaveBeenCalledTimes(1);
     });
 
-    it('MarkdownViewer header toolbar includes Print button that invokes onPrint or triggerPrint', () => {
+    it('AppShell 3-dot menu includes Print action that invokes onPrint', () => {
       const onPrint = vi.fn();
-      render(
-        <MarkdownViewer
-          document={{
-            filePath: '/test/doc.md',
-            filename: 'doc.md',
-            content: '# Heading 1\n\nSome paragraph text.\n\n```js\nconst x = 1;\n```',
-          }}
-          onPrint={onPrint}
-        />
-      );
+      const store = new TabStore();
 
-      const printBtn = screen.getByTestId('doc-print-btn');
-      expect(printBtn).toBeInTheDocument();
-      expect(printBtn).toHaveTextContent('Print');
+      render(<AppShell store={store} onPrint={onPrint} />);
 
-      fireEvent.click(printBtn);
+      // Open 3-dot menu
+      const moreMenuBtn = screen.getByTestId('header-menu-btn');
+      fireEvent.click(moreMenuBtn);
+
+      const printItem = screen.getByTestId('menu-item-print');
+      expect(printItem).toBeInTheDocument();
+
+      fireEvent.click(printItem);
       expect(onPrint).toHaveBeenCalledTimes(1);
     });
 
-    it('MarkdownViewer header toolbar Print button invokes native triggerPrint when onPrint is omitted', () => {
-      const mockPrint = vi.fn();
-      window.print = mockPrint;
-
+    it('MarkdownViewer header toolbar omits Print button in favor of 3-dot menu and Ctrl+P', () => {
       render(
         <MarkdownViewer
           document={{
@@ -270,9 +263,7 @@ describe('Print Page Break Rules & Command Dispatcher (US-024.2, FR-NAV-006)', (
         />
       );
 
-      const printBtn = screen.getByTestId('doc-print-btn');
-      fireEvent.click(printBtn);
-      expect(mockPrint).toHaveBeenCalledTimes(1);
+      expect(screen.queryByTestId('doc-print-btn')).not.toBeInTheDocument();
     });
   });
 });

@@ -1,0 +1,70 @@
+/* Reading Scrollbar Overlay Track & Progress Indicator */
+
+.reading-scrollbar-container {
+  position: absolute;
+  top: 14px;
+  bottom: 8px;
+  width: 28px;
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  user-select: none;
+}
+
+.reading-scrollbar-container.scrollbar-right {
+  right: 6px;
+  left: auto;
+}
+
+.reading-scrollbar-container.scrollbar-left {
+  left: 6px;
+  right: auto;
+}
+
+.reading-scrollbar-track {
+  position: relative;
+  width: 14px;
+  flex: 1;
+  pointer-events: auto;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+}
+
+.reading-scrollbar-thumb {
+  position: absolute;
+  width: 3.5px;
+  border-radius: 2px;
+  background-color: var(--accent-teal);
+  transition: width 0.15s ease, background-color 0.15s ease, opacity 0.15s ease;
+  cursor: grab;
+  opacity: 0.85;
+}
+
+.reading-scrollbar-thumb:hover,
+.reading-scrollbar-thumb.is-dragging {
+  width: 6px;
+  opacity: 1;
+  cursor: grabbing;
+}
+
+.reading-percentage-indicator {
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-muted);
+  user-select: none;
+  pointer-events: none;
+  padding-top: 6px;
+  letter-spacing: 0.03em;
+  height: 16px;
+  line-height: 16px;
+  text-align: center;
+}
+
+body.focus-mode .reading-scrollbar-container {
+  display: none !important;
+}
+

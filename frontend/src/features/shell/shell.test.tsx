@@ -17,7 +17,6 @@ describe('AppShell Integration & Component Tests (US-007.4)', () => {
     expect(screen.getByRole('heading', { level: 2, name: /no document open/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /open markdown file/i })).toBeInTheDocument();
     expect(screen.getByRole('status')).toHaveTextContent('Ready');
-    expect(screen.getByRole('status')).toHaveTextContent('No document open');
   });
 
   it('renders tab and document content when a document is opened', () => {
@@ -41,7 +40,7 @@ describe('AppShell Integration & Component Tests (US-007.4)', () => {
 
     // Status bar updates
     expect(screen.getByRole('status')).toHaveTextContent('/docs/architecture.md');
-    expect(screen.getByRole('status')).toHaveTextContent('1 tab open');
+    expect(screen.getByRole('status')).toHaveTextContent('1 min read');
   });
 
   it('switches between tabs and updates active document view', () => {
@@ -92,7 +91,6 @@ describe('AppShell Integration & Component Tests (US-007.4)', () => {
     expect(screen.queryByRole('tablist')).toBeNull();
     expect(screen.getByRole('heading', { level: 2, name: /no document open/i })).toBeInTheDocument();
     expect(screen.getByRole('status')).toHaveTextContent('Ready');
-    expect(screen.getByRole('status')).toHaveTextContent('No document open');
   });
 
   it('re-opening an open document focuses existing tab without duplicating', () => {
