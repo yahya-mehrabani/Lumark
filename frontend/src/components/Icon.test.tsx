@@ -27,6 +27,9 @@ describe('Icon Component', () => {
     'file',
     'reset',
     'maximize',
+    'book-open',
+    'home',
+    'more-horizontal',
   ];
 
   it('renders all defined icon types without crashing', () => {

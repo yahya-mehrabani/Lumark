@@ -10,6 +10,7 @@ export interface TabBarProps {
   onSelectTab: (tabId: string) => void;
   onCloseTab: (tabId: string) => void;
   onOpenFile?: () => void;
+  maxVisibleTabs?: number;
   className?: string;
 }
 
@@ -19,11 +20,64 @@ export const TabBar: React.FC<TabBarProps> = ({
   onSelectTab,
   onCloseTab,
   onOpenFile,
+  maxVisibleTabs,
   className = '',
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isOverflowOpen, setIsOverflowOpen] = useState(false);
   const overflowRef = useRef<HTMLDivElement | null>(null);
+  const [containerWidth, setContainerWidth] = useState(0);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const handleResize = () => {
+      if (el) setContainerWidth(el.clientWidth);
+    };
+
+    handleResize();
+    if (typeof ResizeObserver !== 'undefined') {
+      const observer = new ResizeObserver(handleResize);
+      observer.observe(el);
+      return () => observer.disconnect();
+    }
+  }, []);
+
+  // Compute visible tabs vs hidden overflow tabs
+  const { visibleTabs, hiddenTabs } = React.useMemo(() => {
+    if (tabs.length === 0) {
+      return { visibleTabs: [], hiddenTabs: [] };
+    }
+
+    let limit = tabs.length;
+    if (typeof maxVisibleTabs === 'number' && maxVisibleTabs > 0) {
+      limit = Math.min(tabs.length, maxVisibleTabs);
+    } else if (containerWidth > 0) {
+      // Allow ~150px per tab + 90px reserved for '+' and '+X more' pill
+      const computed = Math.floor((containerWidth - 90) / 150);
+      if (computed < tabs.length && computed > 0) {
+        limit = computed;
+      }
+    }
+
+    if (limit >= tabs.length) {
+      return { visibleTabs: tabs, hiddenTabs: [] };
+    }
+
+    // Keep active tab visible in the tab strip
+    let visible = tabs.slice(0, limit);
+    const hasActive = visible.some((t) => t.id === activeTabId);
+    if (activeTabId && !hasActive) {
+      const active = tabs.find((t) => t.id === activeTabId);
+      if (active) {
+        visible = [...tabs.slice(0, Math.max(1, limit - 1)), active];
+      }
+    }
+
+    const hidden = tabs.filter((t) => !visible.some((v) => v.id === t.id));
+    return { visibleTabs: visible, hiddenTabs: hidden };
+  }, [tabs, activeTabId, maxVisibleTabs, containerWidth]);
 
   const selectAndFocusTab = (tabId: string) => {
     onSelectTab(tabId);
@@ -138,46 +192,6 @@ export const TabBar: React.FC<TabBarProps> = ({
 
   return (
     <div className={`tab-bar-wrapper app-chrome ${className}`.trim()}>
-      {/* Tab Utility Controls: Overflow Dropdown positioned to the left of the first tab */}
-      <div className="tab-utility-controls" ref={overflowRef}>
-        <button
-          type="button"
-          className={`tab-icon-btn ${isOverflowOpen ? 'active' : ''}`}
-          id="tabOverflowBtn"
-          onClick={() => setIsOverflowOpen((prev) => !prev)}
-          title="All Open Tabs"
-          aria-haspopup="true"
-          aria-expanded={isOverflowOpen}
-          data-testid="tab-overflow-btn"
-        >
-          <Icon name="chevron-down" size={14} strokeWidth={2.2} />
-        </button>
-
-        {isOverflowOpen && (
-          <div className="tab-overflow-menu open" id="tabOverflowMenu" role="menu">
-            <div className="overflow-menu-header">Open Tabs ({tabs.length})</div>
-            {tabs.map((tab) => {
-              const isActive = tab.id === activeTabId;
-              return (
-                <div
-                  key={tab.id}
-                  className={`overflow-tab-item ${isActive ? 'active' : ''}`}
-                  role="menuitem"
-                  onClick={() => {
-                    onSelectTab(tab.id);
-                    setIsOverflowOpen(false);
-                  }}
-                  data-testid={`overflow-item-${tab.id}`}
-                >
-                  <span>{tab.filename || tab.displayTitle}</span>
-                  <span className="overflow-tab-dot" />
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-
       <div
         ref={containerRef}
         className="tab-bar-container"
@@ -190,15 +204,77 @@ export const TabBar: React.FC<TabBarProps> = ({
           aria-orientation="horizontal"
           onKeyDown={handleKeyDown}
         >
-          {tabs.map((tab) => (
-            <TabItem
-              key={tab.id}
-              tab={tab}
-              isActive={tab.id === activeTabId}
-              onSelect={onSelectTab}
-              onClose={onCloseTab}
-            />
-          ))}
+          {visibleTabs.map((tab, index) => {
+            const isActive = tab.id === activeTabId;
+            const prevTab = index > 0 ? visibleTabs[index - 1] : null;
+            const isPrevActive = prevTab ? prevTab.id === activeTabId : false;
+            const showDivider = index > 0 && !isActive && !isPrevActive;
+
+            return (
+              <React.Fragment key={tab.id}>
+                {showDivider && <div className="tab-separator" aria-hidden="true" />}
+                <TabItem
+                  tab={tab}
+                  isActive={isActive}
+                  onSelect={onSelectTab}
+                  onClose={onCloseTab}
+                />
+              </React.Fragment>
+            );
+          })}
+
+          {/* +X more pill for overflow tabs */}
+          {hiddenTabs.length > 0 && (
+            <div className="tab-overflow-container" ref={overflowRef}>
+              <button
+                type="button"
+                className={`tab-overflow-pill-btn ${isOverflowOpen ? 'active' : ''}`}
+                id="tabOverflowBtn"
+                onClick={() => setIsOverflowOpen((prev) => !prev)}
+                aria-label={`+${hiddenTabs.length} more tabs`}
+                title={`${hiddenTabs.length} more tabs`}
+                aria-haspopup="true"
+                aria-expanded={isOverflowOpen}
+                data-testid="tab-overflow-pill"
+              >
+                +{hiddenTabs.length} more
+              </button>
+
+              {isOverflowOpen && (
+                <div
+                  className="tab-overflow-menu"
+                  id="tabOverflowMenu"
+                  role="menu"
+                  data-testid="tab-overflow-menu"
+                >
+                  <div className="overflow-menu-header">Hidden Tabs ({hiddenTabs.length})</div>
+                  {hiddenTabs.map((tab) => {
+                    const isActive = tab.id === activeTabId;
+                    return (
+                      <div
+                        key={tab.id}
+                        className={`overflow-tab-item ${isActive ? 'active' : ''}`}
+                        role="menuitem"
+                        onClick={() => {
+                          onSelectTab(tab.id);
+                          setIsOverflowOpen(false);
+                        }}
+                        data-testid={`overflow-item-${tab.id}`}
+                      >
+                        <span className="overflow-tab-title">{tab.filename || tab.displayTitle}</span>
+                        {tab.status !== 'ready' && (
+                          <span className={`tab-status-badge badge-${tab.status}`}>
+                            {tab.status === 'missing' ? 'Missing' : 'Error'}
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
           <button
             type="button"
             className="tab-icon-btn tab-add-btn"

@@ -251,6 +251,7 @@ export function App() {
         onOpenFile={handleOpenFile}
         onPrint={handlePrint}
         onOpenSettings={() => setIsSettingsOpen(true)}
+        onNavigateHome={() => tabStore.switchTab(null)}
         onFileDrop={handleFileDrop}
         onSelectRecentFile={(filePath) => loadDocumentPath(filePath)}
         onRemoveRecentFile={removeRecentFile}

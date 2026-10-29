@@ -124,9 +124,20 @@ export class TabStore {
   };
 
   /**
-   * Switches the active tab to the specified tabId.
+   * Switches the active tab to the specified tabId (or null for empty/home state).
    */
-  public switchTab = (tabId: string): boolean => {
+  public switchTab = (tabId: string | null): boolean => {
+    if (tabId === null) {
+      if (this.state.activeTabId !== null) {
+        this.state = {
+          ...this.state,
+          activeTabId: null,
+        };
+        this.notify();
+      }
+      return true;
+    }
+
     const exists = this.state.tabs.some((t) => t.id === tabId);
     if (!exists) return false;
 

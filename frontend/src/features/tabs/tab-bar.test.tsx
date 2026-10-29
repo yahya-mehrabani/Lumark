@@ -186,26 +186,38 @@ describe('TabBar & TabItem Components (US-007.2)', () => {
     expect(handleClose).toHaveBeenCalledTimes(2);
   });
 
-  it('renders tab overflow chevron button to the left of the tab list', () => {
-    const { container } = render(
+  it('renders +X more pill when tabs exceed visible limit and opens hidden tabs dropdown', () => {
+    const handleSelect = vi.fn();
+    render(
       <TabBar
         tabs={mockTabs}
         activeTabId="tab-1"
-        onSelectTab={vi.fn()}
+        onSelectTab={handleSelect}
         onCloseTab={vi.fn()}
+        maxVisibleTabs={2}
       />
     );
 
-    const overflowBtn = screen.getByTestId('tab-overflow-btn');
-    const tablist = screen.getByRole('tablist');
-    expect(overflowBtn).toBeInTheDocument();
-    expect(tablist).toBeInTheDocument();
+    // Visible tabs in list: tab-1 and tab-2
+    const tabs = screen.getAllByRole('tab');
+    expect(tabs).toHaveLength(2);
 
-    // Verify DOM order: overflowBtn container precedes tab-bar-container
-    const wrapper = container.querySelector('.tab-bar-wrapper');
-    const utilityControls = container.querySelector('.tab-utility-controls');
-    const tabBarContainer = container.querySelector('.tab-bar-container');
-    expect(wrapper?.firstElementChild).toBe(utilityControls);
-    expect(utilityControls?.nextElementSibling).toBe(tabBarContainer);
+    // Overflow pill shows "+1 more"
+    const pill = screen.getByTestId('tab-overflow-pill');
+    expect(pill).toBeInTheDocument();
+    expect(pill).toHaveTextContent('+1 more');
+
+    // Menu is closed initially
+    expect(screen.queryByTestId('tab-overflow-menu')).toBeNull();
+
+    // Click pill to open dropdown
+    fireEvent.click(pill);
+    expect(screen.getByTestId('tab-overflow-menu')).toBeInTheDocument();
+    expect(screen.getByTestId('overflow-item-tab-3')).toHaveTextContent('missing.md');
+
+    // Click hidden tab in dropdown to select it
+    fireEvent.click(screen.getByTestId('overflow-item-tab-3'));
+    expect(handleSelect).toHaveBeenCalledWith('tab-3');
+    expect(screen.queryByTestId('tab-overflow-menu')).toBeNull();
   });
 });

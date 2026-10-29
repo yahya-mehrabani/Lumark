@@ -140,19 +140,64 @@ describe('AppShell Integration & Component Tests (US-007.4)', () => {
     expect(handleOpenFile).toHaveBeenCalledTimes(2);
   });
 
-  it('renders appBrand as a static, non-interactive branding element', () => {
-    const handleOpenFile = vi.fn();
-    const { container } = render(<AppShell store={store} onOpenFile={handleOpenFile} />);
+  it('renders appBrand as a clickable Home button that triggers Home/Empty State view', () => {
+    const handleNavigateHome = vi.fn();
+    const { container } = render(
+      <AppShell store={store} onNavigateHome={handleNavigateHome} />
+    );
 
     const brand = container.querySelector('#appBrand');
     expect(brand).toBeInTheDocument();
-    expect(brand).not.toHaveAttribute('role', 'button');
-    expect(brand).not.toHaveAttribute('tabindex');
+    expect(brand).toHaveAttribute('aria-label', 'Home');
 
     if (brand) {
       fireEvent.click(brand);
     }
-    expect(handleOpenFile).not.toHaveBeenCalled();
+    expect(handleNavigateHome).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders 3-dot menu and triggers menu items with keyboard shortcuts', () => {
+    const handleOpenFile = vi.fn();
+    const handlePrint = vi.fn();
+    const handleOpenSettings = vi.fn();
+    const handleNavigateHome = vi.fn();
+
+    render(
+      <AppShell
+        store={store}
+        onOpenFile={handleOpenFile}
+        onPrint={handlePrint}
+        onOpenSettings={handleOpenSettings}
+        onNavigateHome={handleNavigateHome}
+      />
+    );
+
+    const menuBtn = screen.getByTestId('header-menu-btn');
+    expect(menuBtn).toBeInTheDocument();
+
+    // Menu is closed initially
+    expect(screen.queryByTestId('header-dropdown-menu')).toBeNull();
+
+    // Click 3-dot menu button to open dropdown
+    fireEvent.click(menuBtn);
+    expect(screen.getByTestId('header-dropdown-menu')).toBeInTheDocument();
+
+    // Verify all menu items exist
+    expect(screen.getByTestId('menu-item-open')).toHaveTextContent('Open File');
+    expect(screen.getByTestId('menu-item-home')).toHaveTextContent('Home');
+    expect(screen.getByTestId('menu-item-find')).toHaveTextContent('Find');
+    expect(screen.getByTestId('menu-item-print')).toHaveTextContent('Print');
+    expect(screen.getByTestId('menu-item-recents')).toHaveTextContent('Recent Files');
+    expect(screen.getByTestId('menu-item-preferences')).toHaveTextContent('Preferences');
+
+    // Click Home item
+    fireEvent.click(screen.getByTestId('menu-item-home'));
+    expect(handleNavigateHome).toHaveBeenCalledTimes(1);
+    expect(screen.queryByTestId('header-dropdown-menu')).toBeNull();
+
+    // Test Ctrl+Shift+H shortcut
+    fireEvent.keyDown(window, { key: 'H', ctrlKey: true, shiftKey: true });
+    expect(handleNavigateHome).toHaveBeenCalledTimes(2);
   });
 
   it('renders window control buttons (minimize, maximize, close) and triggers Wails Window runtime methods', () => {

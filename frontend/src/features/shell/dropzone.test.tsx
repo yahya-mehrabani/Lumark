@@ -169,12 +169,14 @@ describe('DropZone & AppShell Drag-and-Drop Integration Tests (US-008.4)', () =>
       expect(notifyWarning.mock.calls[0][0]).toContain("Unsupported file 'bad.exe'");
     });
 
-    it('triggers onOpenFile when clicking header Open File button or Ctrl+O shortcut', () => {
+    it('triggers onOpenFile when clicking menu Open File button or Ctrl+O shortcut', () => {
       const handleOpenFile = vi.fn();
       render(<AppShell store={store} onOpenFile={handleOpenFile} />);
 
-      // Click header button
-      const openBtn = screen.getByRole('button', { name: /open document file/i });
+      // Open 3-dot menu and click Open File
+      const menuBtn = screen.getByTestId('header-menu-btn');
+      fireEvent.click(menuBtn);
+      const openBtn = screen.getByTestId('menu-item-open');
       fireEvent.click(openBtn);
       expect(handleOpenFile).toHaveBeenCalledTimes(1);
 

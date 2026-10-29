@@ -23,7 +23,10 @@ export type IconName =
   | 'alert'
   | 'file'
   | 'reset'
-  | 'maximize';
+  | 'maximize'
+  | 'book-open'
+  | 'home'
+  | 'more-horizontal';
 
 export interface IconProps extends React.SVGAttributes<SVGElement> {
   name: IconName;
@@ -196,6 +199,31 @@ export const Icon: React.FC<IconProps> = ({
 
       case 'maximize':
         return <rect x="3.5" y="3.5" width="17" height="17" rx="2" ry="2" />;
+
+      case 'book-open':
+        return (
+          <>
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+          </>
+        );
+
+      case 'home':
+        return (
+          <>
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </>
+        );
+
+      case 'more-horizontal':
+        return (
+          <>
+            <circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none" />
+            <circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none" />
+            <circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none" />
+          </>
+        );
 
       default:
         return null;
