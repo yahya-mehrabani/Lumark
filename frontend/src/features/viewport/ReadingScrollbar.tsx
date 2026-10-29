@@ -28,7 +28,7 @@ export const ReadingScrollbar: React.FC<ReadingScrollbarProps> = ({
     const trackHeight = track && track.clientHeight > 0 ? track.clientHeight : (clientHeight || 300);
 
     if (maxScroll <= 0) {
-      setProgress(100);
+      setProgress(0);
       setThumbTop(0);
       setThumbHeight(trackHeight);
       return;

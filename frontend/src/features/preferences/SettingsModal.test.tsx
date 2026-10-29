@@ -18,7 +18,7 @@ describe('SettingsModal Component', () => {
       defaultZoom: 1.0,
       restoreOpenTabs: true,
       openTabs: [],
-      maxRecentFiles: 20,
+      maxRecentFiles: 10,
     });
     store = new SettingsStore(adapter);
     themeStore.setTheme('system');
@@ -42,14 +42,13 @@ describe('SettingsModal Component', () => {
     expect(screen.getByText('Preferences & Settings')).toBeDefined();
   });
 
-  it('renders theme, direction, zoom, tab restore, and recent files controls', () => {
+  it('renders theme, direction, zoom, and tab restore controls', () => {
     render(<SettingsModal isOpen={true} onClose={vi.fn()} store={store} />);
 
     expect(screen.getByTestId('settings-theme-select')).toBeDefined();
     expect(screen.getByTestId('settings-direction-select')).toBeDefined();
     expect(screen.getByTestId('settings-zoom-select')).toBeDefined();
     expect(screen.getByTestId('settings-restore-tabs-checkbox')).toBeDefined();
-    expect(screen.getByTestId('settings-max-recent-select')).toBeDefined();
   });
 
   it('updates theme setting and synchronizes with themeStore', async () => {
@@ -132,19 +131,6 @@ describe('SettingsModal Component', () => {
     });
   });
 
-  it('updates maxRecentFiles setting', async () => {
-    render(<SettingsModal isOpen={true} onClose={vi.fn()} store={store} />);
-
-    const recentSelect = screen.getByTestId('settings-max-recent-select') as HTMLSelectElement;
-    expect(recentSelect.value).toBe('20');
-
-    fireEvent.change(recentSelect, { target: { value: '10' } });
-
-    await waitFor(() => {
-      expect(store.getSettings().maxRecentFiles).toBe(10);
-    });
-  });
-
   it('shows clear confirmation when Reset to Defaults is clicked and cancels correctly', async () => {
     render(<SettingsModal isOpen={true} onClose={vi.fn()} store={store} />);
 
@@ -214,7 +200,7 @@ describe('SettingsModal Component', () => {
       expect(current.defaultDirection).toBe('auto');
       expect(current.defaultZoom).toBe(1.0);
       expect(current.restoreOpenTabs).toBe(true);
-      expect(current.maxRecentFiles).toBe(20);
+      expect(current.maxRecentFiles).toBe(10);
       expect(themeStore.getPreference()).toBe('system');
       expect(zoomController.getZoom()).toBe(100);
     });

@@ -14,7 +14,7 @@ describe('AppShell Integration & Component Tests (US-007.4)', () => {
   it('renders empty state when launched with zero tabs', () => {
     render(<AppShell store={store} />);
 
-    expect(screen.getByRole('heading', { level: 2, name: /no document open/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: /open document/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /open markdown file/i })).toBeInTheDocument();
     expect(screen.getByRole('status')).toHaveTextContent('Ready');
   });
@@ -89,7 +89,7 @@ describe('AppShell Integration & Component Tests (US-007.4)', () => {
 
     // Must return to empty state
     expect(screen.queryByRole('tablist')).toBeNull();
-    expect(screen.getByRole('heading', { level: 2, name: /no document open/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: /open document/i })).toBeInTheDocument();
     expect(screen.getByRole('status')).toHaveTextContent('Ready');
   });
 
@@ -183,7 +183,6 @@ describe('AppShell Integration & Component Tests (US-007.4)', () => {
     // Verify all menu items exist
     expect(screen.getByTestId('menu-item-open')).toHaveTextContent('Open File');
     expect(screen.getByTestId('menu-item-home')).toHaveTextContent('Home');
-    expect(screen.getByTestId('menu-item-find')).toHaveTextContent('Find');
     expect(screen.getByTestId('menu-item-print')).toHaveTextContent('Print');
     expect(screen.getByTestId('menu-item-recents')).toHaveTextContent('Recent Files');
     expect(screen.getByTestId('menu-item-preferences')).toHaveTextContent('Preferences');
@@ -193,8 +192,8 @@ describe('AppShell Integration & Component Tests (US-007.4)', () => {
     expect(handleNavigateHome).toHaveBeenCalledTimes(1);
     expect(screen.queryByTestId('header-dropdown-menu')).toBeNull();
 
-    // Test Ctrl+Shift+H shortcut
-    fireEvent.keyDown(window, { key: 'H', ctrlKey: true, shiftKey: true });
+    // Test Ctrl+H shortcut
+    fireEvent.keyDown(window, { key: 'H', ctrlKey: true });
     expect(handleNavigateHome).toHaveBeenCalledTimes(2);
   });
 

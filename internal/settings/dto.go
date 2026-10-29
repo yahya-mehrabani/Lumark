@@ -16,7 +16,7 @@ const (
 
 	// Default numeric values
 	DefaultZoom      = 1.0
-	DefaultMaxRecent = 20
+	DefaultMaxRecent = 10
 )
 
 // SettingsDTO defines the versioned configuration schema for user preferences.

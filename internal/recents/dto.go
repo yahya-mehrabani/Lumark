@@ -5,8 +5,8 @@ import (
 	"strings"
 )
 
-// DefaultMaxRecent defines the default limit of 20 items per PRD Section 10.1 and FR-OPEN-006.
-const DefaultMaxRecent = 20
+// DefaultMaxRecent defines the default limit of 10 items per PRD Section 10.1 and FR-OPEN-006.
+const DefaultMaxRecent = 10
 
 // RecentFileDTO represents a recently opened document path with metadata.
 // In strict accordance with FR-SET-003 and FR-OPEN-006 (Data Minimization),

@@ -236,7 +236,11 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
       // Ctrl+F or Cmd+F
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f') {
         e.preventDefault();
-        search.openSearch();
+        if (search.isOpen) {
+          search.closeSearch();
+        } else {
+          search.openSearch();
+        }
       } else if (e.key === 'F3' && search.isOpen) {
         e.preventDefault();
         if (e.shiftKey) {

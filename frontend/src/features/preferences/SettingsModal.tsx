@@ -60,10 +60,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     updateSettings({ restoreOpenTabs: e.target.checked });
   };
 
-  const handleMaxRecentChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    updateSettings({ maxRecentFiles: parseInt(e.target.value, 10) });
-  };
-
   const handleConfirmReset = async () => {
     await resetSettings();
     setShowResetConfirm(false);
@@ -164,21 +160,21 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             <div className="segmented-control" role="radiogroup" aria-label="Default Text Direction">
               <button
                 type="button"
-                className={`seg-btn ${settings.defaultDirection === 'auto' ? 'active' : ''}`}
-                onClick={() => updateSettings({ defaultDirection: 'auto' })}
-                role="radio"
-                aria-checked={settings.defaultDirection === 'auto'}
-              >
-                <span>Auto</span>
-              </button>
-              <button
-                type="button"
                 className={`seg-btn ${settings.defaultDirection === 'ltr' ? 'active' : ''}`}
                 onClick={() => updateSettings({ defaultDirection: 'ltr' })}
                 role="radio"
                 aria-checked={settings.defaultDirection === 'ltr'}
               >
                 <span>LTR</span>
+              </button>
+              <button
+                type="button"
+                className={`seg-btn ${settings.defaultDirection === 'auto' ? 'active' : ''}`}
+                onClick={() => updateSettings({ defaultDirection: 'auto' })}
+                role="radio"
+                aria-checked={settings.defaultDirection === 'auto'}
+              >
+                <span>Auto</span>
               </button>
               <button
                 type="button"
@@ -207,8 +203,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
           {/* TOC Position: 3-Way Segmented Control */}
           <div className="setting-block">
-            <span className="setting-label">TOC Position</span>
-            <div className="segmented-control" role="radiogroup" aria-label="TOC Position">
+            <span className="setting-label">Table of Content Position</span>
+            <div className="segmented-control" role="radiogroup" aria-label="Table of Content Position">
               <button
                 type="button"
                 className={`seg-btn ${settings.tocPosition === 'left' ? 'active' : ''}`}
@@ -221,16 +217,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </button>
               <button
                 type="button"
-                className={`seg-btn ${settings.tocPosition === 'right' ? 'active' : ''}`}
-                onClick={() => updateSettings({ tocPosition: 'right' })}
-                role="radio"
-                aria-checked={settings.tocPosition === 'right'}
-                data-testid="settings-toc-pos-right"
-              >
-                <span>Right</span>
-              </button>
-              <button
-                type="button"
                 className={`seg-btn ${settings.tocPosition === 'auto' ? 'active' : ''}`}
                 onClick={() => updateSettings({ tocPosition: 'auto' })}
                 role="radio"
@@ -238,6 +224,16 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 data-testid="settings-toc-pos-auto"
               >
                 <span>Auto</span>
+              </button>
+              <button
+                type="button"
+                className={`seg-btn ${settings.tocPosition === 'right' ? 'active' : ''}`}
+                onClick={() => updateSettings({ tocPosition: 'right' })}
+                role="radio"
+                aria-checked={settings.tocPosition === 'right'}
+                data-testid="settings-toc-pos-right"
+              >
+                <span>Right</span>
               </button>
             </div>
             {/* Backward-compatible select for automated tests */}
@@ -293,42 +289,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <option value="1.75">175%</option>
               <option value="2">200%</option>
               <option value="2.5">250%</option>
-            </select>
-          </div>
-
-          {/* Max Recent Files: Range Slider */}
-          <div className="setting-block">
-            <div className="slider-header">
-              <label htmlFor="settings-max-recent-range" className="setting-label">
-                Maximum Recent Files
-              </label>
-              <span className="slider-value">{settings.maxRecentFiles} files</span>
-            </div>
-            <input
-              type="range"
-              id="settings-max-recent-range"
-              className="range-slider"
-              min="10"
-              max="50"
-              step="5"
-              value={settings.maxRecentFiles}
-              onChange={(e) => updateSettings({ maxRecentFiles: parseInt(e.target.value, 10) })}
-              aria-label="Maximum Recent Files"
-            />
-            {/* Backward-compatible select for automated tests */}
-            <select
-              id="settings-max-recent-select"
-              value={settings.maxRecentFiles.toString()}
-              onChange={handleMaxRecentChange}
-              data-testid="settings-max-recent-select"
-              style={{ display: 'none' }}
-              aria-hidden="true"
-            >
-              <option value="10">10 files</option>
-              <option value="15">15 files</option>
-              <option value="20">20 files (Default)</option>
-              <option value="30">30 files</option>
-              <option value="50">50 files</option>
             </select>
           </div>
 

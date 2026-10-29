@@ -25,7 +25,7 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
   defaultZoom: 1.0,
   restoreOpenTabs: true,
   openTabs: [],
-  maxRecentFiles: 20,
+  maxRecentFiles: 10,
   showToc: true,
   showTableOfContents: true,
   tocPosition: 'left',

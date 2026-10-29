@@ -6,7 +6,7 @@ describe('EmptyState Component (US-007.3)', () => {
   it('renders title, subtitle, Open File button, and shortcut cheatsheet', () => {
     render(<EmptyState onOpenFile={vi.fn()} />);
 
-    expect(screen.getByRole('heading', { level: 2, name: /no document open/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: /open document/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /open markdown file/i })).toBeInTheDocument();
     expect(screen.getByText(/drop markdown \(\.md\) files here/i)).toBeInTheDocument();
     expect(screen.getByRole('region', { name: /keyboard shortcuts/i })).toBeInTheDocument();

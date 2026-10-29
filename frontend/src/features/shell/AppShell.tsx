@@ -152,20 +152,20 @@ export const AppShell: React.FC<AppShellProps> = ({
   // Global shortcuts
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'h' || e.key === 'H')) {
+      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && (e.key === 'h' || e.key === 'H')) {
         e.preventDefault();
         handleNavigateHome();
-      } else if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'o' || e.key === 'O')) {
+      } else if ((e.ctrlKey || e.metaKey) && !e.shiftKey && (e.key === 'r' || e.key === 'R')) {
         e.preventDefault();
         setIsMenuOpen(true);
         setIsRecentsSubmenuOpen(true);
-      } else if ((e.ctrlKey || e.metaKey) && (e.key === 'o' || e.key === 'O')) {
+      } else if ((e.ctrlKey || e.metaKey) && !e.shiftKey && (e.key === 'o' || e.key === 'O')) {
         e.preventDefault();
         onOpenFile?.();
-      } else if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P')) {
+      } else if ((e.ctrlKey || e.metaKey) && !e.shiftKey && (e.key === 'p' || e.key === 'P')) {
         e.preventDefault();
         onPrint?.();
-      } else if ((e.ctrlKey || e.metaKey) && e.key === ',') {
+      } else if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key === ',') {
         e.preventDefault();
         onOpenSettings?.();
       } else if (e.key === 'Escape' && document.body.classList.contains('focus-mode')) {
@@ -178,7 +178,7 @@ export const AppShell: React.FC<AppShellProps> = ({
     return () => {
       window.removeEventListener('keydown', handleGlobalKeyDown);
     };
-  }, [onOpenFile, onPrint, onOpenSettings, onNavigateHome]);
+  }, [onOpenFile, onPrint, onOpenSettings, handleNavigateHome]);
 
   const hasTabs = state.tabs.length > 0;
 
@@ -245,7 +245,7 @@ export const AppShell: React.FC<AppShellProps> = ({
             id="appBrand"
             onClick={handleNavigateHome}
             aria-label="Home"
-            title="Home (Ctrl+Shift+H)"
+            title="Home (Ctrl + H)"
             data-testid="app-brand-btn"
           >
             <div className="brand-badge">
@@ -277,7 +277,7 @@ export const AppShell: React.FC<AppShellProps> = ({
             title="Find in Document (Ctrl+F)"
             data-testid="header-search-btn"
           >
-            <Icon name="search" size={15} strokeWidth={1.9} />
+            <Icon name="search" size={18} strokeWidth={1.9} />
           </button>
 
           <button
@@ -291,7 +291,7 @@ export const AppShell: React.FC<AppShellProps> = ({
             data-theme-mode={theme}
             data-resolved-theme={resolvedTheme}
           >
-            <Icon name={resolvedTheme === 'dark' ? 'moon' : 'sun'} size={15} />
+            <Icon name={resolvedTheme === 'dark' ? 'moon' : 'sun'} size={18} />
           </button>
 
           <div className="header-menu-container" ref={menuRef}>
@@ -306,7 +306,7 @@ export const AppShell: React.FC<AppShellProps> = ({
               aria-expanded={isMenuOpen}
               data-testid="header-menu-btn"
             >
-              <Icon name="more-horizontal" size={16} strokeWidth={2} />
+              <Icon name="more-horizontal" size={18} strokeWidth={2} />
             </button>
 
             {isMenuOpen && (
@@ -330,7 +330,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                     <Icon name="folder-open" size={14} />
                     <span>Open File</span>
                   </div>
-                  <span className="menu-shortcut">Ctrl O</span>
+                  <span className="menu-shortcut">Ctrl + O</span>
                 </button>
 
                 <button
@@ -347,24 +347,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                     <Icon name="home" size={14} />
                     <span>Home</span>
                   </div>
-                  <span className="menu-shortcut">Ctrl ⇧ H</span>
-                </button>
-
-                <button
-                  type="button"
-                  className="menu-item"
-                  role="menuitem"
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    handleToggleSearch();
-                  }}
-                  data-testid="menu-item-find"
-                >
-                  <div className="menu-item-left">
-                    <Icon name="search" size={14} />
-                    <span>Find</span>
-                  </div>
-                  <span className="menu-shortcut">Ctrl F</span>
+                  <span className="menu-shortcut">Ctrl + H</span>
                 </button>
 
                 <button
@@ -381,7 +364,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                     <Icon name="printer" size={14} />
                     <span>Print</span>
                   </div>
-                  <span className="menu-shortcut">Ctrl P</span>
+                  <span className="menu-shortcut">Ctrl + P</span>
                 </button>
 
                 <div className="menu-divider" role="separator" />
@@ -404,7 +387,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                       <Icon name="clock" size={14} />
                       <span>Recent Files</span>
                     </div>
-                    <span className="menu-shortcut">Ctrl ⇧ O</span>
+                    <span className="menu-shortcut">Ctrl + R</span>
                   </button>
 
                   {isRecentsSubmenuOpen && (
@@ -476,7 +459,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                     <Icon name="settings" size={14} />
                     <span>Preferences</span>
                   </div>
-                  <span className="menu-shortcut">Ctrl ,</span>
+                  <span className="menu-shortcut">Ctrl + ,</span>
                 </button>
               </div>
             )}
@@ -558,7 +541,7 @@ export const AppShell: React.FC<AppShellProps> = ({
         </div>
         <div className="status-center" />
         <div className="status-right">
-          {readingTime && <span>{readingTime}</span>}
+          {readingTime && <span className="status-reading-time">{readingTime}</span>}
         </div>
       </footer>
     </DropZone>

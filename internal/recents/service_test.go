@@ -325,13 +325,13 @@ func TestRecentFilesCorruptionRecovery(t *testing.T) {
 func TestRecentFilesCustomBounds(t *testing.T) {
 	tempDir := t.TempDir()
 
-	// <= 0 fallback to DefaultMaxRecent (20)
+	// <= 0 fallback to DefaultMaxRecent (10)
 	svcDefault, err := NewServiceWithPath(filepath.Join(tempDir, "default.json"), 0)
 	if err != nil {
 		t.Fatalf("Failed to create default svc: %v", err)
 	}
-	if svcDefault.maxRecent != 20 {
-		t.Errorf("Expected maxRecent 20, got %d", svcDefault.maxRecent)
+	if svcDefault.maxRecent != 10 {
+		t.Errorf("Expected maxRecent 10, got %d", svcDefault.maxRecent)
 	}
 
 	// Custom bound of 5

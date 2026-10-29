@@ -36,8 +36,8 @@ func TestSettingsPersistence(t *testing.T) {
 	if !initial.RestoreOpenTabs {
 		t.Errorf("Expected default restoreOpenTabs true, got %t", initial.RestoreOpenTabs)
 	}
-	if initial.MaxRecentFiles != 20 {
-		t.Errorf("Expected default maxRecentFiles 20, got %d", initial.MaxRecentFiles)
+	if initial.MaxRecentFiles != 10 {
+		t.Errorf("Expected default maxRecentFiles 10, got %d", initial.MaxRecentFiles)
 	}
 	if initial.TocPosition != "left" {
 		t.Errorf("Expected default tocPosition left, got %s", initial.TocPosition)
@@ -304,8 +304,8 @@ func TestSettingsReset(t *testing.T) {
 	if !defaults.RestoreOpenTabs {
 		t.Errorf("Expected reset restoreOpenTabs to be true, got %t", defaults.RestoreOpenTabs)
 	}
-	if defaults.MaxRecentFiles != 20 {
-		t.Errorf("Expected reset maxRecentFiles to be 20, got %d", defaults.MaxRecentFiles)
+	if defaults.MaxRecentFiles != 10 {
+		t.Errorf("Expected reset maxRecentFiles to be 10, got %d", defaults.MaxRecentFiles)
 	}
 	if defaults.TocPosition != "left" {
 		t.Errorf("Expected reset tocPosition to be left, got %s", defaults.TocPosition)
@@ -345,7 +345,7 @@ func TestSettingsNormalization(t *testing.T) {
 				Theme:            ThemeSystem,
 				DefaultDirection: DirectionAuto,
 				DefaultZoom:      1.0,
-				MaxRecentFiles:   20,
+				MaxRecentFiles:   10,
 			},
 		},
 		{
@@ -360,7 +360,7 @@ func TestSettingsNormalization(t *testing.T) {
 				Theme:            ThemeDark,
 				DefaultDirection: DirectionLTR,
 				DefaultZoom:      1.5,
-				MaxRecentFiles:   20,
+				MaxRecentFiles:   10,
 			},
 		},
 		{
@@ -373,7 +373,7 @@ func TestSettingsNormalization(t *testing.T) {
 				Theme:            ThemeSystem,
 				DefaultDirection: DirectionAuto,
 				DefaultZoom:      1.0,
-				MaxRecentFiles:   20,
+				MaxRecentFiles:   10,
 			},
 		},
 		{
@@ -386,7 +386,7 @@ func TestSettingsNormalization(t *testing.T) {
 				Theme:            ThemeSystem,
 				DefaultDirection: DirectionAuto,
 				DefaultZoom:      1.0,
-				MaxRecentFiles:   20,
+				MaxRecentFiles:   10,
 			},
 		},
 		{
@@ -399,7 +399,7 @@ func TestSettingsNormalization(t *testing.T) {
 				Theme:            ThemeSystem,
 				DefaultDirection: DirectionAuto,
 				DefaultZoom:      1.0,
-				MaxRecentFiles:   20,
+				MaxRecentFiles:   10,
 				TocPosition:      "left",
 			},
 		},
@@ -413,7 +413,7 @@ func TestSettingsNormalization(t *testing.T) {
 				Theme:            ThemeSystem,
 				DefaultDirection: DirectionAuto,
 				DefaultZoom:      1.0,
-				MaxRecentFiles:   20,
+				MaxRecentFiles:   10,
 				TocPosition:      "right",
 			},
 		},

@@ -77,6 +77,10 @@
   width: 100%;
 }
 
+.toc-list {
+  border-left: 1px solid var(--border-subtle);
+}
+
 .toc-item {
   list-style: none;
   margin: 0;
@@ -93,23 +97,16 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 6px 10px;
-  border-radius: 4px;
+  padding: 6px 12px;
+  border-radius: 0;
   text-decoration: none;
   cursor: pointer;
   background: transparent;
   border: none;
-  border-left: 2.5px solid transparent;
-  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
   width: 100%;
   box-sizing: border-box;
   pointer-events: auto;
-}
-
-.toc-right .spy-item,
-.toc-right .toc-link {
-  border-left: none;
-  border-right: 2.5px solid transparent;
 }
 
 .spy-item:hover,
@@ -117,17 +114,11 @@
   background-color: var(--bg-chrome-hover);
 }
 
-/* Active TOC item */
+/* Active TOC item: perfectly rectangular with only text color/weight change and subtle background */
 .spy-item.active,
 .toc-link.active {
   background-color: var(--accent-teal-soft, rgba(42, 127, 123, 0.12));
-  border-left-color: var(--accent-teal);
-}
-
-.toc-right .spy-item.active,
-.toc-right .toc-link.active {
-  border-right-color: var(--accent-teal);
-  border-left-color: transparent;
+  border: none;
 }
 
 /* Text labels */

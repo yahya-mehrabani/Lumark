@@ -78,7 +78,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           </svg>
         </div>
 
-        <h2 className="empty-state-title">No Document Open</h2>
+        <h2 className="empty-state-title">Open Document</h2>
         <p className="empty-state-subtitle">
           Open a Markdown file to view, preview diagrams, and inspect math formulas.
         </p>

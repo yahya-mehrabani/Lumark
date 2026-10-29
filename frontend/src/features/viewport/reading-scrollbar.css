@@ -1,11 +1,11 @@
 /* Reading Scrollbar Overlay Track & Progress Indicator */
 
 .reading-scrollbar-container {
-  position: absolute;
-  top: 14px;
-  bottom: 8px;
+  position: fixed;
+  top: 54px;
+  bottom: 32px;
   width: 28px;
-  z-index: 25;
+  z-index: 95;
   display: flex;
   flex-direction: column;
   align-items: center;
