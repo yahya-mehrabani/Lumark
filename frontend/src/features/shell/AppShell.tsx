@@ -102,12 +102,6 @@ export const AppShell: React.FC<AppShellProps> = ({
     }
   };
 
-  const handleToggleSearch = () => {
-    window.dispatchEvent(
-      new KeyboardEvent('keydown', { key: 'f', ctrlKey: true, bubbles: true })
-    );
-  };
-
   const exitFocusMode = () => {
     document.body.classList.remove('focus-mode');
     setIsFocusMode(false);
@@ -268,18 +262,6 @@ export const AppShell: React.FC<AppShellProps> = ({
         </div>
 
         <div className="top-bar-right header-actions">
-          <button
-            type="button"
-            className="ghost-btn header-btn header-icon-btn"
-            id="topSearchBtn"
-            onClick={handleToggleSearch}
-            aria-label="Find in Document (Ctrl+F)"
-            title="Find in Document (Ctrl+F)"
-            data-testid="header-search-btn"
-          >
-            <Icon name="search" size={18} strokeWidth={1.9} />
-          </button>
-
           <button
             type="button"
             className="ghost-btn header-btn header-icon-btn theme-toggle-btn"

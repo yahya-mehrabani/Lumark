@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { TabItem as TabItemData } from './types';
 import { TabItem } from './TabItem';
 import { Icon } from '../../components/Icon';
@@ -30,6 +31,8 @@ export const TabBar: React.FC<TabBarProps> = ({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isOverflowOpen, setIsOverflowOpen] = useState(false);
   const overflowRef = useRef<HTMLDivElement | null>(null);
+  const overflowMenuRef = useRef<HTMLDivElement | null>(null);
+  const [overflowCoords, setOverflowCoords] = useState<{ top: number; left: number } | null>(null);
   const [containerWidth, setContainerWidth] = useState(0);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; tabId: string } | null>(null);
   const contextMenuRef = useRef<HTMLDivElement | null>(null);
@@ -97,8 +100,21 @@ export const TabBar: React.FC<TabBarProps> = ({
   useEffect(() => {
     if (!isOverflowOpen) return;
 
+    if (overflowRef.current) {
+      const rect = overflowRef.current.getBoundingClientRect();
+      setOverflowCoords({
+        top: Math.round(rect.bottom + 4),
+        left: Math.round(rect.left),
+      });
+    }
+
     const handleClickOutside = (e: MouseEvent) => {
-      if (overflowRef.current && !overflowRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      if (
+        overflowRef.current &&
+        !overflowRef.current.contains(target) &&
+        (!overflowMenuRef.current || !overflowMenuRef.current.contains(target))
+      ) {
         setIsOverflowOpen(false);
       }
     };
@@ -305,38 +321,48 @@ export const TabBar: React.FC<TabBarProps> = ({
                 +{hiddenTabs.length} more
               </button>
 
-              {isOverflowOpen && (
-                <div
-                  className="tab-overflow-menu"
-                  id="tabOverflowMenu"
-                  role="menu"
-                  data-testid="tab-overflow-menu"
-                >
-                  <div className="overflow-menu-header">Hidden Tabs ({hiddenTabs.length})</div>
-                  {hiddenTabs.map((tab) => {
-                    const isActive = tab.id === activeTabId;
-                    return (
-                      <div
-                        key={tab.id}
-                        className={`overflow-tab-item ${isActive ? 'active' : ''}`}
-                        role="menuitem"
-                        onClick={() => {
-                          onSelectTab(tab.id);
-                          setIsOverflowOpen(false);
-                        }}
-                        data-testid={`overflow-item-${tab.id}`}
-                      >
-                        <span className="overflow-tab-title">{tab.filename || tab.displayTitle}</span>
-                        {tab.status !== 'ready' && (
-                          <span className={`tab-status-badge badge-${tab.status}`}>
-                            {tab.status === 'missing' ? 'Missing' : 'Error'}
-                          </span>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+              {isOverflowOpen &&
+                typeof document !== 'undefined' &&
+                createPortal(
+                  <div
+                    ref={overflowMenuRef}
+                    className="tab-overflow-menu"
+                    id="tabOverflowMenu"
+                    role="menu"
+                    data-testid="tab-overflow-menu"
+                    style={{
+                      position: 'fixed',
+                      top: `${overflowCoords?.top ?? 44}px`,
+                      left: `${overflowCoords?.left ?? 100}px`,
+                      zIndex: 1000,
+                    }}
+                  >
+                    <div className="overflow-menu-header">Hidden Tabs ({hiddenTabs.length})</div>
+                    {hiddenTabs.map((tab) => {
+                      const isActive = tab.id === activeTabId;
+                      return (
+                        <div
+                          key={tab.id}
+                          className={`overflow-tab-item ${isActive ? 'active' : ''}`}
+                          role="menuitem"
+                          onClick={() => {
+                            onSelectTab(tab.id);
+                            setIsOverflowOpen(false);
+                          }}
+                          data-testid={`overflow-item-${tab.id}`}
+                        >
+                          <span className="overflow-tab-title">{tab.filename || tab.displayTitle}</span>
+                          {tab.status !== 'ready' && (
+                            <span className={`tab-status-badge badge-${tab.status}`}>
+                              {tab.status === 'missing' ? 'Missing' : 'Error'}
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>,
+                  document.body
+                )}
             </div>
           )}
 

@@ -18,6 +18,8 @@ export const DEFAULT_AUTO_DIR_TAGS: ReadonlySet<string> = new Set([
   'h4',
   'h5',
   'h6',
+  'ul',
+  'ol',
   'li',
   'blockquote',
   'td',

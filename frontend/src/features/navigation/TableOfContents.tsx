@@ -254,6 +254,7 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
       aria-label="Table of Contents"
       data-testid="toc-sidebar"
       data-position={position}
+      dir={position === 'right' ? 'rtl' : 'ltr'}
     >
       {onClose && (
         <button

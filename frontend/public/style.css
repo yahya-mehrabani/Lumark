@@ -112,16 +112,15 @@ body {
        margin would push everything (incl. the input) down. φ² gap below. */
     margin-bottom: var(--s-4);
 }
-.brand-mark, .brand-badge {
+.brand-mark {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: transform 0.2s ease, filter 0.2s ease;
 }
-.brand-mark:hover, .brand-badge:hover {
+.brand-mark:hover {
     transform: translateY(-2px);
-    filter: drop-shadow(0 0 1em rgba(255, 77, 77, 0.45));
 }
 /* Logo heights sit on the golden scale (φ³ = 4.236rem). The Wails mark carries
    its wordmark, so the badge is one golden step smaller (φ³ ÷ √φ) to keep the

@@ -18,8 +18,19 @@ export const ReadingScrollbar: React.FC<ReadingScrollbarProps> = ({
   const dragStartYRef = useRef<number>(0);
   const dragStartScrollTopRef = useRef<number>(0);
 
+  const resolveTarget = useCallback((): HTMLElement | null => {
+    if (viewportRef.current) return viewportRef.current;
+    if (typeof document !== 'undefined') {
+      return (
+        document.querySelector<HTMLElement>('.markdown-content') ||
+        document.querySelector<HTMLElement>('.markdown-viewport')
+      );
+    }
+    return null;
+  }, [viewportRef]);
+
   const updateScroll = useCallback(() => {
-    const el = viewportRef.current;
+    const el = resolveTarget();
     const track = trackRef.current;
     if (!el) return;
 
@@ -43,32 +54,58 @@ export const ReadingScrollbar: React.FC<ReadingScrollbarProps> = ({
 
     setThumbHeight(calculatedThumbHeight);
     setThumbTop(currentThumbTop);
-  }, [viewportRef]);
+  }, [resolveTarget]);
 
   useEffect(() => {
-    const el = viewportRef.current;
-    if (!el) return;
+    let attachedEl: HTMLElement | null = null;
+    let ro: ResizeObserver | null = null;
 
-    updateScroll();
-    el.addEventListener('scroll', updateScroll, { passive: true });
+    const attach = () => {
+      const el = resolveTarget();
+      if (!el) return false;
+      attachedEl = el;
+      updateScroll();
+      el.addEventListener('scroll', updateScroll, { passive: true });
+      if (typeof ResizeObserver !== 'undefined') {
+        ro = new ResizeObserver(() => updateScroll());
+        ro.observe(el);
+      }
+      return true;
+    };
+
+    attach();
+    const frameId = requestAnimationFrame(() => {
+      if (!attachedEl) {
+        attach();
+      } else {
+        updateScroll();
+      }
+    });
+
+    const handleCaptureScroll = (e: Event) => {
+      const el = resolveTarget();
+      if (e.target === el || (el && el.contains(e.target as Node))) {
+        updateScroll();
+      }
+    };
+
+    window.addEventListener('scroll', handleCaptureScroll, { capture: true, passive: true });
     window.addEventListener('resize', updateScroll);
 
-    let ro: ResizeObserver | null = null;
-    if (typeof ResizeObserver !== 'undefined') {
-      ro = new ResizeObserver(() => updateScroll());
-      ro.observe(el);
-    }
-
     return () => {
-      el.removeEventListener('scroll', updateScroll);
-      window.removeEventListener('resize', updateScroll);
+      cancelAnimationFrame(frameId);
+      if (attachedEl) {
+        attachedEl.removeEventListener('scroll', updateScroll);
+      }
       ro?.disconnect();
+      window.removeEventListener('scroll', handleCaptureScroll, { capture: true });
+      window.removeEventListener('resize', updateScroll);
     };
-  }, [viewportRef, updateScroll]);
+  }, [resolveTarget, updateScroll]);
 
   const handleTrackClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target !== trackRef.current) return;
-    const el = viewportRef.current;
+    const el = resolveTarget();
     const track = trackRef.current;
     if (!el || !track) return;
 
@@ -90,16 +127,17 @@ export const ReadingScrollbar: React.FC<ReadingScrollbarProps> = ({
   const handleThumbMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
+    const el = resolveTarget();
     setIsDragging(true);
     dragStartYRef.current = e.clientY;
-    dragStartScrollTopRef.current = viewportRef.current?.scrollTop || 0;
+    dragStartScrollTopRef.current = el?.scrollTop || 0;
   };
 
   useEffect(() => {
     if (!isDragging) return;
 
     const handleMouseMove = (e: MouseEvent) => {
-      const el = viewportRef.current;
+      const el = resolveTarget();
       const track = trackRef.current;
       if (!el || !track) return;
 

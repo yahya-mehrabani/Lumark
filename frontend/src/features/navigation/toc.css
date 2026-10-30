@@ -48,8 +48,8 @@
 .toc-sidebar.toc-right {
   right: 36px;
   left: auto;
-  align-items: flex-start;
-  text-align: left;
+  align-items: flex-end;
+  text-align: right;
 }
 
 /* Section Counter (e.g., "02 / 12") */
@@ -63,6 +63,15 @@
   margin-bottom: 12px;
   user-select: none;
   line-height: 1;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.scrollspy-rail.toc-right .toc-counter,
+.toc-sidebar.toc-right .toc-counter,
+[dir="rtl"] .toc-counter {
+  text-align: right;
 }
 
 .toc-list,
@@ -79,6 +88,15 @@
 
 .toc-list {
   border-left: 1px solid var(--border-subtle);
+  border-inline-start: 1px solid var(--border-subtle);
+}
+
+.scrollspy-rail.toc-right .toc-list,
+.toc-sidebar.toc-right .toc-list,
+[dir="rtl"] .toc-list {
+  border-left: none;
+  border-right: 1px solid var(--border-subtle);
+  border-inline-start: 1px solid var(--border-subtle);
 }
 
 .toc-item {
@@ -98,15 +116,33 @@
   align-items: center;
   justify-content: flex-start;
   padding: 6px 12px;
-  border-radius: 0;
+  border-radius: 4px;
   text-decoration: none;
   cursor: pointer;
   background: transparent;
   border: none;
-  transition: background-color 0.15s ease, color 0.15s ease;
-  width: 100%;
+  border-left: 3px solid transparent;
+  border-inline-start: 3px solid transparent;
+  margin-left: -1px;
+  margin-inline-start: -1px;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  width: calc(100% + 1px);
   box-sizing: border-box;
   pointer-events: auto;
+}
+
+.scrollspy-rail.toc-right .spy-item,
+.toc-sidebar.toc-right .toc-link,
+.scrollspy-rail.toc-right .toc-link,
+.toc-sidebar.toc-right .spy-item,
+[dir="rtl"] .spy-item,
+[dir="rtl"] .toc-link {
+  border-left: none;
+  border-right: 3px solid transparent;
+  border-inline-start: 3px solid transparent;
+  margin-left: 0;
+  margin-right: -1px;
+  margin-inline-start: -1px;
 }
 
 .spy-item:hover,
@@ -114,11 +150,23 @@
   background-color: var(--bg-chrome-hover);
 }
 
-/* Active TOC item: perfectly rectangular with only text color/weight change and subtle background */
+/* Active TOC item: thick teal border aligned with rail track and soft background */
 .spy-item.active,
 .toc-link.active {
   background-color: var(--accent-teal-soft, rgba(42, 127, 123, 0.12));
-  border: none;
+  border-left: 3px solid var(--accent-teal);
+  border-inline-start: 3px solid var(--accent-teal);
+}
+
+.scrollspy-rail.toc-right .spy-item.active,
+.toc-sidebar.toc-right .toc-link.active,
+.scrollspy-rail.toc-right .toc-link.active,
+.toc-sidebar.toc-right .spy-item.active,
+[dir="rtl"] .spy-item.active,
+[dir="rtl"] .toc-link.active {
+  border-left: none;
+  border-right: 3px solid var(--accent-teal);
+  border-inline-start: 3px solid var(--accent-teal);
 }
 
 /* Text labels */
@@ -166,11 +214,33 @@
 .toc-level-2 .spy-item,
 .toc-level-2 .toc-link {
   padding-left: 18px;
+  padding-inline-start: 18px;
+}
+
+.scrollspy-rail.toc-right .toc-level-2 .spy-item,
+.toc-sidebar.toc-right .toc-level-2 .spy-item,
+.scrollspy-rail.toc-right .toc-level-2 .toc-link,
+.toc-sidebar.toc-right .toc-level-2 .toc-link,
+[dir="rtl"] .toc-level-2 .spy-item,
+[dir="rtl"] .toc-level-2 .toc-link {
+  padding-left: 12px;
+  padding-right: 18px;
 }
 
 .toc-level-3 .spy-item,
 .toc-level-3 .toc-link {
   padding-left: 26px;
+  padding-inline-start: 26px;
+}
+
+.scrollspy-rail.toc-right .toc-level-3 .spy-item,
+.toc-sidebar.toc-right .toc-level-3 .spy-item,
+.scrollspy-rail.toc-right .toc-level-3 .toc-link,
+.toc-sidebar.toc-right .toc-level-3 .toc-link,
+[dir="rtl"] .toc-level-3 .spy-item,
+[dir="rtl"] .toc-level-3 .toc-link {
+  padding-left: 12px;
+  padding-right: 26px;
 }
 
 .toc-level-4 .spy-item,
@@ -180,6 +250,17 @@
 .toc-level-6 .spy-item,
 .toc-level-6 .toc-link {
   padding-left: 34px;
+  padding-inline-start: 34px;
+}
+
+.scrollspy-rail.toc-right .toc-level-4 .spy-item,
+.toc-sidebar.toc-right .toc-level-4 .spy-item,
+.scrollspy-rail.toc-right .toc-level-4 .toc-link,
+.toc-sidebar.toc-right .toc-level-4 .toc-link,
+[dir="rtl"] .toc-level-4 .spy-item,
+[dir="rtl"] .toc-level-4 .toc-link {
+  padding-left: 12px;
+  padding-right: 34px;
 }
 
 body.focus-mode .scrollspy-rail,

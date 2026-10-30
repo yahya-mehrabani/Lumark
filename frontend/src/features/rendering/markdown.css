@@ -326,8 +326,15 @@ body.focus-mode .floating-toolbar-container {
   overflow-y: auto;
   overflow-x: hidden;
   box-sizing: border-box;
-  scrollbar-gutter: stable;
   position: relative;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.markdown-viewport-body > .markdown-content::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .path-label {
@@ -468,14 +475,45 @@ body.focus-mode .markdown-content {
   text-align: right;
 }
 
-/* RTL list styling: padding-right instead of padding-left */
+/* RTL and Auto-dir list styling: explicit right-sided padding and right text alignment */
 .markdown-content ul[dir="rtl"],
 .markdown-content ol[dir="rtl"],
 .markdown-content[dir="rtl"] ul,
-.markdown-content[dir="rtl"] ol {
+.markdown-content[dir="rtl"] ol,
+.markdown-content ul[dir="auto"]:dir(rtl),
+.markdown-content ol[dir="auto"]:dir(rtl),
+.markdown-content ul:dir(rtl),
+.markdown-content ol:dir(rtl) {
   padding-left: 16px;
   padding-right: 2em;
+  padding-inline-start: 2em;
+  padding-inline-end: 16px;
+  text-align: right;
   box-sizing: border-box;
+}
+
+.markdown-content ul[dir="rtl"] li,
+.markdown-content ol[dir="rtl"] li,
+.markdown-content[dir="rtl"] li,
+.markdown-content li[dir="rtl"],
+.markdown-content ul[dir="auto"]:dir(rtl) li,
+.markdown-content ol[dir="auto"]:dir(rtl) li,
+.markdown-content li[dir="auto"]:dir(rtl),
+.markdown-content li:dir(rtl) {
+  text-align: right;
+  direction: rtl;
+}
+
+.markdown-content ul[dir="auto"],
+.markdown-content ol[dir="auto"] {
+  padding-inline-start: 2em;
+  padding-inline-end: 16px;
+  text-align: start;
+}
+
+.markdown-content ul[dir="auto"] li,
+.markdown-content ol[dir="auto"] li {
+  text-align: start;
 }
 
 /* RTL table header & cell alignment */
@@ -941,6 +979,8 @@ body.theme-dark .shiki span,
   margin-bottom: 1.25em;
   padding-left: 2em;
   padding-right: 16px;
+  padding-inline-start: 2em;
+  padding-inline-end: 16px;
   box-sizing: border-box;
 }
 

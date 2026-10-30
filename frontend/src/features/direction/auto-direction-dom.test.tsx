@@ -137,7 +137,7 @@ describe('Block-Level Direction in Markdown AST & DOM (US-017.2 / FR-DIR-001)', 
     });
 
     it('covers all standard block tags in DEFAULT_AUTO_DIR_TAGS', () => {
-      const expectedTags = ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li', 'blockquote', 'td', 'th', 'caption'];
+      const expectedTags = ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'blockquote', 'td', 'th', 'caption'];
       for (const tag of expectedTags) {
         expect(DEFAULT_AUTO_DIR_TAGS.has(tag)).toBe(true);
       }

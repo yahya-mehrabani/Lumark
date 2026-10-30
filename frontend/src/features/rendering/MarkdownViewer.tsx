@@ -371,8 +371,6 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
               </button>
             </div>
 
-            <div className="pill-divider" />
-
             <button
               type="button"
               className={`pill-icon-btn doc-search-toggle-btn ${search.isOpen ? 'active' : ''}`}
@@ -464,7 +462,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
       )}
 
       <ReadingScrollbar
-        viewportRef={viewportRef}
+        viewportRef={contentRef}
         side={resolvedScrollbarPosition}
       />
     </div>

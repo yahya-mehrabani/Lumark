@@ -30,7 +30,7 @@
   justify-content: space-between;
   padding: 0 14px;
   flex-shrink: 0;
-  z-index: 30;
+  z-index: 150;
   user-select: none;
   --wails-draggable: drag;
   -webkit-app-region: drag;
@@ -91,11 +91,13 @@
   background-color: var(--accent-teal);
   color: #ffffff;
   transition: opacity 0.15s ease, transform 0.12s ease;
+  filter: none;
 }
 
 .app-brand-btn:hover .brand-badge {
   opacity: 0.9;
   transform: scale(1.02);
+  filter: none;
 }
 
 .app-brand-btn:active .brand-badge {
