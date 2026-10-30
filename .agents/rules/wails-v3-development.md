@@ -1,27 +1,25 @@
 ---
 trigger: model_decision
-description: Trigger when working on Wails v3 app initialization, Go service bindings, desktop windows/dialogs/events, wails3 CLI commands (dev, build, doctor, task), or cross-platform packaging.
+description: Trigger when working on Wails v3 app init, Go service bindings, windows/dialogs/events, wails3 CLI, or packaging.
 ---
 
 # Wails v3 Development Standards
 
-## Strict Wails v3 Version Guard
-- This project uses **Wails v3** exclusively.
-- NEVER use Wails v2 APIs, `wails.json` schemas, `wails.Run(&options.App{...})` v2 patterns, or `@wailsapp/runtime` v2 imports.
-- Before diagnosing toolchain or build failures, verify the environment with `go version` (must be Go 1.25+) and `wails3 doctor`.
+## Strict Version Guard
+- **Wails v3 ONLY.** NEVER use v2 APIs, `wails.json` schemas, `wails.Run(...)`, or `@wailsapp/runtime` v2.
+- Verify environment: `go version` (1.25+) and `wails3 doctor`.
 
-## Application and Service Architecture
-- Follow the project's established `application.New(...)` initialization, service registration (`application.NewService(...)`), window creation, and event emission patterns.
-- Expose only necessary public methods on registered Go service structs; keep internal helpers unexported so Wails binding generation remains clean.
-- Return explicit `error` values from bound Go service methods and handle rejected promises properly on the frontend.
-- Use Wails v3 runtime APIs for dialogs, menus, window controls, and custom events consistently with existing codebase usage.
+## App & Services
+- Follow existing `application.New(...)`, `NewService(...)`, and event emission patterns.
+- Expose only necessary public Go methods. Keep helpers unexported to avoid binding clutter.
+- Always return explicit `error` from Go methods; handle promise rejections in frontend.
+- Use Wails v3 runtime APIs for dialogs, menus, and window controls.
 
-## Generated Bindings Discipline
-- NEVER manually edit auto-generated Wails v3 binding files in the frontend directory.
-- Whenever you add, rename, or change the signature of an exported Go service method or struct, regenerate bindings using the project's documented `wails3` / Taskfile command and verify frontend TypeScript compilation.
+## Generated Bindings
+- **NEVER manually edit auto-generated binding files.**
+- If Go signatures change, regenerate bindings via Taskfile/`wails3` and verify TypeScript compilation.
 
-## Build and CLI Workflow
-- Inspect `Taskfile.yml` and the `build/` directory before running any build or packaging command.
-- Do NOT execute `wails3 dev` as a blocking foreground command in the agent terminal during automated verification; instead, validate using `wails3 build`, `go test ./...`, and frontend build/typecheck scripts.
-- Use `wails3 task` or the repository's configured task runner commands for platform-specific builds.
-- Remember that a passing Windows cross-build inside WSL only validates compilation, not native Windows WebView2 runtime behavior.
+## Build & CLI
+- Read `Taskfile.yml` and `build/` before building.
+- **NEVER run `wails3 dev` as a blocking command** in the agent terminal. Validate via `wails3 build`, `go test ./...`, and frontend build scripts.
+- WSL cross-builds only validate compilation, NOT native Windows WebView2 behavior.
