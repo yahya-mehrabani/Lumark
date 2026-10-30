@@ -195,6 +195,20 @@ describe('AppShell Integration & Component Tests (US-007.4)', () => {
     // Test Ctrl+H shortcut
     fireEvent.keyDown(window, { key: 'H', ctrlKey: true });
     expect(handleNavigateHome).toHaveBeenCalledTimes(2);
+
+    // Test Ctrl+Shift+H shortcut (Issue 10)
+    fireEvent.keyDown(window, { key: 'h', ctrlKey: true, shiftKey: true });
+    expect(handleNavigateHome).toHaveBeenCalledTimes(3);
+
+    // Test Ctrl+R opens menu and recents submenu (Issue 11)
+    fireEvent.keyDown(window, { key: 'r', ctrlKey: true });
+    expect(screen.getByTestId('header-dropdown-menu')).toBeInTheDocument();
+    expect(screen.getByTestId('recents-submenu')).toBeInTheDocument();
+
+    // Test second Ctrl+R toggles them closed (Issue 11)
+    fireEvent.keyDown(window, { key: 'r', ctrlKey: true });
+    expect(screen.queryByTestId('header-dropdown-menu')).toBeNull();
+    expect(screen.queryByTestId('recents-submenu')).toBeNull();
   });
 
   it('renders window control buttons (minimize, maximize, close) and triggers Wails Window runtime methods', () => {

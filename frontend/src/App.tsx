@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { Events, WML, Window } from "@wailsio/runtime";
 import { SpikeDocumentService } from "../bindings/markdown-viewer";
 import * as DialogService from "../bindings/markdown-viewer/internal/dialogs/service";
@@ -6,6 +6,7 @@ import { MarkdownViewer } from './MarkdownViewer';
 import { AppShell } from './features/shell/AppShell';
 import { loadDroppedFiles } from './features/shell/batchLoader';
 import { tabStore } from './features/tabs/tabStore';
+import type { TabItem } from './features/tabs/types';
 
 import { triggerPrint } from './features/viewport/printController';
 import { SettingsModal, settingsStore } from './features/preferences';
@@ -13,6 +14,75 @@ import { recentsStore, useRecentFiles } from './features/recents';
 import { restoreTabsOnStartup, saveOpenTabsToSettings, handleFileChanged, syncTabWatches, WailsWatcherAdapter } from './features/tabs';
 import { ErrorBoundary } from './features/errors';
 import { ToastContainer, defaultToastStore } from './features/notifications';
+
+interface DocumentTabRendererProps {
+  tab: TabItem;
+  onOpenDocument: (targetPath: string) => void;
+  onPrint: () => void;
+}
+
+const DocumentTabRenderer = React.memo<DocumentTabRendererProps>(({ tab, onOpenDocument, onPrint }) => {
+  const documentProp = useMemo(
+    () => ({
+      filePath: tab.filePath,
+      filename: tab.filename,
+      dir: tab.parentDir,
+      content: tab.content,
+    }),
+    [tab.filePath, tab.filename, tab.parentDir, tab.content]
+  );
+
+  return (
+    <>
+      {tab.status === 'missing' && (
+        <div
+          className="document-error-notice"
+          role="alert"
+          data-testid="missing-file-banner"
+          style={{
+            margin: '16px auto 0',
+            maxWidth: '920px',
+            width: 'min(920px, 100%)',
+            padding: '12px 16px',
+            borderRadius: '6px',
+            background: 'rgba(239, 68, 68, 0.15)',
+            border: '1px solid rgba(239, 68, 68, 0.4)',
+            color: '#fca5a5',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            boxSizing: 'border-box',
+          }}
+        >
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+            <line x1="12" y1="9" x2="12" y2="13" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+          <span>
+            <strong>File missing on disk:</strong> {tab.errorMessage || 'This file has been deleted or moved.'}
+          </span>
+        </div>
+      )}
+      <MarkdownViewer
+        document={documentProp}
+        onOpenDocument={onOpenDocument}
+        onPrint={onPrint}
+      />
+    </>
+  );
+});
+DocumentTabRenderer.displayName = 'DocumentTabRenderer';
 
 export function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
@@ -38,7 +108,9 @@ export function App() {
     defaultToastStore.showInfo(message);
   };
 
-  const loadDocumentPath = (path: string, silent = false) => {
+  const handleOpenFileRef = useRef<() => Promise<void>>();
+
+  const loadDocumentPath = useCallback((path: string, silent = false) => {
     SpikeDocumentService.LoadFile(path)
       .then((d) => {
         tabStore.openTab({
@@ -64,15 +136,15 @@ export function App() {
           status: 'error',
           errorMessage: String(err),
         });
-        defaultToastStore.showError(err, () => handleOpenFile());
+        defaultToastStore.showError(err, () => handleOpenFileRef.current?.());
       });
-  };
+  }, [addRecentFile]);
 
-  const handlePrint = () => {
+  const handlePrint = useCallback(() => {
     triggerPrint({
       onError: (err) => defaultToastStore.showError(err),
     });
-  };
+  }, []);
 
   useEffect(() => {
     // Globally disable browser default right-click menu
@@ -223,7 +295,7 @@ export function App() {
     };
   }, []);
 
-  const handleOpenFile = async () => {
+  const handleOpenFile = useCallback(async () => {
     try {
       const paths = await DialogService.OpenFiles();
       if (paths && paths.length > 0) {
@@ -241,7 +313,26 @@ export function App() {
       console.error('Failed to open file dialog:', err);
       defaultToastStore.showError(err);
     }
-  };
+  }, [loadDocumentPath]);
+  handleOpenFileRef.current = handleOpenFile;
+
+  const handleOpenDocument = useCallback(
+    (targetPath: string) => {
+      loadDocumentPath(targetPath);
+    },
+    [loadDocumentPath]
+  );
+
+  const renderDocument = useCallback(
+    (tab: TabItem) => (
+      <DocumentTabRenderer
+        tab={tab}
+        onOpenDocument={handleOpenDocument}
+        onPrint={handlePrint}
+      />
+    ),
+    [handleOpenDocument, handlePrint]
+  );
 
   const handleFileDrop = async (files: File[]) => {
     await loadDroppedFiles(files, {
@@ -260,64 +351,11 @@ export function App() {
         onOpenSettings={() => setIsSettingsOpen(true)}
         onNavigateHome={() => tabStore.switchTab(null)}
         onFileDrop={handleFileDrop}
-        onSelectRecentFile={(filePath) => loadDocumentPath(filePath)}
+        onSelectRecentFile={handleOpenDocument}
         onRemoveRecentFile={removeRecentFile}
         onClearRecentFiles={clearRecentFiles}
         recentFiles={recentFiles}
-        renderDocument={(tab) => (
-          <>
-            {tab.status === 'missing' && (
-              <div
-                className="document-error-notice"
-                role="alert"
-                data-testid="missing-file-banner"
-                style={{
-                  margin: '16px auto 0',
-                  maxWidth: '920px',
-                  width: 'min(920px, 100%)',
-                  padding: '12px 16px',
-                  borderRadius: '6px',
-                  background: 'rgba(239, 68, 68, 0.15)',
-                  border: '1px solid rgba(239, 68, 68, 0.4)',
-                  color: '#fca5a5',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  boxSizing: 'border-box',
-                }}
-              >
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
-                  <line x1="12" y1="9" x2="12" y2="13" />
-                  <line x1="12" y1="17" x2="12.01" y2="17" />
-                </svg>
-                <span>
-                  <strong>File missing on disk:</strong> {tab.errorMessage || 'This file has been deleted or moved.'}
-                </span>
-              </div>
-            )}
-            <MarkdownViewer
-              document={{
-                filePath: tab.filePath,
-                filename: tab.filename,
-                dir: tab.parentDir,
-                content: tab.content,
-              }}
-              onOpenDocument={(targetPath) => loadDocumentPath(targetPath)}
-              onPrint={handlePrint}
-            />
-          </>
-        )}
+        renderDocument={renderDocument}
       />
 
       <SettingsModal

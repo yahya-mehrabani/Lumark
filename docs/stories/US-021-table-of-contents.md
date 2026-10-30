@@ -216,7 +216,7 @@ Build an interactive document Table of Contents (TOC) sidebar:
        ✓ falls back to the heading directly above viewport when no heading is currently intersecting
      ✓ useTocToggle hook (3)
        ✓ manages open/close state programmatically
-       ✓ toggles open/close via Ctrl+Shift+O and Cmd+Shift+O keyboard shortcuts
+       ✓ toggles open/close via Ctrl+L and Cmd+L keyboard shortcuts
        ✓ cleanly disables and forces collapsed state when document has zero headings
      ✓ Component Toggle & Layout Preservation (1)
        ✓ collapses and restores TableOfContents cleanly when isOpen changes
@@ -251,7 +251,7 @@ Build an interactive document Table of Contents (TOC) sidebar:
      ✓ Criterion 4: Documents with identical heading titles link to distinct unique anchors
      ✓ Criterion 5: Documents without headings collapse the TOC sidebar cleanly and disable the toggle
      ✓ Bidirectional Support: Preserves Persian and Arabic script headings in TOC outline and anchors
-     ✓ Keyboard Navigation: Toggles outline on Ctrl+Shift+O keyboard shortcut
+     ✓ Keyboard Navigation: Toggles outline on Ctrl+L keyboard shortcut
  ✓ src/features/navigation/toc-scroll-spy.test.tsx (7 tests) 265ms
  ✓ src/features/navigation/toc-sidebar-toggle.test.tsx (6 tests) 131ms
  ✓ src/features/navigation/toc-generator.test.ts (16 tests) 327ms

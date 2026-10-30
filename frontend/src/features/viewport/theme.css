@@ -24,6 +24,9 @@ body.theme-dark,
   --bg-modal: #242320;
   --bg-chrome: #242320;
   --bg-chrome-hover: #2E2D29;
+  --bg-tab-active: #2E2D29;
+  --border-tab-active: #3E3C37;
+  --bg-tab-inactive: rgba(36, 35, 32, 0.55);
   --bg-tab-hover: #2E2D29;
   --bg-pill: rgba(30, 30, 28, 0.88);
   --bg-control: #2E2D29;
@@ -110,6 +113,9 @@ body.theme-light,
   --bg-modal: #FCFBF8;
   --bg-chrome: #F2F1EC;
   --bg-chrome-hover: #E8E6DF;
+  --bg-tab-active: #FFFDFB;
+  --border-tab-active: var(--border-strong);
+  --bg-tab-inactive: rgba(242, 241, 236, 0.55);
   --bg-tab-hover: rgba(255, 255, 255, 0.45);
   --bg-pill: rgba(255, 255, 253, 0.88);
   --bg-control: #F3F1EC;
@@ -196,6 +202,9 @@ body.theme-light,
     --bg-modal: #FCFBF8;
     --bg-chrome: #F2F1EC;
     --bg-chrome-hover: #E8E6DF;
+    --bg-tab-active: #FFFDFB;
+    --border-tab-active: var(--border-strong);
+    --bg-tab-inactive: rgba(242, 241, 236, 0.55);
     --bg-tab-hover: rgba(255, 255, 255, 0.45);
     --bg-pill: rgba(255, 255, 253, 0.88);
     --bg-control: #F3F1EC;

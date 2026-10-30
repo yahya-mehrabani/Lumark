@@ -251,9 +251,48 @@ Another search keyword appears here.
     const firstMark = marks[0];
     expect(firstMark.textContent).toBe('س');
     expect(firstMark.style.unicodeBidi).toBe('isolate');
+    expect(firstMark.getAttribute('dir')).toBe('auto');
     expect(firstMark.style.display).toBe('inline');
     expect(firstMark.style.padding).toBe('0px');
     expect(firstMark.nextSibling?.textContent).toContain('ند');
+  });
+
+  it('Preserves highlights across shell/prop re-renders without unmounting heading subtrees', () => {
+    const docWithHeading = '# Mermaid Diagram\n\nSome text with Mermaid Diagram.';
+    const { rerender } = render(
+      <MarkdownViewer
+        document={{
+          filename: 'doc.md',
+          filePath: '/doc.md',
+          content: docWithHeading,
+        }}
+        onOpenDocument={() => {}}
+      />
+    );
+
+    fireEvent.click(screen.getByTestId('doc-search-toggle'));
+    const input = screen.getByTestId('search-input');
+    act(() => {
+      fireEvent.change(input, { target: { value: 'Mermaid' } });
+    });
+
+    const marksBefore = screen.getByTestId('markdown-content').querySelectorAll('mark[data-search-match="true"]');
+    expect(marksBefore.length).toBe(2);
+
+    // Simulate shell re-render with new function identity for onOpenDocument
+    rerender(
+      <MarkdownViewer
+        document={{
+          filename: 'doc.md',
+          filePath: '/doc.md',
+          content: docWithHeading,
+        }}
+        onOpenDocument={() => {}}
+      />
+    );
+
+    const marksAfter = screen.getByTestId('markdown-content').querySelectorAll('mark[data-search-match="true"]');
+    expect(marksAfter.length).toBe(2);
   });
 
   it('Case Sensitivity Toggle: updates matches dynamically between case-insensitive and case-sensitive', () => {

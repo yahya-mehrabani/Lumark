@@ -233,7 +233,7 @@ console.log('No headings here');
     );
   });
 
-  it('Keyboard Navigation: Toggles outline on Ctrl+Shift+O keyboard shortcut', () => {
+  it('Keyboard Navigation: Toggles outline on Ctrl+L keyboard shortcut', () => {
     const markdown = `
 # Title
 ## Section
@@ -247,13 +247,12 @@ console.log('No headings here');
     // Initially open by default when document has headings (Issue 2)
     expect(screen.getByTestId('toc-sidebar')).toBeInTheDocument();
 
-    // Press Ctrl+Shift+O to close
+    // Press Ctrl+L to close
     act(() => {
       window.dispatchEvent(
         new KeyboardEvent('keydown', {
-          key: 'o',
+          key: 'l',
           ctrlKey: true,
-          shiftKey: true,
           bubbles: true,
         })
       );
@@ -261,13 +260,12 @@ console.log('No headings here');
 
     expect(screen.queryByTestId('toc-sidebar')).not.toBeInTheDocument();
 
-    // Press Ctrl+Shift+O again to re-open
+    // Press Ctrl+L again to re-open
     act(() => {
       window.dispatchEvent(
         new KeyboardEvent('keydown', {
-          key: 'o',
+          key: 'l',
           ctrlKey: true,
-          shiftKey: true,
           bubbles: true,
         })
       );

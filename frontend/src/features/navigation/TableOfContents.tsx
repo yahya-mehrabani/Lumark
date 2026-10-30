@@ -279,7 +279,7 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
         </button>
       )}
       {hasHeadings && counterText && (
-        <div className="toc-counter" data-testid="toc-counter">
+        <div className="toc-counter" dir="ltr" data-testid="toc-counter">
           {counterText}
         </div>
       )}

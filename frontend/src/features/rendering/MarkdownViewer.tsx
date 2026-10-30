@@ -65,6 +65,89 @@ interface MarkdownContentBodyProps {
   onNavigateAnchor?: (anchor: string) => void;
 }
 
+interface MarkdownDocContextValue {
+  docDir?: string;
+  onOpenDocument?: (filePath: string, anchor?: string) => void;
+  onOpenExternalUrl?: (url: string) => Promise<void> | void;
+  onNavigateAnchor?: (anchor: string) => void;
+}
+
+const MarkdownDocContext = React.createContext<MarkdownDocContextValue>({});
+
+const MarkdownH1 = (props: React.ComponentProps<'h1'>) => <Heading level={1} {...props} />;
+const MarkdownH2 = (props: React.ComponentProps<'h2'>) => <Heading level={2} {...props} />;
+const MarkdownH3 = (props: React.ComponentProps<'h3'>) => <Heading level={3} {...props} />;
+const MarkdownH4 = (props: React.ComponentProps<'h4'>) => <Heading level={4} {...props} />;
+const MarkdownH5 = (props: React.ComponentProps<'h5'>) => <Heading level={5} {...props} />;
+const MarkdownH6 = (props: React.ComponentProps<'h6'>) => <Heading level={6} {...props} />;
+const MarkdownCode = (props: React.ComponentProps<'code'>) => <code dir="ltr" {...props} />;
+const MarkdownStyle = ({ children, ...props }: React.ComponentProps<'style'>) => {
+  const cssText =
+    typeof children === 'string'
+      ? children
+      : Array.isArray(children)
+        ? children.join('')
+        : String(children ?? '');
+  return <style dangerouslySetInnerHTML={{ __html: cssText }} {...props} />;
+};
+const MarkdownTable = (props: React.ComponentProps<'table'>) => (
+  <div className="table-wrapper" role="region" tabIndex={0} aria-label="Table">
+    <table {...props} />
+  </div>
+);
+const MarkdownImg = (props: any) => {
+  const { docDir } = React.useContext(MarkdownDocContext);
+  return <MarkdownImage docDir={docDir} {...props} />;
+};
+const MarkdownA = (props: any) => {
+  const { docDir, onOpenDocument, onOpenExternalUrl, onNavigateAnchor } =
+    React.useContext(MarkdownDocContext);
+  return (
+    <MarkdownLink
+      docDir={docDir}
+      onOpenMarkdown={onOpenDocument}
+      onOpenExternal={onOpenExternalUrl}
+      onNavigateAnchor={onNavigateAnchor}
+      {...props}
+    />
+  );
+};
+const MarkdownPre = ({ children, node, ...props }: any) => {
+  if (React.isValidElement(children)) {
+    const codeProps = children.props as { className?: string; children?: React.ReactNode };
+    const rawCode =
+      typeof codeProps.children === 'string'
+        ? codeProps.children
+        : String(codeProps.children ?? '');
+    const match = /language-([a-zA-Z0-9_+-]+)/.exec(codeProps.className || '');
+    const language = match ? match[1] : undefined;
+    if (language?.toLowerCase() === 'mermaid') {
+      return <MermaidBlock rawCode={rawCode} />;
+    }
+    return <CodeBlock rawCode={rawCode} language={language} />;
+  }
+  return (
+    <pre dir="ltr" {...props}>
+      {children}
+    </pre>
+  );
+};
+
+const MARKDOWN_COMPONENTS = {
+  h1: MarkdownH1,
+  h2: MarkdownH2,
+  h3: MarkdownH3,
+  h4: MarkdownH4,
+  h5: MarkdownH5,
+  h6: MarkdownH6,
+  code: MarkdownCode,
+  style: MarkdownStyle,
+  table: MarkdownTable,
+  img: MarkdownImg,
+  a: MarkdownA,
+  pre: MarkdownPre,
+} as const;
+
 const MarkdownContentBody = React.memo(
   React.forwardRef<HTMLElement, MarkdownContentBodyProps>(
     (
@@ -79,6 +162,16 @@ const MarkdownContentBody = React.memo(
       },
       ref
     ) => {
+      const docContextValue = React.useMemo<MarkdownDocContextValue>(
+        () => ({
+          docDir,
+          onOpenDocument,
+          onOpenExternalUrl,
+          onNavigateAnchor,
+        }),
+        [docDir, onOpenDocument, onOpenExternalUrl, onNavigateAnchor]
+      );
+
       return (
         <main
           ref={ref}
@@ -92,72 +185,22 @@ const MarkdownContentBody = React.memo(
           }}
         >
           <SlugContext.Provider value={slugTracker}>
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm, remarkMath, remarkStrictMath]}
-              rehypePlugins={[
-                rehypeRaw,
-                [rehypeSanitize, SANITY_HTML_SCHEMA],
-                rehypeScopedCss,
-                [rehypeKatex, STRICT_KATEX_OPTIONS],
-                [rehypeAutoDirection, { userPreference: activePref }],
-              ]}
-              urlTransform={(url) => url}
-              components={{
-                h1: ({ node, ...props }) => <Heading level={1} {...props} />,
-                h2: ({ node, ...props }) => <Heading level={2} {...props} />,
-                h3: ({ node, ...props }) => <Heading level={3} {...props} />,
-                h4: ({ node, ...props }) => <Heading level={4} {...props} />,
-                h5: ({ node, ...props }) => <Heading level={5} {...props} />,
-                h6: ({ node, ...props }) => <Heading level={6} {...props} />,
-                code: ({ node, ...props }) => <code dir="ltr" {...props} />,
-                style: ({ node, children, ...props }) => {
-                  const cssText =
-                    typeof children === 'string'
-                      ? children
-                      : Array.isArray(children)
-                        ? children.join('')
-                        : String(children ?? '');
-                  return <style dangerouslySetInnerHTML={{ __html: cssText }} {...props} />;
-                },
-                table: ({ node, ...props }) => (
-                  <div className="table-wrapper" role="region" tabIndex={0} aria-label="Table">
-                    <table {...props} />
-                  </div>
-                ),
-                img: ({ node, ...props }) => <MarkdownImage docDir={docDir} {...props} />,
-                a: ({ node, ...props }) => (
-                  <MarkdownLink
-                    docDir={docDir}
-                    onOpenMarkdown={onOpenDocument}
-                    onOpenExternal={onOpenExternalUrl}
-                    onNavigateAnchor={onNavigateAnchor}
-                    {...props}
-                  />
-                ),
-                pre: ({ children, node, ...props }) => {
-                  if (React.isValidElement(children)) {
-                    const codeProps = children.props as { className?: string; children?: React.ReactNode };
-                    const rawCode =
-                      typeof codeProps.children === 'string'
-                        ? codeProps.children
-                        : String(codeProps.children ?? '');
-                    const match = /language-([a-zA-Z0-9_+-]+)/.exec(codeProps.className || '');
-                    const language = match ? match[1] : undefined;
-                    if (language?.toLowerCase() === 'mermaid') {
-                      return <MermaidBlock rawCode={rawCode} />;
-                    }
-                    return <CodeBlock rawCode={rawCode} language={language} />;
-                  }
-                  return (
-                    <pre dir="ltr" {...props}>
-                      {children}
-                    </pre>
-                  );
-                },
-              }}
-            >
-              {content}
-            </ReactMarkdown>
+            <MarkdownDocContext.Provider value={docContextValue}>
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm, remarkMath, remarkStrictMath]}
+                rehypePlugins={[
+                  rehypeRaw,
+                  [rehypeSanitize, SANITY_HTML_SCHEMA],
+                  rehypeScopedCss,
+                  [rehypeKatex, STRICT_KATEX_OPTIONS],
+                  [rehypeAutoDirection, { userPreference: activePref }],
+                ]}
+                urlTransform={(url) => url}
+                components={MARKDOWN_COMPONENTS}
+              >
+                {content}
+              </ReactMarkdown>
+            </MarkdownDocContext.Provider>
           </SlugContext.Provider>
         </main>
       );
@@ -222,10 +265,36 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
     }
   }, [filePath, globalTocDefault, showToc, tocToggle]);
 
-  const isTocOpen =
+  // Responsive TOC: hide automatically on narrow viewports (< 1240px) without touching manual setting
+  const [isNarrowScreen, setIsNarrowScreen] = React.useState<boolean>(() => {
+    if (typeof window !== 'undefined' && window.matchMedia) {
+      return window.matchMedia('(max-width: 1240px)').matches;
+    }
+    return false;
+  });
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const mediaQuery = window.matchMedia('(max-width: 1240px)');
+    const handleMediaChange = (e: MediaQueryListEvent) => {
+      setIsNarrowScreen(e.matches);
+    };
+    setIsNarrowScreen(mediaQuery.matches);
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', handleMediaChange);
+      return () => mediaQuery.removeEventListener('change', handleMediaChange);
+    } else {
+      mediaQuery.addListener(handleMediaChange);
+      return () => mediaQuery.removeListener(handleMediaChange);
+    }
+  }, []);
+
+  const userWantsToc =
     showToc !== undefined
       ? showToc && tocData.hasHeadings
       : tocToggle.isOpen && tocData.hasHeadings;
+
+  const isTocOpen = userWantsToc && !isNarrowScreen;
 
   const contentRef = React.useRef<HTMLElement | null>(null);
   const search = useSearch({ containerRef: contentRef });
@@ -390,10 +459,10 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
               id="outlineToggleBtn"
               onClick={tocToggle.toggle}
               disabled={!tocData.hasHeadings}
-              aria-label="Toggle Outline Scrollspy (Ctrl+Shift+O)"
+              aria-label="Toggle Outline Scrollspy (Ctrl+L)"
               title={
                 tocData.hasHeadings
-                  ? 'Toggle Outline Scrollspy (Ctrl+Shift+O)'
+                  ? 'Toggle Outline Scrollspy (Ctrl+L)'
                   : 'No headings in document'
               }
               aria-expanded={isTocOpen}

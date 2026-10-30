@@ -77,6 +77,7 @@ export function applyHighlights(
         mark.className = 'search-match';
         mark.setAttribute('data-search-match', 'true');
         mark.setAttribute('data-match-index', String(match.index));
+        mark.setAttribute('dir', 'auto');
         mark.style.unicodeBidi = 'isolate';
         mark.style.display = 'inline';
         mark.style.padding = '0';

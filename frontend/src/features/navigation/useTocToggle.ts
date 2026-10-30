@@ -9,7 +9,7 @@ export interface UseTocToggleOptions {
 /**
  * Hook to manage Table of Contents sidebar visibility and keyboard shortcuts.
  * Conforms to PRD Section 5.5 and Story US-021.3.
- * Supports toggling via Ctrl+Shift+O / Cmd+Shift+O / Alt+T.
+ * Supports toggling via Ctrl+L / Cmd+L / Alt+T.
  * Cleanly disables/collapses outline when document has zero headings.
  */
 export function useTocToggle(options: UseTocToggleOptions = {}) {
@@ -46,10 +46,10 @@ export function useTocToggle(options: UseTocToggleOptions = {}) {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Shortcut 1: Ctrl+Shift+O / Cmd+Shift+O
+      // Shortcut: Ctrl+L / Cmd+L / Alt+T
       const isCmdOrCtrl = e.ctrlKey || e.metaKey;
       const isToggleKey =
-        (isCmdOrCtrl && e.shiftKey && (e.key === 'o' || e.key === 'O')) ||
+        (isCmdOrCtrl && (e.key === 'l' || e.key === 'L')) ||
         (e.altKey && (e.key === 't' || e.key === 'T'));
 
       if (isToggleKey) {

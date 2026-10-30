@@ -31,7 +31,7 @@ interface ActiveTabContentProps {
   renderDocument?: (activeTab: TabItem) => React.ReactNode;
 }
 
-const ActiveTabContent: React.FC<ActiveTabContentProps> = ({ tab, renderDocument }) => {
+const ActiveTabContent = React.memo<ActiveTabContentProps>(({ tab, renderDocument }) => {
   if (renderDocument) {
     return <>{renderDocument(tab)}</>;
   }
@@ -69,7 +69,8 @@ const ActiveTabContent: React.FC<ActiveTabContentProps> = ({ tab, renderDocument
       </div>
     </div>
   );
-};
+});
+ActiveTabContent.displayName = 'ActiveTabContent';
 
 export const AppShell: React.FC<AppShellProps> = ({
   store = defaultStore,
@@ -93,6 +94,10 @@ export const AppShell: React.FC<AppShellProps> = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isRecentsSubmenuOpen, setIsRecentsSubmenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const isMenuOpenRef = useRef(isMenuOpen);
+  isMenuOpenRef.current = isMenuOpen;
+  const isRecentsSubmenuOpenRef = useRef(isRecentsSubmenuOpen);
+  isRecentsSubmenuOpenRef.current = isRecentsSubmenuOpen;
 
   const handleNavigateHome = () => {
     if (onNavigateHome) {
@@ -146,13 +151,18 @@ export const AppShell: React.FC<AppShellProps> = ({
   // Global shortcuts
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && (e.key === 'h' || e.key === 'H')) {
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'h' || e.key === 'H')) {
         e.preventDefault();
         handleNavigateHome();
       } else if ((e.ctrlKey || e.metaKey) && !e.shiftKey && (e.key === 'r' || e.key === 'R')) {
         e.preventDefault();
-        setIsMenuOpen(true);
-        setIsRecentsSubmenuOpen(true);
+        if (isMenuOpenRef.current && isRecentsSubmenuOpenRef.current) {
+          setIsMenuOpen(false);
+          setIsRecentsSubmenuOpen(false);
+        } else {
+          setIsMenuOpen(true);
+          setIsRecentsSubmenuOpen(true);
+        }
       } else if ((e.ctrlKey || e.metaKey) && !e.shiftKey && (e.key === 'o' || e.key === 'O')) {
         e.preventDefault();
         onOpenFile?.();

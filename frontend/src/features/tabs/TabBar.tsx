@@ -284,23 +284,18 @@ export const TabBar: React.FC<TabBarProps> = ({
           aria-orientation="horizontal"
           onKeyDown={handleKeyDown}
         >
-          {visibleTabs.map((tab, index) => {
+          {visibleTabs.map((tab) => {
             const isActive = tab.id === activeTabId;
-            const prevTab = index > 0 ? visibleTabs[index - 1] : null;
-            const isPrevActive = prevTab ? prevTab.id === activeTabId : false;
-            const showDivider = index > 0 && !isActive && !isPrevActive;
 
             return (
-              <React.Fragment key={tab.id}>
-                {showDivider && <div className="tab-separator" aria-hidden="true" />}
-                <TabItem
-                  tab={tab}
-                  isActive={isActive}
-                  onSelect={onSelectTab}
-                  onClose={onCloseTab}
-                  onContextMenu={handleTabContextMenu}
-                />
-              </React.Fragment>
+              <TabItem
+                key={tab.id}
+                tab={tab}
+                isActive={isActive}
+                onSelect={onSelectTab}
+                onClose={onCloseTab}
+                onContextMenu={handleTabContextMenu}
+              />
             );
           })}
 

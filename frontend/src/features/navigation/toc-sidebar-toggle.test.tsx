@@ -145,33 +145,31 @@ describe('Active Heading Scroll Spy & Sidebar Toggle (US-021.3)', () => {
       expect(onToggle).toHaveBeenCalledWith(false);
     });
 
-    it('toggles open/close via Ctrl+Shift+O and Cmd+Shift+O keyboard shortcuts', () => {
+    it('toggles open/close via Ctrl+L and Cmd+L keyboard shortcuts', () => {
       const { result } = renderHook(() =>
         useTocToggle({ initialOpen: true, hasHeadings: true })
       );
 
       expect(result.current.isOpen).toBe(true);
 
-      // Press Ctrl+Shift+O
+      // Press Ctrl+L
       act(() => {
         window.dispatchEvent(
           new KeyboardEvent('keydown', {
-            key: 'o',
+            key: 'l',
             ctrlKey: true,
-            shiftKey: true,
             bubbles: true,
           })
         );
       });
       expect(result.current.isOpen).toBe(false);
 
-      // Press Cmd+Shift+O (Mac metaKey)
+      // Press Cmd+L (Mac metaKey)
       act(() => {
         window.dispatchEvent(
           new KeyboardEvent('keydown', {
-            key: 'O',
+            key: 'L',
             metaKey: true,
-            shiftKey: true,
             bubbles: true,
           })
         );
@@ -398,6 +396,75 @@ describe('Active Heading Scroll Spy & Sidebar Toggle (US-021.3)', () => {
       // Ensure spy-label is not given pointer-events: auto anywhere
       expect(cssContent).not.toMatch(/\.spy-label[^{]*\{[^}]*pointer-events:\s*auto/);
       expect(cssContent).not.toMatch(/\.toc-text[^{]*\{[^}]*pointer-events:\s*auto/);
+    });
+
+    it('TOC Counter has dir="ltr" to prevent bidi number reversal in RTL layout (Issue 2)', () => {
+      const items: TocItem[] = [
+        { id: 'h1', text: 'Heading 1', level: 1 },
+        { id: 'h2', text: 'Heading 2', level: 2 },
+      ];
+      render(<TableOfContents items={items} isOpen={true} position="right" />);
+      const counter = screen.getByTestId('toc-counter');
+      expect(counter).toHaveAttribute('dir', 'ltr');
+      expect(counter).toHaveTextContent('01 / 02');
+    });
+
+    it('verifies toc.css sets 2px logical rail border and zeroed start-radius on active items (Issues 3, 4, 5)', async () => {
+      const fs = await import('fs');
+      const path = await import('path');
+      const cssContent = fs.readFileSync(path.resolve(__dirname, 'toc.css'), 'utf-8');
+
+      expect(cssContent).toMatch(/border-inline-start:\s*2px\s+solid\s+var\(--border-subtle\)/);
+      expect(cssContent).toMatch(/border-inline-start:\s*2px\s+solid\s+var\(--accent-teal\)/);
+      expect(cssContent).toMatch(/border-start-start-radius:\s*0/);
+      expect(cssContent).toMatch(/border-end-start-radius:\s*0/);
+    });
+
+    it('Responsive TOC: automatically hides TOC when screen is narrow (< 1240px) and restores when wide without touching manual state (Issue 13)', async () => {
+      await settingsStore.resetSettings();
+      let changeListener: ((e: MediaQueryListEvent) => void) | null = null;
+      let matchesState = false;
+
+      window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+        matches: query === '(max-width: 1240px)' ? matchesState : false,
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn((event: string, handler: any) => {
+          if (event === 'change') changeListener = handler;
+        }),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      }));
+
+      const markdown = '# Head 1\n## Head 2';
+      render(
+        <MarkdownViewer
+          document={{ filename: 'responsive.md', content: markdown }}
+        />
+      );
+
+      // Wide screen: TOC is visible by default
+      expect(screen.getByTestId('toc-sidebar')).toBeInTheDocument();
+
+      // Screen shrinks (< 1240px)
+      act(() => {
+        matchesState = true;
+        changeListener?.({ matches: true } as MediaQueryListEvent);
+      });
+
+      // TOC is now hidden visually
+      expect(screen.queryByTestId('toc-sidebar')).not.toBeInTheDocument();
+
+      // Screen expands again (>= 1240px)
+      act(() => {
+        matchesState = false;
+        changeListener?.({ matches: false } as MediaQueryListEvent);
+      });
+
+      // TOC automatically reappears!
+      expect(screen.getByTestId('toc-sidebar')).toBeInTheDocument();
     });
   });
 });

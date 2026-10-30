@@ -4172,3 +4172,46 @@ This log is an append-only chronological record of all significant actions, veri
 - **All 8 Epics (`EPIC-001` through `EPIC-008`) Complete.**
 - **All 32 User Stories (`US-001` through `US-032`) Complete.**
 - **Next Permitted Action:** Post-Implementation Cross-Platform Validation Process (evaluating native Windows 10/11 x64 host and macOS Apple Silicon runtime integration per deferred checklist in `docs/release-checklist.md`).
+
+---
+
+## 2026-10-30 — UI/UX Defect Remediation & Layout Regression Fixes (13 Issues)
+
+### Context & Goals:
+- Remediate 13 diagnosed UI/UX bugs, bidi ordering defects, and layout regressions based on GLM and DeepSeek root-cause analysis investigations.
+
+### Work Completed:
+1. **Search & Bidi Issues (1a, 1b, 1c):**
+   - In `frontend/src/features/navigation/searchHighlighter.ts`: Added dynamic `dir="auto"` on match `<mark>` elements while strictly preserving `unicode-bidi: isolate` (needed for Persian cursive joining). Prevents LTR words from splitting or reordering in RTL contexts (Issues 1a, 1b).
+   - In `frontend/src/features/rendering/MarkdownViewer.tsx`: Hoisted `MARKDOWN_COMPONENTS` element map to module scope with `MarkdownDocContext` provider. Eliminates function identity regeneration and prevents ReactMarkdown from unmounting/remounting heading subtrees on re-renders, preserving `<mark>` DOM nodes (Issue 1c).
+   - In `frontend/src/App.tsx` and `frontend/src/features/shell/AppShell.tsx`: Stabilized `loadDocumentPath`, `onOpenDocument`, and `renderDocument` using `useCallback` and memoized `DocumentTabRenderer` and `ActiveTabContent` with `React.memo` (Issue 1c).
+2. **TOC Geometry & Section Counter (Issues 2, 3, 4, 5):**
+   - In `frontend/src/features/navigation/TableOfContents.tsx`: Added `dir="ltr"` to `.toc-counter` container so counter values (e.g. `01 / 08`) remain left-to-right regardless of rail direction (Issue 2).
+   - In `frontend/src/features/navigation/toc.css`: Added `unicode-bidi: isolate;` to `.toc-counter`.
+   - In `frontend/src/features/navigation/toc.css`: Set continuous rail line `.toc-list` to `2px` thickness. Replaced physical `border-left`/`border-right` with logical `border-inline-start`.
+   - In `frontend/src/features/navigation/toc.css`: Updated active TOC item to `2px` border to match rail line thickness, aligned with `-2px` inline margin and `calc(100% + 2px)` width.
+   - In `frontend/src/features/navigation/toc.css`: Zeroed out rail-facing corners of active items with logical properties (`border-start-start-radius: 0; border-end-start-radius: 0;`) while preserving outer `4px` corner radii (Issues 3, 4, 5).
+3. **Tabs & Header (Issues 6, 7, 9, 12):**
+   - In `frontend/src/features/viewport/theme.css`: Added dedicated tokens `--bg-tab-active`, `--border-tab-active`, and `--bg-tab-inactive` across dark and light palettes.
+   - In `frontend/src/features/tabs/tabs.css`: Styled active tab with distinct, brighter background token and matching bottom seam. Styled inactive tabs as subtle chips with background and border (Issues 6, 7).
+   - In `frontend/src/features/tabs/TabBar.tsx` and `tabs.css`: Completely removed `.tab-separator` vertical pipes (Issue 7).
+   - In `frontend/src/features/shell/shell.css`: Enlarged header icon button hit area to `32px` and SVG icon size from 18px to `20px !important` (Issue 9).
+   - In `frontend/src/features/tabs/tabs.css`: Enhanced `.tab-overflow-pill-btn` with solid `--bg-surface-hover` fill, `--border-strong` border, `26px` height, and `font-weight: 600` (Issue 12).
+4. **Shortcuts (Issues 8, 10, 11):**
+   - In `frontend/src/features/navigation/useTocToggle.ts`: Updated outline toggle shortcut to `Ctrl+L` / `Cmd+L` (keeping `Alt+T` alias) (Issue 8).
+   - In `frontend/src/features/rendering/MarkdownViewer.tsx`: Updated toolbar outline button aria-label and title to `Ctrl+L` (Issue 8).
+   - In `frontend/src/features/shell/AppShell.tsx`: Updated Home shortcut handler to accept both `Ctrl+H` and `Ctrl+Shift+H` without requiring `!e.shiftKey` (Issue 10).
+   - In `frontend/src/features/shell/AppShell.tsx`: Changed `Ctrl+R` Recent Files shortcut to toggle: closes both menu and submenu if currently open, otherwise opens them (Issue 11).
+5. **Responsive TOC (Issue 13):**
+   - In `frontend/src/features/rendering/MarkdownViewer.tsx`: Added `window.matchMedia('(max-width: 1240px)')` detection setting `isNarrowScreen`. Derived effective visibility as `const isTocOpen = userWantsToc && !isNarrowScreen`. Never invokes `tocToggle.close()` or mutates user settings when the viewport narrows, allowing automatic reappearance when the screen expands (Issue 13).
+   - In `frontend/src/features/navigation/toc.css`: Added fallback `@media (max-width: 1240px)` rule hiding rail.
+
+### Verification Results:
+- `npm run test:unit --prefix frontend -- src/features/navigation/search.test.tsx`: 10/10 passed (PASS).
+- `npm run test:unit --prefix frontend -- src/features/navigation/toc.test.tsx`: 7/7 passed (PASS).
+- `npm run test:unit --prefix frontend -- src/features/navigation/toc-sidebar-toggle.test.tsx`: 16/16 passed (PASS).
+- `npm run test:unit --prefix frontend -- src/features/tabs/`: 38/38 passed (PASS).
+- `npm run test:unit --prefix frontend -- src/features/shell/`: 20/20 passed (PASS).
+- `npm run test:unit --prefix frontend -- src/features/viewport/theme-tokens.test.ts`: 16/16 passed (PASS).
+- `npm run build --prefix frontend`: Production build succeeded in 2.25s with 0 errors (PASS).
+- `git diff --check`: 0 whitespace issues (PASS).
