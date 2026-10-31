@@ -295,3 +295,12 @@ $ golangci-lint run ./...
   3. Multiple diagrams in the same document render independently without cascade failure.
   4. Click directives and javascript: links are neutralized, preventing script execution.
   5. Oversized diagrams scroll horizontally within a bounded container without forcing full-window horizontal scrolling.
+
+### Post-Implementation Defect Remediation Evidence (2026-10-31)
+- **Defect:** Persian text inside Mermaid SVG nodes rendered in an unreadable generic fallback font. Root cause: `STRICT_MERMAID_CONFIG.fontFamily` was `Inter, system-ui, -apple-system, sans-serif`, which contains no Arabic-script font, and Mermaid's built-in themes hardcode `themeVariables.fontFamily` to `'"trebuchet ms", verdana, arial, sans-serif'` (sequence diagrams additionally default their per-diagram `actorFontFamily`/`noteFontFamily`/`messageFontFamily` to `'"Open Sans", sans-serif'`), so Vazirmatn was never in the resolution chain.
+- **Fix (frontend/src/features/rendering/mermaid-adapter.ts):**
+  - `fontFamily` now leads with `'"Vazirmatn", "Lora", "Inter", system-ui, -apple-system, sans-serif'`.
+  - Added `themeVariables: { fontFamily: '"Vazirmatn", "Lora", sans-serif' }` so every built-in theme inherits the Persian-aware stack for SVG `<text>` nodes.
+  - Pinned the sequence-diagram font keys (`actorFontFamily`, `noteFontFamily`, `messageFontFamily`) to the same stack because sequence rendering bypasses `themeVariables`.
+- **Verification (unit, jsdom):** `src/features/rendering/mermaid-adapter.test.ts` — 9/9 tests pass, including new tests asserting the config stack and that rendered flowchart/sequence SVG output contains `font-family` referencing `Vazirmatn`.
+- **Verification (real browser, headless Chromium audit):** rendered Persian flowchart nodes (`بارگذاری سند`, `مسیر معیار`) and sequence actors/messages compute `font-family: "Vazirmatn", "Lora", sans-serif`; CDP `CSS.getPlatformFontsForNode` reports the glyphs are actually painted by the served **Vazirmatn webfont** (e.g. actor text `رضا`/`علی` = `Vazirmatn (3 glyphs)`) with no generic-fallback contamination.

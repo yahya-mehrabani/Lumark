@@ -128,33 +128,35 @@ input[type="text"].search-bar-input {
   color: var(--danger);
 }
 
-/* Document Match Highlighting (supports RTL cursive joining & isolation) */
+/* Document Match Highlighting (bidi-transparent: no dir attribute, no
+   isolation box on the mark, so the browser's bidi algorithm keeps treating
+   the line as one continuous run and reorders naturally) */
 mark,
 mark.search-match,
 .search-match {
-  background-color: rgba(250, 204, 21, 0.45);
-  color: inherit;
+  display: inline;
   padding: 0;
   margin: 0;
+  unicode-bidi: normal;
+  background-color: rgba(250, 204, 21, 0.45);
+  color: inherit;
   border: none;
   border-radius: 0;
   font-weight: inherit;
-  unicode-bidi: isolate;
-  display: inline;
 }
 
 mark.search-match.active,
 .search-match.active {
-  background-color: #f97316;
-  color: #000000;
+  display: inline;
   padding: 0;
   margin: 0;
+  unicode-bidi: normal;
+  background-color: #f97316;
+  color: #000000;
   border: none;
   border-radius: 0;
   outline: none;
   font-weight: inherit;
-  unicode-bidi: isolate;
-  display: inline;
 }
 
 @media print {

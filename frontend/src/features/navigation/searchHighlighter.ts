@@ -77,11 +77,11 @@ export function applyHighlights(
         mark.className = 'search-match';
         mark.setAttribute('data-search-match', 'true');
         mark.setAttribute('data-match-index', String(match.index));
-        mark.setAttribute('dir', 'auto');
-        mark.style.unicodeBidi = 'isolate';
+        // Bidi-transparent wrapper: no dir attribute, no isolation.
         mark.style.display = 'inline';
         mark.style.padding = '0';
         mark.style.margin = '0';
+        mark.style.unicodeBidi = 'normal';
 
         if (match.index === activeIndex) {
           mark.classList.add('active');

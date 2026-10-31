@@ -4215,3 +4215,34 @@ This log is an append-only chronological record of all significant actions, veri
 - `npm run test:unit --prefix frontend -- src/features/viewport/theme-tokens.test.ts`: 16/16 passed (PASS).
 - `npm run build --prefix frontend`: Production build succeeded in 2.25s with 0 errors (PASS).
 - `git diff --check`: 0 whitespace issues (PASS).
+
+---
+
+## 2026-10-31 — Search Bidi Reordering & Persian Typography Remediation (Code & Mermaid)
+
+### Context & Goals:
+- Remediate Persian search highlighting bidi reordering where English words in RTL contexts were visually swapped (e.g. `(Mermaid Diagram)` becoming `(d DiagramMermai)`).
+- Remediate unreadable Persian fonts inside code blocks (`<pre>`, `<code>`, `.shiki`) and offline Mermaid diagrams by establishing robust Vazirmatn font stacks with `!important` and themeVariables.
+
+### Work Completed:
+1. **Search Bidi Isolation Removal:**
+   - In `frontend/src/features/navigation/searchHighlighter.ts`: Completely removed `dir="auto"` and `unicode-bidi: isolate` from match `<mark>` elements. Applied `display: inline; padding: 0; margin: 0; unicode-bidi: normal;`.
+   - In `frontend/src/features/navigation/search.css`: Removed `unicode-bidi: isolate`. Set `<mark>` CSS exactly to `display: inline; padding: 0; margin: 0; unicode-bidi: normal; background-color: rgba(250, 204, 21, 0.45);`. Active marks also set `unicode-bidi: normal`. Mark wrapper is now bidi-transparent so the Unicode Bidi Algorithm treats text across highlight boundaries as continuous runs without splitting LTR words inside RTL lines.
+   - In `frontend/src/features/navigation/search.test.tsx`: Added regression tests verifying `mark.style.unicodeBidi === 'normal'`, `mark.getAttribute('dir') === null`, and natural text order across siblings for `## نمودار فلوچارت (Mermaid Diagram)`.
+2. **Code Block Persian Typography:**
+   - In `frontend/src/features/rendering/markdown.css`: Ensured `pre`, `code`, and `.shiki` have `font-family: var(--font-mono), 'Vazirmatn', monospace !important;`. Applied `!important` to `.code-scroll-container pre`, `.markdown-content pre`, `.code-scroll-container code`, `.markdown-content pre code`, `.code-line-numbers`, and inline `code:not(pre code)`. Code blocks maintain `line-height: 1.6` to prevent Persian ascender/descender clipping.
+   - In `frontend/src/features/viewport/theme.css`: Ensured `--font-mono` includes `'Vazirmatn'` and imported the font via `@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600&display=swap');`.
+   - In `frontend/src/features/rendering/code-typography.test.ts`: Created unit tests asserting `pre`, `code`, and `.shiki` enforce the `!important` Vazirmatn font stack.
+3. **Mermaid Diagram Typography:**
+   - In `frontend/src/features/rendering/mermaid-adapter.ts`: Updated `STRICT_MERMAID_CONFIG` and `initMermaid` to enforce `themeVariables: { fontFamily: '"Vazirmatn", "Lora", sans-serif' }` and sequence diagram font keys.
+   - In `frontend/src/features/rendering/markdown.css`: Added `.mermaid-svg-wrapper svg text, .mermaid-lightbox-content svg text { font-family: "Vazirmatn", "Lora", sans-serif !important; }`.
+   - In `frontend/src/features/rendering/mermaid-adapter.test.ts`: Added unit tests asserting the config and SVG output contain `Vazirmatn`.
+4. **Font Loading:**
+   - Verified `frontend/index.html` loads `Vazirmatn:wght@400;500;600` via Google Fonts `<link>`, and added redundant `@import` to `theme.css`.
+
+### Verification Results:
+- `npm run test:unit --prefix frontend -- src/features/navigation/search.test.tsx`: 11/11 passed (PASS).
+- `npm run test:unit --prefix frontend -- src/features/rendering/code-typography.test.ts`: 6/6 passed (PASS).
+- `npm run test:unit --prefix frontend -- src/features/rendering/mermaid-adapter.test.ts`: 9/9 passed (PASS).
+- `npm run build --prefix frontend`: Production build (`tsc && vite build --mode production`) succeeded with 0 errors (PASS).
+- `git diff --check`: 0 whitespace errors (PASS).

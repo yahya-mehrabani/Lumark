@@ -709,7 +709,7 @@ h6,
   background-color: var(--bg-inline-code);
   border: 1px solid var(--border-subtle);
   color: var(--text-primary);
-  font-family: var(--font-mono);
+  font-family: var(--font-mono), 'Vazirmatn', monospace !important;
   font-size: 0.85em;
   padding: 1px 6px;
   border-radius: 4px;
@@ -800,9 +800,9 @@ h6,
   -webkit-user-select: none;
   border-right: 1px solid var(--border-subtle);
   background: var(--bg-code-header);
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  font-family: var(--font-mono), 'Vazirmatn', monospace !important;
   font-size: 0.85rem;
-  line-height: 1.5;
+  line-height: 1.6;
   text-align: right;
   color: var(--text-muted);
   flex-shrink: 0;
@@ -822,6 +822,12 @@ h6,
   background-color: transparent !important;
 }
 
+pre,
+code,
+.shiki {
+  font-family: var(--font-mono), 'Vazirmatn', monospace !important;
+}
+
 .code-scroll-container pre,
 .markdown-content pre {
   margin: 0;
@@ -829,9 +835,9 @@ h6,
   background: transparent !important;
   background-color: transparent !important;
   border: none !important;
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  font-family: var(--font-mono), 'Vazirmatn', monospace !important;
   font-size: 0.9em;
-  line-height: 1.5;
+  line-height: 1.6;
   overflow-x: visible;
   white-space: pre;
 }
@@ -839,7 +845,7 @@ h6,
 .code-scroll-container code,
 .markdown-content pre code {
   color: var(--text-body);
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  font-family: var(--font-mono), 'Vazirmatn', monospace !important;
   font-size: 0.9em;
   background: transparent !important;
   background-color: transparent !important;
@@ -858,6 +864,7 @@ pre.shiki-fallback,
 pre.shiki-fallback code,
 .code-block-container pre,
 .code-block-container code {
+  font-family: var(--font-mono), 'Vazirmatn', monospace !important;
   background: transparent !important;
   background-color: transparent !important;
 }
@@ -1217,6 +1224,11 @@ body.theme-dark .shiki span,
   max-width: 100%;
   height: auto;
   display: block;
+}
+
+.mermaid-svg-wrapper svg text,
+.mermaid-lightbox-content svg text {
+  font-family: "Vazirmatn", "Lora", sans-serif !important;
 }
 
 /* Neutralized & inert Mermaid click-nodes without valid href (Item 14) */

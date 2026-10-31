@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600&display=swap');
+
 /* ==========================================================================
    Design Tokens & Viewport Theme Styling
    Source: PRD Section 5.7, FR-NAV-004, US-023, DESIGN_SYSTEM.md
@@ -7,7 +9,7 @@
   --default-contextmenu: show;
   --font-serif: 'Lora', 'Vazirmatn', Georgia, serif;
   --font-sans: 'Inter', 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-mono: 'JetBrains Mono', 'Vazirmatn', monospace;
   --font-rtl: 'Vazirmatn', 'Lora', serif;
 }
 
@@ -17,7 +19,7 @@ body.theme-dark,
 .theme-dark {
   --font-serif: 'Lora', 'Vazirmatn', Georgia, serif;
   --font-sans: 'Inter', 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-mono: 'JetBrains Mono', 'Vazirmatn', monospace;
   --font-rtl: 'Vazirmatn', 'Lora', serif;
 
   --bg-canvas: #1C1B18;
@@ -106,7 +108,7 @@ body.theme-light,
 .theme-light {
   --font-serif: 'Lora', 'Vazirmatn', Georgia, serif;
   --font-sans: 'Inter', 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-mono: 'JetBrains Mono', 'Vazirmatn', monospace;
   --font-rtl: 'Vazirmatn', 'Lora', serif;
 
   --bg-canvas: #F7F3EB;
@@ -195,7 +197,7 @@ body.theme-light,
   :root:not([data-theme="dark"]) {
     --font-serif: 'Lora', 'Vazirmatn', Georgia, serif;
     --font-sans: 'Inter', 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
+    --font-mono: 'JetBrains Mono', 'Vazirmatn', monospace;
     --font-rtl: 'Vazirmatn', 'Lora', serif;
 
     --bg-canvas: #F7F3EB;

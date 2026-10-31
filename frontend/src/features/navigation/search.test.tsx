@@ -227,7 +227,7 @@ Another search keyword appears here.
     expect(screen.getByTestId('search-counter')).toHaveTextContent('1 of 2');
   });
 
-  it('Persian Cursive Highlight: preserves unicode-bidi isolate and inline formatting on mark', () => {
+  it('Persian Cursive Highlight: mark stays bidi-transparent so the browser UBA reorders the line naturally', () => {
     const persianContent = 'سند راهنما برای تست می‌رسد';
     render(
       <MarkdownViewer
@@ -250,11 +250,47 @@ Another search keyword appears here.
     expect(marks.length).toBeGreaterThan(0);
     const firstMark = marks[0];
     expect(firstMark.textContent).toBe('س');
-    expect(firstMark.style.unicodeBidi).toBe('isolate');
-    expect(firstMark.getAttribute('dir')).toBe('auto');
+    // The wrapped mark must NOT open an isolation context (dir="auto"/<bdi>/
+    // unicode-bidi:isolate): splitting the text node must not create additional
+    // directional runs, or LTR words swap places inside RTL lines.
+    expect(firstMark.getAttribute('dir')).toBeNull();
+    expect(firstMark.style.unicodeBidi).toBe('normal');
     expect(firstMark.style.display).toBe('inline');
     expect(firstMark.style.padding).toBe('0px');
+    expect(firstMark.style.margin).toBe('0px');
     expect(firstMark.nextSibling?.textContent).toContain('ند');
+  });
+
+  it('Persian Cursive Highlight: mark element keeps natural text order across siblings', () => {
+    // Regression guard for "Mermaid" inside an RTL heading: the wrapped match is a
+    // plain inline child at its source position, so textContent order is unchanged.
+    render(
+      <MarkdownViewer
+        document={{
+          filename: 'diagram.md',
+          filePath: '/docs/diagram.md',
+          content: '## نمودار فلوچارت (Mermaid Diagram)',
+        }}
+      />
+    );
+
+    fireEvent.click(screen.getByTestId('doc-search-toggle'));
+    const input = screen.getByTestId('search-input');
+
+    act(() => {
+      fireEvent.change(input, { target: { value: 'Mermaid' } });
+    });
+
+    const heading = screen.getByTestId('markdown-content').querySelector('h2');
+    expect(heading).not.toBeNull();
+    expect(heading?.querySelectorAll('mark[data-search-match="true"]').length).toBe(1);
+    const mark = heading?.querySelector('mark[data-search-match="true"]');
+    expect(mark?.textContent).toBe('Mermaid');
+    expect(mark?.getAttribute('dir')).toBeNull();
+    // Logical text order is preserved: preceding Persian substring then the match.
+    expect(heading?.textContent).toContain('نمودار فلوچارت (Mermaid Diagram)');
+    expect(mark?.previousSibling?.textContent?.endsWith('(')).toBe(true);
+    expect(mark?.nextSibling?.textContent?.startsWith(' Diagram')).toBe(true);
   });
 
   it('Preserves highlights across shell/prop re-renders without unmounting heading subtrees', () => {

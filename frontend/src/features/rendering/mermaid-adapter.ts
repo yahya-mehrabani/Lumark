@@ -7,12 +7,23 @@ import { sanitizeSvg } from './utils/sanitize-svg';
  * - securityLevel: 'strict' (disables script execution and dangerous tags)
  * - startOnLoad: false (manual programmatic rendering only)
  * - suppressErrorRendering: true (prevents Mermaid from writing unhandled error DOM)
+ *
+ * Font stack: 'Vazirmatn' must lead themeVariables.fontFamily so SVG <text> nodes
+ * resolve Persian glyphs from the loaded Persian webfont instead of a generic
+ * system fallback (themeVariables override every built-in theme, which otherwise
+ * defaults diagram text to '"trebuchet ms", verdana, arial, sans-serif').
+ * Sequence diagrams bypass themeVariables via their own per-diagram font keys,
+ * so sequence.fontFamily is pinned too (mermaid's setConf propagates it to
+ * actorFontFamily/noteFontFamily/messageFontFamily).
  */
 export const STRICT_MERMAID_CONFIG: MermaidConfig = {
   startOnLoad: false,
   securityLevel: 'strict',
   theme: 'default',
-  fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
+  fontFamily: '"Vazirmatn", "Lora", "Inter", system-ui, -apple-system, sans-serif',
+  themeVariables: {
+    fontFamily: '"Vazirmatn", "Lora", sans-serif',
+  },
   suppressErrorRendering: true,
   logLevel: 'error',
   flowchart: {
@@ -21,6 +32,11 @@ export const STRICT_MERMAID_CONFIG: MermaidConfig = {
   },
   sequence: {
     useMaxWidth: true,
+    // Sequence does not read themeVariables for text styling; its own font keys
+    // default to '"Open Sans"/"trebuchet ms", sans-serif' without Arabic glyphs.
+    actorFontFamily: '"Vazirmatn", "Lora", sans-serif',
+    noteFontFamily: '"Vazirmatn", "Lora", sans-serif',
+    messageFontFamily: '"Vazirmatn", "Lora", sans-serif',
   },
   gantt: {
     useMaxWidth: true,
@@ -41,6 +57,11 @@ export function initMermaid(config?: Partial<MermaidConfig>): MermaidConfig {
     ...STRICT_MERMAID_CONFIG,
     theme: resolvedTheme,
     ...config,
+    themeVariables: {
+      ...STRICT_MERMAID_CONFIG.themeVariables,
+      ...(config?.themeVariables || {}),
+      fontFamily: '"Vazirmatn", "Lora", sans-serif',
+    },
     startOnLoad: false,
     securityLevel: 'strict',
     suppressErrorRendering: true,

@@ -255,6 +255,20 @@ Implement fast, non-destructive in-document text search:
    Duration  10.32s
 ```
 - **Platform Limitations & Deferred Checks:** Native Windows/macOS execution deferred to post-implementation validation.
+- **Post-Implementation Defect Remediation (2026-10-31):** Search `<mark>` wrappers inside RTL lines were breaking word order (visual reordering such as `DiagramMermaid`). Root cause: the previous attempt's `dir="auto"` attribute plus `unicode-bidi: isolate` opened an isolation box around the wrapped substring, so splitting the text node created separate directional runs and the Unicode Bidi Algorithm reordered LTR words in the surrounding RTL line. Fix: marks are now bidi-transparent (`dir` attribute removed; inline `unicode-bidi: normal; display: inline; padding: 0; margin: 0`) in `searchHighlighter.ts` and `search.css`, letting one browser bidi pass treat the line as a single run. Verified in unit tests and in real Chromium (headless audit): mark computed `unicode-bidi: normal`, `dir` attribute `null`, logical text order preserved, RTL heading renders `(Mermaid Diagram)` correctly with the mark around "Mermaid" only.
+```text
+> markdown-viewer-frontend@0.1.0 test:unit -- --reporter=verbose search
+ RUN  v5.0.5 /home/repos/personal/markdown-go/frontend
+
+ ✓ src/features/navigation/search.test.tsx > ... > Criterion 1..5 (all criteria pass)
+ ✓ src/features/navigation/search.test.tsx > ... > Persian / RTL Text: highlights occurrences in RTL sections with accurate Unicode offsets 52ms
+ ✓ src/features/navigation/search.test.tsx > ... > Persian Cursive Highlight: mark stays bidi-transparent so the browser UBA reorders the line naturally 27ms
+ ✓ src/features/navigation/search.test.tsx > ... > Persian Cursive Highlight: mark element keeps natural text order across siblings 30ms
+ ✓ src/features/navigation/search-highlighting.test.tsx, search-navigation.test.tsx, search-indexer.test.tsx pass
+
+ Test Files  4 passed (4)
+      Tests  42 passed (42)
+```
 
 ### Story US-022 Completion Summary
 - All 4 tasks (`US-022.1`, `US-022.2`, `US-022.3`, `US-022.4`) successfully implemented and verified under Linux (Ubuntu WSLg).

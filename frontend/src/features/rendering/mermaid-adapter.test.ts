@@ -20,6 +20,33 @@ describe('Mermaid Adapter & Strict Configuration (US-013.1)', () => {
     expect(config.flowchart?.htmlLabels).toBe(false);
   });
 
+  it('forces a Vazirmatn font stack so Persian diagram text stays readable', () => {
+    const config = getMermaidConfig();
+    // themeVariables override every built-in theme (whose defaults are Latin-only
+    // stacks like "trebuchet ms", so Persian falls back to a generic system font).
+    expect(config.themeVariables?.fontFamily).toContain('Vazirmatn');
+    expect(config.fontFamily).toContain('Vazirmatn');
+    // Sequence diagrams bypass themeVariables via per-diagram font keys
+    // (actorFontFamily/noteFontFamily/messageFontFamily).
+    expect(config.sequence?.actorFontFamily).toContain('Vazirmatn');
+    expect(config.sequence?.noteFontFamily).toContain('Vazirmatn');
+    expect(config.sequence?.messageFontFamily).toContain('Vazirmatn');
+  });
+
+  it('emits the Vazirmatn font stack into rendered flowchart and sequence SVG text', async () => {
+    const flowResult = await renderMermaid(
+      'graph TD\n  سند[بارگذاری سند] --> تشخیص{مسیر /*check*/ معیار}'
+    );
+    expect(flowResult.svg).toContain('font-family');
+    expect(flowResult.svg).toContain('Vazirmatn');
+
+    const seqResult = await renderMermaid(
+      'sequenceDiagram\n    علی-->>رضا: سلام رضا\n    رضا-->>علی: سلام علی'
+    );
+    expect(seqResult.svg).toContain('font-family');
+    expect(seqResult.svg).toContain('Vazirmatn');
+  });
+
   it('enforces securityLevel: strict even if caller attempts to override with loose settings', () => {
     // Attempting to downgrade security
     const config = initMermaid({
