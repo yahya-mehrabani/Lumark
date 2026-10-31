@@ -25,6 +25,7 @@
     opacity: 0;
     transform: translateY(-4px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -163,6 +164,7 @@ mark.search-match.active,
   .search-bar-floating {
     display: none !important;
   }
+
   .search-match {
     background-color: transparent !important;
     outline: none !important;

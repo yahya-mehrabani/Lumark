@@ -315,7 +315,7 @@ body.focus-mode .floating-toolbar-container {
   position: relative;
 }
 
-.markdown-viewport-body > .markdown-content {
+.markdown-viewport-body>.markdown-content {
   flex: 1 1 auto;
   min-width: 0;
   min-height: 0;
@@ -331,7 +331,7 @@ body.focus-mode .floating-toolbar-container {
   -ms-overflow-style: none;
 }
 
-.markdown-viewport-body > .markdown-content::-webkit-scrollbar {
+.markdown-viewport-body>.markdown-content::-webkit-scrollbar {
   display: none;
   width: 0;
   height: 0;
@@ -612,9 +612,22 @@ h6,
   margin-bottom: 12px;
   scroll-margin-top: 80px;
 }
-.markdown-content h4 { font-size: 1.1rem; scroll-margin-top: 80px; }
-.markdown-content h5 { font-size: 1rem; scroll-margin-top: 80px; }
-.markdown-content h6 { font-size: 0.9rem; color: var(--text-muted); scroll-margin-top: 80px; }
+
+.markdown-content h4 {
+  font-size: 1.1rem;
+  scroll-margin-top: 80px;
+}
+
+.markdown-content h5 {
+  font-size: 1rem;
+  scroll-margin-top: 80px;
+}
+
+.markdown-content h6 {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  scroll-margin-top: 80px;
+}
 
 /* Heading Anchors */
 .markdown-heading {
@@ -969,13 +982,29 @@ body.theme-dark .shiki span,
 }
 
 /* Syntax Highlighting */
-.syn-c { color: var(--syn-comment); font-style: italic; }
-.syn-cmd { color: var(--syn-command); font-weight: 500; }
-.syn-flag { color: var(--syn-flag); }
-.syn-str { color: var(--syn-string); }
-.syn-arg { color: var(--syn-arg); }
+.syn-c {
+  color: var(--syn-comment);
+  font-style: italic;
+}
 
-.markdown-content blockquote > :last-child {
+.syn-cmd {
+  color: var(--syn-command);
+  font-weight: 500;
+}
+
+.syn-flag {
+  color: var(--syn-flag);
+}
+
+.syn-str {
+  color: var(--syn-string);
+}
+
+.syn-arg {
+  color: var(--syn-arg);
+}
+
+.markdown-content blockquote> :last-child {
   margin-bottom: 0;
 }
 
@@ -995,8 +1024,8 @@ body.theme-dark .shiki span,
   margin-bottom: 0.35em;
 }
 
-.markdown-content li > ul,
-.markdown-content li > ol {
+.markdown-content li>ul,
+.markdown-content li>ol {
   margin-top: 0.35em;
   margin-bottom: 0.35em;
 }
@@ -1083,7 +1112,7 @@ body.theme-dark .shiki span,
   border-right: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.markdown-content tr > :last-child {
+.markdown-content tr> :last-child {
   border-right: none;
 }
 
