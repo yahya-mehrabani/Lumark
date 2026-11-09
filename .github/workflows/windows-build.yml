@@ -38,6 +38,9 @@ jobs:
       - name: Verify Wails CLI
         run: wails3 version
 
+      - name: Set up NSIS
+        uses: nsis-dev/setup-nsis@v1
+
       - name: Build Wails App
         run: wails3 build
 

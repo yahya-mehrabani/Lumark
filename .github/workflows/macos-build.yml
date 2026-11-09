@@ -11,6 +11,8 @@ jobs:
   build-macos:
     name: Build macOS Application Bundle & DMG
     runs-on: macos-latest
+    env:
+      DEVELOPER_DIR: /Applications/Xcode.app/Contents/Developer
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -38,35 +40,32 @@ jobs:
       - name: Verify Wails CLI
         run: wails3 version
 
-      - name: Build Wails App
-        run: wails3 build
-
       - name: Install go-task
         run: brew install go-task create-dmg
 
       - name: Package Application Bundle
         run: |
-          task -t build/darwin/Taskfile.yml package
+          task darwin:package APP_NAME=Lumark
 
       - name: Verify Bundle Info.plist
         run: |
-          plutil -lint "bin/Markdown Viewer.app/Contents/Info.plist"
-          defaults read "$PWD/bin/Markdown Viewer.app/Contents/Info.plist" CFBundleDocumentTypes
+          plutil -lint "bin/Lumark.app/Contents/Info.plist"
+          defaults read "$PWD/bin/Lumark.app/Contents/Info.plist" CFBundleDocumentTypes
 
       - name: Build DMG Package
         run: |
-          ./packaging/macos/create-dmg.sh bin "Markdown Viewer"
+          ./packaging/macos/create-dmg.sh bin "Lumark"
 
       - name: Upload Bundle Artifact
         uses: actions/upload-artifact@v4
         with:
           name: markdown-viewer-macos-app
-          path: bin/Markdown Viewer.app
+          path: bin/Lumark.app
           if-no-files-found: warn
 
       - name: Upload DMG Artifact
         uses: actions/upload-artifact@v4
         with:
           name: markdown-viewer-macos-dmg
-          path: bin/Markdown Viewer.dmg
+          path: bin/Lumark.dmg
           if-no-files-found: warn

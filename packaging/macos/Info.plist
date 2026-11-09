@@ -9,7 +9,7 @@
     <key>CFBundleDisplayName</key>
     <string>Lumark</string>
     <key>CFBundleExecutable</key>
-    <string>markdown-viewer</string>
+    <string>Lumark</string>
     <key>CFBundleIdentifier</key>
     <string>com.lumark.app</string>
     <key>CFBundleVersion</key>

@@ -87,7 +87,7 @@ fi
 # Ensure application bundle exists
 if [[ ! -d "${APP_BUNDLE}" ]]; then
 	echo "ERROR: Application bundle not found at ${APP_BUNDLE}" >&2
-	echo "Please build the app bundle first (e.g. task -t build/darwin/Taskfile.yml package)" >&2
+	echo "Please build the app bundle first (e.g. task darwin:package APP_NAME=Lumark)" >&2
 	exit 1
 fi
 

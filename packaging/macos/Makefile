@@ -11,7 +11,7 @@ check:
 	./create-dmg.sh --check
 
 app:
-	task -t ../../build/darwin/Taskfile.yml package
+	task -d ../.. darwin:package APP_NAME=$(APP_NAME)
 
 dmg:
 	./create-dmg.sh "$(BIN_DIR)" "$(APP_NAME)" "$(OUTPUT_DIR)"
