@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# AppImage Packaging Script for Markdown Viewer
+# AppImage Packaging Script for Lumark
 # Builds an AppDir structure conforming to FreeDesktop AppImage Specification
 # and bundles it into a standalone executable .AppImage artifact.
 set -euo pipefail

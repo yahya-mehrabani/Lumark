@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Automated Linux Package Verification Suite
-# Validates Debian (.deb) and AppImage packages for Markdown Viewer against PRD Section 11.4
+# Validates Debian (.deb) and AppImage packages for Lumark against PRD Section 11.4
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -10,7 +10,7 @@ CANONICAL_DEB="${BUILD_BIN}/markdown-viewer.deb"
 TEST_EXTRACT_DIR="${ROOT_DIR}/build/staging/deb-verification-test"
 
 echo "================================================================="
-echo "Markdown Viewer - Linux Package Verification Suite"
+echo "Lumark - Linux Package Verification Suite"
 echo "================================================================="
 
 # 1. Ensure Debian package is built

@@ -2,7 +2,7 @@
 
 ## 1. System Vision and Architectural Invariants
 
-Markdown Viewer is a dedicated, local-first, read-only desktop application for viewing Markdown files. The architecture is guided by six primary invariants established in [PRD.md](../../PRD.md):
+Lumark is a dedicated, local-first, read-only desktop application for viewing Markdown files. The architecture is guided by six primary invariants established in [PRD.md](../../PRD.md):
 
 1. **Viewer First:** The application does not edit, mutate, or write back to user documents. It is purely an offline viewing engine.
 2. **Local-First & Offline:** Rendering documents, KaTeX formulas, Mermaid diagrams, and code highlighting requires zero internet connectivity and zero external runtime processes.

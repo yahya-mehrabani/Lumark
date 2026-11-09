@@ -58,7 +58,7 @@ These entitlements enable WebKit JavaScript JIT execution and Go runtime dynamic
 
 #### Step 3.1: Clean Extended Attributes
 ```bash
-xattr -cr "bin/Markdown Viewer.app"
+xattr -cr "bin/Lumark.app"
 ```
 
 #### Step 3.2: Sign the Application Bundle with Hardened Runtime
@@ -67,32 +67,32 @@ codesign --force --deep --options runtime \
   --entitlements packaging/macos/entitlements.plist \
   --sign "Developer ID Application: Your Name (TEAM_ID)" \
   --timestamp \
-  "bin/Markdown Viewer.app"
+  "bin/Lumark.app"
 ```
 
 #### Step 3.3: Verify Application Bundle Signature
 ```bash
-codesign --verify --deep --strict --verbose=4 "bin/Markdown Viewer.app"
-spctl --assess --type execute --verbose=4 "bin/Markdown Viewer.app"
+codesign --verify --deep --strict --verbose=4 "bin/Lumark.app"
+spctl --assess --type execute --verbose=4 "bin/Lumark.app"
 ```
 
 ### 4. Disk Image (DMG) Packaging & Signing
 
 #### Step 4.1: Generate Branded DMG
 ```bash
-./packaging/macos/create-dmg.sh bin "Markdown Viewer" bin
+./packaging/macos/create-dmg.sh bin "Lumark" bin
 ```
 
 #### Step 4.2: Sign the DMG Artifact
 ```bash
 codesign --force --sign "Developer ID Application: Your Name (TEAM_ID)" \
   --timestamp \
-  "bin/Markdown Viewer.dmg"
+  "bin/Lumark.dmg"
 ```
 
 #### Step 4.3: Verify DMG Signature
 ```bash
-codesign --verify --strict --verbose=4 "bin/Markdown Viewer.dmg"
+codesign --verify --strict --verbose=4 "bin/Lumark.dmg"
 ```
 
 ### 5. Apple Notarization with `xcrun notarytool`
@@ -107,7 +107,7 @@ xcrun notarytool store-credentials "AC_PASSWORD" \
 
 #### Step 5.2: Submit DMG for Notarization
 ```bash
-xcrun notarytool submit "bin/Markdown Viewer.dmg" \
+xcrun notarytool submit "bin/Lumark.dmg" \
   --keychain-profile "AC_PASSWORD" \
   --wait
 ```
@@ -121,19 +121,19 @@ xcrun notarytool log <SUBMISSION_ID> --keychain-profile "AC_PASSWORD"
 
 #### Step 6.1: Staple Notarization Ticket to DMG
 ```bash
-xcrun stapler staple "bin/Markdown Viewer.dmg"
-xcrun stapler validate "bin/Markdown Viewer.dmg"
+xcrun stapler staple "bin/Lumark.dmg"
+xcrun stapler validate "bin/Lumark.dmg"
 ```
 
 #### Step 6.2: Staple Notarization Ticket to App Bundle
 ```bash
-xcrun stapler staple "bin/Markdown Viewer.app"
-xcrun stapler validate "bin/Markdown Viewer.app"
+xcrun stapler staple "bin/Lumark.app"
+xcrun stapler validate "bin/Lumark.app"
 ```
 
 #### Step 6.3: Validate Gatekeeper Assessment
 ```bash
-spctl --assess --type open --context context:primary-signature --verbose=4 "bin/Markdown Viewer.dmg"
+spctl --assess --type open --context context:primary-signature --verbose=4 "bin/Lumark.dmg"
 ```
 
 ### 7. Unsigned Development Builds & Gatekeeper Quarantine Handling
@@ -142,15 +142,15 @@ When distributing ad-hoc test builds without an Apple Developer ID certificate:
 
 1. **Ad-Hoc Signing (Local Only):**
    ```bash
-   codesign --force --deep --sign - "bin/Markdown Viewer.app"
+   codesign --force --deep --sign - "bin/Lumark.app"
    ```
 
 2. **Bypassing Gatekeeper Quarantine on Target Mac:**
    When opening downloaded unsigned binaries, macOS applies the `com.apple.quarantine` extended attribute. To remove quarantine:
    ```bash
-   xattr -d com.apple.quarantine "/Applications/Markdown Viewer.app"
+   xattr -d com.apple.quarantine "/Applications/Lumark.app"
    ```
-   Alternatively, users can right-click (Control-click) `Markdown Viewer.app` in Finder, select **Open**, and click **Open** in the confirmation dialog.
+   Alternatively, users can right-click (Control-click) `Lumark.app` in Finder, select **Open**, and click **Open** in the confirmation dialog.
 
 ---
 

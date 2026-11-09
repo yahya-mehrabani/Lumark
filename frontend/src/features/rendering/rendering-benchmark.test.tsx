@@ -10,7 +10,7 @@ function generateBenchmarkMarkdown(targetBytes: number): string {
   parts.push('This document is dynamically generated to measure rendering latency and memory boundedness per PRD Section 12.1.\n\n');
 
   const paragraphs = [
-    'Markdown Viewer delivers low-latency, secure, offline-first Markdown rendering for technical documentation, specifications, and notes.',
+    'Lumark delivers low-latency, secure, offline-first Markdown rendering for technical documentation, specifications, and notes.',
     'The engine parses CommonMark and GitHub Flavored Markdown with custom syntax highlighters and math rendering.',
     'When loading large documents, the parser processes tokens linearly into abstract syntax trees, applying strict sanitization allowlists to remove untrusted script elements, dangerous URL schemes, and unauthorized CSS styles.',
     'Bidirectional text detection inspects the first strong directional character to assign reading direction dynamically, ensuring seamless Arabic, Persian, and Hebrew display alongside Latin script.',

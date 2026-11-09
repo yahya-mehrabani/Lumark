@@ -15,7 +15,7 @@
 
 ## 1. Context and Problem Statement
 
-The Markdown Viewer product requires a fast, cross-platform desktop application satisfying the invariants in `PRD.md`:
+The Lumark product requires a fast, cross-platform desktop application satisfying the invariants in `PRD.md`:
 1. Native execution on Windows 10/11 x64, macOS Apple Silicon (arm64), and Linux (Ubuntu 24.04 LTS x64).
 2. Embedded production frontend assets (zero runtime dev server, zero Node.js runtime dependency on user machines).
 3. Native OS integration: file picker dialogs, drag-and-drop, command-line arguments, file associations, and single-instance routing.

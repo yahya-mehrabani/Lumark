@@ -10,17 +10,17 @@ Unicode true
 !include "x64.nsh"
 
 ; Product Definitions
-!define PRODUCT_NAME "Markdown Viewer"
+!define PRODUCT_NAME "Lumark"
 !define PRODUCT_VERSION "0.1.0"
-!define PRODUCT_PUBLISHER "Markdown Viewer Team"
-!define PRODUCT_WEB_SITE "https://github.com/personal/markdown-go"
+!define PRODUCT_PUBLISHER "Lumark Team"
+!define PRODUCT_WEB_SITE "https://github.com/personal/lumark"
 !define PRODUCT_EXE "markdown-viewer.exe"
-!define PROGID "MarkdownViewer.Document"
+!define PROGID "Lumark.Document"
 !define UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 OutFile "..\..\bin\markdown-viewer-installer.exe"
-InstallDir "$LOCALAPPDATA\Programs\MarkdownViewer"
+InstallDir "$LOCALAPPDATA\Programs\Lumark"
 InstallDirRegKey HKCU "Software\${PRODUCT_NAME}" "InstallDir"
 RequestExecutionLevel user
 
@@ -91,7 +91,7 @@ Function CheckWebView2
         Return
     promptUser:
         MessageBox MB_YESNO|MB_ICONEXCLAMATION \
-            "Markdown Viewer requires the Microsoft Edge WebView2 Runtime to display documents.$\r$\n$\r$\nWebView2 Runtime was not detected on this system.$\r$\n$\r$\nWould you like to open the official Microsoft WebView2 download page now?" \
+            "Lumark requires the Microsoft Edge WebView2 Runtime to display documents.$\r$\n$\r$\nWebView2 Runtime was not detected on this system.$\r$\n$\r$\nWould you like to open the official Microsoft WebView2 download page now?" \
             IDYES openBrowser IDNO continueInstall
     openBrowser:
         ExecShell "open" "https://go.microsoft.com/fwlink/p/?LinkId=2124703"
@@ -116,7 +116,7 @@ Section "MainSection" SEC01
     CreateShortcut "$DESKTOP\${PRODUCT_NAME}.lnk" "$INSTDIR\${PRODUCT_EXE}"
 
     ; Register Product-Owned ProgID
-    ; HKCU\Software\Classes\MarkdownViewer.Document
+    ; HKCU\Software\Classes\Lumark.Document
     WriteRegStr HKCU "Software\Classes\${PROGID}" "" "Markdown Document"
     WriteRegStr HKCU "Software\Classes\${PROGID}" "FriendlyTypeName" "Markdown Document"
     WriteRegStr HKCU "Software\Classes\${PROGID}" "CurVer" "${PROGID}"
@@ -126,7 +126,7 @@ Section "MainSection" SEC01
 
     ; Register as Open With handler under OpenWithProgids for supported Markdown extensions
     ; NOTE: PRD Section 11.2 strictly prohibits overriding user default choices.
-    ; Registering under OpenWithProgids presents Markdown Viewer in Windows "Open with"
+    ; Registering under OpenWithProgids presents Lumark in Windows "Open with"
     ; and "Choose another app" menus while respecting user default choice.
     WriteRegNone HKCU "Software\Classes\.md\OpenWithProgids" "${PROGID}"
     WriteRegNone HKCU "Software\Classes\.markdown\OpenWithProgids" "${PROGID}"

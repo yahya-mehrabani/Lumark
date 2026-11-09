@@ -17,7 +17,7 @@ func generateMarkdownContent(targetBytes int) []byte {
 	builder.WriteString("# Synthetic Benchmark Document\n\n")
 	builder.WriteString("This document is generated dynamically for performance benchmarking against PRD Section 12.1.\n\n")
 
-	paragraph := "Markdown Viewer is an offline-capable, cross-platform Markdown document viewer designed for technical writers and developers. It supports CommonMark, GitHub Flavored Markdown, Bidirectional text (Arabic/Persian), LaTeX math expressions via KaTeX, and Mermaid diagrams.\n\n"
+	paragraph := "Lumark is an offline-capable, cross-platform Markdown document viewer designed for technical writers and developers. It supports CommonMark, GitHub Flavored Markdown, Bidirectional text (Arabic/Persian), LaTeX math expressions via KaTeX, and Mermaid diagrams.\n\n"
 	codeBlock := "```go\nfunc ProcessMarkdown(content string) (int, error) {\n\tlines := strings.Split(content, \"\\n\")\n\treturn len(lines), nil\n}\n```\n\n"
 	table := "| Feature | Status | Notes |\n| :--- | :---: | ---: |\n| Offline First | Active | No remote dependencies |\n| KaTeX Math | Bundled | Local WOFF2 fonts |\n| Mermaid | Safe | Isolated rendering |\n\n"
 

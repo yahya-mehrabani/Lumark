@@ -8,7 +8,7 @@
 
 ## 1. Context and Problem Statement
 
-Requirement `FR-OPEN-005` specifies that the Markdown Viewer must run as a single instance per user session by default. When a user double-clicks a `.md` file or executes `markdown-viewer path/to/doc.md` while the application is already running:
+Requirement `FR-OPEN-005` specifies that Lumark must run as a single instance per user session by default. When a user double-clicks a `.md` file or executes `markdown-viewer path/to/doc.md` while the application is already running:
 1. The new process must detect the existing instance.
 2. The new process must transmit the requested file paths to the existing instance.
 3. The existing instance must bring its window to the foreground and open the documents in new tabs.

@@ -2,7 +2,7 @@
 # ==============================================================================
 # create-dmg.sh — macOS DMG Packaging Script with /Applications Drop Link
 # ==============================================================================
-# Packages the Markdown Viewer .app bundle into a branded .dmg disk image with:
+# Packages the Lumark .app bundle into a branded .dmg disk image with:
 # - Branded background artwork
 # - Custom volume icon (.icns)
 # - /Applications symlink for drag-and-drop installation
@@ -11,7 +11,7 @@
 # Usage:
 #   ./packaging/macos/create-dmg.sh [BIN_DIR] [APP_NAME] [OUTPUT_DIR]
 # Example:
-#   ./packaging/macos/create-dmg.sh bin "Markdown Viewer" bin
+#   ./packaging/macos/create-dmg.sh bin "Lumark" bin
 # ==============================================================================
 
 set -euo pipefail
@@ -21,11 +21,11 @@ ROOT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
 if [[ "${1:-}" == "--check" ]]; then
 	BIN_DIR="${ROOT_DIR}/bin"
-	APP_NAME="Markdown Viewer"
+	APP_NAME="Lumark"
 	OUTPUT_DIR="${BIN_DIR}"
 else
 	BIN_DIR="${1:-${ROOT_DIR}/bin}"
-	APP_NAME="${2:-Markdown Viewer}"
+	APP_NAME="${2:-Lumark}"
 	OUTPUT_DIR="${3:-${BIN_DIR}}"
 fi
 

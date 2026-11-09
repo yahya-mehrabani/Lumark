@@ -1,4 +1,4 @@
-APP_NAME ?= Markdown Viewer
+APP_NAME ?= Lumark
 BIN_DIR ?= bin
 OUTPUT_DIR ?= $(BIN_DIR)
 DMG_PATH ?= $(OUTPUT_DIR)/$(APP_NAME).dmg

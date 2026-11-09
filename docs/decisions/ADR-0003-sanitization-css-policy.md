@@ -8,7 +8,7 @@
 
 ## 1. Context and Problem Statement
 
-The Markdown Viewer renders arbitrary local files, including files downloaded from untrusted internet sources. Markdown allows embedded raw HTML fragments and `<style>` blocks (or inline styles) to support rich layouts and bidirectional formatting (e.g., Persian/Arabic alignment).
+Lumark renders arbitrary local files, including files downloaded from untrusted internet sources. Markdown allows embedded raw HTML fragments and `<style>` blocks (or inline styles) to support rich layouts and bidirectional formatting (e.g., Persian/Arabic alignment).
 
 Per PRD Section 7 and Section 8:
 1. Markdown and HTML must **never** execute arbitrary scripts or call native Go/Wails bindings.

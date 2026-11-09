@@ -5,10 +5,10 @@
 	"info": {
 		"0409": {
 			"ProductVersion": "0.1.0",
-			"CompanyName": "Markdown Viewer",
-			"FileDescription": "A fast, cross-platform Markdown Viewer",
-			"LegalCopyright": "© 2026, Markdown Viewer",
-			"ProductName": "Markdown Viewer",
+			"CompanyName": "Lumark",
+			"FileDescription": "Lumark - A fast, cross-platform Markdown reader",
+			"LegalCopyright": "© 2026, Lumark",
+			"ProductName": "Lumark",
 			"Comments": "This is a comment"
 		}
 	}

@@ -130,8 +130,8 @@ func main() {
 
 	// Create a new Wails application by providing the necessary options.
 	app := application.New(application.Options{
-		Name:        "markdown-viewer",
-		Description: "Markdown Viewer Feasibility Spike",
+		Name:        "Lumark",
+		Description: "Lumark - Fast, Cross-Platform Desktop Markdown Reader",
 		Services: []application.Service{
 			application.NewService(&GreetService{}),
 			application.NewService(docService),
@@ -170,7 +170,7 @@ func main() {
 	// 'BackgroundColour' is the background colour of the window.
 	// 'URL' is the URL that will be loaded into the webview.
 	mainWindow := app.Window.NewWithOptions(application.WebviewWindowOptions{
-		Title: "Markdown Viewer",
+		Title: "Lumark",
 		// Window sized to the golden ratio (1000 / 618 ≈ 1.618).
 		Width:               1000,
 		Height:              618,

@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.0
-Name=Markdown Viewer
-Comment=A fast, cross-platform Markdown Viewer
+Name=Lumark
+Comment=Lumark - A fast, cross-platform Markdown reader
 # The Exec line includes %u to pass the URL to the application
 Exec=/usr/local/bin/markdown-viewer %u
 Terminal=false

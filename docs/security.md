@@ -10,7 +10,7 @@
 
 ## 1. Threat Model & Security Posture
 
-The Markdown Viewer renders files obtained from untrusted local, network, or Internet sources. Every document must be treated as **potentially adversarial input**.
+Lumark renders files obtained from untrusted local, network, or Internet sources. Every document must be treated as **potentially adversarial input**.
 
 The primary threat scenarios include:
 1. **Remote Code Execution / IPC Hijacking:** Malicious Markdown attempting to invoke native Go methods, shell commands, or operating system utilities via crafted payloads or links.

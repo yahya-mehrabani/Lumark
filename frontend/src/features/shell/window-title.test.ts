@@ -20,8 +20,8 @@ describe('Window Title Synchronization (Item 15)', () => {
   const syncWindowTitle = (tabStore: TabStore) => {
     const activeTab = tabStore.getActiveTab();
     const title = activeTab
-      ? `${activeTab.filename || activeTab.displayTitle} — Markdown Viewer`
-      : 'Markdown Viewer';
+      ? `${activeTab.filename || activeTab.displayTitle} — Lumark`
+      : 'Lumark';
 
     if (typeof document !== 'undefined') {
       document.title = title;
@@ -36,15 +36,15 @@ describe('Window Title Synchronization (Item 15)', () => {
 
   beforeEach(() => {
     store = new TabStore();
-    document.title = 'Markdown Viewer';
+    document.title = 'Lumark';
     vi.clearAllMocks();
   });
 
-  it('initializes with default "Markdown Viewer" when no tabs are open', () => {
+  it('initializes with default "Lumark" when no tabs are open', () => {
     const title = syncWindowTitle(store);
-    expect(title).toBe('Markdown Viewer');
-    expect(document.title).toBe('Markdown Viewer');
-    expect(Window.SetTitle).toHaveBeenCalledWith('Markdown Viewer');
+    expect(title).toBe('Lumark');
+    expect(document.title).toBe('Lumark');
+    expect(Window.SetTitle).toHaveBeenCalledWith('Lumark');
   });
 
   it('synchronizes title with active tab filename when tab is opened', () => {
@@ -55,9 +55,9 @@ describe('Window Title Synchronization (Item 15)', () => {
     });
 
     const title = syncWindowTitle(store);
-    expect(title).toBe('notes.md — Markdown Viewer');
-    expect(document.title).toBe('notes.md — Markdown Viewer');
-    expect(Window.SetTitle).toHaveBeenCalledWith('notes.md — Markdown Viewer');
+    expect(title).toBe('notes.md — Lumark');
+    expect(document.title).toBe('notes.md — Lumark');
+    expect(Window.SetTitle).toHaveBeenCalledWith('notes.md — Lumark');
   });
 
   it('updates title when active tab switches', () => {
@@ -73,25 +73,25 @@ describe('Window Title Synchronization (Item 15)', () => {
     });
 
     syncWindowTitle(store);
-    expect(document.title).toBe('second.md — Markdown Viewer');
+    expect(document.title).toBe('second.md — Lumark');
 
     // Switch back to first tab
     store.switchTab(tab1.id);
     syncWindowTitle(store);
-    expect(document.title).toBe('first.md — Markdown Viewer');
+    expect(document.title).toBe('first.md — Lumark');
   });
 
-  it('reverts title to "Markdown Viewer" when all tabs are closed', () => {
+  it('reverts title to "Lumark" when all tabs are closed', () => {
     const tab = store.openTab({
       filePath: '/docs/temp.md',
       filename: 'temp.md',
       content: 'temp',
     });
     syncWindowTitle(store);
-    expect(document.title).toBe('temp.md — Markdown Viewer');
+    expect(document.title).toBe('temp.md — Lumark');
 
     store.closeTab(tab.id);
     syncWindowTitle(store);
-    expect(document.title).toBe('Markdown Viewer');
+    expect(document.title).toBe('Lumark');
   });
 });

@@ -5,11 +5,11 @@ version: '3'
 
 # This information is used to generate the build assets.
 info:
-  companyName: "Markdown Viewer" # The name of the company
-  productName: "Markdown Viewer" # The name of the application
-  productIdentifier: "com.markdownviewer.app" # The unique product identifier
-  description: "A fast, cross-platform Markdown Viewer" # The application description
-  copyright: "© 2026, Markdown Viewer" # Copyright text
+  companyName: "Lumark" # The name of the company
+  productName: "Lumark" # The name of the application
+  productIdentifier: "com.lumark.app" # The unique product identifier
+  description: "A fast, cross-platform desktop Markdown reader" # The application description
+  copyright: "© 2026, Lumark" # Copyright text
   comments: "Phase 1 Feasibility Spike" # Comments
   version: "0.1.0" # The application version
   # cfBundleIconName: "appicon" # The macOS icon name in Assets.car icon bundles (optional)

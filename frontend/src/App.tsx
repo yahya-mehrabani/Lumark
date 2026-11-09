@@ -199,8 +199,8 @@ export function App() {
     const syncWindowTitle = () => {
       const activeTab = tabStore.getActiveTab();
       const title = activeTab
-        ? `${activeTab.filename || activeTab.displayTitle} — Markdown Viewer`
-        : 'Markdown Viewer';
+        ? `${activeTab.filename || activeTab.displayTitle} — Lumark`
+        : 'Lumark';
 
       if (typeof document !== 'undefined' && document.title !== title) {
         document.title = title;

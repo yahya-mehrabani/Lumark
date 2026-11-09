@@ -1,6 +1,6 @@
 # Development Environment & Tooling Inventory
 
-This document provides a reproducible inventory of the development environment, toolchain versions, platform capabilities, and system dependencies for the Markdown Viewer project.
+This document provides a reproducible inventory of the development environment, toolchain versions, platform capabilities, and system dependencies for the Lumark project.
 
 ---
 

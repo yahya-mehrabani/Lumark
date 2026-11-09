@@ -1,9 +1,13 @@
 {
-  "name": "markdown-viewer",
+  "name": "lumark",
   "version": "0.1.0",
   "private": true,
-  "description": "Fast, cross-platform Markdown Viewer desktop application",
+  "description": "Lumark - Fast, cross-platform desktop Markdown reader",
   "scripts": {
+    "dev": "wails3 dev -config ./build/config.yml",
+    "test": "npm --prefix frontend run test:unit",
+    "test:security": "npm --prefix frontend run test:security",
+    "test:fixtures": "npm --prefix frontend run test:fixtures",
     "build:deb": "./packaging/linux/build-deb.sh",
     "build:appimage": "./packaging/linux/build-appimage.sh",
     "test:package:linux": "./scripts/test-package-linux.sh",

@@ -1,4 +1,4 @@
-# Markdown Viewer (`markdown-go`)
+# Lumark
 
 A dedicated, fast, cross-platform desktop application for reading Markdown documents as richly formatted documents—offline, securely, and with native operating-system integration.
 
@@ -8,7 +8,7 @@ A dedicated, fast, cross-platform desktop application for reading Markdown docum
 
 ## 1. Project Overview
 
-`markdown-go` is a dedicated, fast, cross-platform desktop application for reading local Markdown files as richly formatted documents—offline, securely, and with native operating-system integration:
+**Lumark** is a dedicated, fast, cross-platform desktop application for reading local Markdown files as richly formatted documents—offline, securely, and with native operating-system integration:
 - **Rich Document Rendering:** CommonMark, GitHub Flavored Markdown (tables, task lists, strikethrough), LaTeX math (KaTeX), syntax-highlighted code blocks (Shiki), and Mermaid diagrams.
 - **First-Class Bidirectional Support:** Per-block auto-detection for Persian/Arabic RTL mixed with English LTR, explicit HTML `dir` support, and scoped CSS direction control.
 - **Deep Desktop Integration:** File associations for `.md`/`.markdown`, command-line opening, single-instance routing, multi-document tabs, and native window behaviors.

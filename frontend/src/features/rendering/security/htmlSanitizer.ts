@@ -2,7 +2,7 @@ import { defaultSchema } from 'rehype-sanitize';
 import type { Options } from 'rehype-sanitize';
 
 /**
- * Custom Rehype-Sanitize Schema Allowlist for Markdown Viewer.
+ * Custom Rehype-Sanitize Schema Allowlist for Lumark.
  * Conforms to PRD Section 7.3, 7.4, 8.1, 8.2, ADR-0003, and Story US-015.
  *
  * Enforces:

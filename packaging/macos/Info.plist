@@ -5,13 +5,13 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleName</key>
-    <string>Markdown Viewer</string>
+    <string>Lumark</string>
     <key>CFBundleDisplayName</key>
-    <string>Markdown Viewer</string>
+    <string>Lumark</string>
     <key>CFBundleExecutable</key>
     <string>markdown-viewer</string>
     <key>CFBundleIdentifier</key>
-    <string>com.markdownviewer.app</string>
+    <string>com.lumark.app</string>
     <key>CFBundleVersion</key>
     <string>0.1.0</string>
     <key>CFBundleShortVersionString</key>
@@ -25,7 +25,7 @@
     <key>NSHighResolutionCapable</key>
     <true/>
     <key>NSHumanReadableCopyright</key>
-    <string>© 2026, Markdown Viewer</string>
+    <string>© 2026, Lumark</string>
     <key>CFBundleDocumentTypes</key>
     <array>
         <dict>

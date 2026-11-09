@@ -1,10 +1,10 @@
-# Markdown Viewer — Product Requirements Document
+# Lumark — Product Requirements Document
 
 **Document type:** Product Requirements Document (PRD) and implementation contract  
 **Status:** Baseline for implementation planning  
 **Version:** 1.0  
 **Created:** 2026-10-23  
-**Product name:** Markdown Viewer (working name; branding is configurable)  
+**Product name:** Lumark (formerly Markdown Viewer)<br>
 **Primary audience:** AI coding agents and engineers responsible for decomposing this document into epics, stories, tasks, and acceptance tests
 
 ---
