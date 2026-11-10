@@ -39,8 +39,8 @@ npm run test:offline    # Network isolation & offline integrity check
 npm run benchmark       # Performance benchmark suite (PRD §12.1)
 
 # Build production installation packages (Linux)
-npm run build:deb       # Debian package (build/bin/markdown-viewer.deb)
-npm run build:appimage  # Portable AppImage bundle
+npm run build:deb       # Debian package (build/bin/lumark_0.1.0-1_amd64.deb)
+npm run build:appimage  # Standalone AppImage package
 npm run test:package:linux # Automated package verification
 ```
 

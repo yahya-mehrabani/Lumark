@@ -9,9 +9,9 @@
 # - Window sizing and icon placement
 #
 # Usage:
-#   ./packaging/macos/create-dmg.sh [BIN_DIR] [APP_NAME] [OUTPUT_DIR]
+#   ./packaging/macos/create-dmg.sh [BIN_DIR] [APP_NAME] [OUTPUT_DIR] [OUTPUT_NAME]
 # Example:
-#   ./packaging/macos/create-dmg.sh bin "Lumark" bin
+#   ./packaging/macos/create-dmg.sh bin "Lumark" bin "Lumark_0.1.0_macos_universal.dmg"
 # ==============================================================================
 
 set -euo pipefail
@@ -23,14 +23,16 @@ if [[ "${1:-}" == "--check" ]]; then
 	BIN_DIR="${ROOT_DIR}/bin"
 	APP_NAME="Lumark"
 	OUTPUT_DIR="${BIN_DIR}"
+	OUTPUT_NAME="${APP_NAME}.dmg"
 else
 	BIN_DIR="${1:-${ROOT_DIR}/bin}"
 	APP_NAME="${2:-Lumark}"
 	OUTPUT_DIR="${3:-${BIN_DIR}}"
+	OUTPUT_NAME="${4:-${APP_NAME}.dmg}"
 fi
 
 APP_BUNDLE="${BIN_DIR}/${APP_NAME}.app"
-OUTPUT_DMG="${OUTPUT_DIR}/${APP_NAME}.dmg"
+OUTPUT_DMG="${OUTPUT_DIR}/${OUTPUT_NAME}"
 
 BACKGROUND_IMG="${ROOT_DIR}/build/darwin/dmg-background.png"
 VOLUME_ICON="${ROOT_DIR}/build/darwin/icons.icns"

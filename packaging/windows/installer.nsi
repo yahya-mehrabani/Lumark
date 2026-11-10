@@ -11,7 +11,9 @@ Unicode true
 
 ; Product Definitions
 !define PRODUCT_NAME "Lumark"
+!ifndef PRODUCT_VERSION
 !define PRODUCT_VERSION "0.1.0"
+!endif
 !define PRODUCT_PUBLISHER "Lumark Team"
 !define PRODUCT_WEB_SITE "https://github.com/yahya-mehrabani/Lumark"
 !define PRODUCT_EXE "Lumark.exe"
@@ -19,7 +21,10 @@ Unicode true
 !define UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "..\..\bin\Lumark-installer.exe"
+!ifndef OUTFILE
+!define OUTFILE "..\..\bin\Lumark-installer.exe"
+!endif
+OutFile "${OUTFILE}"
 InstallDir "$LOCALAPPDATA\Programs\Lumark"
 InstallDirRegKey HKCU "Software\${PRODUCT_NAME}" "InstallDir"
 RequestExecutionLevel user

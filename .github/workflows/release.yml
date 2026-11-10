@@ -5,14 +5,67 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (without leading v, e.g. 0.1.0)'
+        required: false
+        type: string
 
 permissions:
   contents: write
 
 jobs:
-  build-linux:
-    name: Build Linux Packages (Debian & AppImage)
+  prepare:
+    name: Prepare Release Metadata
     runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.vars.outputs.version }}
+      windows_installer: ${{ steps.vars.outputs.windows_installer }}
+      macos_dmg: ${{ steps.vars.outputs.macos_dmg }}
+      macos_zip: ${{ steps.vars.outputs.macos_zip }}
+      linux_appimage: ${{ steps.vars.outputs.linux_appimage }}
+      linux_tar: ${{ steps.vars.outputs.linux_tar }}
+      linux_deb: ${{ steps.vars.outputs.linux_deb }}
+      linux_rpm: ${{ steps.vars.outputs.linux_rpm }}
+    steps:
+      - name: Compute Release Variables
+        id: vars
+        run: |
+          # Derive VERSION from git tag (or dispatch input), stripping any leading 'v'
+          if [ -n "${{ inputs.version }}" ]; then
+            RAW_VER="${{ inputs.version }}"
+          elif [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            RAW_VER="${GITHUB_REF_NAME}"
+          else
+            RAW_VER="${GITHUB_REF_NAME:-v0.1.0}"
+          fi
+          VERSION="${RAW_VER#v}"
+          echo "Computed release version: ${VERSION}"
+
+          # Target asset names conforming to Lumark_<version>_<os>_<arch>[_setup].<ext>
+          WIN_INSTALLER="Lumark_${VERSION}_windows_amd64_setup.exe"
+          MAC_DMG="Lumark_${VERSION}_macos_universal.dmg"
+          MAC_ZIP="Lumark_${VERSION}_macos_universal.zip"
+          LINUX_APPIMAGE="Lumark_${VERSION}_linux_amd64.AppImage"
+          LINUX_TAR="Lumark_${VERSION}_linux_amd64.tar.gz"
+          LINUX_DEB="lumark_${VERSION}-1_amd64.deb"
+          LINUX_RPM="lumark-${VERSION}-1.x86_64.rpm"
+
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "windows_installer=${WIN_INSTALLER}" >> "$GITHUB_OUTPUT"
+          echo "macos_dmg=${MAC_DMG}" >> "$GITHUB_OUTPUT"
+          echo "macos_zip=${MAC_ZIP}" >> "$GITHUB_OUTPUT"
+          echo "linux_appimage=${LINUX_APPIMAGE}" >> "$GITHUB_OUTPUT"
+          echo "linux_tar=${LINUX_TAR}" >> "$GITHUB_OUTPUT"
+          echo "linux_deb=${LINUX_DEB}" >> "$GITHUB_OUTPUT"
+          echo "linux_rpm=${LINUX_RPM}" >> "$GITHUB_OUTPUT"
+
+  build-linux:
+    name: Build Linux Packages (Debian, AppImage, RPM, Tarball)
+    needs: [prepare]
+    runs-on: ubuntu-24.04
+    env:
+      VERSION: ${{ needs.prepare.outputs.version }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -42,30 +95,72 @@ jobs:
       - name: Install Wails CLI
         run: go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-beta.34
 
+      - name: Install appimagetool
+        run: |
+          sudo curl -sSL -o /tmp/appimagetool "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
+          sudo chmod +x /tmp/appimagetool
+          cd /tmp && sudo ./appimagetool --appimage-extract
+          sudo mv /tmp/squashfs-root /usr/local/lib/appimagetool
+          sudo ln -s /usr/local/lib/appimagetool/AppRun /usr/local/bin/appimagetool
+          appimagetool --version
+
       - name: Build Wails App
         run: wails3 build
 
       - name: Build Debian Package
         run: |
-          ./packaging/linux/build-deb.sh
+          ./packaging/linux/build-deb.sh "${{ needs.prepare.outputs.version }}"
 
-      - name: Build AppImage Pipeline
+      - name: Build AppImage
         run: |
-          ./packaging/linux/build-appimage.sh
+          ./packaging/linux/build-appimage.sh "${{ needs.prepare.outputs.version }}"
+
+      - name: Verify AppImage Execution & Entrypoint
+        run: |
+          APPIMAGE="build/bin/${{ needs.prepare.outputs.linux_appimage }}"
+          if [ ! -f "${APPIMAGE}" ]; then
+            echo "ERROR: Expected AppImage not found: ${APPIMAGE}" >&2
+            exit 1
+          fi
+          test -x "${APPIMAGE}"
+          "${APPIMAGE}" --appimage-extract
+          test -x squashfs-root/AppRun
+          test -x squashfs-root/usr/bin/Lumark
+          rm -rf squashfs-root
+          echo "Verified AppImage is executable and contains valid AppRun entry point."
+
+      - name: Build Portable Linux Binary Tarball
+        run: |
+          tar -czf "build/bin/${{ needs.prepare.outputs.linux_tar }}" -C build/bin lumark
+
+      - name: Build RPM Package (nfpm)
+        run: |
+          mkdir -p bin
+          cp -p build/bin/lumark bin/lumark
+          sed "s/version: .*/version: \"${{ needs.prepare.outputs.version }}\"/" build/linux/nfpm/nfpm.yaml > /tmp/nfpm.yaml
+          GIT_COMMITTER_NAME="Lumark Team" \
+          GIT_COMMITTER_EMAIL="team@lumark.local" \
+          GOARCH=amd64 \
+          wails3 tool package -name "${{ needs.prepare.outputs.linux_rpm }}" -format rpm -config /tmp/nfpm.yaml -out build/bin
+          ls -la "build/bin/${{ needs.prepare.outputs.linux_rpm }}"
 
       - name: Upload Linux Release Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: release-linux
           path: |
-            build/bin/lumark_*_amd64.deb
-            build/bin/Lumark.AppImage
-            build/bin/Lumark.AppDir.tar.gz
-          if-no-files-found: warn
+            build/bin/${{ needs.prepare.outputs.linux_deb }}
+            build/bin/${{ needs.prepare.outputs.linux_appimage }}
+            build/bin/${{ needs.prepare.outputs.linux_tar }}
+            build/bin/${{ needs.prepare.outputs.linux_rpm }}
+          if-no-files-found: error
 
   build-windows:
     name: Build Windows Package (NSIS Installer)
+    needs: [prepare]
     runs-on: windows-latest
+    env:
+      VERSION: ${{ needs.prepare.outputs.version }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -96,7 +191,7 @@ jobs:
       - name: Build Wails App
         run: wails3 build
 
-      - name: Build NSIS Installer
+      - name: Stage Executable
         shell: bash
         run: |
           if [ -f bin/markdown-viewer.exe ] && [ ! -f bin/Lumark.exe ]; then
@@ -105,20 +200,69 @@ jobs:
           if [ -f bin/Lumark.exe ] && [ ! -f bin/markdown-viewer.exe ]; then
             cp bin/Lumark.exe bin/markdown-viewer.exe
           fi
-          makensis packaging/windows/installer.nsi
+
+      # =========================================================================
+      # OPTIONAL CODE SIGNING: Windows Executable
+      # To enable code signing, configure the required secrets in GitHub:
+      # Option 1: Azure Trusted Signing (Recommended for modern cloud signing)
+      #   Secrets: AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET,
+      #            AZURE_TRUSTED_SIGNING_ENDPOINT, AZURE_TRUSTED_SIGNING_ACCOUNT_NAME,
+      #            AZURE_TRUSTED_SIGNING_PROFILE_NAME
+      # Option 2: SignPath (Cloud Authenticode Signing)
+      #   Secrets: SIGNPATH_API_TOKEN, SIGNPATH_ORGANIZATION_ID,
+      #            SIGNPATH_PROJECT_SLUG, SIGNPATH_SIGNING_POLICY_SLUG
+      # Option 3: Standard PFX / Authenticode Certificate
+      #   Secrets: WINDOWS_CERTIFICATE_BASE64, WINDOWS_CERTIFICATE_PASSWORD
+      # =========================================================================
+      # - name: Sign Windows Executable (Azure Trusted Signing)
+      #   if: env.AZURE_CLIENT_SECRET != ''
+      #   uses: azure/trusted-signing-action@v0.4.0
+      #   with:
+      #     azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+      #     azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+      #     azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+      #     endpoint: ${{ secrets.AZURE_TRUSTED_SIGNING_ENDPOINT }}
+      #     trusted-signing-account-name: ${{ secrets.AZURE_TRUSTED_SIGNING_ACCOUNT_NAME }}
+      #     certificate-profile-name: ${{ secrets.AZURE_TRUSTED_SIGNING_PROFILE_NAME }}
+      #     files: bin/Lumark.exe
+
+      - name: Build NSIS Installer
+        shell: bash
+        run: |
+          makensis \
+            -DPRODUCT_VERSION="${{ needs.prepare.outputs.version }}" \
+            -DOUTFILE="bin/${{ needs.prepare.outputs.windows_installer }}" \
+            packaging/windows/installer.nsi
+
+      # =========================================================================
+      # OPTIONAL CODE SIGNING: NSIS Installer Executable
+      # =========================================================================
+      # - name: Sign NSIS Installer (Azure Trusted Signing)
+      #   if: env.AZURE_CLIENT_SECRET != ''
+      #   uses: azure/trusted-signing-action@v0.4.0
+      #   with:
+      #     azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+      #     azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+      #     azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+      #     endpoint: ${{ secrets.AZURE_TRUSTED_SIGNING_ENDPOINT }}
+      #     trusted-signing-account-name: ${{ secrets.AZURE_TRUSTED_SIGNING_ACCOUNT_NAME }}
+      #     certificate-profile-name: ${{ secrets.AZURE_TRUSTED_SIGNING_PROFILE_NAME }}
+      #     files: bin/${{ needs.prepare.outputs.windows_installer }}
 
       - name: Upload Windows Release Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: release-windows
-          path: bin/Lumark-installer.exe
-          if-no-files-found: warn
+          path: bin/${{ needs.prepare.outputs.windows_installer }}
+          if-no-files-found: error
 
   build-macos:
-    name: Build macOS Package (DMG & App Bundle)
+    name: Build macOS Package (Universal DMG & App Bundle)
+    needs: [prepare]
     runs-on: macos-latest
     env:
       DEVELOPER_DIR: /Applications/Xcode.app/Contents/Developer
+      VERSION: ${{ needs.prepare.outputs.version }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -146,31 +290,86 @@ jobs:
       - name: Install go-task and create-dmg
         run: brew install go-task create-dmg
 
-      - name: Package Application Bundle
+      - name: Package Universal Application Bundle
         run: |
-          task darwin:package APP_NAME=Lumark
+          task darwin:package:universal APP_NAME=Lumark
+
+      # =========================================================================
+      # OPTIONAL CODE SIGNING & NOTARIZATION: macOS App Bundle
+      # To enable macOS codesigning and notarization, configure these secrets:
+      #   MACOS_CERTIFICATE_BASE64: Base64-encoded Developer ID Application .p12
+      #   MACOS_CERTIFICATE_PASSWORD: Password for the .p12 certificate
+      #   MACOS_KEYCHAIN_PASSWORD: Temp password for CI keychain
+      #   APPLE_ID: Apple Developer account email
+      #   APPLE_APP_SPECIFIC_PASSWORD: App-specific password generated on appleid.apple.com
+      #   APPLE_TEAM_ID: 10-character Apple Developer Team ID
+      # =========================================================================
+      # - name: Import Developer ID Certificate
+      #   if: env.MACOS_CERTIFICATE_BASE64 != ''
+      #   env:
+      #     MACOS_CERTIFICATE_BASE64: ${{ secrets.MACOS_CERTIFICATE_BASE64 }}
+      #     MACOS_CERTIFICATE_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PASSWORD }}
+      #     MACOS_KEYCHAIN_PASSWORD: ${{ secrets.MACOS_KEYCHAIN_PASSWORD }}
+      #   run: |
+      #     KEYCHAIN_PATH=$RUNNER_TEMP/build.keychain
+      #     security create-keychain -p "$MACOS_KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+      #     security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+      #     security unlock-keychain -p "$MACOS_KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+      #     echo "$MACOS_CERTIFICATE_BASE64" | base64 --decode > $RUNNER_TEMP/certificate.p12
+      #     security import $RUNNER_TEMP/certificate.p12 -k "$KEYCHAIN_PATH" -P "$MACOS_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+      #     security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+      #
+      # - name: Sign macOS Application Bundle
+      #   if: env.MACOS_CERTIFICATE_BASE64 != ''
+      #   run: |
+      #     codesign --force --deep --options runtime \
+      #       --entitlements packaging/macos/entitlements.plist \
+      #       --sign "Developer ID Application: Lumark (${{ secrets.APPLE_TEAM_ID }})" \
+      #       --timestamp \
+      #       "bin/Lumark.app"
+      #     codesign --verify --deep --strict --verbose=4 "bin/Lumark.app"
 
       - name: Build DMG Package
         run: |
-          ./packaging/macos/create-dmg.sh bin "Lumark"
+          ./packaging/macos/create-dmg.sh bin "Lumark" bin "${{ needs.prepare.outputs.macos_dmg }}"
+
+      # =========================================================================
+      # OPTIONAL CODE SIGNING & NOTARIZATION: macOS DMG
+      # =========================================================================
+      # - name: Sign and Notarize DMG Package
+      #   if: env.MACOS_CERTIFICATE_BASE64 != ''
+      #   env:
+      #     APPLE_ID: ${{ secrets.APPLE_ID }}
+      #     APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+      #     APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      #   run: |
+      #     codesign --force --sign "Developer ID Application: Lumark (${{ secrets.APPLE_TEAM_ID }})" \
+      #       --timestamp "bin/${{ needs.prepare.outputs.macos_dmg }}"
+      #     codesign --verify --strict --verbose=4 "bin/${{ needs.prepare.outputs.macos_dmg }}"
+      #     xcrun notarytool submit "bin/${{ needs.prepare.outputs.macos_dmg }}" \
+      #       --apple-id "$APPLE_ID" \
+      #       --team-id "$APPLE_TEAM_ID" \
+      #       --password "$APPLE_APP_SPECIFIC_PASSWORD" \
+      #       --wait
+      #     xcrun stapler staple "bin/${{ needs.prepare.outputs.macos_dmg }}"
 
       - name: Create Zip of Application Bundle
         run: |
           cd bin
-          ditto -c -k --sequesterRsrc --keepParent "Lumark.app" "Lumark-macos.zip"
+          ditto -c -k --sequesterRsrc --keepParent "Lumark.app" "${{ needs.prepare.outputs.macos_zip }}"
 
       - name: Upload macOS Release Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: release-macos
           path: |
-            bin/Lumark.dmg
-            bin/Lumark-macos.zip
-          if-no-files-found: warn
+            bin/${{ needs.prepare.outputs.macos_dmg }}
+            bin/${{ needs.prepare.outputs.macos_zip }}
+          if-no-files-found: error
 
   publish-release:
     name: Create GitHub Release
-    needs: [build-linux, build-windows, build-macos]
+    needs: [prepare, build-linux, build-windows, build-macos]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -185,15 +384,43 @@ jobs:
         working-directory: release-assets
         run: |
           rm -f SHA256SUMS.txt
-          sha256sum * > SHA256SUMS.txt
+          sha256sum Lumark_* lumark_* lumark-* > SHA256SUMS.txt
+          sha256sum -c SHA256SUMS.txt
           cat SHA256SUMS.txt
+
+      - name: Generate Release Notes Body
+        run: |
+          cat << 'EOF' > release-body.md
+          ## Installation Guide
+
+          Download the package for your operating system and architecture:
+
+          | Platform | Architecture | Package Format | Filename | Description |
+          | :--- | :--- | :--- | :--- | :--- |
+          | **Windows** | x64 (64-bit) | NSIS Installer | `${{ needs.prepare.outputs.windows_installer }}` | Standard installer with file associations |
+          | **macOS** | Universal (arm64 + x64) | Disk Image | `${{ needs.prepare.outputs.macos_dmg }}` | Branded DMG with drag-and-drop to Applications |
+          | **macOS** | Universal (arm64 + x64) | Zip Archive | `${{ needs.prepare.outputs.macos_zip }}` | Portable zipped `.app` bundle |
+          | **Linux** | x86_64 / amd64 | AppImage | `${{ needs.prepare.outputs.linux_appimage }}` | Standalone executable (`chmod +x` & run) |
+          | **Linux** | x86_64 / amd64 | Debian / Ubuntu | `${{ needs.prepare.outputs.linux_deb }}` | Debian package (`sudo apt install ./...deb`) |
+          | **Linux** | x86_64 / amd64 | RPM (Fedora/RHEL) | `${{ needs.prepare.outputs.linux_rpm }}` | RPM package (`sudo dnf install ./...rpm`) |
+          | **Linux** | x86_64 / amd64 | Tarball | `${{ needs.prepare.outputs.linux_tar }}` | Portable standalone binary archive |
+
+          ### Checksum Verification
+          To verify integrity after downloading, download `SHA256SUMS.txt` into the same directory and run:
+          ```bash
+          sha256sum -c SHA256SUMS.txt --ignore-missing
+          ```
+
+          ---
+
+          EOF
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: release-assets/*
+          body_path: release-body.md
           generate_release_notes: true
           append_body: false
           draft: false
           prerelease: false
-

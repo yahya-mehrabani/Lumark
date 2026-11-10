@@ -5,9 +5,11 @@ import (
 	"embed"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"path/filepath"
+	"runtime"
 	"syscall"
 	"time"
 	"unicode/utf8"
@@ -48,45 +50,50 @@ func main() {
 		wd = "."
 	}
 
-	// Initialize the local-only single-instance IPC coordinator
-	coord, err := ipc.New(ipc.DefaultOptions())
-	if err != nil {
-		log.Fatalf("[IPC] Failed to initialize coordinator: %v", err)
-	}
+	// Initialize the local-only single-instance IPC coordinator on Unix/Linux/macOS.
+	// On Windows, Wails v3 built-in SingleInstanceOptions handles Win32 Mutex & messaging natively.
+	var coord *ipc.Coordinator
+	if runtime.GOOS != "windows" {
+		var initErr error
+		coord, initErr = ipc.New(ipc.DefaultOptions())
+		if initErr != nil {
+			log.Printf("[IPC] Failed to initialize coordinator: %v (continuing)", initErr)
+		} else {
+			role, startErr := coord.Start(context.Background())
+			if startErr != nil {
+				log.Printf("[IPC] Failed to start coordinator: %v (continuing)", startErr)
+			} else if role == ipc.RoleSecondary {
+				// Another instance is already running. Forward CLI arguments and working directory to the primary instance.
+				msg := ipc.Message{
+					Args:       os.Args[1:],
+					WorkingDir: wd,
+				}
 
-	// Determine single-instance role (Primary listener or Secondary client)
-	role, err := coord.Start(context.Background())
-	if err != nil {
-		log.Fatalf("[IPC] Failed to start coordinator: %v", err)
-	}
+				ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+				defer cancel()
 
-	if role == ipc.RoleSecondary {
-		// Another instance is already running. Forward CLI arguments and working directory to the primary instance.
-		msg := ipc.Message{
-			Args:       os.Args[1:],
-			WorkingDir: wd,
+				if sendErr := coord.Send(ctx, msg); sendErr != nil {
+					_ = coord.Close()
+					log.Printf("[IPC/Secondary] Failed to forward arguments to primary instance: %v", sendErr)
+				} else {
+					log.Printf("[IPC/Secondary] Forwarded %d argument(s) to primary instance and exiting", len(msg.Args))
+				}
+
+				_ = coord.Close()
+				os.Exit(0)
+			}
 		}
-
-		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-		defer cancel()
-
-		if sendErr := coord.Send(ctx, msg); sendErr != nil {
-			_ = coord.Close()
-			log.Fatalf("[IPC/Secondary] Failed to forward arguments to primary instance: %v", sendErr)
-		}
-
-		_ = coord.Close()
-		log.Printf("[IPC/Secondary] Forwarded %d argument(s) to primary instance and exiting", len(msg.Args))
-		os.Exit(0)
 	}
 
 	// This process is the Primary instance
-	log.Printf("[IPC/Primary] Single-instance coordinator active (socket: %s)", coord.SocketPath())
+	if coord != nil {
+		log.Printf("[IPC/Primary] Single-instance coordinator active (socket: %s)", coord.SocketPath())
+	}
 
 	// Initialize the scoped local asset resolver
 	assetResolver, err := assets.NewScopedResolver("")
 	if err != nil {
-		log.Fatalf("[Assets] Failed to initialize asset resolver: %v", err)
+		log.Printf("[Assets] Failed to initialize asset resolver: %v", err)
 	}
 
 	// Initialize the spike document service
@@ -128,8 +135,51 @@ func main() {
 		log.Printf("[Watcher] Failed to initialize file watcher service: %v", err)
 	}
 
+	var app *application.App
+	var mainWindow *application.WebviewWindow
+	var singleInstanceOpt *application.SingleInstanceOptions
+	if runtime.GOOS == "windows" {
+		singleInstanceOpt = &application.SingleInstanceOptions{
+			UniqueID: "com.lumark.app",
+			OnSecondInstanceLaunch: func(data application.SecondInstanceData) {
+				log.Printf("[SingleInstance] Second instance launched: %v (dir: %s)", data.Args, data.WorkingDir)
+				for _, arg := range data.Args {
+					logReceivedFile("SingleInstance", arg)
+					targetFile := arg
+					if !filepath.IsAbs(targetFile) {
+						targetFile = filepath.Join(data.WorkingDir, targetFile)
+					}
+					if doc, loadErr := docService.LoadFile(targetFile); loadErr != nil {
+						log.Printf("[DocumentService] Failed to load forwarded document %s: %v", targetFile, loadErr)
+					} else {
+						log.Printf("[DocumentService] Forwarded document loaded: %s (dir: %s, bytes: %d)",
+							doc.Filename, doc.Dir, len(doc.Content))
+						if app != nil {
+							app.Event.Emit("document:open", doc)
+						}
+					}
+					if app != nil {
+						app.Event.Emit("file:open", arg)
+					}
+				}
+				if mainWindow != nil {
+					if mainWindow.IsMinimised() {
+						mainWindow.Restore()
+					}
+					mainWindow.Show()
+					mainWindow.Focus()
+				}
+			},
+		}
+	}
+
+	var assetMiddleware func(http.Handler) http.Handler
+	if assetResolver != nil {
+		assetMiddleware = assetResolver.Middleware
+	}
+
 	// Create a new Wails application by providing the necessary options.
-	app := application.New(application.Options{
+	app = application.New(application.Options{
 		Name:        "Lumark",
 		Description: "Lumark - Fast, Cross-Platform Desktop Markdown Reader",
 		Services: []application.Service{
@@ -142,12 +192,13 @@ func main() {
 		},
 		Assets: application.AssetOptions{
 			Handler:    application.AssetFileServerFS(frontendAssets),
-			Middleware: assetResolver.Middleware,
+			Middleware: assetMiddleware,
 		},
 		Mac: application.MacOptions{
 			ApplicationShouldTerminateAfterLastWindowClosed: true,
 		},
 		FileAssociations: []string{".md", ".markdown", ".mdown", ".mkd"},
+		SingleInstance:   singleInstanceOpt,
 	})
 
 	// Forward watcher events to Wails frontend event bus
@@ -169,7 +220,7 @@ func main() {
 	// 'Mac' options tailor the window when running on macOS.
 	// 'BackgroundColour' is the background colour of the window.
 	// 'URL' is the URL that will be loaded into the webview.
-	mainWindow := app.Window.NewWithOptions(application.WebviewWindowOptions{
+	mainWindow = app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Title: "Lumark",
 		// Window sized to the golden ratio (1000 / 618 ≈ 1.618).
 		Width:               1000,
@@ -222,7 +273,9 @@ func main() {
 		if watcherService != nil {
 			_ = watcherService.Close()
 		}
-		_ = coord.Close()
+		if coord != nil {
+			_ = coord.Close()
+		}
 	})
 
 	// Graceful termination handling for SIGINT / SIGTERM (e.g. kill $PID)
@@ -234,39 +287,43 @@ func main() {
 		if watcherService != nil {
 			_ = watcherService.Close()
 		}
-		_ = coord.Close()
+		if coord != nil {
+			_ = coord.Close()
+		}
 		app.Quit()
 	}()
 
 	// Listen for forwarded documents from secondary instances
-	go func() {
-		for msg := range coord.Messages() {
-			log.Printf("[IPC/Primary] Received forwarded message from secondary (working dir: %s, args: %v)", msg.WorkingDir, msg.Args)
-			for _, arg := range msg.Args {
-				logReceivedFile("IPC/Primary", arg)
-				targetFile := arg
-				if !filepath.IsAbs(targetFile) {
-					targetFile = filepath.Join(msg.WorkingDir, targetFile)
+	if coord != nil {
+		go func() {
+			for msg := range coord.Messages() {
+				log.Printf("[IPC/Primary] Received forwarded message from secondary (working dir: %s, args: %v)", msg.WorkingDir, msg.Args)
+				for _, arg := range msg.Args {
+					logReceivedFile("IPC/Primary", arg)
+					targetFile := arg
+					if !filepath.IsAbs(targetFile) {
+						targetFile = filepath.Join(msg.WorkingDir, targetFile)
+					}
+					if doc, loadErr := docService.LoadFile(targetFile); loadErr != nil {
+						log.Printf("[DocumentService] Failed to load forwarded document %s: %v", targetFile, loadErr)
+					} else {
+						log.Printf("[DocumentService] Forwarded document loaded: %s (dir: %s, bytes: %d)",
+							doc.Filename, doc.Dir, len(doc.Content))
+						app.Event.Emit("document:open", doc)
+					}
+					app.Event.Emit("file:open", arg)
 				}
-				if doc, loadErr := docService.LoadFile(targetFile); loadErr != nil {
-					log.Printf("[DocumentService] Failed to load forwarded document %s: %v", targetFile, loadErr)
-				} else {
-					log.Printf("[DocumentService] Forwarded document loaded: %s (dir: %s, bytes: %d)",
-						doc.Filename, doc.Dir, len(doc.Content))
-					app.Event.Emit("document:open", doc)
+				// Bring the main window forward and request focus
+				if mainWindow != nil {
+					if mainWindow.IsMinimised() {
+						mainWindow.Restore()
+					}
+					mainWindow.Show()
+					mainWindow.Focus()
 				}
-				app.Event.Emit("file:open", arg)
 			}
-			// Bring the main window forward and request focus
-			if mainWindow != nil {
-				if mainWindow.IsMinimised() {
-					mainWindow.Restore()
-				}
-				mainWindow.Show()
-				mainWindow.Focus()
-			}
-		}
-	}()
+		}()
+	}
 
 	// Create a goroutine that emits an event containing the current time every second.
 	// The frontend can listen to this event and update the UI accordingly.
@@ -280,7 +337,9 @@ func main() {
 
 	// Run the application. This blocks until the application has been exited.
 	err = app.Run()
-	_ = coord.Close()
+	if coord != nil {
+		_ = coord.Close()
+	}
 
 	// If an error occurred while running the application, log it and exit.
 	if err != nil {

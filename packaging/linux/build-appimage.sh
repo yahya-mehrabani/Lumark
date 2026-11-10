@@ -8,8 +8,13 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 BUILD_DIR="${ROOT_DIR}/build/bin"
 STAGING_DIR="${ROOT_DIR}/build/staging"
 APP_NAME="Lumark"
+VERSION="${VERSION:-${1:-0.1.0}}"
+VERSION="${VERSION#v}"
+ARCH="${ARCH:-amd64}"
 APP_DIR="${STAGING_DIR}/${APP_NAME}.AppDir"
-APPIMAGE_OUTPUT="${BUILD_DIR}/${APP_NAME}.AppImage"
+TARGET_APPIMAGE_NAME="${APP_NAME}_${VERSION}_linux_${ARCH}.AppImage"
+APPIMAGE_OUTPUT="${BUILD_DIR}/${TARGET_APPIMAGE_NAME}"
+CANONICAL_APPIMAGE="${BUILD_DIR}/${APP_NAME}.AppImage"
 
 mkdir -p "${BUILD_DIR}"
 rm -rf "${APP_DIR}"
@@ -88,12 +93,20 @@ echo "AppDir structure staged successfully at: ${APP_DIR}"
 # 5. Build final .AppImage if appimagetool or linuxdeploy is available
 if command -v appimagetool >/dev/null 2>&1; then
 	echo "Running appimagetool to build single-file AppImage..."
-	ARCH="$(uname -m)" appimagetool "${APP_DIR}" "${APPIMAGE_OUTPUT}"
+	ARCH_APPIMAGE="x86_64"
+	if [ "${ARCH}" = "arm64" ]; then
+		ARCH_APPIMAGE="aarch64"
+	fi
+	ARCH="${ARCH_APPIMAGE}" appimagetool "${APP_DIR}" "${APPIMAGE_OUTPUT}"
+	chmod +x "${APPIMAGE_OUTPUT}"
+	ln -sf "${TARGET_APPIMAGE_NAME}" "${CANONICAL_APPIMAGE}"
 	echo "Generated AppImage: ${APPIMAGE_OUTPUT}"
 elif command -v linuxdeploy >/dev/null 2>&1; then
 	echo "Running linuxdeploy to bundle and build AppImage..."
 	linuxdeploy --appdir "${APP_DIR}" --output appimage
 	mv "${APP_NAME}"*.AppImage "${APPIMAGE_OUTPUT}" 2>/dev/null || true
+	chmod +x "${APPIMAGE_OUTPUT}"
+	ln -sf "${TARGET_APPIMAGE_NAME}" "${CANONICAL_APPIMAGE}"
 	echo "Generated AppImage: ${APPIMAGE_OUTPUT}"
 else
 	echo "Notice: Neither 'appimagetool' nor 'linuxdeploy' is installed in system PATH."

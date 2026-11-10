@@ -4,8 +4,11 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 BUILD_DIR="${ROOT_DIR}/build/bin"
 STAGING_DIR="${ROOT_DIR}/build/staging/debian"
-DEB_VERSION="0.1.0-1"
-DEB_ARCH="amd64"
+VERSION="${VERSION:-${1:-0.1.0}}"
+VERSION="${VERSION#v}"
+DEB_REVISION="${DEB_REVISION:-1}"
+DEB_VERSION="${VERSION}-${DEB_REVISION}"
+DEB_ARCH="${DEB_ARCH:-amd64}"
 PACKAGE_NAME="lumark"
 DEB_OUTPUT="${BUILD_DIR}/${PACKAGE_NAME}_${DEB_VERSION}_${DEB_ARCH}.deb"
 DEB_SYMLINK="${BUILD_DIR}/${PACKAGE_NAME}.deb"
@@ -67,6 +70,8 @@ fi
 
 # Copy DEBIAN control and maintainer scripts
 cp -p "${ROOT_DIR}/packaging/linux/debian/control" "${STAGING_DIR}/DEBIAN/control"
+sed -i "s/^Version:.*/Version: ${DEB_VERSION}/" "${STAGING_DIR}/DEBIAN/control"
+sed -i "s/^Architecture:.*/Architecture: ${DEB_ARCH}/" "${STAGING_DIR}/DEBIAN/control"
 chmod 644 "${STAGING_DIR}/DEBIAN/control"
 
 cp -p "${ROOT_DIR}/packaging/linux/debian/postinst" "${STAGING_DIR}/DEBIAN/postinst"
