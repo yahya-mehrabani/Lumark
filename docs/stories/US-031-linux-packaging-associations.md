@@ -194,7 +194,7 @@ $ dpkg-deb -I build/bin/markdown-viewer_0.1.0-1_amd64.deb
  Maintainer: Markdown Viewer Team <maintainers@markdownviewer.local>
  Depends: libc6 (>= 2.38), libgtk-4-1 (>= 4.12.0) | libgtk-3-0 (>= 3.24.0), libwebkitgtk-6.0-4 (>= 2.40.0) | libwebkit2gtk-4.1-0 (>= 2.40.0)
  Description: Fast, cross-platform Markdown Viewer desktop application
-Homepage: https://github.com/personal/markdown-go
+Homepage: https://github.com/yahya-mehrabani/Lumark
 
 $ dpkg-deb -c build/bin/markdown-viewer_0.1.0-1_amd64.deb
 drwxr-xr-x root/root         0 ./

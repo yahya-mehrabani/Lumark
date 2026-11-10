@@ -12,7 +12,7 @@ priority: "extra"
 maintainer: ${GIT_COMMITTER_NAME} <${GIT_COMMITTER_EMAIL}>
 description: "Lumark - A fast, cross-platform Markdown reader"
 vendor: "Lumark Team"
-homepage: "https://github.com/personal/lumark"
+homepage: "https://github.com/yahya-mehrabani/Lumark"
 license: "MIT"
 release: "1"
 

@@ -13,7 +13,7 @@ Unicode true
 !define PRODUCT_NAME "Lumark"
 !define PRODUCT_VERSION "0.1.0"
 !define PRODUCT_PUBLISHER "Lumark Team"
-!define PRODUCT_WEB_SITE "https://github.com/personal/lumark"
+!define PRODUCT_WEB_SITE "https://github.com/yahya-mehrabani/Lumark"
 !define PRODUCT_EXE "Lumark.exe"
 !define PROGID "Lumark.Document"
 !define UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"

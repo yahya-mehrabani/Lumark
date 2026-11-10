@@ -224,7 +224,7 @@ $ dpkg-deb --info build/bin/markdown-viewer-spike.deb && dpkg-deb -c build/bin/m
   A local-first, standalone desktop Markdown viewer built with Wails and Go.
   Features CommonMark and GitHub Flavored Markdown rendering, offline KaTeX math,
   Mermaid diagrams, bidirectional RTL/LTR layout, and secure local asset isolation.
- Homepage: https://github.com/personal/markdown-go
+ Homepage: https://github.com/yahya-mehrabani/Lumark
 drwxr-xr-x root/root         0 2026-10-23 22:57 ./
 drwxr-xr-x root/root         0 2026-10-23 22:57 ./usr/
 drwxr-xr-x root/root         0 2026-10-23 22:57 ./usr/bin/
