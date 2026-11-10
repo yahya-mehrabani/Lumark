@@ -46,11 +46,22 @@ jobs:
       - name: Build NSIS Installer
         shell: bash
         run: |
+          if [ -f bin/markdown-viewer.exe ] && [ ! -f bin/Lumark.exe ]; then
+            cp bin/markdown-viewer.exe bin/Lumark.exe
+          fi
+          if [ -f bin/Lumark.exe ] && [ ! -f bin/markdown-viewer.exe ]; then
+            cp bin/Lumark.exe bin/markdown-viewer.exe
+          fi
           makensis packaging/windows/installer.nsi
+          if [ -f bin/Lumark-installer.exe ] && [ ! -f bin/markdown-viewer-installer.exe ]; then
+            cp bin/Lumark-installer.exe bin/markdown-viewer-installer.exe
+          fi
 
       - name: Upload Installer Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: markdown-viewer-windows-installer
-          path: bin/markdown-viewer-installer.exe
+          name: lumark-windows-installer
+          path: |
+            bin/Lumark-installer.exe
+            bin/markdown-viewer-installer.exe
           if-no-files-found: warn

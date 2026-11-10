@@ -14,12 +14,12 @@ Unicode true
 !define PRODUCT_VERSION "0.1.0"
 !define PRODUCT_PUBLISHER "Lumark Team"
 !define PRODUCT_WEB_SITE "https://github.com/personal/lumark"
-!define PRODUCT_EXE "markdown-viewer.exe"
+!define PRODUCT_EXE "Lumark.exe"
 !define PROGID "Lumark.Document"
 !define UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "..\..\bin\markdown-viewer-installer.exe"
+OutFile "..\..\bin\Lumark-installer.exe"
 InstallDir "$LOCALAPPDATA\Programs\Lumark"
 InstallDirRegKey HKCU "Software\${PRODUCT_NAME}" "InstallDir"
 RequestExecutionLevel user
@@ -107,7 +107,7 @@ Section "MainSection" SEC01
     SetOverwrite ifnewer
 
     ; Place main executable
-    File "/oname=${PRODUCT_EXE}" "..\..\bin\markdown-viewer.exe"
+    File "/oname=${PRODUCT_EXE}" "..\..\bin\Lumark.exe"
 
     ; Create Start Menu and Desktop shortcuts
     CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME}"

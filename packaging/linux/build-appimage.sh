@@ -7,8 +7,8 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 BUILD_DIR="${ROOT_DIR}/build/bin"
 STAGING_DIR="${ROOT_DIR}/build/staging"
-APP_DIR="${STAGING_DIR}/markdown-viewer.AppDir"
-APP_NAME="markdown-viewer"
+APP_NAME="Lumark"
+APP_DIR="${STAGING_DIR}/${APP_NAME}.AppDir"
 APPIMAGE_OUTPUT="${BUILD_DIR}/${APP_NAME}.AppImage"
 
 mkdir -p "${BUILD_DIR}"
@@ -20,30 +20,49 @@ mkdir -p "${APP_DIR}/usr/share/icons/hicolor/scalable/apps"
 mkdir -p "${APP_DIR}/usr/share/icons/hicolor/128x128/apps"
 
 # 1. Locate binary
-BINARY_SOURCE="${ROOT_DIR}/bin/markdown-viewer"
-if [ ! -f "${BINARY_SOURCE}" ]; then
-	if [ -f "${BUILD_DIR}/markdown-viewer" ]; then
-		BINARY_SOURCE="${BUILD_DIR}/markdown-viewer"
-	elif [ -f "${BUILD_DIR}/markdown-viewer-spike" ]; then
-		BINARY_SOURCE="${BUILD_DIR}/markdown-viewer-spike"
-	else
-		echo "Building production markdown-viewer binary for AppImage..."
-		go build -tags production -trimpath -ldflags="-w -s" -o "${BUILD_DIR}/markdown-viewer" "${ROOT_DIR}"
-		BINARY_SOURCE="${BUILD_DIR}/markdown-viewer"
+BINARY_SOURCE=""
+for candidate in \
+	"${ROOT_DIR}/bin/Lumark" \
+	"${ROOT_DIR}/bin/lumark" \
+	"${ROOT_DIR}/bin/markdown-viewer" \
+	"${BUILD_DIR}/Lumark" \
+	"${BUILD_DIR}/lumark" \
+	"${BUILD_DIR}/markdown-viewer" \
+	"${BUILD_DIR}/markdown-viewer-spike"; do
+	if [ -f "${candidate}" ]; then
+		BINARY_SOURCE="${candidate}"
+		break
 	fi
+done
+
+if [ -z "${BINARY_SOURCE}" ]; then
+	echo "Building production Lumark binary for AppImage..."
+	go build -tags production -trimpath -ldflags="-w -s" -o "${BUILD_DIR}/Lumark" "${ROOT_DIR}"
+	BINARY_SOURCE="${BUILD_DIR}/Lumark"
 fi
 
-# Copy binary
+# Copy binary and provide compatibility symlinks
 cp -p "${BINARY_SOURCE}" "${APP_DIR}/usr/bin/${APP_NAME}"
 chmod 755 "${APP_DIR}/usr/bin/${APP_NAME}"
+ln -sf "${APP_NAME}" "${APP_DIR}/usr/bin/lumark"
+ln -sf "${APP_NAME}" "${APP_DIR}/usr/bin/markdown-viewer"
 
 # 2. Desktop launcher
-cp -p "${ROOT_DIR}/packaging/linux/markdown-viewer.desktop" "${APP_DIR}/usr/share/applications/${APP_NAME}.desktop"
-cp -p "${ROOT_DIR}/packaging/linux/markdown-viewer.desktop" "${APP_DIR}/${APP_NAME}.desktop"
+DESKTOP_SRC="${ROOT_DIR}/packaging/linux/lumark.desktop"
+if [ ! -f "${DESKTOP_SRC}" ]; then
+	DESKTOP_SRC="${ROOT_DIR}/packaging/linux/markdown-viewer.desktop"
+fi
+cp -p "${DESKTOP_SRC}" "${APP_DIR}/usr/share/applications/${APP_NAME}.desktop"
+cp -p "${DESKTOP_SRC}" "${APP_DIR}/${APP_NAME}.desktop"
 chmod 644 "${APP_DIR}/usr/share/applications/${APP_NAME}.desktop" "${APP_DIR}/${APP_NAME}.desktop"
+ln -sf "${APP_NAME}.desktop" "${APP_DIR}/markdown-viewer.desktop"
 
 # 3. Icons
-cp -p "${ROOT_DIR}/packaging/linux/markdown-viewer.svg" "${APP_DIR}/usr/share/icons/hicolor/scalable/apps/${APP_NAME}.svg"
+SVG_SRC="${ROOT_DIR}/packaging/linux/lumark.svg"
+if [ ! -f "${SVG_SRC}" ]; then
+	SVG_SRC="${ROOT_DIR}/packaging/linux/markdown-viewer.svg"
+fi
+cp -p "${SVG_SRC}" "${APP_DIR}/usr/share/icons/hicolor/scalable/apps/${APP_NAME}.svg"
 chmod 644 "${APP_DIR}/usr/share/icons/hicolor/scalable/apps/${APP_NAME}.svg"
 
 if [ -f "${ROOT_DIR}/build/appicon.png" ]; then
@@ -54,19 +73,19 @@ if [ -f "${ROOT_DIR}/build/appicon.png" ]; then
 fi
 
 # 4. Standard AppRun Entrypoint
-cat <<'APPRUN_EOF' >"${APP_DIR}/AppRun"
+cat <<APPRUN_EOF >"${APP_DIR}/AppRun"
 #!/bin/sh
 set -e
 
 # AppRun launcher script for AppImage
-SELF=$(readlink -f "$0")
-HERE=${SELF%/*}
+SELF=\$(readlink -f "\$0")
+HERE=\${SELF%/*}
 
-export PATH="${HERE}/usr/bin:${PATH}"
-export LD_LIBRARY_PATH="${HERE}/usr/lib:${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
-export XDG_DATA_DIRS="${HERE}/usr/share:${XDG_DATA_DIRS:+:$XDG_DATA_DIRS}"
+export PATH="\${HERE}/usr/bin:\${PATH}"
+export LD_LIBRARY_PATH="\${HERE}/usr/lib:\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}"
+export XDG_DATA_DIRS="\${HERE}/usr/share:\${XDG_DATA_DIRS:+:\$XDG_DATA_DIRS}"
 
-exec "${HERE}/usr/bin/markdown-viewer" "$@"
+exec "\${HERE}/usr/bin/${APP_NAME}" "\$@"
 APPRUN_EOF
 chmod 755 "${APP_DIR}/AppRun"
 
@@ -88,4 +107,11 @@ else
 	# Create a portable directory bundle archive for distribution convenience
 	tar -czf "${BUILD_DIR}/${APP_NAME}.AppDir.tar.gz" -C "${STAGING_DIR}" "${APP_NAME}.AppDir"
 	echo "Packaged portable AppDir archive: ${BUILD_DIR}/${APP_NAME}.AppDir.tar.gz"
+fi
+
+# Maintain legacy naming aliases in build directories for existing tests
+rm -rf "${STAGING_DIR}/markdown-viewer.AppDir"
+ln -sf "${APP_NAME}.AppDir" "${STAGING_DIR}/markdown-viewer.AppDir"
+if [ -f "${BUILD_DIR}/${APP_NAME}.AppDir.tar.gz" ]; then
+	cp -pf "${BUILD_DIR}/${APP_NAME}.AppDir.tar.gz" "${BUILD_DIR}/markdown-viewer.AppDir.tar.gz"
 fi

@@ -1,7 +1,7 @@
 version: '3'
 
 vars:
-  APP_NAME: '{{if eq (.GOOS | default OS) "darwin"}}Lumark{{else}}markdown-viewer{{end}}'
+  APP_NAME: '{{if or (eq (.GOOS | default OS) "darwin") (eq (.GOOS | default OS) "windows") (eq OS "darwin") (eq OS "windows")}}Lumark{{else}}lumark{{end}}'
   BIN_DIR: "bin"
   PACKAGE_MANAGER: '{{.PACKAGE_MANAGER | default "npm"}}'
   VITE_PORT: '{{.WAILS_VITE_PORT | default 9245}}'

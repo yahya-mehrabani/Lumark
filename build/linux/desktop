@@ -3,11 +3,11 @@ Version=1.0
 Name=Lumark
 Comment=Lumark - A fast, cross-platform Markdown reader
 # The Exec line includes %u to pass the URL to the application
-Exec=/usr/local/bin/markdown-viewer %u
+Exec=/usr/local/bin/lumark %u
 Terminal=false
 Type=Application
-Icon=markdown-viewer
+Icon=lumark
 Categories=Utility;
-StartupWMClass=markdown-viewer
+StartupWMClass=lumark
 
  

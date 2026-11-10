@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Lumark
+GenericName=Markdown Document Viewer
+Comment=Lumark - A fast, cross-platform Markdown reader
+Exec=lumark %F
+Icon=lumark
+Terminal=false
+Categories=Utility;TextEditor;Viewer;
+MimeType=text/markdown;text/x-markdown;
+Keywords=Markdown;Viewer;Editor;CommonMark;GFM;Lumark;
+StartupNotify=true
+StartupWMClass=lumark

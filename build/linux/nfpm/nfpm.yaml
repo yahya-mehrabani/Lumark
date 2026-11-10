@@ -3,28 +3,28 @@
 #
 # The lines below are called `modelines`. See `:help modeline`
 
-name: "markdown-viewer"
+name: "lumark"
 arch: ${GOARCH}
 platform: "linux"
 version: "0.1.0"
 section: "default"
 priority: "extra"
 maintainer: ${GIT_COMMITTER_NAME} <${GIT_COMMITTER_EMAIL}>
-description: "A fast, cross-platform Markdown Viewer"
-vendor: "Markdown Viewer"
-homepage: "https://wails.io"
+description: "Lumark - A fast, cross-platform Markdown reader"
+vendor: "Lumark Team"
+homepage: "https://github.com/personal/lumark"
 license: "MIT"
 release: "1"
 
 contents:
-  - src: "./bin/markdown-viewer"
-    dst: "/usr/bin/markdown-viewer"
-  - src: "./packaging/linux/markdown-viewer.svg"
-    dst: "/usr/share/icons/hicolor/scalable/apps/markdown-viewer.svg"
+  - src: "./bin/lumark"
+    dst: "/usr/bin/lumark"
+  - src: "./packaging/linux/lumark.svg"
+    dst: "/usr/share/icons/hicolor/scalable/apps/lumark.svg"
   - src: "./build/appicon.png"
-    dst: "/usr/share/icons/hicolor/128x128/apps/markdown-viewer.png"
-  - src: "./build/linux/markdown-viewer.desktop"
-    dst: "/usr/share/applications/markdown-viewer.desktop"
+    dst: "/usr/share/icons/hicolor/128x128/apps/lumark.png"
+  - src: "./build/linux/lumark.desktop"
+    dst: "/usr/share/applications/lumark.desktop"
 
 # Default dependencies for Ubuntu 24.04+ (GTK4 + WebKitGTK 6.0 with GTK3/WebKit2GTK 4.1 fallback)
 depends:

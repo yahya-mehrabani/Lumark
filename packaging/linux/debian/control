@@ -1,10 +1,13 @@
-Package: markdown-viewer
+Package: lumark
 Version: 0.1.0-1
 Section: utils
 Priority: optional
 Architecture: amd64
 Maintainer: Lumark Team <maintainers@lumark.local>
 Depends: libc6 (>= 2.38), libgtk-4-1 (>= 4.12.0) | libgtk-3-0 (>= 3.24.0), libwebkitgtk-6.0-4 (>= 2.40.0) | libwebkit2gtk-4.1-0 (>= 2.40.0)
+Provides: markdown-viewer
+Replaces: markdown-viewer
+Conflicts: markdown-viewer
 Description: Lumark - Fast, cross-platform Markdown reader desktop application
  A local-first, standalone desktop Markdown reader built with Wails and Go.
  Features CommonMark and GitHub Flavored Markdown rendering, offline KaTeX math,

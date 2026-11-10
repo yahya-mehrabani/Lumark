@@ -58,9 +58,9 @@ jobs:
         with:
           name: release-linux
           path: |
-            build/bin/*.deb
-            build/bin/*.AppImage
-            build/bin/*.AppDir.tar.gz
+            build/bin/lumark_*_amd64.deb
+            build/bin/Lumark.AppImage
+            build/bin/Lumark.AppDir.tar.gz
           if-no-files-found: warn
 
   build-windows:
@@ -99,13 +99,19 @@ jobs:
       - name: Build NSIS Installer
         shell: bash
         run: |
+          if [ -f bin/markdown-viewer.exe ] && [ ! -f bin/Lumark.exe ]; then
+            cp bin/markdown-viewer.exe bin/Lumark.exe
+          fi
+          if [ -f bin/Lumark.exe ] && [ ! -f bin/markdown-viewer.exe ]; then
+            cp bin/Lumark.exe bin/markdown-viewer.exe
+          fi
           makensis packaging/windows/installer.nsi
 
       - name: Upload Windows Release Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: release-windows
-          path: bin/markdown-viewer-installer.exe
+          path: bin/Lumark-installer.exe
           if-no-files-found: warn
 
   build-macos:
@@ -178,6 +184,7 @@ jobs:
       - name: Compute SHA256 Checksums
         working-directory: release-assets
         run: |
+          rm -f SHA256SUMS.txt
           sha256sum * > SHA256SUMS.txt
           cat SHA256SUMS.txt
 
@@ -186,6 +193,7 @@ jobs:
         with:
           files: release-assets/*
           generate_release_notes: true
+          append_body: false
           draft: false
           prerelease: false
 

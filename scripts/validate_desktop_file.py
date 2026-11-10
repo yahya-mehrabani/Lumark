@@ -123,9 +123,15 @@ def validate_svg_icon(svg_path: Path) -> list[str]:
 
 def main():
     repo_root = Path(__file__).resolve().parent.parent
-    desktop_file = repo_root / "packaging" / "linux" / "markdown-viewer.desktop"
-    build_desktop_file = repo_root / "build" / "linux" / "markdown-viewer.desktop"
-    svg_icon = repo_root / "packaging" / "linux" / "markdown-viewer.svg"
+    desktop_file = repo_root / "packaging" / "linux" / "lumark.desktop"
+    if not desktop_file.is_file():
+        desktop_file = repo_root / "packaging" / "linux" / "markdown-viewer.desktop"
+    build_desktop_file = repo_root / "build" / "linux" / "lumark.desktop"
+    if not build_desktop_file.is_file():
+        build_desktop_file = repo_root / "build" / "linux" / "markdown-viewer.desktop"
+    svg_icon = repo_root / "packaging" / "linux" / "lumark.svg"
+    if not svg_icon.is_file():
+        svg_icon = repo_root / "packaging" / "linux" / "markdown-viewer.svg"
 
     if len(sys.argv) > 1:
         desktop_file = Path(sys.argv[1])
