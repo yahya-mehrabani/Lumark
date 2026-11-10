@@ -48,18 +48,12 @@ ln -sf "lumark" "${STAGING_DIR}/usr/bin/Lumark"
 
 # Copy desktop launchers
 DESKTOP_SRC="${ROOT_DIR}/packaging/linux/lumark.desktop"
-if [ ! -f "${DESKTOP_SRC}" ]; then
-	DESKTOP_SRC="${ROOT_DIR}/packaging/linux/markdown-viewer.desktop"
-fi
 cp -p "${DESKTOP_SRC}" "${STAGING_DIR}/usr/share/applications/lumark.desktop"
 chmod 644 "${STAGING_DIR}/usr/share/applications/lumark.desktop"
 ln -sf "lumark.desktop" "${STAGING_DIR}/usr/share/applications/markdown-viewer.desktop"
 
 # Copy scalable SVG icon
 SVG_SRC="${ROOT_DIR}/packaging/linux/lumark.svg"
-if [ ! -f "${SVG_SRC}" ]; then
-	SVG_SRC="${ROOT_DIR}/packaging/linux/markdown-viewer.svg"
-fi
 cp -p "${SVG_SRC}" "${STAGING_DIR}/usr/share/icons/hicolor/scalable/apps/lumark.svg"
 chmod 644 "${STAGING_DIR}/usr/share/icons/hicolor/scalable/apps/lumark.svg"
 ln -sf "lumark.svg" "${STAGING_DIR}/usr/share/icons/hicolor/scalable/apps/markdown-viewer.svg"
@@ -89,10 +83,6 @@ fi
 # Build Debian archive using dpkg-deb
 dpkg-deb --build --root-owner-group "${STAGING_DIR}" "${DEB_OUTPUT}"
 cp -pf "${DEB_OUTPUT}" "${DEB_SYMLINK}"
-
-# Maintain legacy naming aliases for local test suites
-cp -pf "${DEB_OUTPUT}" "${BUILD_DIR}/markdown-viewer_${DEB_VERSION}_${DEB_ARCH}.deb"
-cp -pf "${DEB_OUTPUT}" "${BUILD_DIR}/markdown-viewer.deb"
 
 echo "Successfully built Debian package: ${DEB_OUTPUT}"
 echo "Canonical package path: ${DEB_SYMLINK}"

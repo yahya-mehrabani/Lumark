@@ -49,9 +49,6 @@ ln -sf "${APP_NAME}" "${APP_DIR}/usr/bin/markdown-viewer"
 
 # 2. Desktop launcher
 DESKTOP_SRC="${ROOT_DIR}/packaging/linux/lumark.desktop"
-if [ ! -f "${DESKTOP_SRC}" ]; then
-	DESKTOP_SRC="${ROOT_DIR}/packaging/linux/markdown-viewer.desktop"
-fi
 cp -p "${DESKTOP_SRC}" "${APP_DIR}/usr/share/applications/${APP_NAME}.desktop"
 cp -p "${DESKTOP_SRC}" "${APP_DIR}/${APP_NAME}.desktop"
 chmod 644 "${APP_DIR}/usr/share/applications/${APP_NAME}.desktop" "${APP_DIR}/${APP_NAME}.desktop"
@@ -59,9 +56,6 @@ ln -sf "${APP_NAME}.desktop" "${APP_DIR}/markdown-viewer.desktop"
 
 # 3. Icons
 SVG_SRC="${ROOT_DIR}/packaging/linux/lumark.svg"
-if [ ! -f "${SVG_SRC}" ]; then
-	SVG_SRC="${ROOT_DIR}/packaging/linux/markdown-viewer.svg"
-fi
 cp -p "${SVG_SRC}" "${APP_DIR}/usr/share/icons/hicolor/scalable/apps/${APP_NAME}.svg"
 chmod 644 "${APP_DIR}/usr/share/icons/hicolor/scalable/apps/${APP_NAME}.svg"
 
@@ -107,11 +101,4 @@ else
 	# Create a portable directory bundle archive for distribution convenience
 	tar -czf "${BUILD_DIR}/${APP_NAME}.AppDir.tar.gz" -C "${STAGING_DIR}" "${APP_NAME}.AppDir"
 	echo "Packaged portable AppDir archive: ${BUILD_DIR}/${APP_NAME}.AppDir.tar.gz"
-fi
-
-# Maintain legacy naming aliases in build directories for existing tests
-rm -rf "${STAGING_DIR}/markdown-viewer.AppDir"
-ln -sf "${APP_NAME}.AppDir" "${STAGING_DIR}/markdown-viewer.AppDir"
-if [ -f "${BUILD_DIR}/${APP_NAME}.AppDir.tar.gz" ]; then
-	cp -pf "${BUILD_DIR}/${APP_NAME}.AppDir.tar.gz" "${BUILD_DIR}/markdown-viewer.AppDir.tar.gz"
 fi

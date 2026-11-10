@@ -52,7 +52,7 @@ jobs:
       - name: Validate Desktop Entry Specification
         run: |
           desktop-file-validate packaging/linux/lumark.desktop
-          desktop-file-validate packaging/linux/markdown-viewer.desktop
+          desktop-file-validate build/linux/lumark.desktop
           python3 scripts/validate_desktop_file.py
 
       - name: Run Package Verification Suite
@@ -69,7 +69,6 @@ jobs:
           name: lumark-debian-package
           path: |
             build/bin/lumark*.deb
-            build/bin/markdown-viewer*.deb
           if-no-files-found: warn
 
       - name: Upload AppImage Artifacts
@@ -79,6 +78,4 @@ jobs:
           path: |
             build/bin/Lumark*.AppImage
             build/bin/Lumark*.tar.gz
-            build/bin/markdown-viewer*.AppImage
-            build/bin/markdown-viewer*.tar.gz
           if-no-files-found: warn

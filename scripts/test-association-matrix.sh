@@ -28,7 +28,8 @@ report_point() {
 
 # --- Point 1: Fresh Install (Prior Handler Exists) ---
 # Verify existing handlers for text/plain are NOT overridden.
-if ! grep -qi 'text/plain' "${ROOT_DIR}/packaging/linux/markdown-viewer.desktop"; then
+DESKTOP_FILE="${ROOT_DIR}/packaging/linux/lumark.desktop"
+if ! grep -qi 'text/plain' "${DESKTOP_FILE}"; then
 	report_point 1 "Fresh Install (Prior Handler Exists)" "PASS" "text/plain strictly excluded; existing plain-text defaults are preserved"
 else
 	report_point 1 "Fresh Install (Prior Handler Exists)" "FAIL" "text/plain found in desktop entry; violates PRD §11.4"
@@ -37,8 +38,8 @@ fi
 
 # --- Point 2: Fresh Install (No Prior Handler) ---
 # Verify app registers as candidate for text/markdown and text/x-markdown
-if grep -q 'MimeType=.*text/markdown' "${ROOT_DIR}/packaging/linux/markdown-viewer.desktop" &&
-	grep -q 'text/x-markdown' "${ROOT_DIR}/packaging/linux/markdown-viewer.desktop"; then
+if grep -q 'MimeType=.*text/markdown' "${DESKTOP_FILE}" &&
+	grep -q 'text/x-markdown' "${DESKTOP_FILE}"; then
 	report_point 2 "Fresh Install (No Prior Handler)" "PASS" "Declares text/markdown and text/x-markdown candidate associations"
 else
 	report_point 2 "Fresh Install (No Prior Handler)" "FAIL" "Missing text/markdown MIME type in desktop entry"

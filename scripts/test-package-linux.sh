@@ -7,7 +7,6 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BUILD_BIN="${ROOT_DIR}/build/bin"
 DEB_PACKAGE="${BUILD_BIN}/lumark_0.1.0-1_amd64.deb"
 CANONICAL_DEB="${BUILD_BIN}/lumark.deb"
-LEGACY_DEB="${BUILD_BIN}/markdown-viewer_0.1.0-1_amd64.deb"
 TEST_EXTRACT_DIR="${ROOT_DIR}/build/staging/deb-verification-test"
 
 echo "================================================================="
@@ -15,7 +14,7 @@ echo "Lumark - Linux Package Verification Suite"
 echo "================================================================="
 
 # 1. Ensure Debian package is built
-if [ ! -f "${DEB_PACKAGE}" ] && [ ! -f "${CANONICAL_DEB}" ] && [ ! -f "${LEGACY_DEB}" ]; then
+if [ ! -f "${DEB_PACKAGE}" ] && [ ! -f "${CANONICAL_DEB}" ]; then
 	echo "[Package Build] Building Debian package via ./packaging/linux/build-deb.sh..."
 	"${ROOT_DIR}/packaging/linux/build-deb.sh"
 fi
@@ -23,8 +22,6 @@ fi
 TARGET_DEB="${DEB_PACKAGE}"
 if [ ! -f "${TARGET_DEB}" ] && [ -f "${CANONICAL_DEB}" ]; then
 	TARGET_DEB="${CANONICAL_DEB}"
-elif [ ! -f "${TARGET_DEB}" ] && [ -f "${LEGACY_DEB}" ]; then
-	TARGET_DEB="${LEGACY_DEB}"
 fi
 
 echo "[1/6] Verifying Debian package archive: ${TARGET_DEB}"
@@ -81,23 +78,14 @@ echo "  - Binary verified at ${BINARY_PATH} (mode $(stat -c %a "${BINARY_PATH}")
 # Check desktop file
 DESKTOP_PATH="${TEST_EXTRACT_DIR}/usr/share/applications/lumark.desktop"
 if [ ! -f "${DESKTOP_PATH}" ]; then
-	DESKTOP_PATH="${TEST_EXTRACT_DIR}/usr/share/applications/markdown-viewer.desktop"
-fi
-if [ ! -f "${DESKTOP_PATH}" ]; then
-	echo "FAIL: Missing desktop launcher in /usr/share/applications" >&2
+	echo "FAIL: Missing desktop launcher in /usr/share/applications: ${DESKTOP_PATH}" >&2
 	exit 1
 fi
 echo "  - Desktop launcher verified at ${DESKTOP_PATH}"
 
 # Check icons
 ICON_SVG="${TEST_EXTRACT_DIR}/usr/share/icons/hicolor/scalable/apps/lumark.svg"
-if [ ! -f "${ICON_SVG}" ]; then
-	ICON_SVG="${TEST_EXTRACT_DIR}/usr/share/icons/hicolor/scalable/apps/markdown-viewer.svg"
-fi
 ICON_PNG="${TEST_EXTRACT_DIR}/usr/share/icons/hicolor/128x128/apps/lumark.png"
-if [ ! -f "${ICON_PNG}" ]; then
-	ICON_PNG="${TEST_EXTRACT_DIR}/usr/share/icons/hicolor/128x128/apps/markdown-viewer.png"
-fi
 if [ ! -f "${ICON_SVG}" ]; then
 	echo "FAIL: Missing scalable SVG icon at ${ICON_SVG}" >&2
 	exit 1
@@ -159,18 +147,15 @@ echo "[6/6] Validating AppImage pipeline..."
 "${ROOT_DIR}/packaging/linux/build-appimage.sh"
 
 APPDIR="${ROOT_DIR}/build/staging/Lumark.AppDir"
-if [ ! -d "${APPDIR}" ]; then
-	APPDIR="${ROOT_DIR}/build/staging/markdown-viewer.AppDir"
-fi
 if [ ! -f "${APPDIR}/AppRun" ] || [ ! -x "${APPDIR}/AppRun" ]; then
 	echo "FAIL: AppImage AppRun entrypoint missing or not executable" >&2
 	exit 1
 fi
-if [ ! -f "${APPDIR}/usr/bin/Lumark" ] && [ ! -f "${APPDIR}/usr/bin/lumark" ] && [ ! -f "${APPDIR}/usr/bin/markdown-viewer" ]; then
+if [ ! -f "${APPDIR}/usr/bin/Lumark" ] && [ ! -f "${APPDIR}/usr/bin/lumark" ]; then
 	echo "FAIL: AppDir missing usr/bin executable" >&2
 	exit 1
 fi
-if [ ! -f "${APPDIR}/Lumark.desktop" ] && [ ! -f "${APPDIR}/lumark.desktop" ] && [ ! -f "${APPDIR}/markdown-viewer.desktop" ]; then
+if [ ! -f "${APPDIR}/Lumark.desktop" ] && [ ! -f "${APPDIR}/lumark.desktop" ]; then
 	echo "FAIL: AppDir missing root desktop file" >&2
 	exit 1
 fi

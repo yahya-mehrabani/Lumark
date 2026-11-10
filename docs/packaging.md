@@ -169,15 +169,15 @@ This section provides reproducible instructions for packaging, installing, and v
 ### 2. Desktop Launcher and MIME Type Associations
 
 Standard assets installed by the Debian package:
-- **Binary:** `/usr/bin/markdown-viewer` (mode 0755)
-- **Desktop Entry:** `/usr/share/applications/markdown-viewer.desktop` (mode 0644)
-  - `Exec=markdown-viewer %F` (supports multi-file argument lists)
+- **Binary:** `/usr/bin/lumark` (mode 0755, with `/usr/bin/markdown-viewer` compatibility symlink)
+- **Desktop Entry:** `/usr/share/applications/lumark.desktop` (mode 0644, with `markdown-viewer.desktop` symlink)
+  - `Exec=lumark %F` (supports multi-file argument lists)
   - `Categories=Utility;TextEditor;Viewer;`
   - `MimeType=text/markdown;text/x-markdown;`
-  - `StartupNotify=true` and `StartupWMClass=markdown-viewer`
+  - `StartupNotify=true` and `StartupWMClass=lumark`
 - **Application Icons:**
-  - Scalable vector icon: `/usr/share/icons/hicolor/scalable/apps/markdown-viewer.svg`
-  - Raster icon: `/usr/share/icons/hicolor/128x128/apps/markdown-viewer.png`
+  - Scalable vector icon: `/usr/share/icons/hicolor/scalable/apps/lumark.svg`
+  - Raster icon: `/usr/share/icons/hicolor/128x128/apps/lumark.png`
 - **MIME Policy:** Strictly excludes `text/plain` to prevent intercepting ordinary text files.
 
 ### 3. Maintainer Script Hooks
@@ -196,23 +196,23 @@ Debian package maintainer scripts (`packaging/linux/debian/`):
 npm run build:deb
 ```
 Outputs:
-- Versioned: `build/bin/markdown-viewer_0.1.0-1_amd64.deb`
-- Canonical: `build/bin/markdown-viewer.deb`
+- Versioned: `build/bin/lumark_0.1.0-1_amd64.deb`
+- Canonical: `build/bin/lumark.deb`
 
 #### Step 4.2: Inspect Package Metadata & File Tree
 ```bash
-dpkg-deb -I build/bin/markdown-viewer_0.1.0-1_amd64.deb
-dpkg-deb -c build/bin/markdown-viewer_0.1.0-1_amd64.deb
+dpkg-deb -I build/bin/lumark_0.1.0-1_amd64.deb
+dpkg-deb -c build/bin/lumark_0.1.0-1_amd64.deb
 ```
 
 #### Step 4.3: Build AppImage Pipeline
 ```bash
 ./packaging/linux/build-appimage.sh
 ```
-Stages `build/staging/markdown-viewer.AppDir` containing executable `AppRun`, root `.desktop`, icons, and binary, and generates `build/bin/markdown-viewer.AppImage` when `linuxdeploy` or `appimagetool` is available.
+Stages `build/staging/Lumark.AppDir` containing executable `AppRun`, root `.desktop`, icons, and binary, and generates `build/bin/Lumark.AppImage` when `linuxdeploy` or `appimagetool` is available (or portable `Lumark.AppDir.tar.gz`).
 
 #### Step 4.4: Run Linux Package Verification Suite
 ```bash
 npm run test:package:linux
 ```
-Verifies control metadata, binary location (`/usr/bin/markdown-viewer`), permissions, FreeDesktop specification compliance, MIME exclusions, maintainer scripts, and AppDir layout.
+Verifies control metadata, binary location (`/usr/bin/lumark`), permissions, FreeDesktop specification compliance, MIME exclusions, maintainer scripts, and AppDir layout.
