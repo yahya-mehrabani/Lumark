@@ -97,11 +97,13 @@ jobs:
 
       - name: Install appimagetool
         run: |
-          sudo curl -sSL -o /tmp/appimagetool "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
-          sudo chmod +x /tmp/appimagetool
-          cd /tmp && sudo ./appimagetool --appimage-extract
+          curl -sSL -o /tmp/appimagetool "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
+          chmod +x /tmp/appimagetool
+          cd /tmp && ./appimagetool --appimage-extract
+          sudo rm -rf /usr/local/lib/appimagetool
           sudo mv /tmp/squashfs-root /usr/local/lib/appimagetool
-          sudo ln -s /usr/local/lib/appimagetool/AppRun /usr/local/bin/appimagetool
+          sudo chmod -R 755 /usr/local/lib/appimagetool
+          sudo ln -sf /usr/local/lib/appimagetool/AppRun /usr/local/bin/appimagetool
           appimagetool --version
 
       - name: Build Wails App
@@ -229,9 +231,10 @@ jobs:
       - name: Build NSIS Installer
         shell: bash
         run: |
+          mkdir -p bin
           makensis \
             -DPRODUCT_VERSION="${{ needs.prepare.outputs.version }}" \
-            -DOUTFILE="bin/${{ needs.prepare.outputs.windows_installer }}" \
+            -DOUTFILE="../../bin/${{ needs.prepare.outputs.windows_installer }}" \
             packaging/windows/installer.nsi
 
       # =========================================================================

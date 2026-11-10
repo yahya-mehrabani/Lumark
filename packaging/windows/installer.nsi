@@ -22,7 +22,11 @@ Unicode true
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 !ifndef OUTFILE
+!ifdef OUTFILE_NAME
+!define OUTFILE "..\..\bin\${OUTFILE_NAME}"
+!else
 !define OUTFILE "..\..\bin\Lumark-installer.exe"
+!endif
 !endif
 OutFile "${OUTFILE}"
 InstallDir "$LOCALAPPDATA\Programs\Lumark"

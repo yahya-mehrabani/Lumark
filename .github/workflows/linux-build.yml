@@ -59,6 +59,17 @@ jobs:
         run: |
           npm run test:package:linux
 
+      - name: Install appimagetool
+        run: |
+          curl -sSL -o /tmp/appimagetool "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
+          chmod +x /tmp/appimagetool
+          cd /tmp && ./appimagetool --appimage-extract
+          sudo rm -rf /usr/local/lib/appimagetool
+          sudo mv /tmp/squashfs-root /usr/local/lib/appimagetool
+          sudo chmod -R 755 /usr/local/lib/appimagetool
+          sudo ln -sf /usr/local/lib/appimagetool/AppRun /usr/local/bin/appimagetool
+          appimagetool --version
+
       - name: Build AppImage Pipeline
         run: |
           ./packaging/linux/build-appimage.sh

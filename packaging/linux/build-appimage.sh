@@ -62,13 +62,20 @@ ln -sf "${APP_NAME}.desktop" "${APP_DIR}/markdown-viewer.desktop"
 # 3. Icons
 SVG_SRC="${ROOT_DIR}/packaging/linux/lumark.svg"
 cp -p "${SVG_SRC}" "${APP_DIR}/usr/share/icons/hicolor/scalable/apps/${APP_NAME}.svg"
-chmod 644 "${APP_DIR}/usr/share/icons/hicolor/scalable/apps/${APP_NAME}.svg"
+cp -p "${SVG_SRC}" "${APP_DIR}/usr/share/icons/hicolor/scalable/apps/lumark.svg"
+chmod 644 "${APP_DIR}/usr/share/icons/hicolor/scalable/apps/${APP_NAME}.svg" "${APP_DIR}/usr/share/icons/hicolor/scalable/apps/lumark.svg"
 
 if [ -f "${ROOT_DIR}/build/appicon.png" ]; then
 	cp -p "${ROOT_DIR}/build/appicon.png" "${APP_DIR}/usr/share/icons/hicolor/128x128/apps/${APP_NAME}.png"
+	cp -p "${ROOT_DIR}/build/appicon.png" "${APP_DIR}/usr/share/icons/hicolor/128x128/apps/lumark.png"
 	cp -p "${ROOT_DIR}/build/appicon.png" "${APP_DIR}/${APP_NAME}.png"
+	cp -p "${ROOT_DIR}/build/appicon.png" "${APP_DIR}/lumark.png"
 	cp -p "${ROOT_DIR}/build/appicon.png" "${APP_DIR}/.DirIcon"
-	chmod 644 "${APP_DIR}/usr/share/icons/hicolor/128x128/apps/${APP_NAME}.png" "${APP_DIR}/${APP_NAME}.png" "${APP_DIR}/.DirIcon"
+	chmod 644 "${APP_DIR}/usr/share/icons/hicolor/128x128/apps/${APP_NAME}.png" \
+		"${APP_DIR}/usr/share/icons/hicolor/128x128/apps/lumark.png" \
+		"${APP_DIR}/${APP_NAME}.png" \
+		"${APP_DIR}/lumark.png" \
+		"${APP_DIR}/.DirIcon"
 fi
 
 # 4. Standard AppRun Entrypoint
