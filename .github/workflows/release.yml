@@ -109,6 +109,27 @@ jobs:
       - name: Build Wails App
         run: wails3 build
 
+      - name: Stage Linux Binaries
+        run: |
+          mkdir -p bin build/bin
+          SRC=""
+          for candidate in bin/lumark bin/Lumark build/bin/lumark build/bin/Lumark; do
+            if [ -f "$candidate" ]; then
+              SRC="$candidate"
+              break
+            fi
+          done
+          if [ -z "$SRC" ]; then
+            echo "ERROR: Compiled binary not found in bin/ or build/bin/" >&2
+            exit 1
+          fi
+          echo "Staging binary from ${SRC}..."
+          [ "$SRC" != "bin/lumark" ] && cp -pf "$SRC" bin/lumark
+          [ "$SRC" != "bin/Lumark" ] && cp -pf "$SRC" bin/Lumark
+          [ "$SRC" != "build/bin/lumark" ] && cp -pf "$SRC" build/bin/lumark
+          [ "$SRC" != "build/bin/Lumark" ] && cp -pf "$SRC" build/bin/Lumark
+          chmod 755 bin/lumark bin/Lumark build/bin/lumark build/bin/Lumark
+
       - name: Build Debian Package
         run: |
           ./packaging/linux/build-deb.sh "${{ needs.prepare.outputs.version }}"
@@ -133,18 +154,23 @@ jobs:
 
       - name: Build Portable Linux Binary Tarball
         run: |
-          tar -czf "build/bin/${{ needs.prepare.outputs.linux_tar }}" -C build/bin lumark
+          tar -czf "build/bin/${{ needs.prepare.outputs.linux_tar }}" -C build/bin lumark Lumark
 
       - name: Build RPM Package (nfpm)
         run: |
           mkdir -p bin
-          cp -p build/bin/lumark bin/lumark
+          cp -pf build/bin/lumark bin/lumark
           sed "s/version: .*/version: \"${{ needs.prepare.outputs.version }}\"/" build/linux/nfpm/nfpm.yaml > /tmp/nfpm.yaml
+          RPM_NAME="${{ needs.prepare.outputs.linux_rpm }}"
+          RPM_BASE="${RPM_NAME%.rpm}"
           GIT_COMMITTER_NAME="Lumark Team" \
           GIT_COMMITTER_EMAIL="team@lumark.local" \
           GOARCH=amd64 \
-          wails3 tool package -name "${{ needs.prepare.outputs.linux_rpm }}" -format rpm -config /tmp/nfpm.yaml -out build/bin
-          ls -la "build/bin/${{ needs.prepare.outputs.linux_rpm }}"
+          wails3 tool package -name "${RPM_BASE}" -format rpm -config /tmp/nfpm.yaml -out build/bin
+          if [ -f "build/bin/${RPM_NAME}.rpm" ] && [ ! -f "build/bin/${RPM_NAME}" ]; then
+            mv "build/bin/${RPM_NAME}.rpm" "build/bin/${RPM_NAME}"
+          fi
+          ls -la "build/bin/${RPM_NAME}"
 
       - name: Upload Linux Release Artifacts
         uses: actions/upload-artifact@v4

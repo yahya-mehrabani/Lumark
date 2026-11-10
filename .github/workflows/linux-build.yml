@@ -45,6 +45,27 @@ jobs:
       - name: Build Wails App
         run: wails3 build
 
+      - name: Stage Linux Binaries
+        run: |
+          mkdir -p bin build/bin
+          SRC=""
+          for candidate in bin/lumark bin/Lumark build/bin/lumark build/bin/Lumark; do
+            if [ -f "$candidate" ]; then
+              SRC="$candidate"
+              break
+            fi
+          done
+          if [ -z "$SRC" ]; then
+            echo "ERROR: Compiled binary not found in bin/ or build/bin/" >&2
+            exit 1
+          fi
+          echo "Staging binary from ${SRC}..."
+          [ "$SRC" != "bin/lumark" ] && cp -pf "$SRC" bin/lumark
+          [ "$SRC" != "bin/Lumark" ] && cp -pf "$SRC" bin/Lumark
+          [ "$SRC" != "build/bin/lumark" ] && cp -pf "$SRC" build/bin/lumark
+          [ "$SRC" != "build/bin/Lumark" ] && cp -pf "$SRC" build/bin/Lumark
+          chmod 755 bin/lumark bin/Lumark build/bin/lumark build/bin/Lumark
+
       - name: Build Debian Package
         run: |
           ./packaging/linux/build-deb.sh
